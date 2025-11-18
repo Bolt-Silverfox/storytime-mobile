@@ -1,25 +1,23 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import colours from "../colours";
 import defaultStyles from "../styles";
+import Icon from "./Icon";
 
 type Props = {
   setPassword: Dispatch<SetStateAction<string>>;
   password: string;
   label: string;
   placeholder: string;
+  errorMessage?: string;
 };
+
 const PasswordInput = ({
   setPassword,
   password,
   label,
   placeholder,
+  errorMessage,
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
@@ -31,21 +29,22 @@ const PasswordInput = ({
     >
       <Text style={defaultStyles.label}>{label}</Text>
       <TextInput
-        style={defaultStyles.input}
         placeholder={placeholder}
         value={password}
         onChangeText={setPassword}
-        secureTextEntry={showPassword}
+        secureTextEntry={!showPassword}
+        placeholderTextColor={errorMessage ? "red" : colours.text}
+        className={`border rounded-full h-[50px] text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
       />
+      {errorMessage && (
+        <Text className="text-red-600 text-sm">{errorMessage}</Text>
+      )}
       {!showPassword && (
         <Pressable
           onPress={() => setShowPassword(true)}
           style={styles.eyeImage}
         >
-          <Image
-            alt="show password icon"
-            source={require("../assets/icons/eye-hidden.png")}
-          />
+          <Icon name="Eye" color={colours.text} />
         </Pressable>
       )}
       {showPassword && (
@@ -53,10 +52,7 @@ const PasswordInput = ({
           onPress={() => setShowPassword(false)}
           style={styles.eyeImage}
         >
-          <Image
-            alt="show password icon"
-            source={require("../assets/icons/eye-hidden.png")}
-          />
+          <Icon name="EyeOff" color={colours.text} />
         </Pressable>
       )}
     </View>

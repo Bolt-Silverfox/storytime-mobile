@@ -12,13 +12,27 @@ import defaultStyles from "../../styles";
 import colours from "../../colours";
 import { useState } from "react";
 import PasswordInput from "../../components/PasswordInput";
+import useAuth from "../../contexts/AuthContext";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [error, setERror] = useState("");
+  const { login, errorMessage, isLoading } = useAuth();
+
+  const handleLogin = async () => {
+    setERror("");
+    if (!emailRegex.test(email)) {
+      setERror("Invalid Email");
+      return;
+    }
+
+    await login(email, password);
+  };
 
   return (
     <View style={styles.screen}>
@@ -37,14 +51,25 @@ const LoginScreen = () => {
           <Text style={styles.text}>Glad to have you back</Text>
         </View>
         <View style={styles.form}>
+          {Array.isArray(errorMessage) && errorMessage.length ? (
+            errorMessage.map((message) => (
+              <Text key={message} className="text-red-600 text-sm">
+                {message}
+              </Text>
+            ))
+          ) : (
+            <Text className="text-red-600 text-sm">{errorMessage}</Text>
+          )}
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              style={defaultStyles.input}
+              className={`border rounded-full h-[50px] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
+              placeholderTextColor={error ? "red" : colours.text}
               onChangeText={setEmail}
               value={email}
             />
+            {error && <Text className="text-red-600 text-sm">{error}</Text>}
           </View>
           <PasswordInput
             label="Password:"
@@ -62,12 +87,14 @@ const LoginScreen = () => {
           </Text>
         </View>
         <Pressable
-          onPress={() => navigator.navigate("home")}
+          onPress={handleLogin}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
         >
-          <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
+          <Text style={{ ...styles.text, color: "white" }}>
+            {isLoading ? "Logging in..." : "Log in"}
+          </Text>
         </Pressable>
         <Text style={{ ...styles.text, marginTop: 16 }}>
           Don't have an account?{" "}
