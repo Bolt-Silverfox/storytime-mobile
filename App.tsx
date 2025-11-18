@@ -1,11 +1,12 @@
+import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import { AuthProvider } from "./contexts/AuthContext";
 import RootNavigator from "./Navigation/RootNavigator";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
+import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
 

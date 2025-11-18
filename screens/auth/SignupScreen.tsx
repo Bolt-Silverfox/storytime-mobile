@@ -14,6 +14,7 @@ import PasswordInput from "../../components/PasswordInput";
 import TitleModal from "../../components/TitleModal";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import Icon from "../../components/Icon";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -29,7 +30,7 @@ const SignupScreen = () => {
     <ScrollView
       contentContainerStyle={{
         minHeight: "100%",
-        paddingVertical: 46,
+        paddingTop: 46,
       }}
     >
       <Pressable
