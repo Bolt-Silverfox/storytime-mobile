@@ -31,12 +31,14 @@ Before you begin, ensure you have the following installed:
 ## Installation
 
 1. Clone the repository:
+
 ```bash
 git clone <your-repository-url>
 cd storytime-mobile
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
@@ -87,12 +89,12 @@ storytime-mobile/
 
 ## Available Scripts
 
-| Command | Description |
-|---------|-------------|
-| `npm start` | Start the Expo development server |
-| `npm run android` | Run on Android device/emulator |
-| `npm run ios` | Run on iOS simulator (macOS only) |
-| `npm run web` | Run in web browser |
+| Command           | Description                       |
+| ----------------- | --------------------------------- |
+| `npm start`       | Start the Expo development server |
+| `npm run android` | Run on Android device/emulator    |
+| `npm run ios`     | Run on iOS simulator (macOS only) |
+| `npm run web`     | Run in web browser                |
 
 ## Development
 
@@ -103,6 +105,7 @@ This project uses TypeScript for type safety. The TypeScript configuration is in
 ### New React Architecture
 
 This project has the New React Architecture enabled (`newArchEnabled: true`), which includes:
+
 - **Fabric** - The new rendering system
 - **TurboModules** - Improved native module system
 - **Concurrent Features** - Better performance and UX
@@ -188,7 +191,7 @@ npx react-native log-ios
 ### Metro Bundler Cache Issues
 
 ```bash
-# Clear cache
+# Clear
 npx expo start --clear
 ```
 
