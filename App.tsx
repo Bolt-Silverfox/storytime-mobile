@@ -6,6 +6,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import RootNavigator from "./Navigation/RootNavigator";
 import { NavigationContainer } from "@react-navigation/native";
 import { StatusBar } from "expo-status-bar";
+import "./global.css";
 
 SplashScreen.preventAutoHideAsync();
 

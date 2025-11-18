@@ -14,6 +14,7 @@ import PasswordInput from "../../components/PasswordInput";
 import TitleModal from "../../components/TitleModal";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import Icon from "../../components/Icon";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -41,6 +42,7 @@ const SignupScreen = () => {
           source={require("../../assets/icons/arrow-left.png")}
         />
       </Pressable>
+
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
           <Text style={defaultStyles.heading}>Welcome to Storytime4Kids</Text>
