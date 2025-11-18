@@ -1,0 +1,39 @@
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
+import AuthNavigator, { AuthNavigatorParamList } from "./AuthNavigator";
+import useAuth from "../contexts/AuthContext";
+import HomeScree from "../screens/HomeScree";
+import CustomSplashScreen from "../components/CustomSplashScreen";
+import { NavigatorScreenParams } from "@react-navigation/native";
+
+type RootNavigatorParamList = {
+  auth: NavigatorScreenParams<AuthNavigatorParamList>;
+  home: undefined;
+};
+type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
+const Stack = createNativeStackNavigator<RootNavigatorParamList>();
+
+const RootNavigator = () => {
+  const { user } = useAuth();
+
+  if (user === undefined) return <CustomSplashScreen />;
+
+  return (
+    <Stack.Navigator>
+      {!user ? (
+        <Stack.Screen
+          name="auth"
+          component={AuthNavigator}
+          options={{ headerShown: false }}
+        />
+      ) : (
+        <Stack.Screen name="home" component={HomeScree} />
+      )}
+    </Stack.Navigator>
+  );
+};
+
+export type { RootNavigatorProp };
+export default RootNavigator;
