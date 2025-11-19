@@ -14,6 +14,8 @@ import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import PasswordInput from "./PasswordInput";
 import TitleModal from "./TitleModal";
 import colours from "../colours";
+import { useNavigation } from "@react-navigation/native";
+import { RootNavigatorProp } from "../Navigation/RootNavigator";
 
 const registerSchema = z
   .object({
@@ -51,7 +53,8 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [title, setTitle] = useState("");
   const [titleModal, setTitleModal] = useState(false);
-  const { isLoading, errorMessage, signUp } = useAuth();
+  // const { isLoading, errorMessage, signUp } = useAuth();
+  const navigator = useNavigation<RootNavigatorProp>();
 
   const onRegister = async () => {
     setErrors({});
@@ -81,7 +84,7 @@ const SignupForm = () => {
   return (
     <View>
       <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={errorMessage} />
+        {/* <ErrorMessageDisplay errorMessage={errorMessage} /> */}
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Title:</Text>
           <Pressable
@@ -155,11 +158,13 @@ const SignupForm = () => {
         onPress={onRegister}
         style={[
           { marginTop: 44 },
-          isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
+          // isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
+          defaultStyles.button
         ]}
       >
         <Text style={{ ...styles.text, color: "white" }}>
-          {isLoading ? "Loading..." : "Proceed"}
+          {/* {isLoading ? "Loading..." : "Proceed"} */}
+          Proceed
         </Text>
       </Pressable>
     </View>
