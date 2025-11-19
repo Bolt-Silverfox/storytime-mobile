@@ -8,6 +8,8 @@ import ResetPasswordScreen from "../screens/auth/ResetPassword";
 import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
+import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
+import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -16,6 +18,8 @@ type AuthNavigatorParamList = {
   createNewPassword: undefined;
   verifyEmail: undefined;
   resetSuccessful: undefined;
+  imageUpload: undefined;
+  kidsDetailsUpload: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -36,6 +40,8 @@ const AuthNavigator = () => {
         name="resetSuccessful"
         component={PasswordResetSuccessfulScreen}
       />
+      <Stack.Screen name="imageUpload" component={ImageUploadScreen} />
+      <Stack.Screen name="kidsDetailsUpload" component={KidsDetailsUploadScreen} />
     </Stack.Navigator>
   );
 };
