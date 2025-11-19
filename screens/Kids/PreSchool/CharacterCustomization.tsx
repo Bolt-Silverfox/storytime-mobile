@@ -1,7 +1,8 @@
 import ComingSoon from "../../../components/ComingSoon";
 
-const AddVoice = () => {
+const CharacterCustomization = () => {
   return <ComingSoon title="character customization" />;
 };
 
-export default AddVoice;
+export default CharacterCustomization;
+
