@@ -1,3 +1,5 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
 import {
   createContext,
   ReactNode,
@@ -5,34 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
-import apiFetch from "../apiFetch";
 import { emailRegex } from "../constants";
-
-type Profile = {
-  id: string;
-  explicitContent: boolean;
-  maxScreenTimeMins: number;
-  language: string;
-  country: string;
-  createdAt: string;
-  updatedAt: string;
-};
-
-type User = {
-  id: string;
-  email: string;
-  name: string;
-  avatarUrl: string;
-  role: string;
-  createdAt: string;
-  updatedAt: string;
-  title: string;
-  profile: Profile;
-  numberOfKids: number;
-};
+import { User } from "../types";
+import auth from "../utils/auth";
 
 type Login = (email: string, password: string) => void;
 type SignUp = (
@@ -75,8 +53,6 @@ type AuthResponse<T = { messaege: string }> =
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
-
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -111,196 +87,25 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     getUserSession();
   }, []);
 
-  const logout = async () => {
+  const authTryCatch = async <T,>(
+    callback: () => Promise<T>
+  ): Promise<T | AuthErrorResponse> => {
     try {
       setIsLoading(true);
       setErrorMessage(undefined);
-      const response = await apiFetch(`${BASE_URL}/auth/logout`, {
-        method: "POST",
-      });
-      const data: AuthResponse = await response.json();
-      if (!data.success) {
-        setErrorMessage(data.message);
-        return;
-      }
-      await AsyncStorage.removeItem("accessToken");
-      await AsyncStorage.removeItem("refreshToken");
-      await AsyncStorage.removeItem("user");
-      setUser(null);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Unexpected logout error, try again later";
-      setErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const login: Login = async (email, password) => {
-    if (!emailRegex.test(email)) {
-      setErrorMessage("Invalid Email");
-      return;
-    }
-    try {
-      setErrorMessage(undefined);
-      setIsLoading(true);
-      const response = await fetch(`${BASE_URL}/auth/login`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data: AuthResponse<{
-        user: User;
-        jwt: string;
-        refreshToken: string;
-      }> = await response.json();
-
-      if (!data.success) {
-        setErrorMessage(data.message);
-        return;
-      }
-      await AsyncStorage.setItem("accessToken", data.data.jwt);
-      await AsyncStorage.setItem("refreshToken", data.data.refreshToken);
-      await AsyncStorage.setItem("user", JSON.stringify(data.data.user));
-      setUser(data.data.user);
+      return await callback();
     } catch (err) {
       const message =
         err instanceof Error
           ? err.message
-          : "Unexpected error while logging in, try again later.";
+          : "Unexpected error, reload the app and try again";
       setErrorMessage(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const signUp: SignUp = async (email, password, fullName, title) => {
-    try {
-      setIsLoading(true);
-      setErrorMessage(undefined);
-
-      const response = await fetch(`${BASE_URL}/auth/register`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password, title, fullName }),
-      });
-      const data: AuthResponse<{
-        user: User;
-        jwt: string;
-        refreshToken: string;
-      }> = await response.json();
-
-      if (!data.success) {
-        setErrorMessage(data.message);
-        return;
-      }
-      await AsyncStorage.setItem("user", JSON.stringify(data.data.user));
-      await AsyncStorage.setItem("refreshToken", data.data.refreshToken);
-      navigator.navigate("auth", {
-        screen: "verifyEmail",
-        params: {
-          email,
-          refreshToken: data.data.refreshToken,
-          jwt: data.data.jwt,
-        },
-      });
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Unexpected signup error, try again later";
-      setErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const verifyEmail = async (token: string) => {
-    try {
-      setIsLoading(true);
-      setErrorMessage(undefined);
-
-      const response = await fetch(
-        `${BASE_URL}/auth/verify-email?token=${token}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      const data: AuthResponse = await response.json();
-      if (!data.success) {
-        setErrorMessage(data.message);
-        return;
-      }
-      await AsyncStorage.setItem("accessToken", token);
-      const locallyStoredUser = await AsyncStorage.getItem("user");
-      setUser(JSON.parse(locallyStoredUser!));
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error
-          ? err.message
-          : "Unexpected signup error, try again later";
-      setErrorMessage(errorMessage);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const resendVerificationEmail = async (
-    email: string
-  ): Promise<AuthResponse> => {
-    try {
-      setIsLoading(true);
-      setErrorMessage(undefined);
-
-      const response = await fetch(
-        `${BASE_URL}/auth/send-verification?email=${email}`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const data: AuthResponse = await response.json();
-
-      if (!response.ok) {
-        return {
-          statusCode: response.status,
-          success: false,
-          error: response.statusText ?? "Request failed",
-          message: data.message ?? "Unable to resend verification email",
-          timeStamp: new Date().toISOString(),
-        };
-      }
-
-      if (!data.success) {
-        setErrorMessage(data.message);
-        return data;
-      }
-
-      return data;
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Unexpected signup error, try again later";
-
-      setErrorMessage(message);
+      console.log("message", message);
       return {
         statusCode: 500,
         success: false,
         error: "NetworkError",
-        message,
+        message: message.length ? message : "Unexpected error, try again",
         timeStamp: new Date().toISOString(),
       };
     } finally {
@@ -308,41 +113,109 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const logout = async () => {
+    const logoutData = await authTryCatch<AuthResponse>(auth.logout);
+    if (!logoutData.success) {
+      setErrorMessage(logoutData.message);
+      return;
+    }
+    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+    setUser(null);
+  };
+
+  const login: Login = async (email, password) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid Email");
+      return;
+    }
+
+    const loginData = await authTryCatch<
+      AuthResponse<{
+        user: User;
+        jwt: string;
+        refreshToken: string;
+      }>
+    >(() => auth.login(email, password));
+
+    if (!loginData.success) {
+      setErrorMessage(loginData.message);
+      return;
+    }
+    await AsyncStorage.setItem("accessToken", loginData.data.jwt);
+    await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
+    await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
+    setUser(loginData.data.user);
+  };
+
+  const signUp: SignUp = async (email, password, fullName, title) => {
+    const signupData = await authTryCatch<
+      AuthResponse<{
+        user: User;
+        jwt: string;
+        refreshToken: string;
+      }>
+    >(() => auth.signup({ email, password, fullName, title }));
+    if (!signupData.success) {
+      setErrorMessage(signupData.message);
+      return;
+    }
+    await AsyncStorage.setItem("user", JSON.stringify(signupData.data.user));
+    await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
+    navigator.navigate("auth", {
+      screen: "verifyEmail",
+      params: {
+        email,
+        refreshToken: signupData.data.refreshToken,
+        jwt: signupData.data.jwt,
+      },
+    });
+  };
+
+  const verifyEmail = async (token: string) => {
+    const verifyEmailData = await authTryCatch<AuthResponse>(() =>
+      auth.verifyEmail(token)
+    );
+    if (!verifyEmailData.success) {
+      setErrorMessage(verifyEmailData.message);
+      return;
+    }
+    await AsyncStorage.setItem("accessToken", token);
+    const locallyStoredUser = await AsyncStorage.getItem("user");
+    setUser(JSON.parse(locallyStoredUser!));
+  };
+
+  const resendVerificationEmail = async (
+    email: string
+  ): Promise<AuthResponse> => {
+    const resendData = await authTryCatch(() =>
+      auth.resendVerificationEmail(email)
+    );
+    if (!resendData.success) {
+      setErrorMessage(resendData.message);
+      return resendData;
+    }
+    return resendData;
+  };
+
   const requestPasswordReset = async (email: string) => {
     if (!emailRegex.test(email)) {
       setErrorMessage("Invalid email");
       return;
     }
-    try {
-      setIsLoading(true);
-      setErrorMessage("");
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/auth/request-password-reset`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Typp": "application/json",
-          },
-          body: JSON.stringify({ email }),
-        }
-      );
-      const data = await response.json();
-
-      if (data.message) {
-        setErrorMessage(data.message);
-        return;
-      }
-      navigator.navigate("auth", { screen: "createNewPassword" });
-      console.log("reset password data", data);
-    } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "Unexpected error, try again later";
-      setErrorMessage(message);
-    } finally {
-      setIsLoading(false);
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.requestPasswordReset(email)
+    );
+    console.log("requestdata", requestData);
+    if (!requestData.success) {
+      setErrorMessage(requestData.message);
+      return;
     }
+    navigator.navigate("auth", {
+      screen: "confirmResetPasswordToken",
+      params: {
+        email,
+      },
+    });
   };
 
   const providerReturnValues = {

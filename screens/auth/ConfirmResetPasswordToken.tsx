@@ -9,9 +9,12 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 
-type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
+type VerifyEmailRouteProp = RouteProp<
+  AuthNavigatorParamList,
+  "confirmResetPasswordToken"
+>;
 
-const VerifyEmailScreen = () => {
+const ConfirmResetPasswordTokenScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
   const [otp, setOtp] = useState("");
@@ -24,7 +27,7 @@ const VerifyEmailScreen = () => {
     setSuccesMessage("");
     const data = await resendVerificationEmail(route.params.email);
     if (data.success) {
-      setCountdown(59);
+      setCountdown(60);
       setSuccesMessage("Otp resent successfully");
     }
   };
@@ -54,7 +57,7 @@ const VerifyEmailScreen = () => {
               {successMessage}
             </Text>
           )}
-          <Text style={defaultStyles.heading}>Verify your Email</Text>
+          <Text style={defaultStyles.heading}>Reset your password</Text>
           <Text style={styles.text}>
             Enter the verification code sent to your email {route.params.email}
           </Text>
@@ -100,7 +103,7 @@ const VerifyEmailScreen = () => {
   );
 };
 
-export default VerifyEmailScreen;
+export default ConfirmResetPasswordTokenScreen;
 
 const styles = StyleSheet.create({
   image: {
