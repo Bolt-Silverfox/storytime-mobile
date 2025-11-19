@@ -18,7 +18,7 @@ type AuthNavigatorParamList = {
   signUp: undefined;
   resetPassword: undefined;
   createNewPassword: undefined;
-  verifyEmail: undefined;
+  verifyEmail: { email: string; jwt: string; refreshToken: string };
   resetSuccessful: undefined;
   completeProfile: undefined;
   home: undefined;
