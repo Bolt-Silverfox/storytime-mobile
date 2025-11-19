@@ -33,7 +33,7 @@ const PasswordResetSuccessfulScreen = () => {
         Password reset successful
       </Text>
       <Pressable
-        onPress={() => navigator.navigate("auth", { screen: "login" })}
+        onPress={() => navigator.navigate("auth", { screen: "completeProfile" })}
         style={defaultStyles.button}
       >
         <Text
@@ -43,7 +43,7 @@ const PasswordResetSuccessfulScreen = () => {
             textAlign: "center",
           }}
         >
-          Take me to login
+          continue
         </Text>
       </Pressable>
     </View>
