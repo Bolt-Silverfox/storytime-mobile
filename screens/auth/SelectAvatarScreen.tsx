@@ -2,16 +2,13 @@ import React, { useState } from "react";
 import {
   View,
   Text,
-  TouchableOpacity,
   Image,
   ScrollView,
   Alert,
-  Platform,
   Pressable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import defaultStyles from "../../styles";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import * as ImagePicker from "expo-image-picker";
@@ -43,7 +40,6 @@ export default function AvatarScreen() {
   const { onPick, kidIndex } = params;
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  //   const pickBuiltIn = (source: any) => {
   //     if (onPick) {
   //       onPick(
   //         Image.resolveAssetSource
@@ -88,10 +84,7 @@ export default function AvatarScreen() {
   //   };
 
   const getAssetUri = (asset: any) => {
-    // If it's a bundle asset, resolveAssetSource returns an object with a uri
-    // otherwise assume it's already a uri string
     try {
-      // @ts-ignore - resolveAssetSource exists on Image
       const resolved = Image.resolveAssetSource
         ? Image.resolveAssetSource(asset)
         : null;
