@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function StorySelection() {
-  return (
-    <div>StorySelection</div>
-  )
-}
+const StorySelection = () => {
+  return <ComingSoon title="Story selection" />;
+};
 
-export default StorySelection
+export default StorySelection;
