@@ -8,6 +8,7 @@ import ImageUploader from "../../components/ImageUploader";
 import defaultStyles from "../../styles";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { ChevronLeft } from "lucide-react-native";
 
 
 const ImageUploadScreen = () => {
@@ -24,10 +25,7 @@ const ImageUploadScreen = () => {
             onPress={() => navigator.goBack()}
             style={{ paddingHorizontal: 16, marginBottom: 16, flexDirection: 'row', }}
           >
-            <Image
-              style={styles.image}
-              source={require("../../assets/icons/arrow-left.png")}
-            />
+            <ChevronLeft style={styles.image} />
             <Text style={[defaultStyles.defaultText, {fontSize: 18, marginLeft: 16}]}>Upload Image</Text>
           </Pressable>
     <View style={styles.screen}>

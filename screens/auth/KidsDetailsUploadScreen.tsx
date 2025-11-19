@@ -17,6 +17,8 @@ import ImageUploader from "../../components/ImageUploader";
 import * as ImagePicker from "expo-image-picker";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { PencilLine, ChevronDown, ChevronLeft } from "lucide-react-native";
+
 
 type Child = {
   id: string;
@@ -65,10 +67,7 @@ const KidsDetailsUploadScreen = () => {
             onPress={() => navigator.goBack()}
             style={{ paddingHorizontal: 16, marginBottom: 16 }}
           >
-            <Image
-              style={styles.image}
-              source={require("../../assets/icons/arrow-left.png")}
-            />
+            <ChevronLeft style={styles.image} />
           </Pressable>
     <View style={styles.container}>
       <Text style={styles.title}>Enter Your Kids Details</Text>
@@ -152,10 +151,7 @@ const ChildCard = ({
         />
         {/* Pen Icon Overlay */}
         <View style={styles.penWrapper}>
-  <Image
-    source={require("../../assets/icons/pen.png")}
-    style={styles.penIcon}
-  />
+  <PencilLine color="#000" style={styles.penIcon} />
 </View>
       </View>
     </TouchableOpacity>
@@ -188,10 +184,7 @@ const ChildCard = ({
         />
         {/* Pen Icon Overlay */}
         <View style={styles.penWrapper}>
-  <Image
-    source={require("../../assets/icons/pen.png")}
-    style={styles.penIcon}
-  />
+  <PencilLine color="#000" style={styles.penIcon} />
 </View>
       </View>
     </TouchableOpacity>
@@ -224,10 +217,7 @@ const ChildCard = ({
         />
         {/* Pen Icon Overlay */}
         <View style={styles.penWrapper}>
-          <Image
-            source={require("../../assets/icons/pen.png")}
-            style={styles.penIcon}
-          />
+          <PencilLine color="#000" style={styles.penIcon} />
         </View>
       </View>
     </TouchableOpacity>
@@ -269,10 +259,7 @@ const SimpleDropdown = ({
         onPress={() => setOpen(!open)}
       >
         <Text>{value}</Text>
-        <Image
-          style={styles.image}
-          source={require("../../assets/icons/arrow-down.png")}
-        />
+        <ChevronDown style={styles.image} />
       </TouchableOpacity>
 
       {open && (
