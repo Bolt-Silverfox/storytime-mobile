@@ -124,7 +124,7 @@ export default function CompleteProfileScreen() {
 
           <TouchableOpacity
             className="flex-row items-center bg-primary py-3 px-16 rounded-3xl"
-            onPress={() => navigation.navigate("NextPage", { kids })}
+            onPress={() => navigation.navigate("KidsInfoForm", { kids })}
           >
             <CustomText className="text-white font-medium mr-2">Proceed</CustomText>
           </TouchableOpacity>
