@@ -1,8 +1,9 @@
 import ComingSoon from "../../../components/ComingSoon";
 
 function HomeScreen() {
-  return <ComingSoon title="Favourites" />;
+  return <ComingSoon title="HomeScreen" />;
 }
 
 
 export default HomeScreen
+
