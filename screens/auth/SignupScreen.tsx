@@ -1,36 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
 import {
   Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import colours from "../../colours";
-import PasswordInput from "../../components/PasswordInput";
-import TitleModal from "../../components/TitleModal";
+import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
-import Icon from "../../components/Icon";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [titleModal, setTitleModal] = useState(false);
-  const [title, setTitle] = useState("");
 
   return (
     <ScrollView
       contentContainerStyle={{
         minHeight: "100%",
-        paddingVertical: 46,
+        paddingTop: 46,
       }}
     >
       <Pressable
@@ -48,76 +37,7 @@ const SignupScreen = () => {
           <Text style={defaultStyles.heading}>Welcome to Storytime4Kids</Text>
           <Text style={styles.text}>The world's first kids story library</Text>
         </View>
-        <View style={styles.form}>
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Title:</Text>
-            <Pressable
-              style={{
-                ...defaultStyles.input,
-                justifyContent: "center",
-                position: "relative",
-              }}
-              onPress={() => setTitleModal(true)}
-            >
-              <Text>{title || "Select Title"}</Text>
-            </Pressable>
-            <Text style={defaultStyles.smallText}>
-              Example : Mr/Ms/Mrs/Sir/Dr.
-            </Text>
-            <Pressable
-              style={{ position: "absolute", right: 16, top: 35 }}
-              onPress={() => setTitleModal(true)}
-            >
-              <Image source={require("../../assets/icons/arrow-down.png")} />
-            </Pressable>
-          </View>
-          <TitleModal
-            open={titleModal}
-            setOpen={setTitleModal}
-            setValue={setTitle}
-          />
-
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Name:</Text>
-            <TextInput
-              style={defaultStyles.input}
-              placeholder="Enter your name"
-              onChangeText={setName}
-              value={name}
-            />
-          </View>
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Email:</Text>
-            <TextInput
-              style={defaultStyles.input}
-              placeholder="Enter your email"
-              onChangeText={setEmail}
-              value={email}
-            />
-          </View>
-
-          <PasswordInput
-            label="Password:"
-            setPassword={setPassword}
-            password={password}
-            placeholder="Enter your Password"
-          />
-          <PasswordInput
-            label="Confirm Password:"
-            setPassword={setConfirmPassword}
-            password={confirmPassword}
-            placeholder="Confirm your Password"
-          />
-        </View>
-        <Pressable
-          onPress={() => navigator.navigate("completeProfile")}
-          style={[
-            { marginTop: 44 },
-            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
-          ]}
-        >
-          <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
-        </Pressable>
+        <SignupForm />
         <Text style={{ ...styles.text, marginTop: 16 }}>
           If you already have an account{" "}
           <Text
