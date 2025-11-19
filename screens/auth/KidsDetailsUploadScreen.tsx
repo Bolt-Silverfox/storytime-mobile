@@ -105,10 +105,10 @@ const KidsDetailsUploadScreen = () => {
 
       {/* Bottom Action Buttons */}
       <View style={styles.bottomButtons}>
-        <Pressable style={styles.skipButton}>
+        <Pressable style={styles.skipButton} onPress={() => navigator.getParent()?.navigate("home")}>
           <Text style={{ color: colours.primary, textAlign: "center" }}>Skip</Text>
         </Pressable>
-        <Pressable style={[defaultStyles.button, { flex: 1 }]}>
+        <Pressable style={[defaultStyles.button, { flex: 1 }]} onPress={() => navigator.getParent()?.navigate("home")}>
           <Text style={{ color: "white", textAlign: "center" }}>Finalize profile</Text>
         </Pressable>
       </View>
