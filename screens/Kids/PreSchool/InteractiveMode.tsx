@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function InteractiveMode() {
-  return (
-    <div>InteractiveMode</div>
-  )
-}
+const AddVoice = () => {
+  return <ComingSoon title="Interactive mode" />;
+};
 
-export default InteractiveMode
+export default AddVoice;
