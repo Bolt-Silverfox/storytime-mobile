@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function PlainMode() {
-  return (
-    <div>PlainMode</div>
-  )
-}
+const PlainMode = () => {
+  return <ComingSoon title="plain mode" />;
+};
 
-export default PlainMode
+export default PlainMode;
