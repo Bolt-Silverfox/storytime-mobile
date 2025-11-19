@@ -8,7 +8,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://dev.api.storytime.it.com/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://zhu-clan.emerj.net/api/v1"
       }
     },
     "preview": {
@@ -20,7 +20,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_API_URL": "https://dev.api.storytime.it.com/api/v1"
+        "EXPO_PUBLIC_API_URL": "https://zhu-clan.emerj.net/api/v1"
       }
     }
   },

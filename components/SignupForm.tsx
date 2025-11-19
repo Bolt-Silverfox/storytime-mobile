@@ -31,6 +31,10 @@ const registerSchema = z
       .string()
       .min(8, "Password should be at least 8 characters long"),
   })
+  .refine((data) => data.fullName.split(" ").length >= 2, {
+    path: ["fullName"],
+    message: "Full name must contain at least two parts",
+  })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
     message: "Both password fields must match",
@@ -58,6 +62,7 @@ const SignupForm = () => {
       password,
       confirmPassword,
     });
+    console.log(fullName.split(" "));
 
     if (!result.success) {
       const formatted: any = {};
@@ -70,7 +75,7 @@ const SignupForm = () => {
       setErrors(formatted);
       return;
     }
-    await signUp(email, password, fullName, title);
+    await signUp(email, password, fullName.trim(), title);
   };
 
   return (
