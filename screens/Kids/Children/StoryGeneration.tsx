@@ -1,9 +1,8 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
 function StoryGeneration() {
-  return (
-    <div>StoryGeneration</div>
-  )
+  return <ComingSoon title="StoryGeneration" />;
 }
+
 
 export default StoryGeneration
