@@ -1,7 +1,8 @@
 import ComingSoon from "../../../components/ComingSoon";
 
-const AddVoice = () => {
+const DailyChallange = () => {
   return <ComingSoon title="daily challange" />;
 };
 
-export default AddVoice;
+export default DailyChallenge;
+
