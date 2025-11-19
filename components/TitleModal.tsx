@@ -1,6 +1,6 @@
 import { Modal, Pressable, Text, View } from "react-native";
 
-const options = ["Mr", "Mrs", "Ms", "Dr"];
+const options = ["Mr", "Mrs", "Ms", "Dr", "Sir"];
 const TitleModal = ({
   open,
   setOpen,
