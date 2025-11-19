@@ -55,7 +55,7 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
   return (
     <View className="mb-4">
       <TouchableOpacity
-        className="flex-row items-end gap-2 mb-3"
+        className="flex-row items-end gap-1 mb-3"
         onPress={() =>
           navigation.navigate("avatarScreen", {
             onPick: (avatarUri: string) => setField("avatar", avatarUri),
@@ -69,13 +69,13 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
               ? { uri: kid.avatar }
               : require("../assets/icons/null-avatar.png")
           }
-          className="w-14 h-14 rounded-full bg-gray-100 object-cover object-center"
+          className="w-16 h-16 rounded-full bg-gray-100 object-cover object-center"
         />
         <Pencil size={18} />
       </TouchableOpacity>
 
       <TextInput
-        className="border border-gray-300 rounded-full px-4 py-3 mb-3"
+        className="border border-border bg-white rounded-full px-4 py-3 mb-3"
         placeholder="Enter child name"
         value={kid.name}
         onChangeText={(t) => setField("name", t)}
@@ -85,7 +85,7 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
         <TouchableOpacity
           activeOpacity={0.85}
           onPress={toggleAge}
-          className="flex-row items-center justify-between border border-gray-300 rounded-full px-4 py-3 bg-white"
+          className="flex-row items-center justify-between border border-border rounded-full px-4 py-3 bg-white"
           accessibilityRole="button"
         >
           <Text className="text-base text-gray-900">
