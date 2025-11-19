@@ -8,6 +8,7 @@ import ResetPasswordScreen from "../screens/auth/ResetPassword";
 import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
+import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
 import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
 import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
@@ -20,6 +21,7 @@ type AuthNavigatorParamList = {
   createNewPassword: undefined;
   verifyEmail: undefined;
   resetSuccessful: undefined;
+  onBoarding: undefined;
   completeProfile: undefined;
   home: undefined;
   kidsInfoForm: { kidsCount: number };
@@ -32,6 +34,7 @@ const Stack = createNativeStackNavigator<AuthNavigatorParamList>();
 const AuthNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="onBoarding" component={OnBoardingScreen} />
       <Stack.Screen name="signUp" component={SignupScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
       <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
