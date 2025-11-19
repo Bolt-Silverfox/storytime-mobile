@@ -10,7 +10,6 @@ import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
 import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
 import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
-import CompleteProfileScreen from "../components/CompleteProfileScreen";
 import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
 import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
