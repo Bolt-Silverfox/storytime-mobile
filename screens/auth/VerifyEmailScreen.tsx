@@ -1,22 +1,40 @@
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
-import defaultStyles from "../../styles";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
+import { Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
+import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
+import useAuth from "../../contexts/AuthContext";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import defaultStyles from "../../styles";
+import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
+
+type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
 const VerifyEmailScreen = () => {
+  const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
-  const [isLoading, setIsLoading] = useState(false);
   const [otp, setOtp] = useState("");
+  const [successMessage, setSuccesMessage] = useState("");
+  const { isLoading, verifyEmail, errorMessage, resendVerificationEmail } =
+    useAuth();
+  const [countDown, setCountdown] = useState(5);
+
+  const handleResendEmail = async () => {
+    setSuccesMessage("");
+    const data = await resendVerificationEmail(route.params.email);
+    if (data.success) {
+      setOtp("59");
+      setSuccesMessage("Otp resent successfully");
+    }
+  };
+
+  useEffect(() => {
+    if (countDown < 1) return;
+    setTimeout(() => {
+      setCountdown((c) => c - 1);
+    }, 1000);
+  }, [countDown]);
 
   return (
     <View style={styles.screen}>
@@ -31,12 +49,17 @@ const VerifyEmailScreen = () => {
       </Pressable>
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
+          {successMessage.length > 0 && (
+            <Text className="font-[abeezee] text-xl text-primary uppercase text-center">
+              {successMessage}
+            </Text>
+          )}
           <Text style={defaultStyles.heading}>Verify your Email</Text>
           <Text style={styles.text}>
-            Enter the verification code sent to your email
-            daisyluke2025@gmail.com
+            Enter the verification code sent to your email {route.params.email}
           </Text>
         </View>
+        <ErrorMessageDisplay errorMessage={errorMessage} />
         <View style={styles.container}>
           <OtpInput
             numberOfDigits={6}
@@ -50,19 +73,27 @@ const VerifyEmailScreen = () => {
             }}
             focusColor="blue"
           />
-          <Text style={styles.countDown}>00:50</Text>
-          <Text style={styles.resend}>Resend OTP</Text>
+          <Text style={styles.countDown}>
+            00:{countDown > 0 ? countDown : "00"}
+          </Text>
+          <Text
+            onPress={handleResendEmail}
+            disabled={countDown > 0}
+            className={`font-[abeezee] text-base my-11 text-center  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+          >
+            Resend OTP
+          </Text>
         </View>
 
         <Pressable
-          onPress={() =>
-            navigator.navigate("auth", { screen: "createNewPassword" })
-          }
+          onPress={() => verifyEmail(otp)}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
         >
-          <Text style={{ ...styles.text, color: "white" }}>Verify Email</Text>
+          <Text style={{ ...styles.text, color: "white" }}>
+            {isLoading ? "Loading..." : "Verify Email"}
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -121,10 +152,5 @@ const styles = StyleSheet.create({
     ...defaultStyles.linkText,
     textAlign: "right",
     marginTop: 8,
-  },
-  resend: {
-    ...defaultStyles.linkText,
-    textAlign: "center",
-    marginVertical: 42,
   },
 });

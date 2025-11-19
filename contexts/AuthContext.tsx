@@ -49,8 +49,30 @@ type AuthContextType = {
   signUp: SignUp;
   isLoading: boolean;
   errorMessage: string | undefined | string[];
+  verifyEmail: (token: string) => void;
   requestPasswordReset: (email: string) => void;
+  resendVerificationEmail: (email: string) => Promise<AuthResponse>;
 };
+
+type AuthSuccessResponse<T = { message: string }> = {
+  success: true;
+  statusCode: number;
+  message: string;
+  data: T;
+};
+
+type AuthErrorResponse = {
+  success: false;
+  statusCode: number;
+  error: string;
+  message: string;
+  timeStamp: string;
+};
+
+type AuthResponse<T = { messaege: string }> =
+  | AuthSuccessResponse<T>
+  | AuthErrorResponse;
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
@@ -96,9 +118,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const response = await apiFetch(`${BASE_URL}/auth/logout`, {
         method: "POST",
       });
-      const data: { error?: string; message?: string[]; statusCode?: number } =
-        await response.json();
-      if (data.message) {
+      const data: AuthResponse = await response.json();
+      if (!data.success) {
         setErrorMessage(data.message);
         return;
       }
@@ -132,19 +153,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify({ email, password }),
       });
-      const data:
-        | { user: User; jwt: string; refreshToken: string }
-        | { error: string; message: string[]; statusCode: number } =
-        await response.json();
+      const data: AuthResponse<{
+        user: User;
+        jwt: string;
+        refreshToken: string;
+      }> = await response.json();
 
-      if ("message" in data) {
+      if (!data.success) {
         setErrorMessage(data.message);
         return;
       }
-      await AsyncStorage.setItem("accessToken", data.jwt);
-      await AsyncStorage.setItem("refreshToken", data.refreshToken);
-      await AsyncStorage.setItem("user", JSON.stringify(data.user));
-      setUser(data.user);
+      await AsyncStorage.setItem("accessToken", data.data.jwt);
+      await AsyncStorage.setItem("refreshToken", data.data.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(data.data.user));
+      setUser(data.data.user);
     } catch (err) {
       const message =
         err instanceof Error
@@ -168,17 +190,25 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify({ email, password, title, fullName }),
       });
-      const data:
-        | { user: User; jwt: string; refreshToken: string }
-        | { error: string; message: string[]; statusCode: number } =
-        await response.json();
+      const data: AuthResponse<{
+        user: User;
+        jwt: string;
+        refreshToken: string;
+      }> = await response.json();
 
-      if ("message" in data) {
+      if (!data.success) {
         setErrorMessage(data.message);
         return;
       }
+      await AsyncStorage.setItem("user", JSON.stringify(data.data.user));
+      await AsyncStorage.setItem("refreshToken", data.data.refreshToken);
       navigator.navigate("auth", {
-        screen: "login",
+        screen: "verifyEmail",
+        params: {
+          email,
+          refreshToken: data.data.refreshToken,
+          jwt: data.data.jwt,
+        },
       });
     } catch (err) {
       const errorMessage =
@@ -186,6 +216,93 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           ? err.message
           : "Unexpected signup error, try again later";
       setErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const verifyEmail = async (token: string) => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(undefined);
+
+      const response = await fetch(
+        `${BASE_URL}/auth/verify-email?token=${token}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      const data: AuthResponse = await response.json();
+      if (!data.success) {
+        setErrorMessage(data.message);
+        return;
+      }
+      await AsyncStorage.setItem("accessToken", token);
+      const locallyStoredUser = await AsyncStorage.getItem("user");
+      setUser(JSON.parse(locallyStoredUser!));
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unexpected signup error, try again later";
+      setErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resendVerificationEmail = async (
+    email: string
+  ): Promise<AuthResponse> => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(undefined);
+
+      const response = await fetch(
+        `${BASE_URL}/auth/send-verification?email=${email}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      const data: AuthResponse = await response.json();
+
+      if (!response.ok) {
+        return {
+          statusCode: response.status,
+          success: false,
+          error: response.statusText ?? "Request failed",
+          message: data.message ?? "Unable to resend verification email",
+          timeStamp: new Date().toISOString(),
+        };
+      }
+
+      if (!data.success) {
+        setErrorMessage(data.message);
+        return data;
+      }
+
+      return data;
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unexpected signup error, try again later";
+
+      setErrorMessage(message);
+      return {
+        statusCode: 500,
+        success: false,
+        error: "NetworkError",
+        message,
+        timeStamp: new Date().toISOString(),
+      };
     } finally {
       setIsLoading(false);
     }
@@ -236,6 +353,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     errorMessage,
     isLoading,
     requestPasswordReset,
+    verifyEmail,
+    resendVerificationEmail,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>
