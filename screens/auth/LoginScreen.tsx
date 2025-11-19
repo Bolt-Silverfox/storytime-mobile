@@ -1,24 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
   Pressable,
+  StyleSheet,
+  Text,
   TextInput,
+  View,
 } from "react-native";
+import colours from "../../colours";
+import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
+import PasswordInput from "../../components/PasswordInput";
+import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
-import colours from "../../colours";
-import { useState } from "react";
-import PasswordInput from "../../components/PasswordInput";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const { login, errorMessage, isLoading } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -40,11 +41,13 @@ const LoginScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              style={defaultStyles.input}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
+              placeholderTextColor={errorMessage ? "red" : colours.text}
               onChangeText={setEmail}
               value={email}
             />
+            <ErrorMessageDisplay errorMessage={errorMessage} />
           </View>
           <PasswordInput
             label="Password:"
@@ -62,12 +65,14 @@ const LoginScreen = () => {
           </Text>
         </View>
         <Pressable
-          onPress={() => navigator.navigate("home")}
+          onPress={() => login(email, password)}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
         >
-          <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
+          <Text style={{ ...styles.text, color: "white" }}>
+            {isLoading ? "Logging in..." : "Log in"}
+          </Text>
         </Pressable>
         <Text style={{ ...styles.text, marginTop: 16 }}>
           Don't have an account?{" "}
