@@ -74,7 +74,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             <View className="gap-4 flex">
               <Pressable
                 onPress={() =>
-                  navigate.navigate("auth", { screen: "chooseUser" })
+                  navigate.navigate("auth", { screen: "signUp" })
                 }
                 style={[defaultStyles.button]}
               >
