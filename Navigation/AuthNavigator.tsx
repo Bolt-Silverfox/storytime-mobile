@@ -15,13 +15,14 @@ import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
 import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 import HomeScree from "../screens/HomeScree";
+import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
 
 type AuthNavigatorParamList = {
   login: undefined;
   signUp: undefined;
   resetPassword: undefined;
   createNewPassword: undefined;
-  verifyEmail: undefined;
+  verifyEmail: { email: string; jwt: string; refreshToken: string };
   resetSuccessful: undefined;
   imageUpload: undefined;
   kidsDetailsUpload: undefined;
@@ -30,6 +31,7 @@ type AuthNavigatorParamList = {
   home: undefined;
   kidsInfoForm: { kidsCount: number };
   avatarScreen: undefined;
+  confirmResetPasswordToken: { email: string };
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -57,6 +59,10 @@ const AuthNavigator = () => {
       <Stack.Screen name="home" component={HomeScree} />
       <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
+      <Stack.Screen
+        name="confirmResetPasswordToken"
+        component={ConfirmResetPasswordTokenScreen}
+      />
     </Stack.Navigator>
   );
 };
