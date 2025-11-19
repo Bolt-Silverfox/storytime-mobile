@@ -15,8 +15,7 @@ import TitleModal from "../../components/TitleModal";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import useAuth from "../../contexts/AuthContext";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { emailRegex } from "../../constants";
 
 type Errors = {
   fullName?: string;
@@ -26,14 +25,6 @@ type Errors = {
   confirmPassword?: string;
 };
 
-const errorInitialState = {
-  fullName: "",
-  title: "",
-  email: "",
-  password: "",
-  confirmPassword: "",
-};
-
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [fullName, setFullName] = useState("");
@@ -41,15 +32,14 @@ const SignupScreen = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [title, setTitle] = useState("");
-  const [errors, setErrors] = useState<Errors>(errorInitialState);
+  const [errors, setErrors] = useState<Errors>({});
   const [titleModal, setTitleModal] = useState(false);
 
   const { isLoading, errorMessage, signUp } = useAuth();
-  console.log(errorMessage);
 
   const onRegister = async () => {
     try {
-      setErrors(errorInitialState);
+      setErrors({});
       if (password !== confirmPassword) {
         setErrors((prev) => ({
           ...prev,
@@ -123,7 +113,7 @@ const SignupScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Title:</Text>
             <Pressable
-              className={`border rounded-full h-[50px] justify-center text-sm relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-sm relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
               onPress={() => setTitleModal(true)}
             >
               <Text>{title || "Select Title"}</Text>
@@ -150,7 +140,7 @@ const SignupScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Name:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
               placeholderTextColor={errors.fullName ? "red" : colours.text}
               placeholder="Enter your name"
               onChangeText={setFullName}
@@ -166,8 +156,8 @@ const SignupScreen = () => {
               placeholder="Enter your email"
               onChangeText={setEmail}
               value={email}
-              className={`border rounded-full h-[50px] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errors.fullName ? "red" : colours.text}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.email ? "red" : colours.text}
             />
             {errors.email && (
               <Text className="text-red-600 text-sm">{errors.email}</Text>

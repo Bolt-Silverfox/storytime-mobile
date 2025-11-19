@@ -8,6 +8,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
+import apiFetch from "../apiFetch";
 
 type Profile = {
   id: string;
@@ -50,7 +51,6 @@ type AuthContextType = {
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -61,7 +61,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     string | string[] | undefined
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
-  console.log("accesstoken", accessToken);
+
   useEffect(() => {
     async function getUserSession() {
       try {
@@ -69,7 +69,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
         const storedToken = await AsyncStorage.getItem("accessToken");
-        console.log("locally stored user session", localStoredSession);
         if (!localStoredSession || !storedToken) {
           setUser(null);
           return;
@@ -94,27 +93,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     try {
       setIsLoading(true);
       setErrorMessage(undefined);
-      const response = await fetch(`${BASE_URL}/auth/logout`, {
+      const response = await apiFetch(`${BASE_URL}/auth/logout`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: `Bearer ${accessToken}`,
-        },
       });
-
       const data: { error?: string; message?: string[]; statusCode?: number } =
         await response.json();
-
       if (data.message) {
         setErrorMessage(data.message);
         return;
       }
-      console.log("loaout response", data);
       await AsyncStorage.removeItem("accessToken");
       await AsyncStorage.removeItem("refreshToken");
       await AsyncStorage.removeItem("user");
       setUser(null);
-      navigator.navigate("auth", { screen: "login" });
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -146,12 +137,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setErrorMessage(data.message);
         return;
       }
-
       await AsyncStorage.setItem("accessToken", data.jwt);
       await AsyncStorage.setItem("refreshToken", data.refreshToken);
       await AsyncStorage.setItem("user", JSON.stringify(data.user));
       setUser(data.user);
-      console.log("login response", data);
     } catch (err) {
       const message =
         err instanceof Error
@@ -164,12 +153,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signUp: SignUp = async (email, password, fullName, title) => {
-    console.log("i received", {
-      fullName,
-      title,
-      password,
-      email,
-    });
     try {
       setIsLoading(true);
       setErrorMessage(undefined);
@@ -193,8 +176,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       navigator.navigate("auth", {
         screen: "login",
       });
-
-      console.log("signup data", data);
     } catch (err) {
       const errorMessage =
         err instanceof Error

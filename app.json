@@ -13,7 +13,8 @@
       "backgroundColor": "#EC4007"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.moluno.storytimemobile"
     },
     "android": {
       "adaptiveIcon": {
@@ -21,11 +22,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.moluno.storytimemobile"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-font"]
+    "plugins": [
+      "expo-font"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "5eeca318-6dc0-402e-9dbf-d59fd540540a"
+      }
+    }
   }
 }
