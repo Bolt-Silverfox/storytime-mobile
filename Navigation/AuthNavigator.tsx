@@ -11,6 +11,10 @@ import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessf
 import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
 import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
 import CompleteProfileScreen from "../components/CompleteProfileScreen";
+import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
+import AvatarScreen from "../screens/auth/SelectAvatarScreen";
+import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
+import HomeScree from "../screens/HomeScree";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -22,6 +26,9 @@ type AuthNavigatorParamList = {
   imageUpload: undefined;
   kidsDetailsUpload: undefined;
   completeProfile: undefined;
+  home: undefined;
+  kidsInfoForm: { kidsCount: number };
+  avatarScreen: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -45,6 +52,9 @@ const AuthNavigator = () => {
       <Stack.Screen name="imageUpload" component={ImageUploadScreen} />
       <Stack.Screen name="kidsDetailsUpload" component={KidsDetailsUploadScreen} />
       <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
+      <Stack.Screen name="home" component={HomeScree} />
+      <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
+      <Stack.Screen name="avatarScreen" component={AvatarScreen} />
     </Stack.Navigator>
   );
 };

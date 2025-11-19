@@ -6,18 +6,39 @@ import {
   useState,
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { RootNavigatorProp } from "../Navigation/RootNavigator";
+import apiFetch from "../apiFetch";
+import { emailRegex } from "../constants";
+
+type Profile = {
+  id: string;
+  explicitContent: boolean;
+  maxScreenTimeMins: number;
+  language: string;
+  country: string;
+  createdAt: string;
+  updatedAt: string;
+};
 
 type User = {
+  id: string;
   email: string;
   name: string;
+  avatarUrl: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
   title: string;
+  profile: Profile;
+  numberOfKids: number;
 };
 
 type Login = (email: string, password: string) => void;
 type SignUp = (
   email: string,
   password: string,
-  name: string,
+  fullName: string,
   title: string
 ) => void;
 
@@ -27,24 +48,29 @@ type AuthContextType = {
   login: Login;
   signUp: SignUp;
   isLoading: boolean;
-  errorMessage: string | undefined;
+  errorMessage: string | undefined | string[];
+  requestPasswordReset: (email: string) => void;
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | undefined>(
-    undefined
-  );
+  const [errorMessage, setErrorMessage] = useState<
+    string | string[] | undefined
+  >(undefined);
+  const navigator = useNavigation<RootNavigatorProp>();
 
   useEffect(() => {
     async function getUserSession() {
       try {
         setIsLoading(true);
+        setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
-        console.log("locally stored user session", localStoredSession);
-        if (!localStoredSession) {
+        const storedToken = await AsyncStorage.getItem("accessToken");
+        if (!localStoredSession || !storedToken) {
           setUser(null);
           return;
         }
@@ -63,11 +89,144 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     getUserSession();
   }, []);
 
-  const logout = () => {};
+  const logout = async () => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(undefined);
+      const response = await apiFetch(`${BASE_URL}/auth/logout`, {
+        method: "POST",
+      });
+      const data: { error?: string; message?: string[]; statusCode?: number } =
+        await response.json();
+      if (data.message) {
+        setErrorMessage(data.message);
+        return;
+      }
+      await AsyncStorage.removeItem("accessToken");
+      await AsyncStorage.removeItem("refreshToken");
+      await AsyncStorage.removeItem("user");
+      setUser(null);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unexpected logout error, try again later";
+      setErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  const login = () => {};
+  const login: Login = async (email, password) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid Email");
+      return;
+    }
+    try {
+      setErrorMessage(undefined);
+      setIsLoading(true);
+      const response = await fetch(`${BASE_URL}/auth/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data:
+        | { user: User; jwt: string; refreshToken: string }
+        | { error: string; message: string[]; statusCode: number } =
+        await response.json();
 
-  const signUp = () => {};
+      if ("message" in data) {
+        setErrorMessage(data.message);
+        return;
+      }
+      await AsyncStorage.setItem("accessToken", data.jwt);
+      await AsyncStorage.setItem("refreshToken", data.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error while logging in, try again later.";
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const signUp: SignUp = async (email, password, fullName, title) => {
+    try {
+      setIsLoading(true);
+      setErrorMessage(undefined);
+
+      const response = await fetch(`${BASE_URL}/auth/register`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, title, fullName }),
+      });
+      const data:
+        | { user: User; jwt: string; refreshToken: string }
+        | { error: string; message: string[]; statusCode: number } =
+        await response.json();
+
+      if ("message" in data) {
+        setErrorMessage(data.message);
+        return;
+      }
+      navigator.navigate("auth", {
+        screen: "login",
+      });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unexpected signup error, try again later";
+      setErrorMessage(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const requestPasswordReset = async (email: string) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid email");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/request-password-reset`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Typp": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await response.json();
+
+      if (data.message) {
+        setErrorMessage(data.message);
+        return;
+      }
+      navigator.navigate("auth", { screen: "createNewPassword" });
+      console.log("reset password data", data);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error, try again later";
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const providerReturnValues = {
     user,
@@ -76,6 +235,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUp,
     errorMessage,
     isLoading,
+    requestPasswordReset,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>
