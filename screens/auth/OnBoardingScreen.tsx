@@ -4,7 +4,6 @@ import {
   FlatList,
   useWindowDimensions,
   ImageSourcePropType,
-  Animated,
   ImageBackground,
   Pressable,
 } from "react-native";
@@ -24,22 +23,59 @@ type SlideItems = {
 };
 
 export default function OnBoardingScreen() {
-  return (
-    <View style={{ flex: 1 }}>
-      <StatusBar style="light" />
+  const [currentindex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef<FlatList<SlideItems> | null>(null);
+  const { width } = useWindowDimensions();
+  const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
+  console.log("layout width", layoutWidth, "width", width);
 
-      <View style={{ flex: 1 }}>
-        <FlatList
-          data={onBoardingSlide}
-          renderItem={({ item }) => <OnboardingItem item={item} />}
-          bounces={false}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          pagingEnabled
-          keyExtractor={(item) => item.id}
-          scrollEventThrottle={32}
-        />
-      </View>
+  const onScroll = () => {
+    if (currentindex < onBoardingSlide.length - 1) {
+      flatListRef.current?.scrollToIndex({ index: currentindex + 1 });
+      console.log("clicked");
+    } else {
+      console.log("Last item");
+    }
+  };
+
+  return (
+    <View
+      style={{ flex: 1, width }}
+      onLayout={(e) => setLayoutWidth(e.nativeEvent.layout.width)}
+    >
+      <StatusBar style="light" />
+      {layoutWidth && (
+        <View style={{ flex: 1, width }}>
+          <FlatList
+            ref={flatListRef}
+            data={onBoardingSlide}
+            renderItem={({ item }) => <OnboardingItem item={item} />}
+            bounces={false}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            keyExtractor={(item) => item.id}
+            initialNumToRender={3}
+            windowSize={3}
+            removeClippedSubviews={false}
+            getItemLayout={(_, index) => ({
+              length: layoutWidth,
+              offset: layoutWidth * index,
+              index,
+            })}
+            // initialScrollIndex={2}
+            onScrollToIndexFailed={(info) => {
+              const offset = info.index * layoutWidth;
+              flatListRef.current?.scrollToOffset({ offset, animated: true });
+            }}
+          />
+        </View>
+      )}
+      {/* i used this botton to test the scrollToIndex*/}
+      {/* 
+      <Pressable className="p-10 bg-red-700" onPress={onScroll}>
+        <Text>SCROLL</Text>
+      </Pressable> */}
     </View>
   );
 }
@@ -73,9 +109,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 
             <View className="gap-4 flex">
               <Pressable
-                onPress={() =>
-                  navigate.navigate("auth", { screen: "signUp" })
-                }
+                onPress={() => navigate.navigate("auth", { screen: "signUp" })}
                 style={[defaultStyles.button]}
               >
                 <Text
@@ -110,7 +144,7 @@ function Pagination({ data }: { data: SlideItems }) {
     <View className="flex-row justify-center gap-[6px] mb-6  ">
       {data.dot.map((item, i) => {
         return (
-          <Animated.View
+          <View
             key={i.toString()}
             style={[
               {
