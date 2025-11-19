@@ -13,6 +13,7 @@ import { setLogoutCallBack } from "../apiFetch";
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   home: undefined;
+  completeProfile: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
