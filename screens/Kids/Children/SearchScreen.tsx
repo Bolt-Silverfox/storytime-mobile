@@ -1,9 +1,8 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
 function SearchScreen() {
-  return (
-    <div>SearchScreen</div>
-  )
+  return <ComingSoon title="SearchScreen" />;
 }
+
 
 export default SearchScreen
