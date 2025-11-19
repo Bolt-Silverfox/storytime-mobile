@@ -146,7 +146,7 @@ export default function AvatarScreen() {
           >
             <Text className="text-white font-semibold">Select</Text>
           </Pressable>
-          <Pressable onPress={pickImage} className="items-center">
+          <Pressable onPress={() => navigator.navigate("auth", { screen: "imageUpload" })} className="items-center">
             <Text style={defaultStyles.linkText} className="font-semibold">
               Upload an Image
             </Text>
