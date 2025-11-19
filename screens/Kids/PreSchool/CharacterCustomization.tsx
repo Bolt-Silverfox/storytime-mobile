@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function CharacterCustomization() {
-  return (
-    <div>CharacterCustomization</div>
-  )
-}
+const AddVoice = () => {
+  return <ComingSoon title="character customization" />;
+};
 
-export default CharacterCustomization
+export default AddVoice;
