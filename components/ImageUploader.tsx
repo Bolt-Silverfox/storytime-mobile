@@ -11,6 +11,7 @@ import colours from "../colours";
 import defaultStyles from "../styles";
 import { RootNavigatorProp } from '../Navigation/RootNavigator' 
 import { useNavigation } from "@react-navigation/native";
+import { Trash, ImageUp } from "lucide-react-native";
 
 type Props = {
   initialImageUri?: string;
@@ -153,28 +154,24 @@ const ImageUploader: React.FC<Props> = ({
         <TouchableOpacity activeOpacity={0.8} onPress={pickImage} style={styles.touchableInner}>
           <>
   {uri ? (
-    <View style={styles.previewWrapper}>
-      <Image source={{ uri }} style={styles.preview} />
+  <View style={styles.previewWrapper}>
+    <Image source={{ uri }} style={styles.preview} />
 
-      {/* Trash Button */}
-      <TouchableOpacity
-        style={styles.deleteButton}
-        onPress={() => {
-          setUri(null);
-          setFileObj(null);
-        }}
-      >
-        <Image
-      source={require("../assets/icons/trush-square.png")}
-    />
-      </TouchableOpacity>
-    </View>
-  ) : (
-    <Image
-      source={require("../assets/icons/image-upload.png")}
-      style={styles.icon}
-    />
-  )}
+    {/* Trash Button */}
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() => {
+        setUri(null);
+        setFileObj(null);
+      }}
+    >
+      <Trash size={28} color="#ff4444" /> 
+    </TouchableOpacity>
+  </View>
+) : (
+  <ImageUp size={40} color="#888" style={styles.icon} />
+)}
+
 
   {/* These ALWAYS show */}
   <Text style={[defaultStyles.defaultText, styles.primaryText]}>
