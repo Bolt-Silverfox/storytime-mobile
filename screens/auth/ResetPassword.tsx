@@ -8,13 +8,16 @@ import {
   TextInput,
   View,
 } from "react-native";
+import colours from "../../colours";
+import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 
 const ResetPasswordScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const { isLoading, errorMessage, requestPasswordReset } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -36,20 +39,24 @@ const ResetPasswordScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              style={defaultStyles.input}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errorMessage ? "red" : colours.text}
               placeholder="Enter your email"
               onChangeText={setEmail}
               value={email}
             />
+            <ErrorMessageDisplay errorMessage={errorMessage} />
           </View>
         </View>
         <Pressable
-          onPress={() => navigator.navigate("auth", { screen: "verifyEmail" })}
+          onPress={() => requestPasswordReset(email)}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
         >
-          <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
+          <Text style={{ ...styles.text, color: "white" }}>
+            {isLoading ? "Loading..." : "Proceed"}
+          </Text>
         </Pressable>
       </View>
     </View>
