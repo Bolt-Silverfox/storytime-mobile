@@ -40,49 +40,6 @@ export default function AvatarScreen() {
   const { onPick, kidIndex } = params;
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
-  //     if (onPick) {
-  //       onPick(
-  //         Image.resolveAssetSource
-  //           ? Image.resolveAssetSource(source).uri
-  //           : String(source)
-  //       );
-  //     }
-  //     navigation.goBack();
-  //   };
-
-  //   const pickImageFromLibrary = async () => {
-  //     try {
-  //       const res = await launchImageLibrary({
-  //         mediaType: "photo",
-  //         quality: 0.8,
-  //         selectionLimit: 1,
-  //       });
-
-  //       if (res.didCancel) return;
-  //       if (res.errorCode) {
-  //         Alert.alert("Image Picker Error", res.errorMessage || "Unknown error");
-  //         return;
-  //       }
-
-  //       const asset = res.assets && res.assets[0];
-  //       if (!asset) return;
-
-  //       const uri = asset.uri;
-  //       if (!uri) {
-  //         Alert.alert("Upload failed", "Could not get image URI");
-  //         return;
-  //       }
-
-  //       if (onPick) onPick(uri);
-  //       navigation.goBack();
-  //     } catch (e) {
-  //       Alert.alert(
-  //         "Upload error",
-  //         "Something went wrong while picking the image."
-  //       );
-  //     }
-  //   };
-
   const getAssetUri = (asset: any) => {
     try {
       const resolved = Image.resolveAssetSource
