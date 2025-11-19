@@ -8,6 +8,7 @@ import ResetPasswordScreen from "../screens/auth/ResetPassword";
 import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
+import CompleteProfileScreen from "../components/CompleteProfileScreen";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -16,6 +17,7 @@ type AuthNavigatorParamList = {
   createNewPassword: undefined;
   verifyEmail: undefined;
   resetSuccessful: undefined;
+  completeProfile: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -36,6 +38,7 @@ const AuthNavigator = () => {
         name="resetSuccessful"
         component={PasswordResetSuccessfulScreen}
       />
+      <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
     </Stack.Navigator>
   );
 };

@@ -11,6 +11,7 @@ import { NavigatorScreenParams } from "@react-navigation/native";
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   home: undefined;
+  completeProfile: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
