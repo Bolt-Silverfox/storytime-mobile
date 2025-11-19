@@ -1,9 +1,8 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
 function CharacterCustomization() {
-  return (
-    <div>CharacterCustomization</div>
-  )
+  return <ComingSoon title="CharacterCustomization" />;
 }
+
 
 export default CharacterCustomization
