@@ -1,9 +1,8 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
 function HomeScreen() {
-  return (
-    <div>HomeScreen</div>
-  )
+  return <ComingSoon title="Favourites" />;
 }
+
 
 export default HomeScreen
