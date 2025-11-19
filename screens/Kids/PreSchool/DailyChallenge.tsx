@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function DailyChallenge() {
-  return (
-    <div>DailyChallenge</div>
-  )
-}
+const AddVoice = () => {
+  return <ComingSoon title="daily challange" />;
+};
 
-export default DailyChallenge
+export default AddVoice;
