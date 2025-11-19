@@ -1,9 +1,7 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
-function ChangeVoice() {
-  return (
-    <div>ChangeVoice</div>
-  )
-}
+const AddVoice = () => {
+  return <ComingSoon title="change voice" />;
+};
 
-export default ChangeVoice
+export default AddVoice;
