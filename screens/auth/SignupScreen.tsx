@@ -1,82 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
 import {
   Image,
   Pressable,
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from "react-native";
 import colours from "../../colours";
-import PasswordInput from "../../components/PasswordInput";
-import TitleModal from "../../components/TitleModal";
+import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
-import useAuth from "../../contexts/AuthContext";
-import { emailRegex } from "../../constants";
-
-type Errors = {
-  fullName?: string;
-  title?: string;
-  email?: string;
-  password?: string;
-  confirmPassword?: string;
-};
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-  const [title, setTitle] = useState("");
-  const [errors, setErrors] = useState<Errors>({});
-  const [titleModal, setTitleModal] = useState(false);
-
-  const { isLoading, errorMessage, signUp } = useAuth();
-
-  const onRegister = async () => {
-    try {
-      setErrors({});
-      if (password !== confirmPassword) {
-        setErrors((prev) => ({
-          ...prev,
-          confirmPassword: "Both password fields must match",
-          password: "Both password fields must match",
-        }));
-        return;
-      } else if (!fullName.trim().length) {
-        setErrors((prev) => ({
-          ...prev,
-          fullName: "Name is required",
-        }));
-        return;
-      } else if (!emailRegex.test(email)) {
-        setErrors((prev) => ({
-          ...prev,
-          email: "Invalid email, try again",
-        }));
-        return;
-      } else if (!title.trim().length) {
-        setErrors((prev) => ({
-          ...prev,
-          title: "Title is rerquired",
-        }));
-        return;
-      } else if (password.length < 8 || confirmPassword.length < 8) {
-        setErrors((prev) => ({
-          ...prev,
-          confirmPassword: "Password should be at least 8 characters long",
-          password: "Password should be at least 8 characters long",
-        }));
-        return;
-      }
-      console.log("i reached here");
-      await signUp(email, password, fullName, title);
-    } catch (error) {}
-  };
 
   return (
     <ScrollView
@@ -100,96 +37,7 @@ const SignupScreen = () => {
           <Text style={defaultStyles.heading}>Welcome to Storytime4Kids</Text>
           <Text style={styles.text}>The world's first kids story library</Text>
         </View>
-        <View style={styles.form}>
-          {Array.isArray(errorMessage) && errorMessage.length ? (
-            errorMessage.map((message) => (
-              <Text key={message} className="text-red-600 text-sm">
-                {message}
-              </Text>
-            ))
-          ) : (
-            <Text className="text-red-600 text-sm">{errorMessage}</Text>
-          )}
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Title:</Text>
-            <Pressable
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-sm relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
-              onPress={() => setTitleModal(true)}
-            >
-              <Text>{title || "Select Title"}</Text>
-            </Pressable>
-            <Text style={defaultStyles.smallText}>
-              Example : Mr/Ms/Mrs/Sir/Dr.
-            </Text>
-            <Pressable
-              style={{ position: "absolute", right: 16, top: 35 }}
-              onPress={() => setTitleModal(true)}
-            >
-              <Image source={require("../../assets/icons/arrow-down.png")} />
-            </Pressable>
-            {errors.title && (
-              <Text className="text-red-600 text-sm">{errors.title}</Text>
-            )}
-          </View>
-          <TitleModal
-            open={titleModal}
-            setOpen={setTitleModal}
-            setValue={setTitle}
-          />
-
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Name:</Text>
-            <TextInput
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errors.fullName ? "red" : colours.text}
-              placeholder="Enter your name"
-              onChangeText={setFullName}
-              value={fullName}
-            />
-            {errors.fullName && (
-              <Text className="text-red-600 text-sm">{errors.fullName}</Text>
-            )}
-          </View>
-          <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Email:</Text>
-            <TextInput
-              placeholder="Enter your email"
-              onChangeText={setEmail}
-              value={email}
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errors.email ? "red" : colours.text}
-            />
-            {errors.email && (
-              <Text className="text-red-600 text-sm">{errors.email}</Text>
-            )}
-          </View>
-
-          <PasswordInput
-            label="Password:"
-            setPassword={setPassword}
-            password={password}
-            placeholder="Enter your password"
-            errorMessage={errors.password}
-          />
-          <PasswordInput
-            label="Confirm Password:"
-            setPassword={setConfirmPassword}
-            password={confirmPassword}
-            placeholder="Confirm your password"
-            errorMessage={errors.confirmPassword}
-          />
-        </View>
-        <Pressable
-          onPress={onRegister}
-          style={[
-            { marginTop: 44 },
-            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
-          ]}
-        >
-          <Text style={{ ...styles.text, color: "white" }}>
-            {isLoading ? "Loading..." : "Proceed"}
-          </Text>
-        </Pressable>
+        <SignupForm />
         <Text style={{ ...styles.text, marginTop: 16 }}>
           If you already have an account{" "}
           <Text
