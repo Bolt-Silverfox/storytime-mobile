@@ -43,9 +43,8 @@ const refreshTokens = async () => {
   console.log("reresh token", token);
   try {
     const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
+      `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh?token=${token}`,
       {
-        body: JSON.stringify({ token }),
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,9 +55,9 @@ const refreshTokens = async () => {
 
     const data = await response.json();
     console.log("refresh new token data", data);
-    if (data.error) return false;
+    if (!data.success) return false;
     console.log("refresh toen data", data);
-    await AsyncStorage.setItem("accessToken", data.jwt);
+    await AsyncStorage.setItem("accessToken", data.data.jwt);
     return true;
   } catch (err) {
     return false;
