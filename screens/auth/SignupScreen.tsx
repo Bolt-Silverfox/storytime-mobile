@@ -110,7 +110,8 @@ const SignupScreen = () => {
           />
         </View>
         <Pressable
-          onPress={() => navigator.navigate("completeProfile")}
+          // onPress={() => navigator.navigate("completeProfile")}
+          onPress={() => navigator.navigate("auth", { screen: "imageUpload" })}
           style={[
             { marginTop: 44 },
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
