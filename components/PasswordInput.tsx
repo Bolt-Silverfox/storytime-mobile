@@ -34,7 +34,7 @@ const PasswordInput = ({
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
         placeholderTextColor={errorMessage ? "red" : colours.text}
-        className={`border rounded-full h-[50px] text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
+        className={`border rounded-full h-[50px] font-[abeezee] text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
       />
       {errorMessage && (
         <Text className="text-red-600 text-sm">{errorMessage}</Text>

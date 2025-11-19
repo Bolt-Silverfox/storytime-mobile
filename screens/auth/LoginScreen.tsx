@@ -13,14 +13,12 @@ import colours from "../../colours";
 import { useState } from "react";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
-
-const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+import { emailRegex } from "../../constants";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setERror] = useState("");
   const { login, errorMessage, isLoading } = useAuth();
 
@@ -63,7 +61,7 @@ const LoginScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
               placeholderTextColor={error ? "red" : colours.text}
               onChangeText={setEmail}
