@@ -50,6 +50,7 @@ const ResetPasswordScreen = () => {
         </View>
         <Pressable
           onPress={() => requestPasswordReset(email)}
+          disabled={isLoading}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
