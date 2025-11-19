@@ -9,7 +9,6 @@ import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
 import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
-import ChooseUser from "../screens/auth/ChooseUser";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -19,7 +18,6 @@ type AuthNavigatorParamList = {
   verifyEmail: undefined;
   resetSuccessful: undefined;
   onBoarding: undefined;
-  chooseUser: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -29,7 +27,6 @@ const AuthNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="onBoarding" component={OnBoardingScreen} />
-      <Stack.Screen name="chooseUser" component={ChooseUser} />
       <Stack.Screen name="signUp" component={SignupScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
       <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
