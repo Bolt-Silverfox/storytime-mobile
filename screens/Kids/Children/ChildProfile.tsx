@@ -1,9 +1,8 @@
-import React from 'react'
+import ComingSoon from "../../../components/ComingSoon";
 
 function ChildProfile() {
-  return (
-    <div>ChildProfile</div>
-  )
+  return <ComingSoon title="ChildProfile" />;
 }
+
 
 export default ChildProfile
