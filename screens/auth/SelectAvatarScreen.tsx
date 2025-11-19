@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Alert,
-  Pressable,
-} from "react-native";
+import { View, Text, Image, ScrollView, Alert, Pressable } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import defaultStyles from "../../styles";
@@ -146,7 +139,12 @@ export default function AvatarScreen() {
           >
             <Text className="text-white font-semibold">Select</Text>
           </Pressable>
-          <Pressable onPress={() => navigator.navigate("auth", { screen: "imageUpload" })} className="items-center">
+          <Pressable
+            onPress={() =>
+              navigator.navigate("auth", { screen: "imageUpload" })
+            }
+            className="items-center"
+          >
             <Text style={defaultStyles.linkText} className="font-semibold">
               Upload an Image
             </Text>

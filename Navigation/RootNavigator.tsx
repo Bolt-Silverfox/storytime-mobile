@@ -28,14 +28,18 @@ const RootNavigator = () => {
 
   return (
     <Stack.Navigator>
-      {!user ? (
+      {user ? (
         <Stack.Screen
           name="auth"
           component={AuthNavigator}
           options={{ headerShown: false }}
         />
       ) : (
-        <Stack.Screen name="home" component={HomeScree} />
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="home"
+          component={HomeScree}
+        />
       )}
     </Stack.Navigator>
   );

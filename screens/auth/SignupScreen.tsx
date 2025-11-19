@@ -31,7 +31,6 @@ const SignupScreen = () => {
           source={require("../../assets/icons/arrow-left.png")}
         />
       </Pressable>
-
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
           <Text style={defaultStyles.heading}>Welcome to Storytime4Kids</Text>
@@ -51,8 +50,23 @@ const SignupScreen = () => {
       <View style={styles.footer}>
         <Text style={styles.footerText}>
           By accepting to continue, you agree to storytime's{" "}
-          <Text style={styles.footerLinkText}>Terms and conditions</Text> and{" "}
-          <Text style={styles.footerLinkText}>Privacy Policy</Text>
+          <Text
+            onPress={() =>
+              navigator.navigate("auth", { screen: "termsOfService" })
+            }
+            style={styles.footerLinkText}
+          >
+            Terms and conditions
+          </Text>{" "}
+          and{" "}
+          <Text
+            onPress={() =>
+              navigator.navigate("auth", { screen: "privacyScreen" })
+            }
+            style={styles.footerLinkText}
+          >
+            Privacy Policy
+          </Text>
         </Text>
       </View>
     </ScrollView>

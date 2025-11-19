@@ -58,11 +58,11 @@ export default function KidsInfoFormScreen() {
   };
 
   const onProceed = () => {
-    navigator.navigate("home");
+    navigator.getParent()?.navigate("home");
   };
 
   const onSkip = () => {
-    navigator.goBack();
+    navigator.getParent()?.navigate("home");
   };
 
   return (
