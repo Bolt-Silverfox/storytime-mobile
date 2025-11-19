@@ -5,9 +5,9 @@ import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import useAuth from "../../contexts/AuthContext";
+import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
-import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 

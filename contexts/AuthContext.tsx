@@ -181,7 +181,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     await AsyncStorage.setItem("accessToken", token);
     const locallyStoredUser = await AsyncStorage.getItem("user");
-    setUser(JSON.parse(locallyStoredUser!));
+    navigator.navigate("auth", {
+      screen: "emailVerificationSuccessful",
+    });
+    // setUser(JSON.parse(locallyStoredUser!));
   };
 
   const resendVerificationEmail = async (
