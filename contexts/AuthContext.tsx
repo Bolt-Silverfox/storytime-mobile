@@ -9,6 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import apiFetch from "../apiFetch";
+import { emailRegex } from "../constants";
 
 type Profile = {
   id: string;
@@ -48,6 +49,7 @@ type AuthContextType = {
   signUp: SignUp;
   isLoading: boolean;
   errorMessage: string | undefined | string[];
+  requestPasswordReset: (email: string) => void;
 };
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -56,7 +58,6 @@ const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isLoading, setIsLoading] = useState(false);
-  const [accessToken, setAccessToken] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<
     string | string[] | undefined
   >(undefined);
@@ -73,7 +74,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(null);
           return;
         }
-        setAccessToken(storedToken);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
@@ -118,6 +118,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const login: Login = async (email, password) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid Email");
+      return;
+    }
     try {
       setErrorMessage(undefined);
       setIsLoading(true);
@@ -187,6 +191,43 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const requestPasswordReset = async (email: string) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid email");
+      return;
+    }
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/request-password-reset`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Typp": "application/json",
+          },
+          body: JSON.stringify({ email }),
+        }
+      );
+      const data = await response.json();
+
+      if (data.message) {
+        setErrorMessage(data.message);
+        return;
+      }
+      navigator.navigate("auth", { screen: "createNewPassword" });
+      console.log("reset password data", data);
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "Unexpected error, try again later";
+      setErrorMessage(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const providerReturnValues = {
     user,
     login,
@@ -194,6 +235,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     signUp,
     errorMessage,
     isLoading,
+    requestPasswordReset,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>

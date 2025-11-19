@@ -1,36 +1,25 @@
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import {
-  StyleSheet,
-  View,
-  Text,
   Image,
   Pressable,
+  StyleSheet,
+  Text,
   TextInput,
+  View,
 } from "react-native";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
-import defaultStyles from "../../styles";
 import colours from "../../colours";
-import { useState } from "react";
+import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
-import { emailRegex } from "../../constants";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import defaultStyles from "../../styles";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setERror] = useState("");
   const { login, errorMessage, isLoading } = useAuth();
-
-  const handleLogin = async () => {
-    setERror("");
-    if (!emailRegex.test(email)) {
-      setERror("Invalid Email");
-      return;
-    }
-
-    await login(email, password);
-  };
 
   return (
     <View style={styles.screen}>
@@ -49,25 +38,16 @@ const LoginScreen = () => {
           <Text style={styles.text}>Glad to have you back</Text>
         </View>
         <View style={styles.form}>
-          {Array.isArray(errorMessage) && errorMessage.length ? (
-            errorMessage.map((message) => (
-              <Text key={message} className="text-red-600 text-sm">
-                {message}
-              </Text>
-            ))
-          ) : (
-            <Text className="text-red-600 text-sm">{errorMessage}</Text>
-          )}
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
-              placeholderTextColor={error ? "red" : colours.text}
+              placeholderTextColor={errorMessage ? "red" : colours.text}
               onChangeText={setEmail}
               value={email}
             />
-            {error && <Text className="text-red-600 text-sm">{error}</Text>}
+            <ErrorMessageDisplay errorMessage={errorMessage} />
           </View>
           <PasswordInput
             label="Password:"
@@ -85,7 +65,7 @@ const LoginScreen = () => {
           </Text>
         </View>
         <Pressable
-          onPress={handleLogin}
+          onPress={() => login(email, password)}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
