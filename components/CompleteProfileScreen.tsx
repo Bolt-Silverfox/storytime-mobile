@@ -7,12 +7,12 @@ import CustomText from "../components/CustomText";
 
 type RootStackParamList = {
   CompleteProfile: undefined;
-  NextPage: { kids: string };
+  KidsInfoForm: { kids: string };
 };
 
 type CompleteProfileScreenProp = NativeStackNavigationProp<
   RootStackParamList,
-  "CompleteProfile"
+  "KidsInfoForm"
 >;
 
 export default function CompleteProfileScreen() {
