@@ -8,6 +8,7 @@ import DailyChallengeScreen from "../screens/parents/home/DailyChallengeScreen";
 import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStoriesScreen";
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesListScreen from "../screens/parents/StoriesListScreen";
+import ParentsHome from "../screens/parents/ParentsHome";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
@@ -26,7 +27,7 @@ const Stack = createNativeStackNavigator<ParentHomeNavigatorParamList>();
 const ParentHomeNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" component={ParentHomeNavigator} />
+      <Stack.Screen name="index" component={ParentsHome} />
       <Stack.Screen name="storiesList" component={StoriesListScreen} />
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
       <Stack.Screen
