@@ -46,6 +46,17 @@ const SignupScreen = () => {
             Log in
           </Text>
         </Text>
+        <Text style={{ ...styles.text, marginTop: 16 }}>
+          Signed up but haven't verified?{" "}
+          <Text
+            onPress={() =>
+              navigator.navigate("auth", { screen: "requestEmailVerification" })
+            }
+            style={{ ...defaultStyles.defaultText, color: colours.link }}
+          >
+            Verify email
+          </Text>
+        </Text>
       </View>
       <View style={styles.footer}>
         <Text style={styles.footerText}>

@@ -6,6 +6,7 @@ type Profile = {
   country: string;
   createdAt: string;
   updatedAt: string;
+  userId: string;
 };
 
 type User = {
