@@ -27,7 +27,9 @@ const HomeScree = () => {
           <Image source={require("../assets/placeholder-pfp.png")} />
         </View>
         <View className="flex flex-1  flex-col gap-y-1.5">
-          <Text className="font-[abeezee] text-base">Mrs Luke</Text>
+          <Text className="font-[abeezee] text-base">
+            {user?.title} {user?.name}
+          </Text>
           <Text className="font-[abeezee] text-[12px] text-[#616161]">
             Good Morning
           </Text>
