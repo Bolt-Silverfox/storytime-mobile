@@ -6,8 +6,8 @@ const CompleteProfileNewScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   return (
     <View className="flex flex-col gap-y-4 min-h-dvh min-w-dvw flex-1 justify-center items-center">
-      <Text onPress={() => navigator.navigate("parents")}>
-        Go to parents screen
+      <Text className="text-primary font-[quilka] text-2xl">
+        Complete your profile screen
       </Text>
     </View>
   );

@@ -2,7 +2,6 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 import HomeScree from "../screens/HomeScree";
 import CompleteProfileNewScreen from "../screens/CompleteProfileNewScreen";
 
