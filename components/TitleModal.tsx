@@ -1,14 +1,15 @@
 import { Modal, Pressable, Text, View } from "react-native";
 
-const options = ["Mr", "Mrs", "Ms", "Dr", "Sir"];
 const TitleModal = ({
   open,
   setOpen,
   setValue,
+  options = ["Mr", "Mrs", "Ms", "Dr", "Sir"],
 }: {
   open: boolean;
   setOpen: (s: boolean) => void;
   setValue: (v: string) => void;
+  options: string[];
 }) => {
   return (
     <Modal visible={open} transparent animationType="fade">
