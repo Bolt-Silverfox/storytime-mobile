@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { setLogoutCallBack } from "../apiFetch";
 import { View } from "react-native";
 import ParentsTabNavigator from "./ParentsNavigator";
+import ParentsHomeScreen from "../screens/parents/ParentsHomeScreen";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
@@ -43,6 +44,7 @@ const RootNavigator = () => {
             options={{ headerShown: false }}
             name="home"
             component={HomeScree}
+            
           />
           <Stack.Screen
             options={{ headerShown: false }}
