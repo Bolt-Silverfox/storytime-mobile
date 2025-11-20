@@ -19,6 +19,7 @@ import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswor
 import PrivacyScreen from "../screens/auth/PrivacyScreen";
 import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
 import EmailResetSuccessfulScreen from "../screens/auth/EmailResetSuccessfulScreen";
+import ProfileScreen from "../screens/parents/profile/ProfileScreen";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -38,6 +39,7 @@ type AuthNavigatorParamList = {
   privacyScreen: undefined;
   termsOfService: undefined;
   emailVerificationSuccessful: undefined;
+  profileScreen: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -70,6 +72,7 @@ const AuthNavigator = () => {
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
       <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
       <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen name="profileScreen" component={ProfileScreen} />
       <Stack.Screen
         name="emailVerificationSuccessful"
         component={EmailResetSuccessfulScreen}
