@@ -16,6 +16,9 @@ import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 import HomeScree from "../screens/HomeScree";
 import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
+import PrivacyScreen from "../screens/auth/PrivacyScreen";
+import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
+import EmailResetSuccessfulScreen from "../screens/auth/EmailResetSuccessfulScreen";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -32,6 +35,9 @@ type AuthNavigatorParamList = {
   kidsInfoForm: { kidsCount: number };
   avatarScreen: undefined;
   confirmResetPasswordToken: { email: string };
+  privacyScreen: undefined;
+  termsOfService: undefined;
+  emailVerificationSuccessful: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -54,11 +60,20 @@ const AuthNavigator = () => {
         component={PasswordResetSuccessfulScreen}
       />
       <Stack.Screen name="imageUpload" component={ImageUploadScreen} />
-      <Stack.Screen name="kidsDetailsUpload" component={KidsDetailsUploadScreen} />
+      <Stack.Screen
+        name="kidsDetailsUpload"
+        component={KidsDetailsUploadScreen}
+      />
       <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
       <Stack.Screen name="home" component={HomeScree} />
       <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
+      <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen
+        name="emailVerificationSuccessful"
+        component={EmailResetSuccessfulScreen}
+      />
       <Stack.Screen
         name="confirmResetPasswordToken"
         component={ConfirmResetPasswordTokenScreen}

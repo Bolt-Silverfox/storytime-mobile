@@ -72,7 +72,7 @@ export default function KidsInfoFormScreen() {
   };
 
   const onSkip = () => {
-    navigator.goBack();
+    navigator.getParent()?.navigate("home");
   };
 
   return (
