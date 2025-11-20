@@ -23,8 +23,7 @@ const ParentControlNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="manageChild" component={ManageChild} />
       <Stack.Screen name="linkChild" component={LinkChild} />
-      <Stack.Screen name="editChild" component={EditChild} />
-      <Stack.Screen name="deleteSuccess" component={DeleteSuccess} />
+      
     </Stack.Navigator>
   );
 };
