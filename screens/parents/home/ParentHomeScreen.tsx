@@ -1,7 +1,20 @@
-import ComingSoon from "../../../components/ComingSoon";
+import { ScrollView, StatusBar, Text, View } from "react-native";
 
 const ParentHomeScreen = () => {
-  return <ComingSoon title="Parent home screen" />;
+  return (
+    <ScrollView
+      contentContainerStyle={{
+        justifyContent: "center",
+        alignItems: "center",
+        display: "flex",
+        height: "100%",
+      }}
+    >
+      <Text className="font-[abeezee]  text-black text-center">
+        Home screen layout
+      </Text>
+    </ScrollView>
+  );
 };
 
 export default ParentHomeScreen;

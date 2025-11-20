@@ -16,7 +16,7 @@ import ProfileNavigator, {
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
-  completeProfile: NavigatorScreenParams<ProfileNavigatorParamList>;
+  profile: NavigatorScreenParams<ProfileNavigatorParamList>;
   parents: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
@@ -24,15 +24,15 @@ const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
 const RootNavigator = () => {
   const { user, logout } = useAuth();
-  const { data, isPending, error } = useGetUserProfile();
+  // const { data, isPending, error } = useGetUserProfile();
 
   useEffect(() => {
     setLogoutCallBack(logout);
   }, [logout]);
   // if (user === undefined || isPending) return <CustomSplashScreen />;
-  if (user === undefined) return <CustomSplashScreen />;
-  const isProfileComplete = true;
   // const user = true;
+  const isProfileComplete = false;
+  if (user === undefined) return <CustomSplashScreen />;
 
   return (
     <Stack.Navigator>
@@ -51,7 +51,7 @@ const RootNavigator = () => {
       ) : (
         <Stack.Screen
           options={{ headerShown: false }}
-          name="completeProfile"
+          name="profile"
           component={ProfileNavigator}
         />
       )}

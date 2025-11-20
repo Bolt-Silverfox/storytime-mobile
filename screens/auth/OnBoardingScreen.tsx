@@ -28,7 +28,6 @@ export default function OnBoardingScreen() {
   const { width } = useWindowDimensions();
   const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
   console.log("layout width", layoutWidth, "width", width);
-
   const onScroll = () => {
     if (currentindex < onBoardingSlide.length - 1) {
       flatListRef.current?.scrollToIndex({ index: currentindex + 1 });
