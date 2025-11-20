@@ -191,17 +191,15 @@ const ImageUploader: React.FC<Props> = ({
 
     <View style={styles.buttonRow}>
       <TouchableOpacity
-  style={[
-    defaultStyles.button,
-    !uri && defaultStyles.buttonDisabled,  // Disable style when no image
-    styles.saveButton
-  ]}
-  // onPress={onSavePress}
-  onPress={() => navigator.navigate("auth", { screen: "kidsDetailsUpload" })}
-  disabled={!uri}   // Disable press completely
->
-  <Text style={[defaultStyles.defaultText, styles.saveText]}>Save</Text>
-</TouchableOpacity>
+        style={[defaultStyles.button, !uri && defaultStyles.buttonDisabled, styles.saveButton]}
+        onPress={() => {
+          if (onSave) onSave(uri, fileObj); // pass image back to parent
+        }}
+        disabled={!uri}
+      >
+        <Text style={[defaultStyles.defaultText, styles.saveText]}>Save</Text>
+      </TouchableOpacity>
+
 
       <TouchableOpacity style={styles.cancelButton} onPress={onCancelPress}>
         <Text style={[defaultStyles.defaultText, styles.cancelText]}>Cancel</Text>
