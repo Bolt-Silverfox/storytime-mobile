@@ -1,20 +1,21 @@
-import { useFonts } from "expo-font";
-import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
-import CustomSplashScreen from "./components/CustomSplashScreen";
-import { AuthProvider } from "./contexts/AuthContext";
-import RootNavigator from "./Navigation/RootNavigator";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import Netinfo from "@react-native-community/netinfo";
+import { NavigationContainer } from "@react-navigation/native";
 import {
   QueryClient,
   QueryClientProvider,
-  onlineManager,
   focusManager,
+  onlineManager,
 } from "@tanstack/react-query";
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import CustomSplashScreen from "./components/CustomSplashScreen";
+import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
+import RootNavigator from "./Navigation/RootNavigator";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,15 +53,17 @@ export default function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <RootNavigator />
-          </QueryClientProvider>
-        </AuthProvider>
-      </NavigationContainer>
-    </>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <RootNavigator />
+            </QueryClientProvider>
+          </AuthProvider>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
