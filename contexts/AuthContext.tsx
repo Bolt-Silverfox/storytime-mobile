@@ -2,7 +2,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useEffect,
   useState,
@@ -22,6 +24,7 @@ type SignUp = (
 
 type AuthContextType = {
   user: User | null | undefined;
+  setUser: Dispatch<SetStateAction<User | null | undefined>>;
   logout: () => void;
   login: Login;
   signUp: SignUp;
@@ -228,6 +231,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const providerReturnValues = {
     user,
+    setUser,
     login,
     logout,
     signUp,
