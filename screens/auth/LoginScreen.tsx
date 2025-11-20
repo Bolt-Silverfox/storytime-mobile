@@ -133,3 +133,34 @@ const styles = StyleSheet.create({
     marginBottom: 44,
   },
 });
+
+// export function loginDat() {
+//   return {
+//     success: true,
+//     message: "welcome",
+//     data: {
+//       user: {
+//         id: "string",
+//         email: "jutindikonu8@gmail.com",
+//         name: "jutin",
+//         avatarUrl: "",
+//         role: "parent",
+//         createdAt: " string",
+//         updatedAt: "string",
+//         title: "mr",
+//         profile: {
+//           id: "string",
+//           explicitContent: true,
+//           maxScreenTimeMins: 50,
+//           language: "english",
+//           country: "nigeria",
+//           createdAt: "string",
+//           updatedAt: "string",
+//         },
+//         numberOfKids: 2,
+//       },
+//       jwt: "yes",
+//       refreshToken: "noo",
+//     },
+//   };
+// }
