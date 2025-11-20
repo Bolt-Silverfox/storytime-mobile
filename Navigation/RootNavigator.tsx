@@ -9,11 +9,14 @@ import CustomSplashScreen from "../components/CustomSplashScreen";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { useEffect } from "react";
 import { setLogoutCallBack } from "../apiFetch";
+import { View } from "react-native";
+import ParentsTabNavigator from "./ParentsNavigator";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   home: undefined;
   completeProfile: undefined;
+  parents: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
@@ -35,7 +38,18 @@ const RootNavigator = () => {
           options={{ headerShown: false }}
         />
       ) : (
-        <Stack.Screen name="home" component={HomeScree} />
+        <View>
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="home"
+            component={HomeScree}
+          />
+          <Stack.Screen
+            options={{ headerShown: false }}
+            name="parents"
+            component={ParentsTabNavigator}
+          />
+        </View>
       )}
     </Stack.Navigator>
   );
