@@ -33,9 +33,7 @@ const EmailResetSuccessfulScreen = () => {
         Your email has been verified
       </Text>
       <Pressable
-        onPress={() =>
-          navigator.navigate("auth", { screen: "completeProfile" })
-        }
+        onPress={() => navigator.navigate("auth", { screen: "login" })}
         style={defaultStyles.button}
       >
         <Text

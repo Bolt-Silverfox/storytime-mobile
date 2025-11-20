@@ -9,6 +9,9 @@ const useGetUserProfile = () => {
     queryKey: ["userProfile", user?.id],
     queryFn: async () => {
       try {
+        if (user === null || user === undefined) {
+          return null;
+        }
         const url = `${BASE_URL}/user/me`;
         const response = await apiFetch(url, {
           method: "GET",
@@ -22,7 +25,6 @@ const useGetUserProfile = () => {
         throw new Error(message);
       }
     },
-    enabled: !!user,
   });
 };
 

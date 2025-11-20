@@ -16,6 +16,9 @@ const HomeScree = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   return (
     <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
+      <Text className="px-4 py-3 bg-purple-300" onPress={logout}>
+        {isLoading ? "logging out" : "Logout"}
+      </Text>
       <View
         aria-labelledby="user avatar container"
         className="flex flex-row items-center gap-2"
@@ -179,17 +182,17 @@ const data: { id: string; name: string }[] = [
 const HorizontalList = () => {
   return (
     <FlatList
-      horizontal // makes it scroll horizontally
+      horizontal
       data={data}
       keyExtractor={(item) => item.id}
-      showsHorizontalScrollIndicator={false} // optional
+      showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 16 }}
       renderItem={({ item }) => (
         <View
           style={{
-            width: 150, // fixed width for each item
+            width: 150,
             height: 100,
-            marginRight: 12, // spacing between items
+            marginRight: 12,
             backgroundColor: "#6121AF",
             borderRadius: 16,
             justifyContent: "center",
