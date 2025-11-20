@@ -3,9 +3,12 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
+import HomeScree from "../screens/HomeScree";
+import CompleteProfileNewScreen from "../screens/CompleteProfileNewScreen";
 
 type ProfileNavigatorParamList = {
   completeProfile: undefined;
+  homeScreen: undefined;
 };
 
 type ProfileNavigatorProp =
@@ -15,7 +18,11 @@ const Stack = createNativeStackNavigator<ProfileNavigatorParamList>();
 const ProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
+      <Stack.Screen name="homeScreen" component={HomeScree} />
+      <Stack.Screen
+        name="completeProfile"
+        component={CompleteProfileNewScreen}
+      />
     </Stack.Navigator>
   );
 };
