@@ -53,7 +53,7 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [title, setTitle] = useState("");
   const [titleModal, setTitleModal] = useState(false);
-  // const { isLoading, errorMessage, signUp } = useAuth();
+  const { isLoading, errorMessage, signUp } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
 
   const onRegister = async () => {
@@ -65,7 +65,6 @@ const SignupForm = () => {
       password,
       confirmPassword,
     });
-    console.log(fullName.split(" "));
 
     if (!result.success) {
       const formatted: any = {};
@@ -158,13 +157,12 @@ const SignupForm = () => {
         onPress={onRegister}
         style={[
           { marginTop: 44 },
-          // isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
-          defaultStyles.button
+          isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
+          // defaultStyles.button
         ]}
       >
         <Text style={{ ...styles.text, color: "white" }}>
-          {/* {isLoading ? "Loading..." : "Proceed"} */}
-          Proceed
+          {isLoading ? "Loading..." : "Proceed"}
         </Text>
       </Pressable>
     </View>
