@@ -6,7 +6,6 @@ import ParentControlNavigator from "./ParentControlsNavigator";
 import ParentHomeNavigator from "./ParentHomeNavigator";
 import ParentProfileNavigator from "./ParentProfileNavigator";
 import ParentReportNavigator from "./ParentsReportNavigator";
-import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 
 type ParentsNavigatorParamList = {
   home: undefined;
@@ -28,7 +27,7 @@ const ParentsTabNavigator = () => {
         tabBarShowLabel: true,
       }}
     >
-      <Tab.Screen name="home" component={ParentHomeScreen} />
+      <Tab.Screen name="home" component={ParentHomeNavigator} />
       <Tab.Screen name="controls" component={ParentControlNavigator} />
       <Tab.Screen name="profile" component={ParentProfileNavigator} />
       <Tab.Screen name="reports" component={ParentReportNavigator} />
@@ -37,5 +36,5 @@ const ParentsTabNavigator = () => {
   );
 };
 
-export type { ParentsNavigatorProp };
+export type { ParentsNavigatorParamList, ParentsNavigatorProp };
 export default ParentsTabNavigator;
