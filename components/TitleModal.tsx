@@ -9,7 +9,7 @@ const TitleModal = ({
   open: boolean;
   setOpen: (s: boolean) => void;
   setValue: (v: string) => void;
-  options: string[];
+  options?: string[];
 }) => {
   return (
     <Modal visible={open} transparent animationType="fade">
