@@ -28,6 +28,7 @@ const RootNavigator = () => {
     setLogoutCallBack(logout);
   }, [logout]);
   if (user === undefined) return <CustomSplashScreen />;
+  const isProfileComplete = true;
 
   return (
     <Stack.Navigator>
@@ -37,19 +38,18 @@ const RootNavigator = () => {
           component={AuthNavigator}
           options={{ headerShown: false }}
         />
+      ) : isProfileComplete ? (
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="parents"
+          component={ParentsTabNavigator}
+        />
       ) : (
-        <View>
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="home"
-            component={HomeScree}
-          />
-          <Stack.Screen
-            options={{ headerShown: false }}
-            name="parents"
-            component={ParentsTabNavigator}
-          />
-        </View>
+        <Stack.Screen
+          options={{ headerShown: false }}
+          name="home"
+          component={HomeScree}
+        />
       )}
     </Stack.Navigator>
   );
