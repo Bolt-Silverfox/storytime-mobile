@@ -1,20 +1,48 @@
+import Netinfo from "@react-native-community/netinfo";
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  QueryClient,
+  QueryClientProvider,
+  focusManager,
+  onlineManager,
+} from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { StatusBar } from "expo-status-bar";
+import { useEffect } from "react";
+import { AppState, AppStateStatus, Platform } from "react-native";
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import { AuthProvider } from "./contexts/AuthContext";
-import RootNavigator from "./Navigation/RootNavigator";
-import { NavigationContainer } from "@react-navigation/native";
-import { StatusBar } from "expo-status-bar";
 import "./global.css";
+import RootNavigator from "./Navigation/RootNavigator";
 
 SplashScreen.preventAutoHideAsync();
+
+const queryClient = new QueryClient();
+onlineManager.setEventListener((setOnline) => {
+  return Netinfo.addEventListener((state) => {
+    setOnline(!!state.isConnected);
+  });
+});
+
+const onAppStateChange = (status: AppStateStatus) => {
+  if (Platform.OS !== "web") {
+    focusManager.setFocused(status === "active");
+  }
+};
 
 export default function App() {
   const [loaded, error] = useFonts({
     quilka: require("./assets/fonts/Qilkabold-DO6BR.otf"),
     abeezee: require("./assets/fonts/ABeeZee-Regular.ttf"),
   });
+
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", onAppStateChange);
+
+    return () => subscription.remove();
+  }, []);
 
   useEffect(() => {
     if (loaded || error) {
@@ -25,13 +53,17 @@ export default function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <>
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <AuthProvider>
-          <RootNavigator />
-        </AuthProvider>
-      </NavigationContainer>
-    </>
+    <SafeAreaProvider>
+      <SafeAreaView style={{ flex: 1 }}>
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <RootNavigator />
+            </QueryClientProvider>
+          </AuthProvider>
+        </NavigationContainer>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
