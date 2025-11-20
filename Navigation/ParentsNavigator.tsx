@@ -36,5 +36,5 @@ const ParentsTabNavigator = () => {
   );
 };
 
-export type { ParentsNavigatorProp };
+export type { ParentsNavigatorParamList, ParentsNavigatorProp };
 export default ParentsTabNavigator;
