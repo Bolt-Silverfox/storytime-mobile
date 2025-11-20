@@ -23,6 +23,7 @@ type ParentProfileNavigatorParamList = {
   addVoice: undefined;
   bedTimeMode: undefined;
   dailyLimit: undefined;
+  linkChild: undefined;
   activityLog: { childID: string };
 };
 
@@ -44,6 +45,7 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="addVoice" component={AddVoice} />
       <Stack.Screen name="bedTimeMode" component={BedTimeMode} />
       <Stack.Screen name="dailyLimit" component={DailyLimit} />
+      <Stack.Screen name="linkChild" component={LinkChild} />
       <Stack.Screen name="activityLog" component={ActivityLog} />
     </Stack.Navigator>
   );
