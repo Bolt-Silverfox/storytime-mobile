@@ -53,7 +53,7 @@ const SignupForm = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [title, setTitle] = useState("");
   const [titleModal, setTitleModal] = useState(false);
-  // const { isLoading, errorMessage, signUp } = useAuth();
+  const { isLoading, errorMessage, signUp } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
 
   const onRegister = async () => {
@@ -65,7 +65,6 @@ const SignupForm = () => {
       password,
       confirmPassword,
     });
-    console.log(fullName.split(" "));
 
     if (!result.success) {
       const formatted: any = {};
@@ -84,7 +83,7 @@ const SignupForm = () => {
   return (
     <View>
       <View style={styles.form}>
-        {/* <ErrorMessageDisplay errorMessage={errorMessage} /> */}
+        <ErrorMessageDisplay errorMessage={errorMessage} />
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Title:</Text>
           <Pressable
@@ -110,6 +109,7 @@ const SignupForm = () => {
           open={titleModal}
           setOpen={setTitleModal}
           setValue={setTitle}
+          
         />
 
         <View style={styles.formItem}>
@@ -159,7 +159,7 @@ const SignupForm = () => {
         style={[
           { marginTop: 44 },
           // isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
-          defaultStyles.button
+          defaultStyles.button,
         ]}
       >
         <Text style={{ ...styles.text, color: "white" }}>
