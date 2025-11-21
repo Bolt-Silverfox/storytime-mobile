@@ -2,9 +2,12 @@ import { Pencil, EllipsisVertical } from 'lucide-react-native';
 import { Image, ImageSourcePropType, StyleSheet, Text, View } from 'react-native'
 import defaultStyles from '../styles';
 import { Child } from '../screens/parents/profile/LinkChild';
+import { ParntControlNavigatorProp } from '../Navigation/ParentControlsNavigator';
+import { useNavigation } from '@react-navigation/native';
 
 export default function LinkChildProfile({child}: {child: Child}) {
    const fallbackImage = require("../assets/avatars/Avatars-8.png");
+   const navigator = useNavigation<ParntControlNavigatorProp>();
  
   return (
     <View style={styles.wrapper}>

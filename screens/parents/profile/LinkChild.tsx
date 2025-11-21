@@ -25,7 +25,7 @@ const LinkChild = () => {
        username: "Jane Luke",
        ageRange: "5 - 8 years",
        photoUri: null,
-       img: require("../../assets/avatars/Avatars-8.png"),
+       img: require("../../../assets/avatars/Avatars-8.png"),
      },
      {
        id: "kid2",
@@ -33,7 +33,7 @@ const LinkChild = () => {
        username: "Jacob Luke",
        ageRange: "1 - 4 years",
        photoUri: null,
-       img: require("../../assets/avatars/Avatars-7.png"),
+       img: require("../../../assets/avatars/Avatars-7.png"),
      },
      {
        id: "kid3",
@@ -41,7 +41,7 @@ const LinkChild = () => {
        username: "Tim Luke",
        ageRange: "9 - 12 years",
        photoUri: null,
-       img: require("../../assets/avatars/Avatars-3.png"),
+       img: require("../../../assets/avatars/Avatars-3.png"),
      },
    ]);
 
