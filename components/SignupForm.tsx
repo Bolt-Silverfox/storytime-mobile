@@ -109,6 +109,7 @@ const SignupForm = () => {
           open={titleModal}
           setOpen={setTitleModal}
           setValue={setTitle}
+          
         />
 
         <View style={styles.formItem}>

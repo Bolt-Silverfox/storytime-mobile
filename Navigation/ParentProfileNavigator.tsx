@@ -13,6 +13,8 @@ import AddVoice from "../screens/parents/controls/AddVoice";
 import BedTimeMode from "../screens/parents/controls/BedTimeMode";
 import DailyLimit from "../screens/parents/controls/DailyLimit";
 import ActivityLog from "../screens/parents/controls/ActivityLog";
+import EditChild from "../screens/parents/profile/EditChild";
+import DeleteSuccess from "../screens/parents/profile/DeleteSuccess";
 
 type ParentProfileNavigatorParamList = {
   contentFilter: undefined;
@@ -25,6 +27,8 @@ type ParentProfileNavigatorParamList = {
   dailyLimit: undefined;
   linkChild: undefined;
   activityLog: { childID: string };
+  editChild: { childId: string };
+  deleteSuccess: undefined;
 };
 
 type ParentProfileNavigatorProp =
@@ -34,6 +38,8 @@ const Stack = createNativeStackNavigator<ParentProfileNavigatorParamList>();
 const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="editChild" component={EditChild} />
+      <Stack.Screen name="deleteSuccess" component={DeleteSuccess} />
       <Stack.Screen name="contentFilter" component={ContentFilterScreen} />
       <Stack.Screen name="hideStories" component={HideStoriesScreen} />
       <Stack.Screen name="recordVoice" component={RecordVoice} />
