@@ -6,6 +6,7 @@ type Profile = {
   country: string;
   createdAt: string;
   updatedAt: string;
+  userId: string;
 };
 
 type User = {
@@ -21,4 +22,21 @@ type User = {
   numberOfKids: number;
 };
 
-export type { User, Profile };
+type KidType = {
+  statusCode: number;
+  success: boolean;
+  data: {
+    id: string;
+    name: string;
+    avatarId: string | null;
+    ageRange: string;
+    parentId: string;
+    createdAt: string;
+    updatedAt: string;
+    preferredVoiceId: null | string;
+    avatar: string | null;
+  }[];
+  message: string;
+};
+
+export type { User, Profile, KidType };

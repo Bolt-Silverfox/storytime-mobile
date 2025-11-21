@@ -12,7 +12,7 @@ import Icon from "../components/Icon";
 import useAuth from "../contexts/AuthContext";
 
 const HomeScree = () => {
-  const { logout, isLoading, user } = useAuth();
+  const { user } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
   return (
     <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
@@ -24,7 +24,9 @@ const HomeScree = () => {
           <Image source={require("../assets/placeholder-pfp.png")} />
         </View>
         <View className="flex flex-1  flex-col gap-y-1.5">
-          <Text className="font-[abeezee] text-base">Mrs Luke</Text>
+          <Text className="font-[abeezee] text-base">
+            {user?.title} {user?.name}
+          </Text>
           <Text className="font-[abeezee] text-[12px] text-[#616161]">
             Good Morning
           </Text>
@@ -173,23 +175,22 @@ const data: { id: string; name: string }[] = [
   { id: "1", name: "Item 1" },
   { id: "2", name: "Item 2" },
   { id: "3", name: "Item 3" },
-  // ...
 ];
 
 const HorizontalList = () => {
   return (
     <FlatList
-      horizontal // makes it scroll horizontally
+      horizontal
       data={data}
       keyExtractor={(item) => item.id}
-      showsHorizontalScrollIndicator={false} // optional
+      showsHorizontalScrollIndicator={false}
       contentContainerStyle={{ paddingHorizontal: 16 }}
       renderItem={({ item }) => (
         <View
           style={{
-            width: 150, // fixed width for each item
+            width: 150,
             height: 100,
-            marginRight: 12, // spacing between items
+            marginRight: 12,
             backgroundColor: "#6121AF",
             borderRadius: 16,
             justifyContent: "center",
