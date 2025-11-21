@@ -12,13 +12,10 @@ import Icon from "../components/Icon";
 import useAuth from "../contexts/AuthContext";
 
 const HomeScree = () => {
-  const { logout, isLoading, user } = useAuth();
+  const { user } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
   return (
     <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
-      <Text className="px-4 py-3 bg-purple-300" onPress={logout}>
-        {isLoading ? "logging out" : "Logout"}
-      </Text>
       <View
         aria-labelledby="user avatar container"
         className="flex flex-row items-center gap-2"
@@ -178,7 +175,6 @@ const data: { id: string; name: string }[] = [
   { id: "1", name: "Item 1" },
   { id: "2", name: "Item 2" },
   { id: "3", name: "Item 3" },
-  // ...
 ];
 
 const HorizontalList = () => {

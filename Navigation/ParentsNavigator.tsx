@@ -1,6 +1,8 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import colours from "../colours";
+import Icon from "../components/Icon";
 import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
 import ParentControlNavigator from "./ParentControlsNavigator";
 import ParentHomeNavigator from "./ParentHomeNavigator";
@@ -27,11 +29,86 @@ const ParentsTabNavigator = () => {
         tabBarShowLabel: true,
       }}
     >
-      <Tab.Screen name="home" component={ParentHomeNavigator} />
-      <Tab.Screen name="controls" component={ParentControlNavigator} />
-      <Tab.Screen name="profile" component={ParentProfileNavigator} />
-      <Tab.Screen name="reports" component={ParentReportNavigator} />
-      <Tab.Screen name="favourite" component={FavouriteScreen} />
+      <Tab.Screen
+        name="home"
+        component={ParentHomeNavigator}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="House"
+              color={focused ? colours.primary : colours.black}
+            />
+          ),
+          tabBarActiveTintColor: colours.primary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="reports"
+        component={ParentReportNavigator}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="ChartColumnIncreasing"
+              color={focused ? colours.primary : colours.black}
+            />
+          ),
+          tabBarActiveTintColor: colours.primary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="controls"
+        component={ParentControlNavigator}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="ShieldUser"
+              color={focused ? colours.primary : colours.black}
+            />
+          ),
+          tabBarActiveTintColor: colours.primary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="favourite"
+        component={FavouriteScreen}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="Heart"
+              color={focused ? colours.primary : colours.black}
+            />
+          ),
+          tabBarActiveTintColor: colours.primary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize",
+          },
+        }}
+      />
+      <Tab.Screen
+        name="profile"
+        component={ParentProfileNavigator}
+        options={{
+          tabBarIcon: ({ focused }) => (
+            <Icon
+              name="User"
+              color={focused ? colours.primary : colours.black}
+            />
+          ),
+          tabBarActiveTintColor: colours.primary,
+          tabBarLabelStyle: {
+            textTransform: "capitalize",
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 };
