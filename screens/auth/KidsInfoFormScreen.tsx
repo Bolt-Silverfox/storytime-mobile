@@ -1,41 +1,27 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import {
-  ScrollView,
-  Text,
-  View,
-  Alert,
-  Pressable,
-  Image,
-} from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import {
-  useRoute,
-  useNavigation,
-  NavigationProp,
-  ParamListBase,
-} from "@react-navigation/native";
 import KidsForm, { Kid } from "../../components/KidsForm";
-import defaultStyles from "../../styles";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import useAddKids from "../../hooks/tanstack/mutationHooks/useAddKids";
+import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
+import defaultStyles from "../../styles";
 
 export default function KidsInfoFormScreen() {
-  const navigator = useNavigation<RootNavigatorProp>();
-
   const route = useRoute();
   const params = (route.params as { kidsCount: number }) || {};
   const { kidsCount } = params;
-
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
-
+  const navigation = useNavigation<ProfileNavigatorProp>();
   const [kids, setKids] = useState<Kid[]>(
     Array.from({ length: kidsCount }).map(() => ({
       name: "",
-      age: "",
-      avatar: null,
+      ageRange: "",
+      avatar: "",
     }))
   );
   const [submitting, setSubmitting] = useState(false);
+  const { mutate, isPending } = useAddKids(kids.length);
 
   const updateKid = (index: number, patch: Partial<Kid>) => {
     setKids((prev) => {
@@ -45,34 +31,8 @@ export default function KidsInfoFormScreen() {
     });
   };
 
-
-  const onProceed = async () => {
-    // run validation first
-    for (let i = 0; i < kids.length; i++) {
-      if (!kids[i].name.trim() || !kids[i].age) {
-        Alert.alert("Validation", `Please complete details for Kid ${i + 1}`);
-        return;
-      }
-    }
-
-    // SHOW overlay
-    setSubmitting(true);
-
-    try {
-      // simulate network request
-      await new Promise((res) => setTimeout(res, 2000));
-
-      navigator.navigate("home");
-    } catch (err) {
-      console.warn(err);
-      Alert.alert("Error submitting form");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   const onSkip = () => {
-    navigator.getParent()?.navigate("home");
+    navigation.navigate("homeScreen");
   };
 
   return (
@@ -80,7 +40,7 @@ export default function KidsInfoFormScreen() {
       <SafeAreaView
         style={{ flex: 1, backgroundColor: "hsla(15,100%,99%,0.98)" }}
       >
-        <Pressable onPress={() => navigator.goBack()} className="p-5 bg-white">
+        <Pressable onPress={() => navigation.goBack()} className="p-5 bg-white">
           <Image
             className="w-5 h-5"
             source={require("../../assets/icons/arrow-left.png")}
@@ -93,15 +53,18 @@ export default function KidsInfoFormScreen() {
           }}
         >
           <Text style={defaultStyles.heading}>Enter Your Kids’ Details</Text>
-          <Text style={defaultStyles.defaultText}>
+          <Text
+            style={{
+              ...defaultStyles.defaultText,
+              textAlign: "center",
+              marginTop: 10,
+            }}
+          >
             Complete setting up your kids information
           </Text>
 
           {kids.map((kid, idx) => (
-            <View
-              key={idx}
-              className="flex-col gap-2 mt-6 px-2"
-            >
+            <View key={idx} className="flex-col gap-2 mt-6 px-2">
               <KidsForm
                 index={idx}
                 kid={kid}
@@ -122,11 +85,11 @@ export default function KidsInfoFormScreen() {
             </Pressable>
 
             <Pressable
-              onPress={onProceed}
+              onPress={() => mutate(kids)}
               className="flex-1 bg-primary rounded-full py-3 items-center"
             >
               <Text className="text-base font-semibold text-white">
-                Finalize Profile
+                {!isPending ? "  Finalize Profile" : "Loading..."}
               </Text>
             </Pressable>
           </View>

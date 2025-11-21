@@ -1,23 +1,18 @@
-import React, { useState } from "react";
-import colours from "../../colours";
-import { View, TouchableOpacity, ScrollView, useWindowDimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import React, { useState } from "react";
+import {
+  ScrollView,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import colours from "../../colours";
 import CustomText from "../../components/CustomText";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
-type RootStackParamList = {
-  CompleteProfile: undefined;
-  kidsInfoForm: { kidsCount?: number };
-};
-
-type CompleteProfileScreenProp = NativeStackNavigationProp<
-  RootStackParamList,
-  "CompleteProfile"
->;
+import useUpdateUserProfile from "../../hooks/tanstack/mutationHooks/useUpdateUserProfile";
+import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
 
 export default function CompleteProfileScreen() {
-  const navigation = useNavigation<CompleteProfileScreenProp>();
+  const navigation = useNavigation<ProfileNavigatorProp>();
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const containerWidth = isTablet ? Math.min(width * 0.55, 600) : "100%";
@@ -25,7 +20,10 @@ export default function CompleteProfileScreen() {
   const [language, setLanguage] = useState("English");
   const [country, setCountry] = useState("Nigeria");
   const [kids, setKids] = useState("1");
-  const [openDropdown, setOpenDropdown] = useState<"language" | "country" | "kids" | null>(null);
+  const { mutate, isPending } = useUpdateUserProfile(Number(kids));
+  const [openDropdown, setOpenDropdown] = useState<
+    "language" | "country" | "kids" | null
+  >(null);
 
   const languages = ["English", "Spanish", "French"];
   const countries = ["Nigeria", "Ghana", "Kenya"];
@@ -98,15 +96,10 @@ export default function CompleteProfileScreen() {
 
   return (
     <ScrollView
-      style={{ backgroundColor: colours["bg-light"], flex: 1 }}
-      contentContainerStyle={{
-        paddingTop: isTablet ? 48 : 20,
-        paddingBottom: 80,
-        minHeight: "100%",
-        alignItems: "center",
-      }}
+      className="flex-1 bg-white"
+      style={{ backgroundColor: colours["bg-light"] }}
     >
-      <View style={{ height: isTablet ? 40 : 20 }} />
+      <View style={{ height: 70, backgroundColor: "white" }} />
 
       <View
         style={{
@@ -118,20 +111,8 @@ export default function CompleteProfileScreen() {
           backgroundColor: "white",
         }}
       >
-        <TouchableOpacity
-          style={{ marginBottom: isTablet ? 24 : 12 }}
-          onPress={() => navigation.goBack()}
-        >
-          <View
-            style={{
-              width: isTablet ? 20 : 12,
-              height: isTablet ? 20 : 12,
-              borderTopWidth: 2,
-              borderLeftWidth: 2,
-              borderColor: "black",
-              transform: [{ rotate: "-45deg" }],
-            }}
-          />
+        <TouchableOpacity className="mb-12" onPress={() => navigation.goBack()}>
+          <View className="w-3 h-3 border-t-2 border-l-2 border-black -rotate-45" />
         </TouchableOpacity>
 
         <CustomText
@@ -157,51 +138,40 @@ export default function CompleteProfileScreen() {
           Complete setting up your profile information
         </CustomText>
 
-        {renderDropdown("Language", language, languages, "language", setLanguage)}
+        {renderDropdown(
+          "Language",
+          language,
+          languages,
+          "language",
+          setLanguage
+        )}
         {renderDropdown("Country", country, countries, "country", setCountry)}
         {renderDropdown("Kids", kids, kidsCount, "kids", setKids)}
 
-        <CustomText
-          style={{
-            color: "#555",
-            marginBottom: isTablet ? 24 : 12,
-            marginTop: isTablet ? 16 : 8,
-            fontSize: isTablet ? 16 : 13,
-          }}
-        >
-          Please specify the number of kids you'd like to add. e.g 1, 2, 3, 4 etc.
+        <CustomText className="text-gray-500 mb-8 mt-4">
+          Please specify the number of kids you'd like to add. e.g 1, 2, 3, 4
+          etc.
         </CustomText>
 
-        <View style={{ flexDirection: "row", justifyContent: "center", marginTop: isTablet ? 12 : 8 }}>
+        <View className="flex-row items-center justify-center">
           <TouchableOpacity
-            style={{
-              borderWidth: 1,
-              borderColor: "#ccc",
-              borderRadius: 24,
-              marginRight: isTablet ? 12 : 8,
-              paddingVertical: isTablet ? 14 : 10,
-              paddingHorizontal: isTablet ? 40 : 20,
-            }}
+            onPress={() =>
+              navigation.navigate("kidsInfoForm", {
+                kidsCount: 1,
+              })
+            }
+            className="border border-gray-300 py-3 px-20 rounded-3xl mr-10"
           >
-            <CustomText style={{ color: "#555", fontWeight: "500" }}>Skip</CustomText>
+            <CustomText className="text-gray-700 font-medium">Skip</CustomText>
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={{
-              backgroundColor: colours.primary,
-              borderRadius: 24,
-              flexDirection: "row",
-              alignItems: "center",
-              paddingVertical: isTablet ? 14 : 10,
-              paddingHorizontal: isTablet ? 48 : 32,
-            }}
-            onPress={async () => {
-              await AsyncStorage.setItem("kidsCount", kids);
-              navigation.navigate("kidsInfoForm", { kidsCount: Number(kids) });
-            }}
+            disabled={isPending}
+            className="flex-row items-center bg-primary py-3 px-16 rounded-3xl"
+            onPress={() => mutate({ country, language })}
           >
-            <CustomText style={{ color: "white", fontWeight: "600", marginRight: 8 }}>
-              Proceed
+            <CustomText className="text-white font-medium mr-2">
+              {isPending ? "Please wait..." : "proceed"}
             </CustomText>
           </TouchableOpacity>
         </View>

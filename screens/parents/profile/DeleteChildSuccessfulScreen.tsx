@@ -1,11 +1,11 @@
+import { StyleSheet, View, Text, Image, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Image, Pressable, Text, View } from "react-native";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
-import colours from "../../colours";
-import defaultStyles from "../../styles";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../styles";
+import colours from "../../../colours";
 
-const EmailResetSuccessfulScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
+const DeleteChildSuccessfulScreen = () => {
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
   return (
     <View
       style={{
@@ -15,7 +15,7 @@ const EmailResetSuccessfulScreen = () => {
       }}
     >
       <Image
-        source={require("../../assets/icons/successful-reset-illustration.png")}
+        source={require("../../../assets/icons/successful-reset-illustration.png")}
         style={{ alignSelf: "center" }}
       />
       <Text
@@ -30,10 +30,10 @@ const EmailResetSuccessfulScreen = () => {
           marginBottom: 167,
         }}
       >
-        Your email has been verified
+        Child profile has been deleted successfully.
       </Text>
       <Pressable
-        onPress={() => navigator.navigate("auth", { screen: "login" })}
+        onPress={() => navigator.navigate("manageChildProfiles")}
         style={defaultStyles.button}
       >
         <Text
@@ -50,4 +50,8 @@ const EmailResetSuccessfulScreen = () => {
   );
 };
 
-export default EmailResetSuccessfulScreen;
+export default DeleteChildSuccessfulScreen;
+
+const styles = StyleSheet.create({
+  screen: { flex: 1 },
+});

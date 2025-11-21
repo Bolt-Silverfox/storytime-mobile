@@ -8,14 +8,15 @@ import {
   Platform,
   UIManager,
   LayoutAnimation,
+  Alert,
 } from "react-native";
 import { Pencil } from "lucide-react-native";
 import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 export interface Kid {
   name: string;
-  age: string;
-  avatar?: string | null;
+  ageRange: string;
+  avatar?: string;
 }
 
 type Props = {
@@ -36,13 +37,7 @@ if (
 
 export default function KidsForm({ index, kid, onChange, navigation }: Props) {
   const [ageOpen, setAgeOpen] = useState(false);
-  const ageOptions = [
-    "3 - 4 years",
-    "5 - 6 years",
-    "7 - 8 years",
-    "9 - 10 years",
-    "11 - 12 years",
-  ];
+  const ageOptions = ["1-4", "5-8", "9-12"];
 
   const setField = (field: keyof Kid, value: string | null | undefined) =>
     onChange({ [field]: value } as Partial<Kid>);
@@ -57,10 +52,11 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
       <TouchableOpacity
         className="flex-row items-end gap-1 mb-3"
         onPress={() =>
-          navigation.navigate("avatarScreen", {
-            onPick: (avatarUri: string) => setField("avatar", avatarUri),
-            kidIndex: index,
-          })
+          // navigation.navigate("avatarScreen", {
+          //   onPick: (avatarUri: string) => setField("avatar", avatarUri),
+          //   kidIndex: index,
+          // })
+          Alert.alert("coming soon")
         }
       >
         <Image
@@ -89,7 +85,7 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
           accessibilityRole="button"
         >
           <Text className="text-base text-gray-900">
-            {kid.age ? kid.age : "Select age"}
+            {kid.ageRange ? kid.ageRange : "Select age"}
           </Text>
           <Text className="text-gray-400">{ageOpen ? "▲" : "▼"}</Text>
         </TouchableOpacity>
@@ -100,12 +96,12 @@ export default function KidsForm({ index, kid, onChange, navigation }: Props) {
               <TouchableOpacity
                 key={opt}
                 onPress={() => {
-                  setField("age", opt);
+                  setField("ageRange", opt);
                   setAgeOpen(false);
                 }}
                 className="px-4 py-3 border-b border-gray-100"
               >
-                <Text className="text-base text-gray-800">{opt}</Text>
+                <Text className="text-base text-gray-800">{opt} years</Text>
               </TouchableOpacity>
             ))}
           </View>

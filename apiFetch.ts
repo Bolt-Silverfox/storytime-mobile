@@ -43,12 +43,13 @@ const refreshTokens = async () => {
   console.log("reresh token", token);
   try {
     const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh?token=${token}`,
+      `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
+        body: JSON.stringify({ token }),
       }
     );
     if (!response.ok) return false;
