@@ -14,13 +14,16 @@ import { Bell } from 'lucide-react-native';
 import DailyChallenge from '../../components/parents/DailyChallenge';
 import StoryTracker from '../../components/parents/StoryTracker';
 import CategoryGrid from '../../components/parents/CategoryGrid';
-
+import ParentImg from '../../assets/avatars/parent.png'
+import MissNettles from '../../assets/images/miss-nettles.png'
+import LifeOfPi from '../../assets/images/pi.png'
+import { StoryId, CategoryId } from '../../types/parents.types';
 
 const ParentsHomeScreen: React.FC<{ navigation: NavigationProp<ParamListBase> }> = ({ navigation }) => {
   // data fetching 
   const [userData, setUserData] = useState({
     name: 'Mrs Luke',
-    avatar: 'https://via.placeholder.com/40',
+    avatar: ParentImg,
   });
 
   const [stories, setStories] = useState([
@@ -29,30 +32,36 @@ const ParentsHomeScreen: React.FC<{ navigation: NavigationProp<ParamListBase> }>
       title: 'Little Miss Nettle',
       category: 'Adventure',
       progress: 26,
-      coverColor: '#FF6B9D',
-      image: '🏠',
+      color: '#7B5FFF',
+      backgroundColor: '#0731EC1A',
+      coverColor: '#7B5FFF',
+      image: MissNettles,
       childName: 'Jacob',
+      progBackgroundColor: '#4E6FFF',
     },
     {
       id: 2,
       title: 'Life of Pi',
       category: 'Mystery',
       progress: 13,
-      coverColor: '#4A90E2',
-      image: '🌙',
+       color: '#07CAEC',
+      backgroundColor: '#07CAEC1A',
+      coverColor: '#07CAEC',
+      image: LifeOfPi,
       childName: 'Solomon',
+      progBackgroundColor: '#07CAEC',
     },
   ]);
 
   const [categories, setCategories] = useState([
-    { id: 1, name: 'Adventure', color: '#B8F3D8' },
-    { id: 2, name: 'Coming of Age', color: '#FFD7BE' },
-    { id: 3, name: 'Courage/Bravery', color: '#FFF4B8' },
-    { id: 4, name: 'Good vs Evil', color: '#B8E8F3' },
-    { id: 5, name: 'Fantasy', color: '#E8D4F3' },
-    { id: 6, name: 'Love & Family', color: '#B8F3E0' },
-    { id: 7, name: 'Transformation', color: '#FFE4D4' },
-    { id: 8, name: 'Honesty', color: '#FFF9D4' },
+    { id: 1, name: 'Adventure', color: '#CDFBD7', textColor: '#039222' },
+    { id: 2, name: 'Coming of Age', color: '#FBE5CD', textColor: '#925403' },
+    { id: 3, name: 'Courage/Bravery', color: '#FBF9CD', textColor: '#926903' },
+    { id: 4, name: 'Good vs Evil', color: '#CDFBF7', textColor: '#008D81'},
+    { id: 5, name: 'Fantasy', color: '#EFCDFB' , textColor: '#5B007C'},
+    { id: 6, name: 'Love & Family', color: '#CDFBD7', textColor: '#039222' },
+    { id: 7, name: 'Transformation', color: '#FBE5CD', textColor: '#925403' },
+    { id: 8, name: 'Honesty', color: '#FBF9CD', textColor: '#926903' },
   ]);
 
   const handleNotificationPress = () => {
@@ -87,12 +96,12 @@ const ParentsHomeScreen: React.FC<{ navigation: NavigationProp<ParamListBase> }>
         <View style={styles.header}>
           <View style={styles.headerLeft}>
             <Image
-              source={{ uri: userData.avatar }}
+              source={userData.avatar}
               style={styles.avatar}
             />
             <View>
               <Text style={styles.greeting}>{userData.name}</Text>
-              <Text style={styles.subGreeting}>Good morning</Text>
+              <Text style={styles.subGreeting}>Good morning ⛅</Text>
             </View>
           </View>
           <TouchableOpacity
@@ -150,16 +159,20 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     marginRight: 12,
-    backgroundColor: '#E0E0E0',
+    
   },
   greeting: {
     fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: '400',
+    color: '#000000',
+     fontFamily: "ABeeZee",
+     lineHeight: 22,
   },
   subGreeting: {
     fontSize: 12,
     color: '#999',
+     fontFamily: "ABeeZee",
+     fontWeight: '400',
   },
   notificationIcon: {
     padding: 8,

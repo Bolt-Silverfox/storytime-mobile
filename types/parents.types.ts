@@ -11,12 +11,17 @@ export interface Story {
   coverColor: string;
   image: string;
   childName: string;
+  progBackgroundColor: string,
+  color: string,
+  backgroundColor: string,
+
 }
 
 export interface Category {
   id: number;
   name: string;
   color: string;
+  textColor: string,
 }
 
 export type StoryId = number;
