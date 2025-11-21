@@ -21,7 +21,7 @@ export default function LinkChildProfile({child}: {child: Child}) {
        <Text style={[defaultStyles.defaultText, {fontSize: 14, textAlign: "left"}]}>Age: {child.ageRange}</Text>
       </View>
       <View style={{marginLeft: "auto", marginRight: 15, alignSelf: "center", flexDirection: "row", gap: 10}}>
-       <Pencil color="#000" style={[styles.penIcon, ]} />
+       <Pencil color="#000" style={[styles.penIcon, ]} onPress={() => navigator.navigate("editChild")} />
        <EllipsisVertical color="#000" style={[styles.penIcon, ]} />
       </View>
     </View>
