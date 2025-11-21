@@ -15,6 +15,7 @@ export default function CompleteProfileScreen() {
   const navigation = useNavigation<ProfileNavigatorProp>();
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
+  const containerWidth = isTablet ? Math.min(width * 0.55, 600) : "100%";
 
   const [language, setLanguage] = useState("English");
   const [country, setCountry] = useState("Nigeria");
@@ -35,33 +36,57 @@ export default function CompleteProfileScreen() {
     dropdownKey: "language" | "country" | "kids",
     onSelect: (v: string) => void
   ) => (
-    <View className="mb-4">
+    <View style={{ marginBottom: isTablet ? 16 : 8 }}>
       <TouchableOpacity
         onPress={() =>
           setOpenDropdown(openDropdown === dropdownKey ? null : dropdownKey)
         }
-        className="border border-gray-300 rounded-3xl p-4"
+        style={{
+          borderWidth: 1,
+          borderColor: "#ccc",
+          borderRadius: 24,
+          padding: isTablet ? 16 : 12,
+        }}
       >
-        <View className="flex-row items-center justify-between w-full">
-          <CustomText>{value}</CustomText>
-          <CustomText className="text-gray-400 ml-3">
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            width: "100%",
+          }}
+        >
+          <CustomText style={{ fontSize: isTablet ? 18 : 14 }}>{value}</CustomText>
+          <CustomText style={{ color: "#666", marginLeft: 8, fontSize: isTablet ? 18 : 14 }}>
             {openDropdown === dropdownKey ? "▲" : "▼"}
           </CustomText>
         </View>
       </TouchableOpacity>
 
       {openDropdown === dropdownKey && (
-        <View className="border border-gray-300 rounded-xl mt-1 bg-white">
+        <View
+          style={{
+            borderWidth: 1,
+            borderColor: "#ccc",
+            borderRadius: 12,
+            marginTop: 4,
+            backgroundColor: "#fff",
+          }}
+        >
           {options.map((option, idx) => (
             <TouchableOpacity
               key={idx}
-              className="p-4 border-b border-gray-200"
+              style={{
+                padding: isTablet ? 16 : 12,
+                borderBottomWidth: 1,
+                borderColor: "#eee",
+              }}
               onPress={() => {
                 onSelect(option);
                 setOpenDropdown(null);
               }}
             >
-              <CustomText>{option}</CustomText>
+              <CustomText style={{ fontSize: isTablet ? 16 : 13 }}>{option}</CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -77,14 +102,13 @@ export default function CompleteProfileScreen() {
       <View style={{ height: 70, backgroundColor: "white" }} />
 
       <View
-        className={`${isTablet ? "max-w-xl mx-auto" : ""}`}
         style={{
-          width: 398,
-          paddingHorizontal: 15,
-          paddingVertical: 12,
-
+          width: containerWidth,
+          paddingHorizontal: isTablet ? 28 : 15,
+          paddingVertical: isTablet ? 24 : 12,
           borderTopLeftRadius: 24,
           borderTopRightRadius: 24,
+          backgroundColor: "white",
         }}
       >
         <TouchableOpacity className="mb-12" onPress={() => navigation.goBack()}>
@@ -94,7 +118,7 @@ export default function CompleteProfileScreen() {
         <CustomText
           style={{
             fontFamily: "quilka",
-            fontSize: 24,
+            fontSize: isTablet ? 32 : 24,
             textAlign: "center",
             color: colours.black,
           }}
@@ -102,7 +126,15 @@ export default function CompleteProfileScreen() {
           COMPLETE YOUR PROFILE
         </CustomText>
 
-        <CustomText className="text-center text-gray-500 mb-8 mt-1">
+        <CustomText
+          style={{
+            textAlign: "center",
+            color: "#777",
+            marginBottom: isTablet ? 16 : 8,
+            marginTop: 4,
+            fontSize: isTablet ? 18 : 14,
+          }}
+        >
           Complete setting up your profile information
         </CustomText>
 
