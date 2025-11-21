@@ -8,15 +8,15 @@ import { setLogoutCallBack } from "../apiFetch";
 import CustomSplashScreen from "../components/CustomSplashScreen";
 import useAuth from "../contexts/AuthContext";
 import AuthNavigator, { AuthNavigatorParamList } from "./AuthNavigator";
-import ParentsTabNavigator from "./ParentsNavigator";
 import ProfileNavigator, {
   ProfileNavigatorParamList,
 } from "./ProfileNavigator";
+import ProtectedRoutesNavigator from "./ProtectedNavigator";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   profile: NavigatorScreenParams<ProfileNavigatorParamList>;
-  parents: undefined;
+  protected: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
@@ -40,8 +40,8 @@ const RootNavigator = () => {
       ) : user.numberOfKids > 0 ? (
         <Stack.Screen
           options={{ headerShown: false }}
-          name="parents"
-          component={ParentsTabNavigator}
+          name="protected"
+          component={ProtectedRoutesNavigator}
         />
       ) : (
         <Stack.Screen

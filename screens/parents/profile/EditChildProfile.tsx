@@ -1,0 +1,128 @@
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import Icon from "../../../components/Icon";
+import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
+import {
+  ParentProfileNavigatorParamList,
+  ParentProfileNavigatorProp,
+} from "../../../Navigation/ParentProfileNavigator";
+import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
+import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
+import DeleteChildModal from "../../../components/modals/DeleteChildModal";
+
+type EditChildProfileRouteProp = RouteProp<
+  ParentProfileNavigatorParamList,
+  "editChildProfile"
+>;
+
+const EditChildProfile = () => {
+  const { params } = useRoute<EditChildProfileRouteProp>();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const [name, setName] = useState(params.name ?? "");
+  const [age, setAge] = useState(params.ageRange ?? "");
+  const [userName, setUsername] = useState(params?.userName ?? "");
+  const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
+    "age" | "delete" | null
+  >(null);
+  const { isPending, mutate } = useUpdateKids();
+  const { isPending: isDeleting, mutate: deleteKid } = useDeleteKid();
+
+  const handleCloseModals = () => {
+    setCurrentlyOpenModal(null);
+  };
+  return (
+    <ScrollView contentContainerClassName="flex flex-col gap-y-12 px-2">
+      <View className="flex flex-row bg-white py-5">
+        <Pressable onPress={() => navigator.goBack()}>
+          <Icon name="ChevronLeft" />
+        </Pressable>
+        <Text className="text-center flex-1  text-[18px] font-[abeezee]">
+          Manage Child Profiles
+        </Text>
+      </View>
+      <View className=" ">
+        <Image
+          source={require("../../../assets/placeholder-pfp.png")}
+          className="size-[80px] self-center"
+        />
+        <Pressable className="absolute bottom-0 right-0"></Pressable>
+      </View>
+      <View className="flex flex-col gap-y-5 px-5">
+        <View className="w-full max-w-xl mx-auto ">
+          <Text className="text-base font-[abeezee]">Child's Name:</Text>
+          <TextInput
+            value={name}
+            onChangeText={setName}
+            className="border border-border px-4 py-3 rounded-full w-full"
+          />
+        </View>
+        <View className="w-full max-w-xl mx-auto ">
+          <Text className="text-base font-[abeezee]">Age:</Text>
+
+          <Pressable
+            onPress={() => setCurrentlyOpenModal("age")}
+            className="border border-border px-4 py-3 rounded-full w-full"
+          >
+            <Text className="text-base text-black font-[abeezee]">
+              {age || "Select age"}
+            </Text>
+          </Pressable>
+        </View>
+        <View className="w-full max-w-xl mx-auto ">
+          <Text className="text-base font-[abeezee]">Child's Username:</Text>
+          <TextInput
+            value={userName}
+            onChangeText={setUsername}
+            className="border border-border px-4 py-3 rounded-full w-full"
+          />
+        </View>
+      </View>
+      <View className="flex flex-col gap-y-6 mt-20">
+        <Pressable
+          onPress={() =>
+            mutate([{ id: params.id, name, ageRange: age, avatarUrl: "" }])
+          }
+          className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+        >
+          <Text className="text-white font-[abeezee] text-center text-base">
+            {isPending ? "Saving..." : "Save"}
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => setCurrentlyOpenModal("delete")}
+          className="bg-transparent border border-primary py-4 w-full max-w-96 rounded-full mx-auto"
+        >
+          <Text className="text-primary font-[abeezee] text-center text-base">
+            Delete Profile
+          </Text>
+        </Pressable>
+      </View>
+      {currentlyOpenModal === "age" && (
+        <AgeSelectionModal
+          isOpen={currentlyOpenModal === "age"}
+          onClose={handleCloseModals}
+          selectAge={setAge}
+        />
+      )}
+      {currentlyOpenModal === "delete" && (
+        <DeleteChildModal
+          onClose={handleCloseModals}
+          handleDelete={() => deleteKid([params.id])}
+          isOpen={currentlyOpenModal === "delete"}
+          isDeleting={isDeleting}
+          name={name}
+        />
+      )}
+    </ScrollView>
+  );
+};
+
+export default EditChildProfile;
