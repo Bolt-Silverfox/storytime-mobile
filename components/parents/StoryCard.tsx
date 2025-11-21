@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet,Image } from 'react-native';
 import { Story } from '../../types/parents.types';
 
 interface StoryCardProps {
@@ -10,20 +10,36 @@ interface StoryCardProps {
 const StoryCard: React.FC<StoryCardProps> = ({ story, onPress }) => {
   return (
     <TouchableOpacity style={styles.storyCard} onPress={onPress}>
-      <View style={[styles.storyCover, { backgroundColor: story.coverColor }]}>
-        <Text style={styles.storyEmoji}>{story.image}</Text>
+      {/* cover dynamic background */}
+      <View style={[styles.storyCover, { backgroundColor: story.backgroundColor }]}>
+        <Image
+          source={typeof story.image === 'string' ? { uri: story.image } : story.image}
+          style={styles.image}
+        />
         <Text style={styles.storyTitleOnCover}>{story.title}</Text>
       </View>
 
+      {/* Info section */}
       <View style={styles.storyInfo}>
-        <Text style={styles.storyCategory}>{story.category}</Text>
+        <Text
+          style={[
+            styles.storyCategory,
+            { color: story.color, backgroundColor: story.backgroundColor } 
+          ]}
+        >
+          {story.category}
+        </Text>
+
         <Text style={styles.storyTitle}>{story.title}</Text>
         <Text style={styles.progressText}>{story.childName}'s progress</Text>
         <Text style={styles.progressPercent}>{story.progress}%</Text>
 
         <View style={styles.progressBarBg}>
           <View
-            style={[styles.progressBarFill, { width: `${story.progress}%` }]}
+            style={[
+              styles.progressBarFill,
+              { width: `${story.progress}%`, backgroundColor: story.progBackgroundColor } 
+            ]}
           />
         </View>
       </View>
@@ -34,26 +50,31 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, onPress }) => {
 
 const styles = StyleSheet.create({
   storyCard: {
-    width: 160,
-    marginRight: 12,
-    backgroundColor: '#FFF',
-    borderRadius: 12,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
+  width: 240,
+  height: 399,
+  marginRight: 12,
+  backgroundColor: '#FFF',
+  borderRadius: 24,
+  overflow: 'hidden',
+  
+  // iOS shadow
+  shadowColor: '#0e0e0e',
+  shadowOffset: { width: 0, height: 4 },
+  shadowOpacity: 0.1,
+  shadowRadius: 8,
+  
+  // android
+  elevation: 5,
+},
   storyCover: {
-    height: 140,
+    height: 182,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
   },
-  storyEmoji: {
-    fontSize: 40,
-    marginBottom: 8,
+  image:{
+      width: 240,
+      height: 182,
   },
   storyTitleOnCover: {
     fontSize: 14,
@@ -63,40 +84,55 @@ const styles = StyleSheet.create({
   },
   storyInfo: {
     padding: 12,
+    marginTop: 10 ,
   },
+
   storyCategory: {
     fontSize: 10,
-    color: '#7B5FFF',
+    
     fontWeight: '600',
-    marginBottom: 4,
+    marginBottom: 12,
+    fontFamily: "ABeeZee",
+    borderRadius: 99,
+    padding: 8,
+    width: 101,
+    height: 28,
+    textAlign: 'center',
+
   },
   storyTitle: {
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 22,
+    fontWeight: '400',
     color: '#333',
-    marginBottom: 8,
+    marginBottom: 12,
+    lineHeight: 22,
+    fontFamily: "ABeeZee",
   },
   progressText: {
-    fontSize: 11,
-    color: '#999',
+    fontSize: 14,
+    color: '#616161',
     marginBottom: 2,
+    fontFamily: "ABeeZee",
+    lineHeight: 22,
+
   },
   progressPercent: {
     fontSize: 12,
     fontWeight: '600',
-    color: '#333',
-    marginBottom: 6,
+    color: '#616161',
+     fontFamily: "ABeeZee",
+    marginBottom: 12,
   },
   progressBarBg: {
-    height: 6,
+    height: 25,
     backgroundColor: '#E0E0E0',
-    borderRadius: 3,
+    borderRadius: 99,
     overflow: 'hidden',
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#7B5FFF',
-    borderRadius: 3,
+    
+    borderRadius: 99,
   },
 });
 

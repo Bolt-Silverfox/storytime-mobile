@@ -51,14 +51,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#333',
+    color: '#212121',
+    fontFamily: "Qilkabold",
+    
   },
   viewAll: {
-    fontSize: 14,
-    color: '#7B5FFF',
-    fontWeight: '600',
+    fontSize: 16,
+    color: '#0731EC',
+    fontWeight: '400',
+    fontFamily: "ABeeZee",
   },
   scrollContent: {
     paddingLeft: 16,

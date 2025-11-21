@@ -41,23 +41,25 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    marginBottom: 12,
+    marginBottom: 15,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '700',
-    color: '#333',
+    color: '#212121',
+    fontFamily: "Qilkabold",
   },
   viewAll: {
     fontSize: 14,
-    color: '#7B5FFF',
-    fontWeight: '600',
+    color: '#0731EC',
+    fontWeight: '400',
+    fontFamily: "ABeeZee",
   },
   categoriesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    paddingHorizontal: 16,
     gap: 12,
+    marginLeft: 10,
   },
 });
 

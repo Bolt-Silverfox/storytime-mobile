@@ -13,14 +13,20 @@ const CategoryCard: React.FC<CategoryCardProps> =  ({ category, onPress }) => {
       style={[styles.categoryCard, { backgroundColor: category.color }]}
       onPress={onPress}
     >
-      <Text style={styles.categoryText}>{category.name}</Text>
+      <Text style={[styles.categoryText, {
+        color: category.textColor, fontFamily: 'ABeeZee', fontSize: 16, lineHeight: 22
+      }]}
+      
+      
+      >{category.name}</Text>
     </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   categoryCard: {
-    width: '47%',
+    width: 193,
+    height: 91,
     paddingVertical: 20,
     borderRadius: 12,
     alignItems: 'center',
