@@ -1,12 +1,12 @@
 import { useNavigation, useRoute } from "@react-navigation/native";
 import React, { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import KidsForm, { Kid } from "../../components/KidsForm";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import useAddKids from "../../hooks/tanstack/mutationHooks/useAddKids";
 import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
 import defaultStyles from "../../styles";
-import useAddKids from "../../hooks/tanstack/mutationHooks/useAddKids";
 
 export default function KidsInfoFormScreen() {
   const route = useRoute();
@@ -30,31 +30,6 @@ export default function KidsInfoFormScreen() {
       return next;
     });
   };
-
-  // const onProceed = async () => {
-  //   // run validation first
-  //   for (let i = 0; i < kids.length; i++) {
-  //     if (!kids[i].name.trim() || !kids[i].age) {
-  //       Alert.alert("Validation", `Please complete details for Kid ${i + 1}`);
-  //       return;
-  //     }
-  //   }
-
-  //   // SHOW overlay
-  //   setSubmitting(true);
-
-  //   try {
-  //     // simulate network request
-  //     await new Promise((res) => setTimeout(res, 2000));
-
-  //     navigation.navigate("homeScreen");
-  //   } catch (err) {
-  //     console.warn(err);
-  //     Alert.alert("Error submitting form");
-  //   } finally {
-  //     setSubmitting(false);
-  //   }
-  // };
 
   const onSkip = () => {
     navigation.navigate("homeScreen");

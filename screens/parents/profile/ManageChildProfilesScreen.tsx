@@ -60,14 +60,14 @@ const ManageChildProfilesScreen = () => {
                 {kid.name}
               </Text>
               <Text className="text-sm font-[abeezee]">
-                Age {kid.ageRnge} Years
+                Age {kid.ageRange} Years
               </Text>
             </View>
             <View className="flex flex-row gap-x-3">
               <Pressable
                 onPress={() =>
                   navigator.navigate("editChildProfile", {
-                    ageRange: kid.ageRnge,
+                    ageRange: kid.ageRange,
                     name: kid.name,
                     imageUrl: kid.avatar,
                     id: kid.id,

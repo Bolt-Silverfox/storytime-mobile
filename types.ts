@@ -29,7 +29,7 @@ type KidType = {
     id: string;
     name: string;
     avatarId: string | null;
-    ageRnge: string;
+    ageRange: string;
     parentId: string;
     createdAt: string;
     updatedAt: string;
