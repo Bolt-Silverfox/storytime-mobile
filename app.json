@@ -4,7 +4,7 @@
     "slug": "storytime-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/new-logo.png",
+    "icon": "./assets/adaptive-icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
@@ -21,7 +21,8 @@
         "backgroundColor": "#fbf8f7"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO"]
     },
     "web": {
       "favicon": "./assets/icons/new-logo.png"
