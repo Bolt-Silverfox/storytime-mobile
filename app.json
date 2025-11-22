@@ -21,8 +21,7 @@
         "backgroundColor": "#fbf8f7"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"]
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "favicon": "./assets/icons/new-logo.png"

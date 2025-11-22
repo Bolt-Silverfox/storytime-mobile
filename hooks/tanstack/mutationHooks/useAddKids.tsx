@@ -6,10 +6,17 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { User } from "../../../types";
 
+type Kid = {
+  id: string;
+  name: string;
+  ageRange: string;
+  avatarUrl?: string;
+};
+
 const useAddKids = (numOfKids: number, redirect?: () => void) => {
   const queryClient = useQueryClient();
-
   const { user, setUser } = useAuth();
+
   return useMutation({
     mutationFn: async (
       kids: {
@@ -21,13 +28,32 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
       const invalid = kids.some(
         (kid) => !kid.name.trim().length || !kid.ageRange.trim().length
       );
-
       if (invalid) {
-        return Promise.reject(
-          "Invalid child data, All fields are required for each child"
-        );
-        return;
+        throw new Error("Invalid child data, All fields are required.");
       }
+
+      const normalizedNames = kids.map((k) => k.name.trim().toLowerCase());
+      const hasInternalDuplicate = normalizedNames.some(
+        (name, i) => normalizedNames.indexOf(name) !== i
+      );
+      if (hasInternalDuplicate) {
+        throw new Error("Two kids cannot have the same name.");
+      }
+
+      const cachedResponse = queryClient.getQueryData<{
+        success: boolean;
+        message: string;
+        data: Kid[];
+      }>(["userKids"]);
+
+      const existingKids = cachedResponse?.data ?? [];
+      const duplicate = normalizedNames.some((name) =>
+        existingKids.some((kid) => kid.name.trim().toLowerCase() === name)
+      );
+      if (duplicate) {
+        throw new Error("Kid already exists, use another name.");
+      }
+
       const response = await apiFetch(`${BASE_URL}/auth/kids`, {
         method: "POST",
         body: JSON.stringify(kids),
@@ -39,7 +65,9 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
       queryClient.invalidateQueries({
         queryKey: ["userKids"],
       });
+
       if (!user) return;
+
       const updatedUser: User = {
         ...user,
         numberOfKids: user.numberOfKids + numOfKids,
