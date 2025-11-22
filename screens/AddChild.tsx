@@ -1,4 +1,4 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   Image,
@@ -8,35 +8,23 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Icon from "../../../components/Icon";
-import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
-import {
-  ParentProfileNavigatorParamList,
-  ParentProfileNavigatorProp,
-} from "../../../Navigation/ParentProfileNavigator";
-import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
-import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
-import DeleteChildModal from "../../../components/modals/DeleteChildModal";
-import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import LoadingOverlay from "../../../components/LoadingOverlay";
+import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
+import useAddKids from "../hooks/tanstack/mutationHooks/useAddKids";
+import AgeSelectionModal from "../components/modals/AgeSelectionModal";
+import LoadingOverlay from "../components/LoadingOverlay";
+import ErrorMessageDisplay from "../components/ErrorMessageDisplay";
+import Icon from "../components/Icon";
 
-type EditChildProfileRouteProp = RouteProp<
-  ParentProfileNavigatorParamList,
-  "editChildProfile"
->;
-
-const EditChildProfile = () => {
-  const { params } = useRoute<EditChildProfileRouteProp>();
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const [name, setName] = useState(params.name ?? "");
-  const [age, setAge] = useState(params.ageRange ?? "");
-  const [userName, setUsername] = useState(params?.userName ?? "");
+const AddChildScreen = () => {
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const [name, setName] = useState("");
+  const [age, setAge] = useState("");
+  const [userName, setUsername] = useState("");
   const [error, setError] = useState("");
   const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
     "age" | "delete" | null
   >(null);
-  const { isPending, mutate } = useUpdateKids();
-  const { isPending: isDeleting, mutate: deleteKid } = useDeleteKid();
+  const { isPending, mutate } = useAddKids(1, () => navigator.goBack());
 
   const handleSubmit = () => {
     if (!name.trim().length) {
@@ -44,11 +32,11 @@ const EditChildProfile = () => {
       return;
     }
     if (!age.trim().length) {
-      setError("Age is required ");
+      setError("Age is required");
       return;
     }
     setError("");
-    mutate([{ id: params.id, name, ageRange: age, avatarUrl: "" }]);
+    mutate([{ name, ageRange: age, avatarUrl: "" }]);
   };
 
   const handleCloseModals = () => {
@@ -61,12 +49,12 @@ const EditChildProfile = () => {
           <Icon name="ChevronLeft" />
         </Pressable>
         <Text className="text-center flex-1  text-[18px] font-[abeezee]">
-          Edit Child Profile
+          Add Child
         </Text>
       </View>
       <View className=" ">
         <Image
-          source={require("../../../assets/placeholder-pfp.png")}
+          source={require("../assets/placeholder-pfp.png")}
           className="size-[80px] self-center"
         />
         <Pressable className="absolute bottom-0 right-0"></Pressable>
@@ -104,19 +92,12 @@ const EditChildProfile = () => {
       </View>
       <View className="flex flex-col gap-y-6 mt-20">
         <Pressable
+          disabled={isPending}
           onPress={handleSubmit}
           className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
         >
           <Text className="text-white font-[abeezee] text-center text-base">
             Save
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setCurrentlyOpenModal("delete")}
-          className="bg-transparent border border-primary py-4 w-full max-w-96 rounded-full mx-auto"
-        >
-          <Text className="text-primary font-[abeezee] text-center text-base">
-            Delete Profile
           </Text>
         </Pressable>
       </View>
@@ -127,21 +108,9 @@ const EditChildProfile = () => {
           selectAge={setAge}
         />
       )}
-      {currentlyOpenModal === "delete" && (
-        <DeleteChildModal
-          onClose={handleCloseModals}
-          handleDelete={() => deleteKid([params.id])}
-          isOpen={currentlyOpenModal === "delete"}
-          isDeleting={isDeleting}
-          name={name}
-        />
-      )}
-      <LoadingOverlay
-        visible={isPending || isDeleting}
-        label="Saving changes..."
-      />
+      <LoadingOverlay visible={isPending} label="Adding child..." />
     </ScrollView>
   );
 };
 
-export default EditChildProfile;
+export default AddChildScreen;

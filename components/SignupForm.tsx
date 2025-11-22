@@ -16,6 +16,7 @@ import TitleModal from "./TitleModal";
 import colours from "../colours";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
+import LoadingOverlay from "./LoadingOverlay";
 
 const registerSchema = z
   .object({
@@ -109,7 +110,6 @@ const SignupForm = () => {
           open={titleModal}
           setOpen={setTitleModal}
           setValue={setTitle}
-          
         />
 
         <View style={styles.formItem}>
@@ -156,17 +156,11 @@ const SignupForm = () => {
       </View>
       <Pressable
         onPress={onRegister}
-        style={[
-          { marginTop: 44 },
-          // isLoading ? defaultStyles.buttonDisabled : defaultStyles.button,
-          defaultStyles.button,
-        ]}
+        style={[{ marginTop: 44 }, defaultStyles.button]}
       >
-        <Text style={{ ...styles.text, color: "white" }}>
-          {/* {isLoading ? "Loading..." : "Proceed"} */}
-          Proceed
-        </Text>
+        <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
       </Pressable>
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 };

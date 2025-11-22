@@ -30,7 +30,7 @@ const useUpdateKids = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids", user?.id],
+        queryKey: ["userKids"],
       });
       navigator.navigate("manageChildProfiles");
     },

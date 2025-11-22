@@ -71,7 +71,7 @@ const auth = {
     const response = await fetch(`${BASE_URL}/auth/request-password-reset`, {
       method: "POST",
       headers: {
-        "Content-Typp": "application/json",
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ email }),
     });

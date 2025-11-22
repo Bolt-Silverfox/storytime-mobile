@@ -20,7 +20,6 @@ export default function KidsInfoFormScreen() {
       avatar: "",
     }))
   );
-  const [submitting, setSubmitting] = useState(false);
   const { mutate, isPending } = useAddKids(kids.length);
 
   const updateKid = (index: number, patch: Partial<Kid>) => {
@@ -36,67 +35,62 @@ export default function KidsInfoFormScreen() {
   };
 
   return (
-    <>
-      <SafeAreaView
-        style={{ flex: 1, backgroundColor: "hsla(15,100%,99%,0.98)" }}
+    <SafeAreaView
+      style={{ flex: 1, backgroundColor: "hsla(15,100%,99%,0.98)" }}
+    >
+      <Pressable onPress={() => navigation.goBack()} className="p-5 bg-white">
+        <Image
+          className="w-5 h-5"
+          source={require("../../assets/icons/arrow-left.png")}
+        />
+      </Pressable>
+      <ScrollView
+        contentContainerStyle={{
+          padding: 16,
+          backgroundColor: "hsla(15,100%,99%,0.98)",
+        }}
       >
-        <Pressable onPress={() => navigation.goBack()} className="p-5 bg-white">
-          <Image
-            className="w-5 h-5"
-            source={require("../../assets/icons/arrow-left.png")}
-          />
-        </Pressable>
-        <ScrollView
-          contentContainerStyle={{
-            padding: 16,
-            backgroundColor: "hsla(15,100%,99%,0.98)",
+        <Text style={defaultStyles.heading}>Enter Your Kids’ Details</Text>
+        <Text
+          style={{
+            ...defaultStyles.defaultText,
+            textAlign: "center",
+            marginTop: 10,
           }}
         >
-          <Text style={defaultStyles.heading}>Enter Your Kids’ Details</Text>
-          <Text
-            style={{
-              ...defaultStyles.defaultText,
-              textAlign: "center",
-              marginTop: 10,
-            }}
-          >
-            Complete setting up your kids information
-          </Text>
+          Complete setting up your kids information
+        </Text>
 
-          {kids.map((kid, idx) => (
-            <View key={idx} className="flex-col gap-2 mt-6 px-2">
-              <KidsForm
-                index={idx}
-                kid={kid}
-                onChange={(patch) => updateKid(idx, patch)}
-                navigation={navigation}
-              />
-            </View>
-          ))}
-
-          <View className="flex-row justify-between gap-3 mt-12">
-            <Pressable
-              onPress={onSkip}
-              className="flex-1 bg-white border border-border rounded-full py-3 items-center"
-            >
-              <Text className="text-base font-semibold text-gray-800">
-                Skip
-              </Text>
-            </Pressable>
-
-            <Pressable
-              onPress={() => mutate(kids)}
-              className="flex-1 bg-primary rounded-full py-3 items-center"
-            >
-              <Text className="text-base font-semibold text-white">
-                {!isPending ? "  Finalize Profile" : "Loading..."}
-              </Text>
-            </Pressable>
+        {kids.map((kid, idx) => (
+          <View key={idx} className="flex-col gap-2 mt-6 px-2">
+            <KidsForm
+              index={idx}
+              kid={kid}
+              onChange={(patch) => updateKid(idx, patch)}
+              navigation={navigation}
+            />
           </View>
-        </ScrollView>
-      </SafeAreaView>
+        ))}
 
-      <LoadingOverlay visible={submitting} />
-    </>
+        <View className="flex-row justify-between gap-3 mt-12">
+          <Pressable
+            onPress={onSkip}
+            className="flex-1 bg-white border border-border rounded-full py-3 items-center"
+          >
+            <Text className="text-base font-semibold text-gray-800">Skip</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={() => mutate(kids)}
+            className="flex-1 bg-primary rounded-full py-3 items-center"
+          >
+            <Text className="text-base font-semibold text-white">
+              Finalize Profile
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+      <LoadingOverlay visible={isPending} />
+    </SafeAreaView>
   );
 }
