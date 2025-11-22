@@ -37,7 +37,7 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids", user?.id],
+        queryKey: ["userKids"],
       });
       if (!user) return;
       const updatedUser: User = {

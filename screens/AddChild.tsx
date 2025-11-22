@@ -97,7 +97,7 @@ const AddChildScreen = () => {
           className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
         >
           <Text className="text-white font-[abeezee] text-center text-base">
-            {isPending ? "Saving..." : "Save"}
+            Save
           </Text>
         </Pressable>
       </View>

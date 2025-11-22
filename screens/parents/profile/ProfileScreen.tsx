@@ -23,6 +23,7 @@ import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import MenuItem from "../../../components/MenuItem";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -130,47 +131,6 @@ const ProfileScreen: FC = () => {
 
 export default ProfileScreen;
 
-const MenuItem: FC<any> = ({
-  label,
-  icon,
-  textColor = "#000",
-  onPress,
-  isTablet,
-}) => (
-  <TouchableOpacity style={styles.menuItem} onPress={onPress}>
-    <View style={styles.menuItemLeft}>
-      {icon}
-      <CustomText
-        style={[
-          styles.menuItemLabel,
-          { color: textColor, fontSize: isTablet ? 18 : 16 },
-        ]}
-      >
-        {label}
-      </CustomText>
-    </View>
-    <CustomText
-      style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
-    >
-      ›
-    </CustomText>
-  </TouchableOpacity>
-);
-
-const NavItem: FC<any> = ({ icon, label, active, isTablet }) => (
-  <TouchableOpacity style={styles.navItem}>
-    {icon}
-    <CustomText
-      style={[
-        styles.navItemLabel,
-        { color: active ? "#FB923C" : "#9CA3AF", fontSize: isTablet ? 14 : 10 },
-      ]}
-    >
-      {label}
-    </CustomText>
-  </TouchableOpacity>
-);
-
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   scrollContent: { paddingBottom: 100 },
@@ -207,32 +167,4 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: "90%",
   },
-  menuItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  menuItemLeft: { flexDirection: "row", alignItems: "center" },
-  menuItemLabel: { fontSize: 16, marginLeft: 12 },
-  menuItemArrow: { fontSize: 20, color: "#FB923C" },
-  bottomNav: {
-    position: "absolute",
-    bottom: 10,
-    left: 0,
-    right: 0,
-    backgroundColor: "#FFFFFF",
-    paddingVertical: 12,
-    flexDirection: "row",
-    justifyContent: "space-around",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowOffset: { width: 0, height: -2 },
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  navItem: { alignItems: "center" },
-  navItemLabel: { fontSize: 10, marginTop: 4 },
 });

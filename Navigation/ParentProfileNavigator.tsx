@@ -39,7 +39,6 @@ type ParentProfileNavigatorParamList = {
   dailyLimit: undefined;
   activityLog: { childID: string };
   editChild: { childId: string };
-  deleteSuccess: undefined;
 };
 
 type ParentProfileNavigatorProp =

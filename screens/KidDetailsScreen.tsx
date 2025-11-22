@@ -5,8 +5,9 @@ import {
   ProtectedRoutesParamList,
 } from "../Navigation/ProtectedNavigator";
 import ErrorComponent from "../components/ErrorComponent";
+import LoadingOverlay from "../components/LoadingOverlay";
+import { childDetailsData } from "../data";
 import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
-import ComingSoon from "../components/ComingSoon";
 
 type KidsDetailsRouteProp = RouteProp<ProtectedRoutesParamList, "kidDetails">;
 
@@ -15,12 +16,6 @@ const KidDetailsScreen = () => {
   const { isPending, error, data, refetch } = useGetUserKids();
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
 
-  if (isPending)
-    return (
-      <Text className="text-center font-[quilka] text-primary text-2xl">
-        Loading...
-      </Text>
-    );
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (!data)
@@ -40,7 +35,10 @@ const KidDetailsScreen = () => {
     );
 
   return (
-    <ScrollView contentContainerClassName="flex flex-col gap-y-10 p-5">
+    <ScrollView
+      stickyHeaderIndices={[0]}
+      contentContainerStyle={{ padding: 20 }}
+    >
       <View className="flex flex-row items-center gap-x-3">
         <Image
           source={require("../assets/placeholder-pfp.png")}
@@ -52,7 +50,15 @@ const KidDetailsScreen = () => {
           className="size-[50px]"
         />
       </View>
-      <ComingSoon title="Child stories" />
+      <View className="flex flex-row flex-wrap justify-around gap-6 mt-6">
+        {childDetailsData.map((data) => (
+          <View key={data.id}>
+            <Image source={data.source} className="h-[228px] w-[187px]" />
+          </View>
+        ))}
+      </View>
+
+      <LoadingOverlay visible={isPending} />
     </ScrollView>
   );
 };

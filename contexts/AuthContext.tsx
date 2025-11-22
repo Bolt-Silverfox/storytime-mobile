@@ -67,17 +67,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     async function getUserSession() {
       try {
-        console.log("i ran to find user session");
         setIsLoading(true);
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
         const storedToken = await AsyncStorage.getItem("accessToken");
         if (!localStoredSession || !storedToken) {
           setUser(null);
-          console.log("user not found");
           return;
         }
-        console.log("user found", localStoredSession);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
@@ -106,7 +103,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           ? err.message
           : "Unexpected error, reload the app and try again";
       setErrorMessage(message);
-      console.log("message", message);
       return {
         statusCode: 500,
         success: false,
@@ -142,7 +138,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         refreshToken: string;
       }>
     >(() => auth.login(email, password));
-    console.log("login data", loginData);
     if (!loginData.success) {
       setErrorMessage(loginData.message);
       return;
@@ -165,8 +160,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorMessage(signupData.message);
       return;
     }
-    // await AsyncStorage.setItem("user", JSON.stringify(signupData.data.user));
-    // await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
     navigator.navigate("auth", {
       screen: "verifyEmail",
       params: {
@@ -183,12 +176,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorMessage(verifyEmailData.message);
       return;
     }
-    // await AsyncStorage.setItem("accessToken", token);
-    // const locallyStoredUser = await AsyncStorage.getItem("user");
     navigator.navigate("auth", {
       screen: "emailVerificationSuccessful",
     });
-    // setUser(JSON.parse(locallyStoredUser!));
   };
 
   const resendVerificationEmail = async (

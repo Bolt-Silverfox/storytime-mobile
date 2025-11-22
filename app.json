@@ -4,7 +4,7 @@
     "slug": "storytime-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/adaptive-icon.png",
+    "icon": "./assets/icons/new-logo.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
