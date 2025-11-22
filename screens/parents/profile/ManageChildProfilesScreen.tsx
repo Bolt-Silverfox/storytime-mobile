@@ -4,30 +4,27 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 import ErrorComponent from "../../../components/ErrorComponent";
 import Icon from "../../../components/Icon";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const ManageChildProfilesScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { data, isPending, error, refetch } = useGetUserKids();
 
   if (isPending)
-    return (
-      <Text className="font-[quilka] text-primary text-3xl text-center">
-        Loading...
-      </Text>
-    );
+    return <LoadingOverlay visible={isPending} label="Loading..." />;
 
   if (!data?.length)
     return (
-      <View className="flex flex-col gap-y-3 ">
+      <View className="flex flex-col gap-y-3 flex-1 justify-center items-center">
         <Text className="font-[quilka] text-primary text-3xl text-center">
           No child yet{" "}
         </Text>
         <Pressable
           className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
-          onPress={() => navigator.navigate("indexPage")}
+          onPress={() => navigator.navigate("addChild")}
         >
           <Text className="text-white font-[abeezee] text-center text-base">
-            Go back{" "}
+            Add child
           </Text>
         </Pressable>
       </View>
@@ -81,7 +78,10 @@ const ManageChildProfilesScreen = () => {
           </View>
         ))}
       </View>
-      <Pressable className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto">
+      <Pressable
+        className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+        onPress={() => navigator.navigate("addChild")}
+      >
         <Text className="text-white font-[abeezee] text-center text-base">
           Add Child
         </Text>

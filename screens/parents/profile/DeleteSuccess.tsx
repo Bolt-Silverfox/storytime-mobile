@@ -1,14 +1,14 @@
-import { View, Text, Image, Pressable } from "react-native";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-import defaultStyles from "../../../styles";
-import { ChevronLeft } from "lucide-react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ParntControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
+import { ChevronLeft } from "lucide-react-native";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../styles";
 
 export default function DeleteSuccess() {
   const inset = useSafeAreaInsets();
-  const navigator = useNavigation<ParntControlNavigatorProp>();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return (
     <View
@@ -18,7 +18,7 @@ export default function DeleteSuccess() {
       <View className="px-5">
         <Pressable
           className="w-8 py-2"
-          onPress={() => navigator.navigate("manageChild")}
+          onPress={() => navigator.navigate("manageChildProfiles")}
         >
           <ChevronLeft size={25} />
         </Pressable>
@@ -42,7 +42,7 @@ export default function DeleteSuccess() {
       <View className="justify-center w-[95%] mx-auto h-[250px] ">
         <Pressable
           style={[defaultStyles.button]}
-          onPress={() => navigator.navigate("manageChild")}
+          onPress={() => navigator.navigate("manageChildProfiles")}
         >
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}

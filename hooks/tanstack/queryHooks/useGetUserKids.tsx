@@ -16,7 +16,6 @@ const useGetUserKids = () => {
       if (!result.success) {
         throw new Error(result.message);
       }
-      console.log("get kids result", result);
       return result;
     },
     staleTime: Infinity,

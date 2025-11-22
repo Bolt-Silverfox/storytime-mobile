@@ -7,10 +7,10 @@ const CustomSplashScreen = () => {
       <View style={styles.imageContainer}>
         <Image
           alt="Storytime4Kids logo"
-          source={require("../assets/logo.png")}
+          source={require("../assets/icons/new-logo.png")}
         />
       </View>
-      <Text style={styles.text}>
+      <Text className="text-primary font-[abeezee] text-xl text-center">
         Re-defining storytelling for kids with big imagination
       </Text>
     </View>
@@ -22,7 +22,7 @@ export default CustomSplashScreen;
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: colours.primary,
+    backgroundColor: colours["bg-light"],
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,

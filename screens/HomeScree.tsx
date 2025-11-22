@@ -10,6 +10,7 @@ import {
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import Icon from "../components/Icon";
 import useAuth from "../contexts/AuthContext";
+import { categories, popularSuggestions } from "../data";
 
 const HomeScree = () => {
   const { user } = useAuth();
@@ -128,76 +129,47 @@ const HomeScree = () => {
 };
 export default HomeScree;
 
-const categories = [
-  {
-    name: "Adventure",
-    colour: "#039222",
-    bg: "#99CDA5",
-  },
-  {
-    name: "Coming of Age",
-    colour: "#925403",
-    bg: "#FBE5CD",
-  },
-  {
-    name: "Courage/Bravery",
-    colour: "#926903",
-    bg: "#FBF9CD",
-  },
-  {
-    name: "Good vs Evil",
-    colour: "#008D81",
-    bg: "#CDFBF7",
-  },
-  {
-    name: "Fantasy",
-    colour: "#5B007C",
-    bg: "#EFCDFB",
-  },
-  {
-    name: "Love & Family",
-    colour: "#039222",
-    bg: "#99CDA5",
-  },
-  {
-    name: "Transformation",
-    colour: "#925403",
-    bg: "#FBE5CD",
-  },
-  {
-    name: "Honesty",
-    colour: "#926903",
-    bg: "#FBF9CD",
-  },
-];
-
-const data: { id: string; name: string }[] = [
-  { id: "1", name: "Item 1" },
-  { id: "2", name: "Item 2" },
-  { id: "3", name: "Item 3" },
-];
-
 const HorizontalList = () => {
   return (
     <FlatList
       horizontal
-      data={data}
+      data={popularSuggestions}
       keyExtractor={(item) => item.id}
       showsHorizontalScrollIndicator={false}
-      contentContainerStyle={{ paddingHorizontal: 16 }}
+      contentContainerStyle={{ paddingHorizontal: 16, marginBottom: 20 }}
+      ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
       renderItem={({ item }) => (
         <View
+          className="w-60 h-[284px] rounded-3xl bg-white flex flex-col gap-y-2"
           style={{
-            width: 150,
-            height: 100,
-            marginRight: 12,
-            backgroundColor: "#6121AF",
-            borderRadius: 16,
-            justifyContent: "center",
-            alignItems: "center",
+            shadowColor: "#000",
+            shadowOffset: { width: 0, height: 3 },
+            shadowOpacity: 0.2,
+            shadowRadius: 6,
+            elevation: 6,
           }}
         >
-          <Text style={{ color: "#fff" }}>{item.name}</Text>
+          <Image
+            source={item.source}
+            className="h-[182px] w-full rounded-t-3xl"
+          />
+          <View className="flex flex-col gap-y-2 px-3 w-full">
+            <View
+              style={{ backgroundColor: item.bgColour }}
+              className="rounded-full w-fit  p-2"
+            >
+              <Text
+                style={{ color: item.textColour }}
+                className=" capitalize text-center"
+              >
+                {item.label}
+              </Text>
+            </View>
+            <Text className="text-base font-[abeezee]">{item.title}</Text>
+            <Text className="text-xs font-[abeezee]">
+              {item.ageRange} years
+            </Text>
+          </View>
         </View>
       )}
     />
