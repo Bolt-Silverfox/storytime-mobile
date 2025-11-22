@@ -9,6 +9,7 @@ import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStories
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesListScreen from "../screens/parents/StoriesListScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
+// import ParentsHomeScreen from "../screens/parents/ParentsHomeScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };

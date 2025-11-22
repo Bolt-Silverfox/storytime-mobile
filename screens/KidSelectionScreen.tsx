@@ -1,35 +1,31 @@
-import { Button, Image, Pressable, ScrollView, Text, View } from "react-native";
-import useAuth from "../contexts/AuthContext";
-import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
+import { useNavigation } from "@react-navigation/native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import ErrorComponent from "../components/ErrorComponent";
 import Icon from "../components/Icon";
-import { useNavigation } from "@react-navigation/native";
-import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
+import LoadingOverlay from "../components/LoadingOverlay";
+import useAuth from "../contexts/AuthContext";
+import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
   const { data, isPending, error, refetch } = useGetUserKids();
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
 
-  if (isPending)
-    return (
-      <Text className="font-[quilka] text-primary text-3xl text-center">
-        Loading...
-      </Text>
-    );
+  if (isPending) return <LoadingOverlay visible={isPending} />;
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   if (!data.length)
     return (
-      <View>
+      <View className="flex flex-col gap-y-3 flex-1 justify-center items-center">
         <Text className="font-[quilka] text-primary text-3xl text-center">
-          No kids yet...
+          No child yet{" "}
         </Text>
         <Pressable
-          onPress={() => navigation.navigate("addChild")}
           className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+          onPress={() => navigation.navigate("addChild")}
         >
           <Text className="text-white font-[abeezee] text-center text-base">
             Add child
@@ -37,8 +33,16 @@ const KidSelectionScreen = () => {
         </Pressable>
       </View>
     );
+
   return (
-    <ScrollView contentContainerClassName="flex flex-col  p-8 gap-y-16">
+    <ScrollView
+      style={{ flex: 1 }}
+      contentContainerStyle={{
+        flexGrow: 1,
+        padding: 32,
+        gap: 64,
+      }}
+    >
       <View
         aria-labelledby="User information"
         className="flex flex-row gap-x-2 items-center"
@@ -77,7 +81,7 @@ const KidSelectionScreen = () => {
                   {kid.name.split(" ").at(0)}
                 </Text>
                 <Text className="text-base font-[abeezee] text-center">
-                  {kid.ageRnge} years
+                  {kid.ageRange} years
                 </Text>
               </View>
             </Pressable>

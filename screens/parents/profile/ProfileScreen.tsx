@@ -1,97 +1,61 @@
-import React, { FC, useState, useEffect } from "react";
-import colours from "../../../colours";
+import { useNavigation } from "@react-navigation/native";
 import {
-  View,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-  ImageBackground,
-  Image,
-  Modal,
-  useWindowDimensions,
-} from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import ImageUploader from "../../../components/ImageUploader";
-import CustomText from "../../../components/CustomText";
-import {
-  Camera,
-  User,
-  Lock,
-  Phone,
   CreditCard,
   HelpCircle,
+  Lock,
   LogOut,
+  Phone,
   Trash,
-  Home,
-  ChartBar,
-  Cog,
-  Star,
+  User,
 } from "lucide-react-native";
+import React, { FC, useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import colours from "../../../colours";
+import CustomText from "../../../components/CustomText";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import useAuth from "../../../contexts/AuthContext";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
-const ProfileScreen: FC = ({ navigation }: any) => {
-  const [kidsCount, setKidsCount] = useState<number>(0);
-  const [profileImage, setProfileImage] = useState<string | null>(null);
+const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
-  const [userName, setUserName] = useState<string>("");
-  const [userEmail, setUserEmail] = useState<string>("");
+  const { user, isLoading, logout } = useAuth();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
-  
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        const savedImage = await AsyncStorage.getItem("profileImage");
-        if (savedImage) setProfileImage(savedImage);
-
-        const kids = await AsyncStorage.getItem("kidsCount");
-        if (kids) setKidsCount(Number(kids));
-
-        const savedName = await AsyncStorage.getItem("userName");
-        if (savedName) setUserName(savedName);
-
-        const savedEmail = await AsyncStorage.getItem("userEmail");
-        if (savedEmail) setUserEmail(savedEmail);
-      } catch (err) {
-        console.warn("Failed to load data", err);
-      }
-    };
-    loadData();
-  }, []);
-
-  
-  const handleImageSave = async (uri: string | null) => {
-    if (uri) {
-      setProfileImage(uri);
-      await AsyncStorage.setItem("profileImage", uri);
-    }
-    setUploaderVisible(false);
-  };
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollContent}>
         <ImageBackground
-          source={require("../../assets/VectorImg.png")}
+          source={require("../../../assets/bg-adaptive-image.png")}
           style={styles.header}
-          imageStyle={{ borderBottomLeftRadius: 24, borderBottomRightRadius: 24 }}
+          imageStyle={{
+            borderBottomLeftRadius: 24,
+            borderBottomRightRadius: 24,
+          }}
         >
           <TouchableOpacity
             style={styles.addPhotoButton}
             onPress={() => setUploaderVisible(true)}
           >
-            {profileImage ? (
-              <Image
-                source={{ uri: profileImage }}
-                style={{ width: 100, height: 100, borderRadius: 50 }}
-              />
-            ) : (
-              <>
-                <Camera size={32} color="#6B7280" />
-                <CustomText style={styles.addPhotoText}>Add Photo</CustomText>
-              </>
-            )}
+            <Image
+              source={require("../../../assets/placeholder-pfp.png")}
+              width={100}
+              height={100}
+              borderRadius={50}
+              className="h-full w-full"
+            />
           </TouchableOpacity>
         </ImageBackground>
 
@@ -104,7 +68,7 @@ const ProfileScreen: FC = ({ navigation }: any) => {
               color: colours.black,
             }}
           >
-            {userName || "Your Name"}
+            {user?.name}
           </CustomText>
           <CustomText
             style={{
@@ -114,48 +78,65 @@ const ProfileScreen: FC = ({ navigation }: any) => {
               marginTop: 4,
             }}
           >
-            {userEmail || "youremail@example.com"}
+            {user?.email}
           </CustomText>
         </View>
 
         <View style={styles.menuList}>
           <MenuItem
             icon={<User size={isTablet ? 20 : 18} />}
-            label={`Manage ${kidsCount} Child${kidsCount !== 1 ? "ren" : ""} Profiles`}
-            onPress={() => navigation.navigate("LinkChild")}
+            label="Manage Child  Profiles"
+            onPress={() => navigator.navigate("manageChildProfiles")}
             isTablet={isTablet}
           />
-          <MenuItem icon={<Lock size={isTablet ? 20 : 18} />} label="Manage Password/Pin" isTablet={isTablet} />
-          <MenuItem icon={<Phone size={isTablet ? 20 : 18} />} label="Enable Finger Print / Face ID" isTablet={isTablet} />
-          <MenuItem icon={<CreditCard size={isTablet ? 20 : 18} />} label="Subscription" isTablet={isTablet} />
-          <MenuItem icon={<HelpCircle size={isTablet ? 20 : 18} />} label="Help & Support" isTablet={isTablet} />
-          <MenuItem icon={<LogOut size={isTablet ? 20 : 18} />} label="Log Out" isTablet={isTablet} />
-          <MenuItem icon={<Trash size={isTablet ? 20 : 18} />} label="Delete Account" textColor="#DC2626" isTablet={isTablet} />
+          <MenuItem
+            icon={<Lock size={isTablet ? 20 : 18} />}
+            label="Manage Password/Pin"
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<Phone size={isTablet ? 20 : 18} />}
+            label="Enable Finger Print / Face ID"
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<CreditCard size={isTablet ? 20 : 18} />}
+            label="Subscription"
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<HelpCircle size={isTablet ? 20 : 18} />}
+            label="Help & Support"
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<LogOut size={isTablet ? 20 : 18} />}
+            label="Log Out"
+            isTablet={isTablet}
+            onPress={logout}
+          />
+          <MenuItem
+            icon={<Trash size={isTablet ? 20 : 18} />}
+            label="Delete Account"
+            textColor="#DC2626"
+            isTablet={isTablet}
+          />
         </View>
       </ScrollView>
-
-      <View style={styles.bottomNav}>
-        <NavItem icon={<Home size={isTablet ? 28 : 24} />} label="Home" isTablet={isTablet} />
-        <NavItem icon={<ChartBar size={isTablet ? 28 : 24} />} label="Reports" isTablet={isTablet} />
-        <NavItem icon={<Cog size={isTablet ? 28 : 24} />} label="Controls" isTablet={isTablet} />
-        <NavItem icon={<Star size={isTablet ? 28 : 24} />} label="Favourite" isTablet={isTablet} />
-        <NavItem icon={<User size={isTablet ? 28 : 24} />} label="Profile" active isTablet={isTablet} />
-      </View>
-
-      <Modal visible={uploaderVisible} animationType="slide">
-        <ImageUploader
-          initialImageUri={profileImage ?? undefined}
-          onSave={handleImageSave}
-          onCancel={() => setUploaderVisible(false)}
-        />
-      </Modal>
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 };
 
 export default ProfileScreen;
 
-const MenuItem: FC<any> = ({ label, icon, textColor = "#000", onPress, isTablet }) => (
+const MenuItem: FC<any> = ({
+  label,
+  icon,
+  textColor = "#000",
+  onPress,
+  isTablet,
+}) => (
   <TouchableOpacity style={styles.menuItem} onPress={onPress}>
     <View style={styles.menuItemLeft}>
       {icon}
@@ -168,7 +149,11 @@ const MenuItem: FC<any> = ({ label, icon, textColor = "#000", onPress, isTablet 
         {label}
       </CustomText>
     </View>
-    <CustomText style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}>›</CustomText>
+    <CustomText
+      style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
+    >
+      ›
+    </CustomText>
   </TouchableOpacity>
 );
 
@@ -176,13 +161,15 @@ const NavItem: FC<any> = ({ icon, label, active, isTablet }) => (
   <TouchableOpacity style={styles.navItem}>
     {icon}
     <CustomText
-      style={[styles.navItemLabel, { color: active ? "#FB923C" : "#9CA3AF", fontSize: isTablet ? 14 : 10 }]}
+      style={[
+        styles.navItemLabel,
+        { color: active ? "#FB923C" : "#9CA3AF", fontSize: isTablet ? 14 : 10 },
+      ]}
     >
       {label}
     </CustomText>
   </TouchableOpacity>
 );
-
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
@@ -191,12 +178,12 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 192,
     position: "relative",
-    overflow: "visible", 
+    overflow: "visible",
   },
   addPhotoButton: {
     position: "absolute",
     left: "50%",
-    bottom: -56, 
+    bottom: -56,
     marginLeft: -56,
     width: 112,
     height: 112,
@@ -214,12 +201,38 @@ const styles = StyleSheet.create({
   },
   addPhotoText: { fontSize: 10, color: "#6B7280", marginTop: 4 },
   nameContainer: { alignItems: "center", marginTop: 56 },
-  menuList: { marginTop: 24, paddingHorizontal: 16, alignSelf: "center", width: "90%" },
-  menuItem: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", paddingVertical: 16, borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
+  menuList: {
+    marginTop: 24,
+    paddingHorizontal: 16,
+    alignSelf: "center",
+    width: "90%",
+  },
+  menuItem: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
   menuItemLeft: { flexDirection: "row", alignItems: "center" },
   menuItemLabel: { fontSize: 16, marginLeft: 12 },
   menuItemArrow: { fontSize: 20, color: "#FB923C" },
-  bottomNav: { position: "absolute", bottom: 10, left: 0, right: 0, backgroundColor: "#FFFFFF", paddingVertical: 12, flexDirection: "row", justifyContent: "space-around", shadowColor: "#000", shadowOpacity: 0.1, shadowOffset: { width: 0, height: -2 }, shadowRadius: 4, elevation: 5 },
+  bottomNav: {
+    position: "absolute",
+    bottom: 10,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FFFFFF",
+    paddingVertical: 12,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: -2 },
+    shadowRadius: 4,
+    elevation: 5,
+  },
   navItem: { alignItems: "center" },
   navItemLabel: { fontSize: 10, marginTop: 4 },
 });
