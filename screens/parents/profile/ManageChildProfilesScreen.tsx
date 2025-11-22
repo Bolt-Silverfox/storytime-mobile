@@ -59,7 +59,7 @@ const ManageChildProfilesScreen = () => {
                 >
                   <Icon name="Pen" />
                 </Pressable>
-                <Icon name="EllipsisVertical" />
+                {/* <Icon name="EllipsisVertical" /> */}
               </View>
             </View>
           ))}
