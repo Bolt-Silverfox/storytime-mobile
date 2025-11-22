@@ -10,16 +10,19 @@ export default function DeleteSuccess() {
   const inset = useSafeAreaInsets();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
+  const onNavigate = () => {
+    navigator.reset({
+      index: 0,
+      routes: [{ name: "manageChildProfiles" }],
+    });
+  };
   return (
     <View
       style={{ paddingTop: inset.top, paddingBottom: inset.bottom }}
       className="flex-1 bg-[#FFFCFBFB]"
     >
       <View className="px-5">
-        <Pressable
-          className="w-8 py-2"
-          onPress={() => navigator.navigate("manageChildProfiles")}
-        >
+        <Pressable className="w-8 py-2" onPress={onNavigate}>
           <ChevronLeft size={25} />
         </Pressable>
       </View>
@@ -40,10 +43,7 @@ export default function DeleteSuccess() {
         </View>
       </View>
       <View className="justify-center w-[95%] mx-auto h-[250px] ">
-        <Pressable
-          style={[defaultStyles.button]}
-          onPress={() => navigator.navigate("manageChildProfiles")}
-        >
+        <Pressable style={[defaultStyles.button]} onPress={onNavigate}>
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
             className="text-center text-white"

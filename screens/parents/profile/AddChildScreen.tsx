@@ -25,7 +25,10 @@ const AddChildScreen = () => {
     "age" | "delete" | null
   >(null);
   const { isPending, mutate } = useAddKids(1, () =>
-    navigator.navigate("manageChildProfiles")
+    navigator.reset({
+      index: 0,
+      routes: [{ name: "manageChildProfiles" }],
+    })
   );
 
   const handleSubmit = () => {
@@ -99,7 +102,7 @@ const AddChildScreen = () => {
           className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
         >
           <Text className="text-white font-[abeezee] text-center text-base">
-            {isPending ? "Saving..." : "Save"}
+            Save
           </Text>
         </Pressable>
       </View>

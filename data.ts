@@ -62,4 +62,31 @@ const popularSuggestions = [
   },
 ];
 
-export { categories, popularSuggestions };
+const childDetailsData = [
+  {
+    source: require("./assets/images/books/mice-town.png"),
+    id: "1",
+  },
+  {
+    source: require("./assets/images/books/mother-hen.png"),
+    id: "2",
+  },
+  {
+    source: require("./assets/images/books/life-of-pi.png"),
+    id: "3",
+  },
+  {
+    source: require("./assets/images/books/ponyo.png"),
+    id: "4",
+  },
+  {
+    source: require("./assets/images/books/little-miss-nettie.png"),
+    id: "5",
+  },
+  {
+    source: require("./assets/images/books/animals.png"),
+    id: "6",
+  },
+];
+
+export { categories, popularSuggestions, childDetailsData };
