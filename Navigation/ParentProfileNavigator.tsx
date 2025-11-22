@@ -8,12 +8,14 @@ import BedTimeMode from "../screens/parents/controls/BedTimeMode";
 import CustomizeReadingVoice from "../screens/parents/controls/CustomizeReadingVoice";
 import DailyLimit from "../screens/parents/controls/DailyLimit";
 import HideStoriesScreen from "../screens/parents/controls/HideStoriesScreen";
-import ParentsProfileIndexScreen from "../screens/parents/profile/ParentsProfileIndexScreen";
 import RecordVoice from "../screens/parents/controls/RecordVoice";
 import RecordingDetails from "../screens/parents/controls/RecordingDetails";
 import ManageChildProfilesScreen from "../screens/parents/profile/ManageChildProfilesScreen";
 import EditChildProfile from "../screens/parents/profile/EditChildProfile";
 import DeleteChildSuccessfulScreen from "../screens/parents/profile/DeleteChildSuccessfulScreen";
+import ProfileScreen from "../screens/parents/profile/ProfileScreen";
+import AddChildScreen from "../screens/parents/profile/AddChildScreen";
+import DeleteSuccess from "../screens/parents/profile/DeleteSuccess";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -25,6 +27,7 @@ type ParentProfileNavigatorParamList = {
     userName?: string;
     id: string;
   };
+  addChild: undefined;
   deleteProfileSucessful: undefined;
 
   hideStories: undefined;
@@ -36,7 +39,6 @@ type ParentProfileNavigatorParamList = {
   dailyLimit: undefined;
   activityLog: { childID: string };
   editChild: { childId: string };
-  deleteSuccess: undefined;
 };
 
 type ParentProfileNavigatorProp =
@@ -46,16 +48,14 @@ const Stack = createNativeStackNavigator<ParentProfileNavigatorParamList>();
 const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="indexPage" component={ParentsProfileIndexScreen} />
+      <Stack.Screen name="indexPage" component={ProfileScreen} />
       <Stack.Screen
         name="manageChildProfiles"
         component={ManageChildProfilesScreen}
       />
       <Stack.Screen name="editChildProfile" component={EditChildProfile} />
-      <Stack.Screen
-        name="deleteProfileSucessful"
-        component={DeleteChildSuccessfulScreen}
-      />
+      <Stack.Screen name="addChild" component={AddChildScreen} />
+      <Stack.Screen name="deleteProfileSucessful" component={DeleteSuccess} />
 
       <Stack.Screen name="hideStories" component={HideStoriesScreen} />
       <Stack.Screen name="recordVoice" component={RecordVoice} />

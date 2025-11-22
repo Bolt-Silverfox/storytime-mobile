@@ -10,6 +10,7 @@ import colours from "../../colours";
 import CustomText from "../../components/CustomText";
 import useUpdateUserProfile from "../../hooks/tanstack/mutationHooks/useUpdateUserProfile";
 import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 export default function CompleteProfileScreen() {
   const navigation = useNavigation<ProfileNavigatorProp>();
@@ -56,8 +57,16 @@ export default function CompleteProfileScreen() {
             width: "100%",
           }}
         >
-          <CustomText style={{ fontSize: isTablet ? 18 : 14 }}>{value}</CustomText>
-          <CustomText style={{ color: "#666", marginLeft: 8, fontSize: isTablet ? 18 : 14 }}>
+          <CustomText style={{ fontSize: isTablet ? 18 : 14 }}>
+            {value}
+          </CustomText>
+          <CustomText
+            style={{
+              color: "#666",
+              marginLeft: 8,
+              fontSize: isTablet ? 18 : 14,
+            }}
+          >
             {openDropdown === dropdownKey ? "▲" : "▼"}
           </CustomText>
         </View>
@@ -86,7 +95,9 @@ export default function CompleteProfileScreen() {
                 setOpenDropdown(null);
               }}
             >
-              <CustomText style={{ fontSize: isTablet ? 16 : 13 }}>{option}</CustomText>
+              <CustomText style={{ fontSize: isTablet ? 16 : 13 }}>
+                {option}
+              </CustomText>
             </TouchableOpacity>
           ))}
         </View>
@@ -171,11 +182,12 @@ export default function CompleteProfileScreen() {
             onPress={() => mutate({ country, language })}
           >
             <CustomText className="text-white font-medium mr-2">
-              {isPending ? "Please wait..." : "proceed"}
+              proceed
             </CustomText>
           </TouchableOpacity>
         </View>
       </View>
+      <LoadingOverlay visible={isPending} label="Saving changes..." />
     </ScrollView>
   );
 }

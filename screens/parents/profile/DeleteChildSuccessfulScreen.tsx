@@ -43,7 +43,7 @@ const DeleteChildSuccessfulScreen = () => {
             textAlign: "center",
           }}
         >
-          continue
+          Continue
         </Text>
       </Pressable>
     </View>

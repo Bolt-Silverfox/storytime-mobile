@@ -3,7 +3,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ParentsTabNavigator from "./ParentsNavigator";
 import KidSelectionScreen from "../screens/KidSelectionScreen";
 import KidDetailsScreen from "../screens/KidDetailsScreen";
-import AddChildScreen from "../screens/AddChildScreen";
+import AddChildScreen from "../screens/AddChild";
 
 type ProtectedRoutesParamList = {
   selection: undefined;

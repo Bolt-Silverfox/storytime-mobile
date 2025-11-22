@@ -4,34 +4,16 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 import ErrorComponent from "../../../components/ErrorComponent";
 import Icon from "../../../components/Icon";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
 
 const ManageChildProfilesScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { data, isPending, error, refetch } = useGetUserKids();
 
   if (isPending)
-    return (
-      <Text className="font-[quilka] text-primary text-3xl text-center">
-        Loading...
-      </Text>
-    );
+    return <LoadingOverlay visible={isPending} label="Loading..." />;
 
-  if (!data?.length)
-    return (
-      <View className="flex flex-col gap-y-3 ">
-        <Text className="font-[quilka] text-primary text-3xl text-center">
-          No child yet{" "}
-        </Text>
-        <Pressable
-          className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
-          onPress={() => navigator.navigate("indexPage")}
-        >
-          <Text className="text-white font-[abeezee] text-center text-base">
-            Go back{" "}
-          </Text>
-        </Pressable>
-      </View>
-    );
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
@@ -45,47 +27,54 @@ const ManageChildProfilesScreen = () => {
           Manage Child Profiles
         </Text>
       </View>
-      <View className="flex flex-col gap-y-4 mx-4">
-        {data.map((kid) => (
-          <View
-            key={kid.id}
-            className="flex bg-white px-3 py-3.5 rounded-xl items-center flex-row gap-x-2.5"
+      {data.length ? (
+        <View className="flex flex-col gap-y-4 mx-4">
+          {data.map((kid) => (
+            <View
+              key={kid.id}
+              className="flex bg-white px-3 py-3.5 rounded-xl items-center flex-row gap-x-2.5"
+            >
+              <Image
+                source={require("../../../assets/placeholder-pfp.png")}
+                className="size-[60px]"
+              />
+              <View className="flex flex-1 flex-col gap-y-2.5">
+                <Text className="font-[quilka] text-xl capitalize">
+                  {kid.name}
+                </Text>
+                <Text className="text-sm font-[abeezee]">
+                  Age {kid.ageRange} Years
+                </Text>
+              </View>
+              <View className="flex flex-row gap-x-3">
+                <Pressable
+                  onPress={() =>
+                    navigator.navigate("editChildProfile", {
+                      ageRange: kid.ageRange,
+                      name: kid.name,
+                      imageUrl: kid.avatar,
+                      id: kid.id,
+                    })
+                  }
+                >
+                  <Icon name="Pen" />
+                </Pressable>
+                <Icon name="EllipsisVertical" />
+              </View>
+            </View>
+          ))}
+          <Pressable
+            className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+            onPress={() => navigator.navigate("addChild")}
           >
-            <Image
-              source={require("../../../assets/placeholder-pfp.png")}
-              className="size-[60px]"
-            />
-            <View className="flex flex-1 flex-col gap-y-2.5">
-              <Text className="font-[quilka] text-xl capitalize">
-                {kid.name}
-              </Text>
-              <Text className="text-sm font-[abeezee]">
-                Age {kid.ageRange} Years
-              </Text>
-            </View>
-            <View className="flex flex-row gap-x-3">
-              <Pressable
-                onPress={() =>
-                  navigator.navigate("editChildProfile", {
-                    ageRange: kid.ageRange,
-                    name: kid.name,
-                    imageUrl: kid.avatar,
-                    id: kid.id,
-                  })
-                }
-              >
-                <Icon name="Pen" />
-              </Pressable>
-              <Icon name="EllipsisVertical" />
-            </View>
-          </View>
-        ))}
-      </View>
-      <Pressable className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto">
-        <Text className="text-white font-[abeezee] text-center text-base">
-          Add Child
-        </Text>
-      </Pressable>
+            <Text className="text-white font-[abeezee] text-center text-base">
+              Add Child
+            </Text>
+          </Pressable>
+        </View>
+      ) : (
+        <ChildrenEmptyState navigate={() => navigator.navigate("addChild")} />
+      )}
     </ScrollView>
   );
 };

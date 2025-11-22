@@ -8,14 +8,15 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import useAuth from "../../../contexts/AuthContext";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const ParentHomeScreen = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   return (
     <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
       <View
         aria-labelledby="user avatar container"
-        className="flex flex-row items-center gap-2"
+        className="flex flex-row items-center gap-2 sticky top-0 "
       >
         <View>
           <Image source={require("../../../assets/placeholder-pfp.png")} />
@@ -95,6 +96,7 @@ const ParentHomeScreen = () => {
           </Text>
         </Pressable>
       </View>
+      <LoadingOverlay visible={isLoading} />
     </ScrollView>
   );
 };

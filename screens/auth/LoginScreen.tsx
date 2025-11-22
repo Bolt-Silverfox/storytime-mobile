@@ -14,6 +14,7 @@ import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -66,13 +67,12 @@ const LoginScreen = () => {
         </View>
         <Pressable
           onPress={() => login(email, password)}
+          disabled={isLoading}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
         >
-          <Text style={{ ...styles.text, color: "white" }}>
-            {isLoading ? "Logging in..." : "Log in"}
-          </Text>
+          <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
         </Pressable>
         <Text style={{ ...styles.text, marginTop: 16 }}>
           Don't have an account?{" "}
@@ -84,6 +84,7 @@ const LoginScreen = () => {
           </Text>
         </Text>
       </View>
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 };

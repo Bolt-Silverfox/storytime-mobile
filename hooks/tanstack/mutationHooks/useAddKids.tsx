@@ -1,13 +1,14 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
-import { Alert } from "react-native";
 import { User } from "../../../types";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const useAddKids = (numOfKids: number) => {
+const useAddKids = (numOfKids: number, redirect?: () => void) => {
   const queryClient = useQueryClient();
+
   const { user, setUser } = useAuth();
   return useMutation({
     mutationFn: async (
@@ -17,17 +18,26 @@ const useAddKids = (numOfKids: number) => {
         ageRange: string;
       }[]
     ) => {
+      const invalid = kids.some(
+        (kid) => !kid.name.trim().length || !kid.ageRange.trim().length
+      );
+
+      if (invalid) {
+        return Promise.reject(
+          "Invalid child data, All fields are required for each child"
+        );
+        return;
+      }
       const response = await apiFetch(`${BASE_URL}/auth/kids`, {
         method: "POST",
         body: JSON.stringify(kids),
       });
       const results = await response.json();
-      console.log("add kids result", results);
       return results;
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids", user?.id],
+        queryKey: ["userKids"],
       });
       if (!user) return;
       const updatedUser: User = {
@@ -36,9 +46,14 @@ const useAddKids = (numOfKids: number) => {
       };
       setUser(updatedUser);
       await AsyncStorage.setItem("user", JSON.stringify(updatedUser));
+
+      if (redirect) {
+        redirect();
+      }
     },
-    onError: (err) => {
-      Alert.alert(err.message);
+    onError: (err: Error | string) => {
+      const message = err instanceof Error ? err.message : err;
+      Alert.alert(message);
     },
   });
 };
