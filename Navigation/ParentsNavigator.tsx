@@ -6,15 +6,18 @@ import Icon from "../components/Icon";
 import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
 import ParentControlNavigator from "./ParentControlsNavigator";
 import ParentHomeNavigator from "./ParentHomeNavigator";
-import ParentProfileNavigator from "./ParentProfileNavigator";
+import ParentProfileNavigator, {
+  ParentProfileNavigatorParamList,
+} from "./ParentProfileNavigator";
 import ParentReportNavigator from "./ParentsReportNavigator";
+import { NavigatorScreenParams } from "@react-navigation/native";
 
 type ParentsNavigatorParamList = {
   home: undefined;
   reports: undefined;
   controls: undefined;
   favourite: undefined;
-  profile: undefined;
+  profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
 };
 
 type ParentsNavigatorProp = BottomTabNavigationProp<ParentsNavigatorParamList>;

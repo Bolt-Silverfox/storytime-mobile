@@ -9,11 +9,15 @@ import {
 import Icon from "../../../components/Icon";
 import useAuth from "../../../contexts/AuthContext";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import CustomButton from "../../../components/uI/CustomButton";
 
 const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
   return (
-    <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
+    <ScrollView
+      className="flex-1"
+      contentContainerClassName="flex min-h-full px-5 pt-4 pb-10 bg-white"
+    >
       <View
         aria-labelledby="user avatar container"
         className="flex flex-row items-center gap-2 sticky top-0 "
@@ -32,7 +36,7 @@ const ParentHomeScreen = () => {
         <Icon name="Bell" />
       </View>
 
-      <View className="flex flex-col gap-y-2 my-7">
+      <View className="flex flex-col gap-y-2 my-7 max-w-screen-md mx-auto w-full">
         <Text className="text-xl font-[quilka]">Daily Challenge</Text>
         <HorizontalList />
       </View>
@@ -49,7 +53,10 @@ const ParentHomeScreen = () => {
         <HorizontalList />
       </View>
 
-      <View aria-labelledby="Categories" className="flex flex-col gap-y-2 mt-7">
+      <View
+        aria-labelledby="Categories"
+        className="flex flex-col max-w-screen-md flex-1 mx-auto w-full gap-y-2 mt-7"
+      >
         <View className="flex flex-row justify-between items-center">
           <Text className="text-xl font-[quilka]">Categories</Text>
           <Text className="font-[abeezee] text-base text-link">View all</Text>
@@ -66,7 +73,7 @@ const ParentHomeScreen = () => {
                 borderBottomEndRadius: 20,
               }}
               key={category.name}
-              className={`h-[91px] w-[160px]  flex justify-center items-center rounded-3xl`}
+              className={`h-[91px] w-[160px] sm:h-[120px] sm:w-[200px]  flex justify-center items-center rounded-3xl`}
             >
               <Text
                 style={{ color: category.colour }}
@@ -90,11 +97,7 @@ const ParentHomeScreen = () => {
           You can only access one story per day. Unlock our full library for
           unlimted stories
         </Text>
-        <Pressable className="bg-primary w-full py-4 rounded-full mt-4">
-          <Text className="text-center text-white font-[abeezee]">
-            Subscribe to Storytime Premium
-          </Text>
-        </Pressable>
+        <CustomButton text="Subscribe to Storytime Premium" />
       </View>
       <LoadingOverlay visible={isLoading} />
     </ScrollView>
@@ -162,14 +165,9 @@ const HorizontalList = () => {
       renderItem={({ item }) => (
         <View
           style={{
-            width: 150,
-            height: 100,
-            marginRight: 12,
             backgroundColor: "#6121AF",
-            borderRadius: 16,
-            justifyContent: "center",
-            alignItems: "center",
           }}
+          className="w-[150px] h-[150px] sm:h-[250px] sm:w-[250px] mr-3 rounded-xl justify-center items-center"
         >
           <Text style={{ color: "#fff" }}>{item.name}</Text>
         </View>

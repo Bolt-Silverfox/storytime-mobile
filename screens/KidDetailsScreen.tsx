@@ -16,6 +16,7 @@ const KidDetailsScreen = () => {
   const { isPending, error, data, refetch } = useGetUserKids();
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
 
+  if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (!data)
@@ -35,10 +36,7 @@ const KidDetailsScreen = () => {
     );
 
   return (
-    <ScrollView
-      stickyHeaderIndices={[0]}
-      contentContainerStyle={{ padding: 20 }}
-    >
+    <ScrollView contentContainerClassName="p-5 max-w-screen-md mx-auto w-full">
       <View className="flex flex-row items-center gap-x-3">
         <Image
           source={require("../assets/placeholder-pfp.png")}

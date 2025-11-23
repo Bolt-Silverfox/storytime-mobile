@@ -11,12 +11,16 @@ import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import Icon from "../components/Icon";
 import useAuth from "../contexts/AuthContext";
 import { categories, popularSuggestions } from "../data";
+import CustomButton from "../components/uI/CustomButton";
 
 const HomeScree = () => {
   const { user } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
   return (
-    <ScrollView contentContainerClassName="flex px-5 pt-4 pb-10 bg-white">
+    <ScrollView
+      className="flex-1"
+      contentContainerClassName="px-5 pt-4 pb-10 bg-white min-h-full"
+    >
       <View
         aria-labelledby="user avatar container"
         className="flex flex-row items-center gap-2"
@@ -35,7 +39,7 @@ const HomeScree = () => {
         <Icon name="Bell" />
       </View>
 
-      <View className="mt-5 mb-8 bg-[#6121AF] rounded-2xl flex justify-between items-center flex-row gap-x-2 pl-2.5">
+      <View className="mt-5 mb-8 bg-[#6121AF] max-w-screen-md w-full mx-auto rounded-2xl flex justify-between items-center flex-row gap-x-2 pl-2.5">
         <Pressable
           onPress={() =>
             navigator.navigate("profile", {
@@ -63,7 +67,7 @@ const HomeScree = () => {
 
       <View
         aria-labelledby="Most popular suggestinos"
-        className="flex flex-col gap-y-2"
+        className="flex flex-col gap-y-2 max-w-screen-md w-full mx-auto"
       >
         <View className="flex flex-row justify-between items-center">
           <Text className="text-xl font-[quilka]">
@@ -76,13 +80,13 @@ const HomeScree = () => {
 
       <View
         aria-labelledby="Categories"
-        className="flex flex-col gap-y-2 mt-10"
+        className="flex flex-col gap-y-2 mt-10 flex-1 max-w-screen-md w-full mx-auto"
       >
         <View className="flex flex-row justify-between items-center">
           <Text className="text-xl font-[quilka]">Categories</Text>
           <Text className="font-[abeezee] text-base text-link">View all</Text>
         </View>
-        <View className="flex flex-row flex-wrap justify-around gap-4">
+        <View className="flex flex-row flex-wrap  justify-around gap-4">
           {categories.map((category) => (
             <View
               style={{
@@ -118,11 +122,7 @@ const HomeScree = () => {
           You can only access one story per day. Unlock our full library for
           unlimted stories
         </Text>
-        <Pressable className="bg-primary w-full py-4 rounded-full mt-4">
-          <Text className="text-center text-white font-[abeezee]">
-            Subscribe to Storytime Premium
-          </Text>
-        </Pressable>
+        <CustomButton text="Subscribe to Storytime Premium" />
       </View>
     </ScrollView>
   );

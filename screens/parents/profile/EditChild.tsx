@@ -9,6 +9,7 @@ import TitleModal from "../../../components/TitleModal";
 import { ParntControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
+import PageTitle from "../../../components/PageTitle";
 
 export default function EditChild() {
   const [childName, setChildName] = useState("");
@@ -18,26 +19,12 @@ export default function EditChild() {
 
   const navigator = useNavigation<ParntControlNavigatorProp>();
   const inset = useSafeAreaInsets();
-  console.log(childName);
   return (
     <View
       className="flex-1 bg-[#FFFCFBFB] "
       style={{ paddingTop: inset.top, paddingBottom: inset.bottom }}
     >
-      <View className="justify-center items-center px-3">
-        <Pressable
-          className=" self-start py-2"
-          onPress={() => navigator.goBack()}
-        >
-          <ChevronLeft />
-        </Pressable>
-        <Text
-          className="text-center justify-self-start  absolute mx-auto "
-          style={[defaultStyles.defaultText]}
-        >
-          Manage Child Profile
-        </Text>
-      </View>
+      <PageTitle title="Edit Child" goBack={() => navigator.goBack()} />
 
       <View className=" w-[95%] mx-auto gap-4">
         <Pressable
