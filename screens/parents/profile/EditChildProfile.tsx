@@ -13,7 +13,7 @@ import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
 import {
   ParentProfileNavigatorParamList,
   ParentProfileNavigatorProp,
-} from "../../../Navigation/ParentProfileNavigator";
+} from "../../../Navigation/parents/ParentProfileNavigator";
 import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
 import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
 import DeleteChildModal from "../../../components/modals/DeleteChildModal";

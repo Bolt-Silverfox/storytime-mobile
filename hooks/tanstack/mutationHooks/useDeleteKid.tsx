@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/parents/ParentProfileNavigator";
 
 const useDeleteKid = () => {
   const queryClient = useQueryClient();

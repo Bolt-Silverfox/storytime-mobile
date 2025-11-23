@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import ParentsTabNavigator from "./ParentsNavigator";
+import ParentsTabNavigator from "./parents/ParentsNavigator";
 import KidSelectionScreen from "../screens/KidSelectionScreen";
 import KidDetailsScreen from "../screens/KidDetailsScreen";
 import AddChildScreen from "../screens/AddChild";

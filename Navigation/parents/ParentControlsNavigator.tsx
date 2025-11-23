@@ -2,7 +2,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import LinkChild from "../screens/parents/profile/LinkChild";
+import LinkChild from "../../screens/parents/profile/LinkChild";
 
 type ParentControlNavigatorParamList = {
   manageChild: undefined;

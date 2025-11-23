@@ -1,22 +1,24 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import colours from "../colours";
-import Icon from "../components/Icon";
-import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import colours from "../../colours";
+import Icon from "../../components/Icon";
 import ParentControlNavigator from "./ParentControlsNavigator";
+import ParentFavouritesNavigator, {
+  ParentFavouritesNavigatorParamList,
+} from "./ParentFavouritesNavigator";
 import ParentHomeNavigator from "./ParentHomeNavigator";
 import ParentProfileNavigator, {
   ParentProfileNavigatorParamList,
 } from "./ParentProfileNavigator";
 import ParentReportNavigator from "./ParentsReportNavigator";
-import { NavigatorScreenParams } from "@react-navigation/native";
 
 type ParentsNavigatorParamList = {
   home: undefined;
   reports: undefined;
   controls: undefined;
-  favourite: undefined;
+  favourite: NavigatorScreenParams<ParentFavouritesNavigatorParamList>;
   profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
 };
 
@@ -82,7 +84,7 @@ const ParentsTabNavigator = () => {
       />
       <Tab.Screen
         name="favourite"
-        component={FavouriteScreen}
+        component={ParentFavouritesNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon

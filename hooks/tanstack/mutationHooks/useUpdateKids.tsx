@@ -4,7 +4,7 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/parents/ParentProfileNavigator";
 
 const useUpdateKids = () => {
   const queryClient = useQueryClient();

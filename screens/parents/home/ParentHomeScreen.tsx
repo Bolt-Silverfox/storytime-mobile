@@ -48,7 +48,9 @@ const ParentHomeScreen = () => {
           <Text className="text-xl font-[quilka]">
             Most popular suggestions
           </Text>
-          <Text className="font-[abeezee] text-base text-link">View all</Text>
+          <Pressable>
+            <Text className="font-[abeezee] text-base text-link">View all</Text>
+          </Pressable>
         </View>
         <HorizontalList />
       </View>
@@ -59,7 +61,9 @@ const ParentHomeScreen = () => {
       >
         <View className="flex flex-row justify-between items-center">
           <Text className="text-xl font-[quilka]">Categories</Text>
-          <Text className="font-[abeezee] text-base text-link">View all</Text>
+          <Pressable>
+            <Text className="font-[abeezee] text-base text-link">View all</Text>
+          </Pressable>
         </View>
         <View className="flex flex-row flex-wrap justify-around gap-4">
           {categories.map((category) => (

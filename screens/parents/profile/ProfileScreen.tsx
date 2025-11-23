@@ -22,7 +22,7 @@ import colours from "../../../colours";
 import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useAuth from "../../../contexts/AuthContext";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/parents/ParentProfileNavigator";
 import MenuItem from "../../../components/MenuItem";
 
 const ProfileScreen: FC = () => {

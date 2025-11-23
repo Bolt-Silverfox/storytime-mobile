@@ -3,7 +3,7 @@ import { ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/parents/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
 
 export default function DeleteSuccess() {

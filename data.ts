@@ -1,3 +1,5 @@
+import { ImageSourcePropType } from "react-native";
+
 const categories = [
   {
     name: "Adventure",
@@ -207,10 +209,57 @@ const termsAndConditionsData: {
   },
 ];
 
+const favouritesData: {
+  imgSource: ImageSourcePropType | undefined;
+  title: string;
+  description: string;
+  ageRange: string;
+  author: string;
+  id: string;
+}[] = [
+  {
+    title: "The smart mice",
+    description:
+      "A gentle snail makes his way home, one quiet step at a time, under a stairlit...",
+    author: "Samuil Liu",
+    ageRange: "1 - 4",
+    imgSource: require("./assets/images/favourite-stories/judy-hopps.png"),
+    id: "1",
+  },
+  {
+    title: "The smart mice",
+    description:
+      "A gentle snail makes his way home, one quiet step at a time, under a stairlit...",
+    author: "Samuil Liu",
+    ageRange: "1 - 4",
+    imgSource: require("./assets/images/favourite-stories/smart-mice.png"),
+    id: "2",
+  },
+  {
+    title: "The smart mice",
+    description:
+      "A gentle snail makes his way home, one quiet step at a time, under a stairlit...",
+    author: "Samuil Liu",
+    ageRange: "1 - 4",
+    imgSource: require("./assets/images/favourite-stories/kiki.png"),
+    id: "3",
+  },
+  {
+    title: "The smart mice",
+    description:
+      "A gentle snail makes his way home, one quiet step at a time, under a stairlit...",
+    author: "Samuil Liu",
+    ageRange: "1 - 4",
+    imgSource: require("./assets/images/favourite-stories/kiki.png"),
+    id: "4",
+  },
+];
+
 export {
   categories,
   popularSuggestions,
   childDetailsData,
   privacyPolicyData,
   termsAndConditionsData,
+  favouritesData,
 };

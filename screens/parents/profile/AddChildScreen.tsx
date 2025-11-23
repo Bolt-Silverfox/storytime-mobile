@@ -12,7 +12,7 @@ import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import Icon from "../../../components/Icon";
 import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
 import useAddKids from "../../../hooks/tanstack/mutationHooks/useAddKids";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/parents/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const AddChildScreen = () => {

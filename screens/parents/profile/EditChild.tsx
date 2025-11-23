@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react-native";
 import colours from "../../../colours";
 import defaultStyles from "../../../styles";
 import TitleModal from "../../../components/TitleModal";
-import { ParntControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
+import { ParntControlNavigatorProp } from "../../../Navigation/parents/ParentControlsNavigator";
 import MaskedView from "@react-native-masked-view/masked-view";
 import { LinearGradient } from "expo-linear-gradient";
 import PageTitle from "../../../components/PageTitle";

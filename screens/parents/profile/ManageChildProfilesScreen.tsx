@@ -7,7 +7,7 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/uI/CustomButton";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import { ParentsNavigatorProp } from "../../../Navigation/parents/ParentsNavigator";
 
 const ManageChildProfilesScreen = () => {
   const parentNavigator = useNavigation<ParentsNavigatorProp>();
