@@ -10,12 +10,11 @@ import DailyLimit from "../screens/parents/controls/DailyLimit";
 import HideStoriesScreen from "../screens/parents/controls/HideStoriesScreen";
 import RecordVoice from "../screens/parents/controls/RecordVoice";
 import RecordingDetails from "../screens/parents/controls/RecordingDetails";
-import ManageChildProfilesScreen from "../screens/parents/profile/ManageChildProfilesScreen";
-import EditChildProfile from "../screens/parents/profile/EditChildProfile";
-import DeleteChildSuccessfulScreen from "../screens/parents/profile/DeleteChildSuccessfulScreen";
-import ProfileScreen from "../screens/parents/profile/ProfileScreen";
 import AddChildScreen from "../screens/parents/profile/AddChildScreen";
 import DeleteSuccess from "../screens/parents/profile/DeleteSuccess";
+import EditChildProfile from "../screens/parents/profile/EditChildProfile";
+import ManageChildProfilesScreen from "../screens/parents/profile/ManageChildProfilesScreen";
+import ProfileScreen from "../screens/parents/profile/ProfileScreen";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -72,5 +71,5 @@ const ParentProfileNavigator = () => {
   );
 };
 
-export type { ParentProfileNavigatorProp, ParentProfileNavigatorParamList };
+export type { ParentProfileNavigatorParamList, ParentProfileNavigatorProp };
 export default ParentProfileNavigator;

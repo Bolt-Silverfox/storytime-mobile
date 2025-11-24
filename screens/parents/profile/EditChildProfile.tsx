@@ -8,17 +8,17 @@ import {
   TextInput,
   View,
 } from "react-native";
-import Icon from "../../../components/Icon";
+import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
+import DeleteChildModal from "../../../components/modals/DeleteChildModal";
+import PageTitle from "../../../components/PageTitle";
+import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
+import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
 import {
   ParentProfileNavigatorParamList,
   ParentProfileNavigatorProp,
 } from "../../../Navigation/ParentProfileNavigator";
-import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
-import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
-import DeleteChildModal from "../../../components/modals/DeleteChildModal";
-import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import LoadingOverlay from "../../../components/LoadingOverlay";
 
 type EditChildProfileRouteProp = RouteProp<
   ParentProfileNavigatorParamList,
@@ -55,15 +55,8 @@ const EditChildProfile = () => {
     setCurrentlyOpenModal(null);
   };
   return (
-    <ScrollView contentContainerClassName="flex flex-col gap-y-12 px-2">
-      <View className="flex flex-row bg-white py-5">
-        <Pressable onPress={() => navigator.goBack()}>
-          <Icon name="ChevronLeft" />
-        </Pressable>
-        <Text className="text-center flex-1  text-[18px] font-[abeezee]">
-          Edit Child Profile
-        </Text>
-      </View>
+    <ScrollView contentContainerClassName="flex flex-col gap-y-12">
+      <PageTitle title="Edit Child Profile" goBack={() => navigator.goBack()} />
       <View className=" ">
         <Image
           source={require("../../../assets/placeholder-pfp.png")}
