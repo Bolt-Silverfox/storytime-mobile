@@ -1,24 +1,34 @@
 import { useNavigation } from "@react-navigation/native";
-import { useLayoutEffect } from "react";
-import { StyleSheet, View, Text } from "react-native";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { FlatList, Text, View } from "react-native";
+import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
+import PageTitle from "../../components/PageTitle";
+import { termsAndConditionsData } from "../../data";
 
 const TermsOfServiceScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
-  useLayoutEffect(() => {
-    navigator.setOptions({
-      title: "Terms of service",
-    });
-  });
+  const navigator = useNavigation<AuthNavigatorProp>();
   return (
-    <View style={styles.screen}>
-      <Text>TermsOfServiceScreen</Text>
+    <View className="flex flex-col">
+      <PageTitle
+        title="Terms and Conditions"
+        goBack={() => navigator.goBack()}
+      />
+      <FlatList
+        data={termsAndConditionsData}
+        showsVerticalScrollIndicator={false}
+        keyExtractor={(data) => data.index}
+        contentContainerClassName="px-4 flex flex-col gap-y-8 pt-14 mx-auto max-w-[600px]"
+        ListFooterComponent={<View style={{ height: 60 }} />}
+        renderItem={({ item }) => (
+          <View className="flex flex-col gap-y-3 ">
+            <Text className="font-[quilka] text-[18px]">
+              {item.index}. {item.heading}
+            </Text>
+            <Text className="text-base font-[abeezee]">{item.paragraph}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 };
 
 export default TermsOfServiceScreen;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});

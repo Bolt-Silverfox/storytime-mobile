@@ -40,7 +40,6 @@ const apiFetch = async (url: string, options: any = {}) => {
 
 const refreshTokens = async () => {
   const token = await AsyncStorage.getItem("refreshToken");
-  console.log("reresh token", token);
   try {
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
@@ -55,9 +54,7 @@ const refreshTokens = async () => {
     if (!response.ok) return false;
 
     const data = await response.json();
-    console.log("refresh new token data", data);
     if (!data.success) return false;
-    console.log("refresh toen data", data);
     await AsyncStorage.setItem("accessToken", data.data.jwt);
     return true;
   } catch (err) {
@@ -67,5 +64,3 @@ const refreshTokens = async () => {
 
 export { setLogoutCallBack };
 export default apiFetch;
-
-
