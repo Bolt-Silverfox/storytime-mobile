@@ -76,7 +76,6 @@ const AuthNavigator = () => {
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
       <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
       <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />
-      {/* <Stack.Screen name="profileScreen" component={ProfileScreen} /> */}
       <Stack.Screen
         name="emailVerificationSuccessful"
         component={EmailResetSuccessfulScreen}
