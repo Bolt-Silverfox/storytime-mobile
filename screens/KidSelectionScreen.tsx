@@ -21,15 +21,11 @@ const KidSelectionScreen = () => {
   return (
     <ScrollView
       style={{ flex: 1 }}
-      contentContainerStyle={{
-        flexGrow: 1,
-        padding: 32,
-        gap: 64,
-      }}
+      contentContainerClassName="gap-16 p-8 min-h-full max-w-screen-md mx-auto w-full"
     >
       <View
         aria-labelledby="User information"
-        className="flex flex-row gap-x-2 items-center"
+        className="flex flex-row gap-x-2 items-center "
       >
         <Image
           source={require("../assets/placeholder-pfp.png")}
