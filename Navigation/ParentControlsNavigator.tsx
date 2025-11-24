@@ -3,12 +3,8 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import LinkChild from "../screens/parents/profile/LinkChild";
-import ManageChild from "../screens/parents/profile/ManageChild";
-import EditChild from "../screens/parents/profile/EditChild";
-import DeleteSuccess from "../screens/parents/profile/DeleteSuccess";
 
 type ParentControlNavigatorParamList = {
-  manageChild: undefined;
   linkChild: { childId: string };
   editChild: undefined;
   deleteSuccess: undefined;
@@ -21,9 +17,7 @@ const Stack = createNativeStackNavigator<ParentControlNavigatorParamList>();
 const ParentControlNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="manageChild" component={ManageChild} />
       <Stack.Screen name="linkChild" component={LinkChild} />
-      
     </Stack.Navigator>
   );
 };
