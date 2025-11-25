@@ -20,7 +20,7 @@ const Stack = createNativeStackNavigator<ProtectedRoutesParamList>();
 const ProtectedRoutesNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name="selection" component={KidSelectionScreen} /> */}
+      <Stack.Screen name="selection" component={KidSelectionScreen} />
       <Stack.Screen name="parents" component={ParentsTabNavigator} />
       <Stack.Screen name="kidDetails" component={KidDetailsScreen} />
       <Stack.Screen name="addChild" component={AddChildScreen} />
