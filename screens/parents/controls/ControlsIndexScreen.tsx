@@ -3,7 +3,7 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import Icon from "../../../components/Icon";
 import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import colours from "../../../colours";
-import KidSelectorModal from "./SelectKidsModal";
+import KidSelectorModal from "../../../components/SelectKidsModal";
 import { useState } from "react";
 import { Alert } from "react-native";
 

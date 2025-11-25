@@ -1,9 +1,9 @@
 import React from "react";
 import { Alert, Image, Modal, Pressable, Text, View } from "react-native";
-import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import CustomButton from "../../../components/UI/CustomButton";
-import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
+import ErrorMessageDisplay from "./ErrorMessageDisplay";
+import LoadingOverlay from "./LoadingOverlay";
+import CustomButton from "./UI/CustomButton";
+import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
 
 type Props = {
   isOpen: boolean;
