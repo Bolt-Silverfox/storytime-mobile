@@ -3,9 +3,40 @@ import { Pressable, ScrollView, Text, View } from "react-native";
 import Icon from "../../../components/Icon";
 import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import colours from "../../../colours";
+import KidSelectorModal from "./SelectKidsModal";
+import { useState } from "react";
+import { Alert } from "react-native";
+
+type ValidRoutes =
+  | "contentFilter"
+  | "excludeStoryTags"
+  | "recordVoice"
+  | "customizeReadingVoices"
+  | "setBedtime"
+  | "setDailyLimit"
+  | "viewActivityLog";
 
 const ControlsIndexScreen = () => {
   const navigator = useNavigation<ParentControlNavigatorProp>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedKidId, setSelectedKidId] = useState("");
+  const [selectedRoute, setSelectedRoute] = useState<ValidRoutes | undefined>(
+    undefined
+  );
+
+  const openModal = (route: ValidRoutes) => {
+    setIsModalOpen(true);
+    setSelectedRoute(route);
+  };
+
+  const navigateToRoute = () => {
+    if (!selectedRoute) {
+      Alert.alert("Select a valid route");
+      return;
+    }
+    navigator.navigate(selectedRoute, { childId: selectedKidId });
+  };
+
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -19,7 +50,7 @@ const ControlsIndexScreen = () => {
         </Text>
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("contentFilter")}
+          onPress={() => openModal("contentFilter")}
         >
           <Icon name="Funnel" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -30,7 +61,7 @@ const ControlsIndexScreen = () => {
 
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("contentFilter")}
+          onPress={() => openModal("excludeStoryTags")}
         >
           <Icon name="Funnel" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -41,7 +72,7 @@ const ControlsIndexScreen = () => {
 
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("recordVoice")}
+          onPress={() => openModal("recordVoice")}
         >
           <Icon name="Mic" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -52,7 +83,7 @@ const ControlsIndexScreen = () => {
 
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("customizeReadingVoices")}
+          onPress={() => openModal("customizeReadingVoices")}
         >
           <Icon name="Volume2" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -66,7 +97,7 @@ const ControlsIndexScreen = () => {
         <Text className="text-[18px] font-[abeezee] my-3">READING & USAGE</Text>
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("setBedtime")}
+          onPress={() => openModal("setBedtime")}
         >
           <Icon name="Moon" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -77,7 +108,7 @@ const ControlsIndexScreen = () => {
 
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("setDailyLimit")}
+          onPress={() => openModal("setDailyLimit")}
         >
           <Icon name="Hourglass" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -88,7 +119,7 @@ const ControlsIndexScreen = () => {
 
         <Pressable
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => navigator.navigate("viewActivityLog")}
+          onPress={() => openModal("viewActivityLog")}
         >
           <Icon name="Clock" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
@@ -97,6 +128,15 @@ const ControlsIndexScreen = () => {
           <Icon name="ChevronRight" color="black" />
         </Pressable>
       </View>
+      {isModalOpen && (
+        <KidSelectorModal
+          selectedKidId={selectedKidId}
+          setSelectedKId={setSelectedKidId}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          handleNavigate={navigateToRoute}
+        />
+      )}
     </ScrollView>
   );
 };
