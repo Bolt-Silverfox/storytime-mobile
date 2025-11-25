@@ -7,7 +7,7 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 
 import { privacy, terms } from "../../../constants/constants";
 
-export default function TermsAndConditions() {
+export default function PrivacyAndPolicy() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return (

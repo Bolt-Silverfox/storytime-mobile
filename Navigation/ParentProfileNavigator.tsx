@@ -27,6 +27,7 @@ import Feedback from "../screens/parents/profile/FeedBack";
 import FeedBackMessageSuccess from "../screens/parents/profile/FeedBackMessageSuccessful";
 import ContactUs from "../screens/parents/profile/ContactUs";
 import TermsAndConditions from "../screens/parents/profile/TermsAndConditions";
+import PrivacyAndPolicy from "../screens/parents/profile/privacy";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -54,6 +55,7 @@ type ParentProfileNavigatorParamList = {
   feedBackMessageSuccessful: undefined;
   contactUs: undefined;
   termsAndConditions: undefined;
+  privacyAndPolicy: undefined;
 
   hideStories: undefined;
   recordVoice: undefined;
@@ -106,6 +108,7 @@ const ParentProfileNavigator = () => {
       />
       <Stack.Screen name="contactUs" component={ContactUs} />
       <Stack.Screen name="termsAndConditions" component={TermsAndConditions} />
+      <Stack.Screen name="privacyAndPolicy" component={PrivacyAndPolicy} />
 
       <Stack.Screen name="hideStories" component={HideStoriesScreen} />
       <Stack.Screen name="recordVoice" component={RecordVoice} />
