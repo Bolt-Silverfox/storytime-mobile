@@ -75,6 +75,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(null);
           return;
         }
+        console.log("acces token", storedToken);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
