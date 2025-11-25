@@ -48,7 +48,10 @@ const ProfileScreen: FC = () => {
         >
           <TouchableOpacity
             style={styles.addPhotoButton}
-            onPress={() => setUploaderVisible(true)}
+            onPress={() => {
+              setUploaderVisible(true);
+              navigator.navigate("editParentImage");
+            }}
           >
             <Image
               source={require("../../../assets/placeholder-pfp.png")}
@@ -57,6 +60,9 @@ const ProfileScreen: FC = () => {
               borderRadius={50}
               className="h-full w-full"
             />
+            <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
+              <Image source={require("../../../assets/icons/pen.png")} />
+            </View>
           </TouchableOpacity>
         </ImageBackground>
 
