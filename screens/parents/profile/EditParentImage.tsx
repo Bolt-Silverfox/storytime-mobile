@@ -188,7 +188,7 @@ export default function EditParentImage() {
   );
 }
 
-const ScreenModal = ({
+export const ScreenModal = ({
   open,
   setOpen,
   onPressCamera,
