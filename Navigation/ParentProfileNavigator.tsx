@@ -15,9 +15,11 @@ import DeleteSuccess from "../screens/parents/profile/DeleteSuccess";
 import EditChildProfile from "../screens/parents/profile/EditChildProfile";
 import ManageChildProfilesScreen from "../screens/parents/profile/ManageChildProfilesScreen";
 import ProfileScreen from "../screens/parents/profile/ProfileScreen";
+import EditParentImage from "../screens/parents/profile/EditParentImage";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
+  editParentImage: undefined;
   manageChildProfiles: undefined;
   editChildProfile: {
     name: string;
@@ -47,7 +49,9 @@ const Stack = createNativeStackNavigator<ParentProfileNavigatorParamList>();
 const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="indexPage" component={ProfileScreen} />
+      {/* <Stack.Screen name="indexPage" component={ProfileScreen} /> */}
+      <Stack.Screen name="editParentImage" component={EditParentImage} />
+
       <Stack.Screen
         name="manageChildProfiles"
         component={ManageChildProfilesScreen}
