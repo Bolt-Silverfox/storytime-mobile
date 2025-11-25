@@ -1,14 +1,14 @@
 import { StyleSheet, View, Text } from "react-native";
 
-const RecordVoice = () => {
+const SetDailyLimit = () => {
   return (
     <View style={styles.screen}>
-      <Text>RecordVoice</Text>
+      <Text>SetDailyLimit</Text>
     </View>
   );
 };
 
-export default RecordVoice;
+export default SetDailyLimit;
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
