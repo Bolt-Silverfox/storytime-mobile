@@ -82,6 +82,7 @@ export default function HelpAndSupport() {
             icon={<LockCircle color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Privacy and Policy"
             isTablet={isTablet}
+            onPress={() => navigator.navigate("privacyAndPolicy")}
           />
         </View>
       </ScrollView>
