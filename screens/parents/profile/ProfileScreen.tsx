@@ -25,6 +25,7 @@ import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import MenuItem from "../../../components/MenuItem";
 import { Profile, ProfileCircle } from "iconsax-react-nativejs";
+import Avatar from "../../../components/Avatar";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -47,21 +48,12 @@ const ProfileScreen: FC = () => {
             borderBottomRightRadius: 24,
           }}
         >
-          <TouchableOpacity
-            style={[
-              styles.addPhotoButton,
-              { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
-            ]}
+          <Avatar
             onPress={() => {
               // setUploaderVisible(true);
               navigator.navigate("editParentImage");
             }}
-          >
-            <Profile size="100" variant="Bold" color="white" />
-            <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
-              <Image source={require("../../../assets/icons/pen.png")} />
-            </View>
-          </TouchableOpacity>
+          />
         </ImageBackground>
 
         <View style={styles.nameContainer}>
@@ -97,11 +89,13 @@ const ProfileScreen: FC = () => {
           <MenuItem
             icon={<Lock size={isTablet ? 20 : 18} />}
             label="Manage Password/Pin"
+            onPress={() => navigator.navigate("managePassword")}
             isTablet={isTablet}
           />
           <MenuItem
             icon={<Phone size={isTablet ? 20 : 18} />}
             label="Enable Finger Print / Face ID"
+            onPress={() => navigator.navigate("enableBiometrics")}
             isTablet={isTablet}
           />
           <MenuItem
@@ -113,6 +107,7 @@ const ProfileScreen: FC = () => {
             icon={<HelpCircle size={isTablet ? 20 : 18} />}
             label="Help & Support"
             isTablet={isTablet}
+            onPress={() => navigator.navigate('helpAndSupport')}
           />
           <MenuItem
             icon={<LogOut size={isTablet ? 20 : 18} />}
