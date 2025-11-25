@@ -1,14 +1,14 @@
 import { StyleSheet, View, Text } from "react-native";
 
-const RecordVoice = () => {
+const ViewActivityLog = () => {
   return (
     <View style={styles.screen}>
-      <Text>RecordVoice</Text>
+      <Text>ViewActivityLog</Text>
     </View>
   );
 };
 
-export default RecordVoice;
+export default ViewActivityLog;
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },
