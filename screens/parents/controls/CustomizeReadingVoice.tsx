@@ -1,7 +1,15 @@
-import ComingSoon from "../../../components/ComingSoon";
+import { StyleSheet, View, Text } from "react-native";
 
 const CustomizeReadingVoice = () => {
-  return <ComingSoon title="Customize reading voice" />;
+  return (
+    <View style={styles.screen}>
+      <Text>CustomizeReadingVoice</Text>
+    </View>
+  );
 };
 
 export default CustomizeReadingVoice;
+
+const styles = StyleSheet.create({
+  screen: { flex: 1 },
+});
