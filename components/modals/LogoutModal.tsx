@@ -1,4 +1,4 @@
-import { Modal, Pressable, Text, View } from "react-native";
+import { Alert, Modal, Pressable, Text, View } from "react-native";
 
 type Props = {
   open: boolean;
@@ -27,7 +27,7 @@ const LogoutModal = ({ open, setOpen, logout }: Props) => {
             Are you sure you want to logout of this device?
           </Text>
           <Pressable
-            // onPress={}
+            onPress={() => setOpen(false)}
             className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
           >
             <Text className="text-white font-[abeezee] text-center text-base">
@@ -37,7 +37,9 @@ const LogoutModal = ({ open, setOpen, logout }: Props) => {
           <Pressable
             onPress={() => {
               setOpen(false);
-              logout();
+              setTimeout(() => {
+                logout();
+              }, 1000);
             }}
             className="bg-transparent border border-primary py-4 w-full max-w-96 rounded-full mx-auto"
           >

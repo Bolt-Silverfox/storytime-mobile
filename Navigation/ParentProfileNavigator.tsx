@@ -102,7 +102,7 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="termsAndConditions" component={TermsAndConditions} />
       <Stack.Screen name="privacyAndPolicy" component={PrivacyAndPolicy} />
 
-      <Stack.Screen name="hideStories" component={HideStoriesScreen} />
+      {/* <Stack.Screen name="hideStories" component={HideStoriesScreen} />
       <Stack.Screen name="recordVoice" component={RecordVoice} />
       <Stack.Screen name="recordingDetails" component={RecordingDetails} />
       <Stack.Screen
@@ -112,7 +112,7 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="addVoice" component={AddVoice} />
       <Stack.Screen name="bedTimeMode" component={BedTimeMode} />
       <Stack.Screen name="dailyLimit" component={DailyLimit} />
-      <Stack.Screen name="activityLog" component={ActivityLog} />
+      <Stack.Screen name="activityLog" component={ActivityLog} /> */}
     </Stack.Navigator>
   );
 };
