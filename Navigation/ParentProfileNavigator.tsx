@@ -49,7 +49,7 @@ const Stack = createNativeStackNavigator<ParentProfileNavigatorParamList>();
 const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {/* <Stack.Screen name="indexPage" component={ProfileScreen} /> */}
+      <Stack.Screen name="indexPage" component={ProfileScreen} />
       <Stack.Screen name="editParentImage" component={EditParentImage} />
 
       <Stack.Screen

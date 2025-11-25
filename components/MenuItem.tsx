@@ -1,6 +1,7 @@
 import { FC } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import CustomText from "./CustomText";
+import { ChevronRight } from "lucide-react-native";
 
 const MenuItem: FC<any> = ({
   label,
@@ -24,7 +25,7 @@ const MenuItem: FC<any> = ({
     <CustomText
       style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
     >
-      ›
+      <ChevronRight strokeWidth={1.5} />
     </CustomText>
   </TouchableOpacity>
 );

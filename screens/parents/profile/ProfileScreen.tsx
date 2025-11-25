@@ -24,6 +24,7 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import MenuItem from "../../../components/MenuItem";
+import { Profile, ProfileCircle } from "iconsax-react-nativejs";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -47,19 +48,16 @@ const ProfileScreen: FC = () => {
           }}
         >
           <TouchableOpacity
-            style={styles.addPhotoButton}
+            style={[
+              styles.addPhotoButton,
+              { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
+            ]}
             onPress={() => {
-              setUploaderVisible(true);
+              // setUploaderVisible(true);
               navigator.navigate("editParentImage");
             }}
           >
-            <Image
-              source={require("../../../assets/placeholder-pfp.png")}
-              width={100}
-              height={100}
-              borderRadius={50}
-              className="h-full w-full"
-            />
+            <Profile size="100" variant="Bold" color="white" />
             <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
               <Image source={require("../../../assets/icons/pen.png")} />
             </View>
