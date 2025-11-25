@@ -1,14 +1,14 @@
 import { StyleSheet, View, Text } from "react-native";
 
-const RecordVoice = () => {
+const SetBedtime = () => {
   return (
     <View style={styles.screen}>
-      <Text>RecordVoice</Text>
+      <Text>SetBedtime</Text>
     </View>
   );
 };
 
-export default RecordVoice;
+export default SetBedtime;
 
 const styles = StyleSheet.create({
   screen: { flex: 1 },

@@ -18,11 +18,12 @@ const useUpdateUserProfile = (numOfKids: number) => {
       country?: string;
       title?: string;
     }) => {
-      const response = await apiFetch(`${BASE_URL}/user/${user?.id}`, {
+      const response = await apiFetch(`${BASE_URL}/auth/profile`, {
         method: "PUT",
         body: JSON.stringify(data),
       });
-      return await response.json();
+      const result = await response.json();
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
