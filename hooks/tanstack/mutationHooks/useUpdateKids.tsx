@@ -1,16 +1,14 @@
+import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import useAuth from "../../../contexts/AuthContext";
-import { Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
 const useUpdateKids = () => {
   const queryClient = useQueryClient();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
-  const { user } = useAuth();
   return useMutation({
     mutationFn: async (
       kids: {

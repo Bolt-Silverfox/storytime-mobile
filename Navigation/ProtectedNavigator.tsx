@@ -2,13 +2,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import ParentsTabNavigator from "./ParentsNavigator";
 import KidSelectionScreen from "../screens/KidSelectionScreen";
-import KidDetailsScreen from "../screens/KidDetailsScreen";
 import AddChildScreen from "../screens/AddChild";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import KidsNavigator, { KidsNavigatorParamList } from "./KidsNavigator";
 
 type ProtectedRoutesParamList = {
   selection: undefined;
   parents: undefined;
-  kidDetails: { kidId: string };
+  kid: NavigatorScreenParams<KidsNavigatorParamList>;
   addChild: undefined;
 };
 
@@ -22,8 +23,8 @@ const ProtectedRoutesNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="selection" component={KidSelectionScreen} />
       <Stack.Screen name="parents" component={ParentsTabNavigator} />
-      <Stack.Screen name="kidDetails" component={KidDetailsScreen} />
       <Stack.Screen name="addChild" component={AddChildScreen} />
+      <Stack.Screen name="kid" component={KidsNavigator} />
     </Stack.Navigator>
   );
 };

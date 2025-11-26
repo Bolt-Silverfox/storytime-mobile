@@ -142,6 +142,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorMessage(loginData.message);
       return;
     }
+    console.log("login data", loginData);
     await AsyncStorage.setItem("accessToken", loginData.data.jwt);
     await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));

@@ -10,7 +10,7 @@ import KidsProgressScreen from "../screens/Kids/KidsProgressScreen";
 import KidsProfileScreen from "../screens/Kids/KidsProfileScreen";
 
 type KidsTabNavigatorParamList = {
-  home: undefined;
+  home: { childId: string };
   library: undefined;
   progress: undefined;
   profile: undefined;
