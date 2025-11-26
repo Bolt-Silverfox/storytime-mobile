@@ -14,6 +14,7 @@ import {
 } from "../../Navigation/KidsSetupNavigator";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
+
 type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
 const KidHomeScreen = () => {
@@ -82,6 +83,7 @@ const KidHomeScreen = () => {
 
       <LoadingOverlay visible={isPending} />
     </ScrollView>
+
   );
 };
 

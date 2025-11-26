@@ -8,6 +8,7 @@ import colours from "../colours";
 import KidsLibraryScreen from "../screens/Kids/KidsLibraryScreen";
 import KidsProgressScreen from "../screens/Kids/KidsProgressScreen";
 import KidsProfileScreen from "../screens/Kids/KidsProfileScreen";
+import KidsLibraryNavigator from "./KidsLibraryNavigator";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
@@ -46,7 +47,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="library"
-        component={KidsLibraryScreen}
+        component={KidsLibraryNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon

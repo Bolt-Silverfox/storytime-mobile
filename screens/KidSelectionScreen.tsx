@@ -7,6 +7,7 @@ import LoadingOverlay from "../components/LoadingOverlay";
 import useAuth from "../contexts/AuthContext";
 import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
 import ChildrenEmptyState from "../components/emptyState/ChildrenEmptyState";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
@@ -46,15 +47,16 @@ const KidSelectionScreen = () => {
           <View className="flex flex-row justify-around flex-wrap gap-y-6 gap-x-10">
             {data.map((kid) => (
               <Pressable
-                onPress={() =>
+                onPress={async () => {
+                  await AsyncStorage.setItem("currentKid", kid.id);
                   navigation.navigate("kid", {
                     screen: "setup",
                     params: {
                       screen: "buddySelectionPage",
                       params: { childId: kid.id },
                     },
-                  })
-                }
+                  });
+                }}
                 key={kid.id}
                 className="flex w-[100px]  items-center flex-col gap-y-3"
               >
