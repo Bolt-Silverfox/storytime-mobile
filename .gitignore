@@ -20,12 +20,12 @@ expo-env.d.ts
 
 # Metro
 .metro-health-check*
-
+my-upload-key.keystore
 # debug
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-
+eas.json
 # macOS
 .DS_Store
 *.pem

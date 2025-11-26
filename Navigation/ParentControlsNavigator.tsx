@@ -15,14 +15,14 @@ import ViewActivityLog from "../screens/parents/controls/ViewActivityLog";
 type ParentControlNavigatorParamList = {
   indexPage: undefined;
   linkChild: { childId: string };
-  contentFilter: undefined;
-  excludeStoryTags: undefined;
-  recordVoice: undefined;
-  customizeReadingVoices: undefined;
+  contentFilter: { childId: string };
+  excludeStoryTags: { childId: string };
+  recordVoice: { childId: string };
+  customizeReadingVoices: { childId: string };
 
-  setBedtime: undefined;
-  setDailyLimit: undefined;
-  viewActivityLog: undefined;
+  setBedtime: { childId: string };
+  setDailyLimit: { childId: string };
+  viewActivityLog: { childId: string };
 };
 
 type ParentControlNavigatorProp =

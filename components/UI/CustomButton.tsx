@@ -10,7 +10,7 @@ const CustomButton = ({
   return (
     <Pressable
       onPress={onPress}
-      className="bg-primary w-full py-4 rounded-full mt-4 max-w-screen-sm mx-auto"
+      className="bg-primary mx-5 sm:w-full py-4 rounded-full mt-4 max-w-screen-sm sm:mx-auto"
     >
       <Text className="text-center text-white font-[abeezee]">{text}</Text>
     </Pressable>
