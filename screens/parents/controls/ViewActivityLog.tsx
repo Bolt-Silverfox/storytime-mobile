@@ -35,21 +35,25 @@ const ViewActivityLog = () => {
       contentContainerClassName="min-h-full gap-y-10 max-w-screem-md mx-auto w-full"
     >
       <PageTitle goBack={() => navigator.goBack()} title="Activity Log" />
-      <View className="flex flex-col gap-y-4">
-        {activityDummyData.map((activity) => (
-          <View
-            className="p-4 rounded-2xl bg-slate-200 mx-5"
-            key={activity.date}
-          >
-            <Text className="text-xl font-[abeezee] mb-10">
-              {activity.date}
-            </Text>
-            <Text>Device : {activity.deviceName}</Text>
-            <Text>IP : {activity.IP}</Text>
-            <Text>Status : {activity.status}</Text>
-          </View>
-        ))}
-      </View>
+      {data.length > 0 ? (
+        <View className="flex flex-col gap-y-4">
+          {activityDummyData.map((activity) => (
+            <View
+              className="p-4 rounded-2xl bg-slate-200 mx-5"
+              key={activity.date}
+            >
+              <Text className="text-xl font-[abeezee] mb-10">
+                {activity.date}
+              </Text>
+              <Text>Device : {activity.deviceName}</Text>
+              <Text>IP : {activity.IP}</Text>
+              <Text>Status : {activity.status}</Text>
+            </View>
+          ))}
+        </View>
+      ) : (
+        <EmptyState />
+      )}
     </ScrollView>
   );
 };
@@ -57,11 +61,13 @@ const ViewActivityLog = () => {
 export default ViewActivityLog;
 
 const EmptyState = () => {
-  <View className="rounded-lg mx-5 h-[30%] justify-center items-center flex flex-col bg-[#f5f5f5]">
-    <Text className="text-xl font-[abeezee] text-dark text-center">
-      No activity reports yet
-    </Text>
-  </View>;
+  return (
+    <View className="rounded-lg mx-5 h-[30%] justify-center items-center flex flex-col bg-[#f5f5f5]">
+      <Text className="text-xl font-[abeezee] text-dark text-center">
+        No activity reports yet
+      </Text>
+    </View>
+  );
 };
 
 const activityDummyData: ActivityLog[] = [
