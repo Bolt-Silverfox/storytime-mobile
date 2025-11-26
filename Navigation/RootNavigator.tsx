@@ -12,11 +12,13 @@ import ProfileNavigator, {
   ProfileNavigatorParamList,
 } from "./ProfileNavigator";
 import ProtectedRoutesNavigator from "./ProtectedNavigator";
+import KidsNavigator from "./KidsNavigator";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   profile: NavigatorScreenParams<ProfileNavigatorParamList>;
   protected: undefined;
+  kids: undefined;
 };
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
@@ -30,8 +32,8 @@ const RootNavigator = () => {
   if (user === undefined) return <CustomSplashScreen />;
 
   return (
-    <Stack.Navigator>
-      {!user ? (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {/* {!user ? (
         <Stack.Screen
           name="auth"
           component={AuthNavigator}
@@ -49,7 +51,8 @@ const RootNavigator = () => {
           name="profile"
           component={ProfileNavigator}
         />
-      )}
+      )} */}
+      <Stack.Screen name="kids" component={KidsNavigator} />
     </Stack.Navigator>
   );
 };

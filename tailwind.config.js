@@ -17,6 +17,7 @@ module.exports = {
         black: "#212121",
         "bg-light": "#fbf8f7",
         disabled: "#FF8771",
+        purple: "#4807EC",
       },
     },
   },
