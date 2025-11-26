@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import {
   KidsTabNavigatorParamList,
   KidsTabNavigatorProp,
@@ -8,6 +8,11 @@ import useGetUserKids from "../../hooks/tanstack/queryHooks/useGetUserKids";
 import ErrorComponent from "../../components/ErrorComponent";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import { childDetailsData } from "../../data";
+import {
+  KidsSetupNavigatorParamList,
+  KidsSetupProp,
+} from "../../Navigation/KidsSetupNavigator";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
 type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
@@ -15,6 +20,12 @@ const KidHomeScreen = () => {
   const { params } = useRoute<RouteProps>();
   const { isPending, error, data, refetch } = useGetUserKids();
   const navigation = useNavigation<KidsTabNavigatorProp>();
+  const navigator = useNavigation<KidsSetupProp>();
+
+  const parent =
+    navigation.getParent<
+      NativeStackNavigationProp<KidsSetupNavigatorParamList>
+    >();
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -52,9 +63,20 @@ const KidHomeScreen = () => {
       </View>
       <View className="flex flex-row flex-wrap justify-around gap-6 mt-6">
         {childDetailsData.map((data) => (
-          <View key={data.id}>
+          <Pressable
+            key={data.id}
+            onPress={() => {
+              // always pass id = "1" for testing
+              // change to { storyId: data.id } when real ids are available
+              navigation.navigate("setup" as any, {
+                screen: "storyInteraction",
+                params: { storyId: "1" },
+              });
+            }}
+            className="overflow-hidden rounded-lg"
+          >
             <Image source={data.source} className="h-[228px] w-[187px]" />
-          </View>
+          </Pressable>
         ))}
       </View>
 
