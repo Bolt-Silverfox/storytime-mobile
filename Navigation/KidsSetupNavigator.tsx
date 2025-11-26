@@ -4,7 +4,7 @@ import {
 } from "@react-navigation/native-stack";
 import BuddySelectionScreen from "../screens/Kids/BuddySelectionScreen";
 import KidWelcomeScreen from "../screens/Kids/KidWelcomeScreen";
-import KidDetailsScreen from "../screens/KidDetailsScreen";
+// import KidDetailsScreen from "../screens/KidDetailsScreen";
 import ChooseHero from "../screens/Kids/ChooseHero";
 
 type KidsSetupNavigatorParamList = {
