@@ -16,6 +16,8 @@ module.exports = {
         link: "#0731EC",
         black: "#212121",
         "bg-light": "#fbf8f7",
+        bgLight: "#fbf8f7",
+        light: "#FAF42",
         disabled: "#FF8771",
       },
     },
