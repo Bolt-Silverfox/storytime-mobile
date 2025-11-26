@@ -1,0 +1,46 @@
+import { useQuery } from "@tanstack/react-query";
+import apiFetch from "../../../apiFetch";
+import { BASE_URL } from "../../../constants";
+
+type ActivityLog = {
+  statusCode: number;
+  success: boolean;
+  data: {
+    voice_id: string;
+    name: string;
+    category: string;
+    samples: string | null;
+    description: string;
+    preview_url: string;
+    label: {
+      accent: string;
+      gender: string;
+      age: string;
+    };
+  }[];
+
+  message: string;
+};
+
+const useGetKidActivityLog = (id: string) => {
+  console.log("kidid", id);
+  return useQuery({
+    queryKey: ["voices"],
+    queryFn: async () => {
+      const URL = `${BASE_URL}/activity-logs/kid/${id}`;
+      const request = await apiFetch(URL, {
+        method: "GET",
+      });
+      const response: ActivityLog = await request.json();
+      console.log("activity log", response);
+      if (!response.success) throw new Error(response.message);
+      return response;
+    },
+    staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    select: (res) => res.data,
+  });
+};
+
+export default useGetKidActivityLog;

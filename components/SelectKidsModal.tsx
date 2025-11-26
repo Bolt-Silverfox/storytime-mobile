@@ -23,7 +23,7 @@ const KidSelectorModal = ({
   const { data, isPending, error } = useGetUserKids();
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error) return <ErrorMessageDisplay errorMessage={error.message} />;
-  if (!data.length) return <EmptyState />;
+  if (!data.length) return <EmptyState onClose={onClose} />;
 
   return (
     <Modal
@@ -103,12 +103,13 @@ le image"
 
 export default KidSelectorModal;
 
-const EmptyState = () => {
+const EmptyState = ({ onClose }: { onClose: () => void }) => {
   return (
     <View className="flex flex-col gap-y-3 flex-1 justify-center items-center">
       <Text className="font-[quilka] text-primary text-3xl text-center">
         No child added yet{" "}
       </Text>
+      <CustomButton onPress={onClose} text="Cancel" />
     </View>
   );
 };

@@ -1,11 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, Pressable, Text, View } from "react-native";
 import colours from "../../../colours";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import defaultStyles from "../../../styles";
 
-const DeleteChildSuccessfulScreen = () => {
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
+const SuccessScreen = () => {
+  const navigator = useNavigation<ParentControlNavigatorProp>();
   return (
     <View
       style={{
@@ -30,10 +30,15 @@ const DeleteChildSuccessfulScreen = () => {
           marginBottom: 167,
         }}
       >
-        Child profile has been deleted successfully.
+        Your settings have been updated.
       </Text>
       <Pressable
-        onPress={() => navigator.navigate("manageChildProfiles")}
+        onPress={() =>
+          navigator.reset({
+            index: 0,
+            routes: [{ name: "indexPage" }],
+          })
+        }
         style={defaultStyles.button}
       >
         <Text
@@ -50,4 +55,4 @@ const DeleteChildSuccessfulScreen = () => {
   );
 };
 
-export default DeleteChildSuccessfulScreen;
+export default SuccessScreen;
