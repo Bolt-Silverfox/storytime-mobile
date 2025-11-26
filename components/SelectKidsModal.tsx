@@ -51,7 +51,7 @@ const KidSelectorModal = ({
               >
                 <View className="flex-row items-center gap-x-3">
                   <Image
-                    source={require("../../../assets/placeholder-pfp.png")}
+                    source={require("../assets/placeholder-pfp.png")}
                     alt="Kid's profi          onClose={() => setIsModalOpen(false)}
 le image"
                     className="w-12 h-12 rounded-full bg-gray-200"
