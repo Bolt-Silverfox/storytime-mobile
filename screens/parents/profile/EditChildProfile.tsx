@@ -48,7 +48,7 @@ const EditChildProfile = () => {
       return;
     }
     setError("");
-    mutate([{ id: params.id, name, ageRange: age, avatarUrl: "" }]);
+    mutate({ id: params.id, name, ageRange: age });
   };
 
   const handleCloseModals = () => {
@@ -86,14 +86,14 @@ const EditChildProfile = () => {
             </Text>
           </Pressable>
         </View>
-        <View className="w-full max-w-xl mx-auto ">
+        {/* <View className="w-full max-w-xl mx-auto ">
           <Text className="text-base font-[abeezee]">Child's Username:</Text>
           <TextInput
             value={userName}
             onChangeText={setUsername}
             className="border border-border px-4 py-3 rounded-full w-full"
           />
-        </View>
+        </View> */}
       </View>
       <View className="flex flex-col gap-y-6 mt-20">
         <Pressable

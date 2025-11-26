@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 const KidsProfileScreen = () => {
   const navigator = useNavigation();
   return (
-    <ScrollView style={styles.screen} className=" flex-1">
+    <ScrollView className=" flex-1">
       <View>
         <Text style={defaultStyles.heading} className="mt-3">
           Profile
@@ -107,9 +107,3 @@ const KidsProfileScreen = () => {
     </ScrollView>
   );
 };
-
-export default KidsProfileScreen;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});

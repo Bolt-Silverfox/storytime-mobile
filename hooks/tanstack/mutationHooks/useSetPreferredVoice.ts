@@ -10,7 +10,7 @@ const useSetPreferredVoice = () => {
 
   return useMutation({
     mutationFn: async (voiceId: string) => {
-      const URL = `${BASE_URL}/stories/voices/preferred`;
+      const URL = `${BASE_URL}/voices/preferred`;
       const request = await apiFetch(URL, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),

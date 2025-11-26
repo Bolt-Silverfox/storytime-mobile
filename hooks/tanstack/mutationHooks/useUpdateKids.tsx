@@ -10,20 +10,36 @@ const useUpdateKids = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return useMutation({
-    mutationFn: async (
-      kids: {
-        id: string;
-        name: string;
-        avatarUrl: string;
-        ageRange: string;
-      }[]
-    ) => {
-      const request = await apiFetch(`${BASE_URL}/auth/kids`, {
+    mutationFn: async (kids: {
+      id: string;
+      name?: string;
+      ageRange?: string;
+      isBedtimeEnabled?: boolean;
+      bedtimeStart?: string;
+      bedtimeEnd?: string;
+      bedtimeDays?: Array<"everyday" | "weekdays" | "weekends">;
+      preferredVoiceId?: string;
+    }) => {
+      const bedTimeDays = kids.bedtimeDays
+        ? getBedtimeDaysByString(kids.bedtimeDays[0])
+        : [0];
+      const request = await apiFetch(`${BASE_URL}/auth/kids/${kids.id}`, {
         method: "PUT",
-        body: JSON.stringify(kids),
+        body: JSON.stringify({
+          name: kids.name,
+          ageRange: kids.ageRange,
+          // bedTimeDays,
+          isBedtimeEnabled: kids.isBedtimeEnabled,
+          bedtimeStart: kids.bedtimeStart,
+          bedtimeEnd: kids.bedtimeEnd,
+          preferredVoiceId: kids.preferredVoiceId,
+        }),
       });
       const results = await request.json();
       console.log("update kids result", results);
+      if (!results.success) {
+        throw new Error(results.message ?? "unexpected error, try again");
+      }
       return results;
     },
     onSuccess: () => {
@@ -39,3 +55,15 @@ const useUpdateKids = () => {
 };
 
 export default useUpdateKids;
+
+const getBedtimeDaysByString = (
+  input: "everyday" | "weekdays" | "weekends"
+): number[] => {
+  if (input === "everyday") {
+    return [0, 1, 2, 3, 4, 5, 6];
+  } else if (input === "weekdays") {
+    return [1, 2, 3, 4, 5];
+  } else {
+    return [6, 1];
+  }
+};
