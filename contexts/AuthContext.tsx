@@ -34,6 +34,8 @@ type AuthContextType = {
   verifyEmail: (token: string) => void;
   requestPasswordReset: (email: string) => void;
   resendVerificationEmail: (email: string) => Promise<AuthResponse>;
+  validatePasswordReset: (email: string, token: string) => void;
+  resetPassword: (email: string, token: string, newPassword: string) => void;
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -76,7 +78,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(null);
           return;
         }
-        console.log("acces token", storedToken);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
@@ -142,7 +143,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorMessage(loginData.message);
       return;
     }
-    console.log("login data", loginData);
     await AsyncStorage.setItem("accessToken", loginData.data.jwt);
     await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
@@ -207,7 +207,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.requestPasswordReset(email)
     );
-    console.log("requestdata", requestData);
     if (!requestData.success) {
       setErrorMessage(requestData.message);
       return;
@@ -217,6 +216,52 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       params: {
         email,
       },
+    });
+  };
+
+  const validatePasswordReset = async (email: string, token: string) => {
+    if (!emailRegex.test(email)) {
+      setErrorMessage("Invalid email");
+      return;
+    }
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.vaildateResetToken(email, token)
+    );
+    if (!requestData.success) {
+      setErrorMessage(requestData.message);
+      return;
+    }
+    navigator.navigate("auth", {
+      screen: "inputNewPassword",
+      params: {
+        email,
+        token,
+      },
+    });
+  };
+
+  const resetPassword = async (
+    email: string,
+    token: string,
+    newPassword: string
+  ) => {
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.resetpassword(email, token, newPassword)
+    );
+    if (!requestData.success) {
+      setErrorMessage(requestData.message);
+      return;
+    }
+    navigator.reset({
+      index: 0,
+      routes: [
+        {
+          name: "auth",
+          params: {
+            screen: "resetPasswordSuccessful",
+          },
+        },
+      ],
     });
   };
 
@@ -231,6 +276,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     requestPasswordReset,
     verifyEmail,
     resendVerificationEmail,
+    validatePasswordReset,
+    resetPassword,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>
