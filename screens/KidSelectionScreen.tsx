@@ -12,7 +12,6 @@ const KidSelectionScreen = () => {
   const { user } = useAuth();
   const { data, isPending, error, refetch } = useGetUserKids();
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
-
   if (isPending) return <LoadingOverlay visible={isPending} />;
 
   if (error)
@@ -48,7 +47,13 @@ const KidSelectionScreen = () => {
             {data.map((kid) => (
               <Pressable
                 onPress={() =>
-                  navigation.navigate("kidDetails", { kidId: kid.id })
+                  navigation.navigate("kid", {
+                    screen: "setup",
+                    params: {
+                      screen: "buddySelectionPage",
+                      params: { childId: kid.id },
+                    },
+                  })
                 }
                 key={kid.id}
                 className="flex w-[100px]  items-center flex-col gap-y-3"

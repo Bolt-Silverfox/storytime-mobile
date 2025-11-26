@@ -11,7 +11,7 @@ type KidsSetupNavigatorParamList = {
   buddySelectionPage: { childId: string };
   welcomeScreen: { selected: "zylo" | "lumina"; childId: string };
   chooseHero: { selected: "zylo" | "lumina"; childId: string };
-  homePage: { selected: "zylo" | "lumina"; childId: string };
+  // homePage: { selected: "zylo" | "lumina"; childId: string };
 };
 
 const SetupStack = createNativeStackNavigator<KidsSetupNavigatorParamList>();
@@ -24,7 +24,6 @@ const KidSetupNavigator = () => {
         component={BuddySelectionScreen}
       />
       <SetupStack.Screen name="welcomeScreen" component={KidWelcomeScreen} />
-      <SetupStack.Screen name="homePage" component={KidDetailsScreen} />
       <SetupStack.Screen name="chooseHero" component={ChooseHero} />
     </SetupStack.Navigator>
   );

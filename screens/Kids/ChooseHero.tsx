@@ -65,11 +65,13 @@ const ChooseHero = () => {
           </View>
         </View>
       </ScrollView>
-      <ChildButton
+      {/* <ChildButton
         icon="ArrowRight"
         disabled={!heroName}
-        onPress={() => navigator.navigate("index", { screen: "home" })}
-      />
+        onPress={() => navigator.navigate("index", { screen : 'home', {
+            params : 
+        } })}
+      /> */}
     </View>
   );
 };

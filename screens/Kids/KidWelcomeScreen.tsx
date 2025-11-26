@@ -42,6 +42,7 @@ const KidWelcomeScreen = () => {
           onPress={() =>
             navigator.navigate("index", {
               screen: "home",
+              params: { childId: params.childId },
             })
           }
           className={`mx-5 bg-purple/90 mb-20  flex flex-row justify-center items-center gap-x-4 sm:w-full py-4 rounded-full mt-4 max-w-screen-sm sm:mx-auto `}
