@@ -1,15 +1,7 @@
-import { StyleSheet, View, Text } from "react-native";
+import ComingSoon from "../../../components/ComingSoon";
 
 const RecordVoice = () => {
-  return (
-    <View style={styles.screen}>
-      <Text>RecordVoice</Text>
-    </View>
-  );
+  return <ComingSoon title="Record voice" />;
 };
 
 export default RecordVoice;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});
