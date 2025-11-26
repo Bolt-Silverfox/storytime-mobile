@@ -19,8 +19,12 @@ const ConfirmResetPasswordTokenScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [otp, setOtp] = useState("");
   const [successMessage, setSuccesMessage] = useState("");
-  const { isLoading, verifyEmail, errorMessage, resendVerificationEmail } =
-    useAuth();
+  const {
+    isLoading,
+    validatePasswordReset,
+    errorMessage,
+    resendVerificationEmail,
+  } = useAuth();
   const [countDown, setCountdown] = useState(59);
 
   const handleResendEmail = async () => {
@@ -89,7 +93,7 @@ const ConfirmResetPasswordTokenScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => verifyEmail(otp)}
+          onPress={() => validatePasswordReset(route.params.email, otp)}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }

@@ -20,6 +20,8 @@ import PrivacyScreen from "../screens/auth/PrivacyScreen";
 import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
 import EmailResetSuccessfulScreen from "../screens/auth/EmailResetSuccessfulScreen";
 import RequestEmailVerification from "../screens/auth/RequestEmailVerification";
+import ResetPasswordSuccessful from "../screens/auth/ResetPasswordSuccessful";
+import InputNewPassword from "../screens/auth/InputNewPassword";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -36,9 +38,11 @@ type AuthNavigatorParamList = {
   kidsInfoForm: { kidsCount: number };
   avatarScreen: undefined;
   confirmResetPasswordToken: { email: string };
+  inputNewPassword: { email: string; token: string };
   privacyScreen: undefined;
   termsOfService: undefined;
   emailVerificationSuccessful: undefined;
+  resetPasswordSuccessful: undefined;
   requestEmailVerification: undefined;
 };
 
@@ -84,6 +88,11 @@ const AuthNavigator = () => {
         name="confirmResetPasswordToken"
         component={ConfirmResetPasswordTokenScreen}
       />
+      <Stack.Screen
+        name="resetPasswordSuccessful"
+        component={ResetPasswordSuccessful}
+      />
+      <Stack.Screen name="inputNewPassword" component={InputNewPassword} />
     </Stack.Navigator>
   );
 };
