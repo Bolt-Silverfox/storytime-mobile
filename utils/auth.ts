@@ -3,6 +3,7 @@ import { BASE_URL } from "../constants";
 
 const auth = {
   logout: async () => {
+    console.log("auth .logout");
     const response = await apiFetch(`${BASE_URL}/auth/logout`, {
       method: "POST",
     });
