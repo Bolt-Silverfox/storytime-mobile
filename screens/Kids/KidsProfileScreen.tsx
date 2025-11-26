@@ -107,3 +107,4 @@ const KidsProfileScreen = () => {
     </ScrollView>
   );
 };
+export default KidsProfileScreen;

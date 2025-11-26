@@ -4,10 +4,7 @@ import {
 } from "@react-navigation/native-stack";
 import BuddySelectionScreen from "../screens/Kids/BuddySelectionScreen";
 import KidWelcomeScreen from "../screens/Kids/KidWelcomeScreen";
-<<<<<<< HEAD
 // import KidDetailsScreen from "../screens/KidDetailsScreen";
-=======
->>>>>>> 3121d235c332d4550497bafec84580e99a2c34b8
 import ChooseHero from "../screens/Kids/ChooseHero";
 import StoryModeSelector from "../screens/Kids/Toddlers/StoryModeSelector";
 import StoryInteractionScreen, {
