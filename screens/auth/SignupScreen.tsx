@@ -14,7 +14,6 @@ import defaultStyles from "../../styles";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
-
   return (
     <ScrollView
       contentContainerStyle={{
@@ -85,6 +84,7 @@ const SignupScreen = () => {
 };
 
 export default SignupScreen;
+
 
 const styles = StyleSheet.create({
   image: {
