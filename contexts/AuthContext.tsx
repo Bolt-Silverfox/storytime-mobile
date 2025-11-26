@@ -5,6 +5,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -116,15 +117,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = async () => {
-    const logoutData = await authTryCatch<AuthResponse>(auth.logout);
-    if (!logoutData.success) {
-      setErrorMessage(logoutData.message);
-      return;
-    }
-    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
-    setUser(null);
-  };
+  const logout = useCallback(() => {
+    (async () => {
+      await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+      setUser(null);
+      setErrorMessage(undefined);
+    })();
+  }, []);
 
   const login: Login = async (email, password) => {
     if (!emailRegex.test(email)) {
@@ -143,6 +142,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorMessage(loginData.message);
       return;
     }
+    console.log("login data", loginData);
     await AsyncStorage.setItem("accessToken", loginData.data.jwt);
     await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));

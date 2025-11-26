@@ -1,20 +1,20 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Image, ScrollView, Text, View } from "react-native";
 import {
-  ProtectedRoutesNavigationProp,
-  ProtectedRoutesParamList,
-} from "../Navigation/ProtectedNavigator";
-import ErrorComponent from "../components/ErrorComponent";
-import LoadingOverlay from "../components/LoadingOverlay";
-import { childDetailsData } from "../data";
-import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
+  KidsTabNavigatorParamList,
+  KidsTabNavigatorProp,
+} from "../../Navigation/KidsTabNavigator";
+import useGetUserKids from "../../hooks/tanstack/queryHooks/useGetUserKids";
+import ErrorComponent from "../../components/ErrorComponent";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import { childDetailsData } from "../../data";
 
-type KidsDetailsRouteProp = RouteProp<ProtectedRoutesParamList, "kidDetails">;
+type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
-const KidDetailsScreen = () => {
-  const { params } = useRoute<KidsDetailsRouteProp>();
+const KidHomeScreen = () => {
+  const { params } = useRoute<RouteProps>();
   const { isPending, error, data, refetch } = useGetUserKids();
-  const navigation = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigation = useNavigation<KidsTabNavigatorProp>();
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -25,7 +25,7 @@ const KidDetailsScreen = () => {
         refetch={() => navigation.goBack()}
       />
     );
-  const kid = data.find((kid) => kid.id === params.kidId);
+  const kid = data.find((kid) => kid.id === params.childId);
   if (!kid)
     return (
       <ErrorComponent
@@ -41,12 +41,12 @@ const KidDetailsScreen = () => {
     >
       <View className="flex flex-row items-center gap-x-3">
         <Image
-          source={require("../assets/placeholder-pfp.png")}
+          source={require("../../assets/placeholder-pfp.png")}
           className="size-[50px]"
         />
         <Text className="text-xl font-[abeezee] flex-1">Hello, {kid.name}</Text>
         <Image
-          source={require("../assets/robot.png")}
+          source={require("../../assets/robot.png")}
           className="size-[50px]"
         />
       </View>
@@ -63,4 +63,4 @@ const KidDetailsScreen = () => {
   );
 };
 
-export default KidDetailsScreen;
+export default KidHomeScreen;

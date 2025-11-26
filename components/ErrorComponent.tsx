@@ -1,4 +1,5 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
+import useAuth from "../contexts/AuthContext";
 
 const ErrorComponent = ({
   message,
@@ -7,6 +8,7 @@ const ErrorComponent = ({
   message?: string;
   refetch: () => void;
 }) => {
+  const { logout } = useAuth();
   return (
     <View className="flex-1 flex justify-center items-center flex-col bg-bg-light gap-y-4 px-8">
       <Text className="flex font-[quilka] text-center text-2xl text-primary">
@@ -18,6 +20,7 @@ const ErrorComponent = ({
       >
         <Text className="text-white text-center font-[abeezee]">Try again</Text>
       </TouchableOpacity>
+      {/* <Button onPress={logout} title="Logout now" /> */}
     </View>
   );
 };

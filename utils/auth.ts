@@ -3,6 +3,7 @@ import { BASE_URL } from "../constants";
 
 const auth = {
   logout: async () => {
+    console.log("auth .logout");
     const response = await apiFetch(`${BASE_URL}/auth/logout`, {
       method: "POST",
     });
@@ -56,6 +57,7 @@ const auth = {
   },
 
   resendVerificationEmail: async (email: string) => {
+    console.log("i received email", email);
     const response = await fetch(`${BASE_URL}/auth/send-verification`, {
       method: "POST",
       headers: {
@@ -63,7 +65,9 @@ const auth = {
       },
       body: JSON.stringify({ email }),
     });
-    return await response.json();
+    const data = await response.json();
+    console.log("resend email", data);
+    return data;
   },
 
   requestPasswordReset: async (email: string) => {
