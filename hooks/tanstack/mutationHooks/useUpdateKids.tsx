@@ -28,7 +28,7 @@ const useUpdateKids = () => {
         body: JSON.stringify({
           name: kids.name,
           ageRange: kids.ageRange,
-          bedTimeDays,
+          // bedTimeDays,
           isBedtimeEnabled: kids.isBedtimeEnabled,
           bedtimeStart: kids.bedtimeStart,
           bedtimeEnd: kids.bedtimeEnd,
