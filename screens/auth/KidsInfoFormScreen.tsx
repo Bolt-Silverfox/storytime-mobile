@@ -17,7 +17,6 @@ export default function KidsInfoFormScreen() {
     Array.from({ length: kidsCount }).map(() => ({
       name: "",
       ageRange: "",
-      avatar: "",
     }))
   );
   const { mutate, isPending } = useAddKids(kids.length);
