@@ -10,19 +10,19 @@ const useUpdateKids = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return useMutation({
-    mutationFn: async (
-      kids: {
-        id: string;
-        name: string;
-        avatarUrl: string;
-        ageRange: string;
-      }[]
-    ) => {
-      const request = await apiFetch(`${BASE_URL}/auth/kids`, {
+    mutationFn: async (kids: {
+      id: string;
+      name: string;
+      ageRange: string;
+    }) => {
+      const request = await apiFetch(`${BASE_URL}/auth/kids/${kids.id}`, {
         method: "PUT",
-        body: JSON.stringify(kids),
+        body: JSON.stringify({ name: kids.name, ageRange: kids.ageRange }),
       });
       const results = await request.json();
+      if (!results.success) {
+        throw new Error(results.message);
+      }
       console.log("update kids result", results);
       return results;
     },

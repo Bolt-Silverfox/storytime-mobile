@@ -21,10 +21,11 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     mutationFn: async (
       kids: {
         name: string;
-        avatarUrl?: string;
+        // avatarUrl?: string;
         ageRange: string;
       }[]
     ) => {
+      console.log("kids data", kids);
       const invalid = kids.some(
         (kid) => !kid.name.trim().length || !kid.ageRange.trim().length
       );
@@ -60,6 +61,9 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
       });
       const results = await response.json();
       console.log("results", results);
+      if (!results.success) {
+        throw new Error(results.message);
+      }
       return results;
     },
     onSuccess: async () => {
