@@ -1,15 +1,7 @@
-import { StyleSheet, View, Text } from "react-native";
+import ComingSoon from "../../components/ComingSoon";
 
 const KidsProgressScreen = () => {
-  return (
-    <View style={styles.screen}>
-      <Text>KidsProgressScreen</Text>
-    </View>
-  );
+  return <ComingSoon title="Kid's Progress" />;
 };
 
 export default KidsProgressScreen;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});
