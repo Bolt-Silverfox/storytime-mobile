@@ -10,9 +10,8 @@ const useDeleteKid = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   return useMutation({
     mutationFn: async (kidsIds: Array<string>) => {
-      const request = apiFetch(`${BASE_URL}/auth/kids`, {
+      const request = apiFetch(`${BASE_URL}/auth/kids/${kidsIds[0]}`, {
         method: "DELETE",
-        body: JSON.stringify(kidsIds),
       });
       return request;
     },
