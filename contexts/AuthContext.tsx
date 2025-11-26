@@ -5,6 +5,7 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -116,15 +117,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = async () => {
-    const logoutData = await authTryCatch<AuthResponse>(auth.logout);
-    if (!logoutData.success) {
-      setErrorMessage(logoutData.message);
-      return;
-    }
-    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
-    setUser(null);
-  };
+  const logout = useCallback(() => {
+    (async () => {
+      await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+      setUser(null);
+      setErrorMessage(undefined);
+    })();
+  }, []);
 
   const login: Login = async (email, password) => {
     if (!emailRegex.test(email)) {
