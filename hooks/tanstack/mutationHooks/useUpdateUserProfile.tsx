@@ -1,15 +1,12 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
-import { Alert } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import { ProfileNavigatorProp } from "../../../Navigation/ProfileNavigator";
 
-const useUpdateUserProfile = (numOfKids: number) => {
+const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const navigation = useNavigation<ProfileNavigatorProp>();
   return useMutation({
     mutationFn: async (data: {
       name?: string;
@@ -29,7 +26,7 @@ const useUpdateUserProfile = (numOfKids: number) => {
       queryClient.invalidateQueries({
         queryKey: ["userProfile", user?.id],
       });
-      navigation.navigate("kidsInfoForm", { kidsCount: numOfKids });
+      onSuccess?.();
     },
     onError: (err) => {
       Alert.alert(err.message);

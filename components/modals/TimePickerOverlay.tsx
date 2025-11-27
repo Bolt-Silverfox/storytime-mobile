@@ -9,8 +9,8 @@ type Props = {
   onConfirm: (time: string) => void;
 };
 
-const hourItems: ItemType[] = Array.from({ length: 12 }, (_, i) => {
-  const val = (i + 1).toString();
+const hourItems: ItemType[] = Array.from({ length: 24 }, (_, i) => {
+  const val = i.toString();
   return { label: val, value: val };
 });
 
@@ -19,21 +19,14 @@ const minuteItems: ItemType[] = Array.from({ length: 60 }, (_, i) => {
   return { label: val, value: val };
 });
 
-const periodItems: ItemType[] = ["AM", "PM"].map((p) => ({
-  label: p,
-  value: p,
-}));
-
 const TimePickerOverlay = ({ visible, onClose, onConfirm }: Props) => {
   const [hourIndex, setHourIndex] = useState(11);
   const [minuteIndex, setMinuteIndex] = useState(0);
-  const [periodIndex, setPeriodIndex] = useState(0);
 
   const handleConfirm = () => {
     const hour = hourItems[hourIndex].value;
     const minute = minuteItems[minuteIndex].value;
-    const period = periodItems[periodIndex].value;
-    const final = `${hour}:${minute} ${period}`;
+    const final = `${hour}:${minute}`;
     onConfirm(final);
     onClose();
   };
@@ -44,7 +37,7 @@ const TimePickerOverlay = ({ visible, onClose, onConfirm }: Props) => {
         <View className="w-4/5 bg-white rounded-2xl p-6 items-center">
           <Text className="text-xl font-semibold mb-4">Select Time</Text>
 
-          <View className="flex-row justify-between w-full">
+          <View className="flex-row justify-center w-full">
             <WheelPicker
               items={hourItems}
               onChange={({ index }) => setHourIndex(index)}
@@ -55,13 +48,6 @@ const TimePickerOverlay = ({ visible, onClose, onConfirm }: Props) => {
             <WheelPicker
               items={minuteItems}
               onChange={({ index }) => setMinuteIndex(index)}
-              height={150}
-              width={80}
-            />
-
-            <WheelPicker
-              items={periodItems}
-              onChange={({ index }) => setPeriodIndex(index)}
               height={150}
               width={80}
             />

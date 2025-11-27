@@ -10,9 +10,16 @@ const useDeleteKid = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   return useMutation({
     mutationFn: async (kidsIds: Array<string>) => {
-      const request = apiFetch(`${BASE_URL}/auth/kids/${kidsIds[0]}`, {
+      const request = await apiFetch(`${BASE_URL}/auth/kids/${kidsIds[0]}`, {
         method: "DELETE",
       });
+      console.log("kids", kidsIds);
+      const response = await request.json();
+
+      if (!response.success) {
+        throw new Error(response.message ?? "Unexpected error, try again");
+      }
+      console.log("delete respone", response);
       return request;
     },
     onSuccess: () => {
