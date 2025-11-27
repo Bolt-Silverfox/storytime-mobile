@@ -13,14 +13,23 @@ import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferre
 import ErrorComponent from "./ErrorComponent";
 import useGetVoices from "../hooks/tanstack/queryHooks/useGetVoices";
 import { useState } from "react";
+import useUpdateKids from "../hooks/tanstack/mutationHooks/useUpdateKids";
 
-const StorytimeVoices = ({}: {}) => {
-  const [selectedVoice, setSelectedVoice] = useState<null | string>(null);
+const StorytimeVoices = ({
+  currentlyActiveVoiceId,
+  childId,
+}: {
+  currentlyActiveVoiceId: string;
+  childId: string;
+}) => {
+  const [selectedVoice, setSelectedVoice] = useState<null | string>(
+    currentlyActiveVoiceId
+  );
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(
     null
   );
   const { play, isLoading } = useAudioPlayer();
-  const { isPending: isSaving, mutate } = useSetPreferredVoice();
+  const { isPending: isSaving, mutate } = useUpdateKids({ id: childId });
   const { error, data, refetch } = useGetVoices();
 
   if (error)
@@ -61,7 +70,7 @@ const StorytimeVoices = ({}: {}) => {
         )}
       />
       <CustomButton
-        onPress={() => mutate(selectedVoice!)}
+        onPress={() => mutate({ preferredVoiceId: selectedVoice! })}
         text={isSaving ? "Saving..." : "Save"}
         disabled={isSaving || !selectedVoice}
       />

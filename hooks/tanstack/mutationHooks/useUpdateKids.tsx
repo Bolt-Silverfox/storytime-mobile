@@ -17,7 +17,10 @@ const useUpdateKids = ({
       name?: string;
       ageRange?: string;
       excludedTags?: string[];
+      preferredVoiceId?: string;
+      preferredCategoryIds?: string[];
     }) => {
+      console.log("voice data", kids);
       // const bedTimeDays = kids.bedtimeDays
       //   ? getBedtimeDaysByString(kids.bedtimeDays[0])
       //   : [0];
@@ -27,6 +30,8 @@ const useUpdateKids = ({
           name: kids.name,
           ageRange: kids.ageRange,
           excludedTags: kids.excludedTags,
+          preferredVoiceId: kids.preferredVoiceId,
+          preferredCategoryIds: kids.preferredCategoryIds,
           // bedTimeDays,
         }),
       });

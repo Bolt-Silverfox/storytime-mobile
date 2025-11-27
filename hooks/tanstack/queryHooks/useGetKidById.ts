@@ -18,7 +18,12 @@ type KidData = {
   name: string;
   notificationPreferences: any[];
   parentId: string;
-  preferredCategories: [];
+  preferredCategories: {
+    description: string;
+    id: string;
+    image: string;
+    name: string;
+  }[];
   preferredVoiceId: null | string;
   updatedAt: string;
 };
