@@ -1,3 +1,10 @@
+type QueryResponse<T> = {
+  success: boolean;
+  mesage: string;
+  statusCode: number;
+  data: T;
+};
+
 type Profile = {
   id: string;
   explicitContent: boolean;
@@ -39,4 +46,15 @@ type KidType = {
   message: string;
 };
 
-export type { User, Profile, KidType };
+type SystemAvatar = {
+  id: string;
+  name: string;
+  url: string;
+  isSystemAvatar: boolean;
+  isDeleted: boolean;
+  deletedAt: null | string;
+  publicId: null | string;
+  createdAt: string;
+};
+
+export type { User, Profile, KidType, QueryResponse, SystemAvatar };

@@ -129,7 +129,7 @@ const SetBedtime = () => {
             onValueChange={() => setRepeatDays(everyday)}
           />
         </View>
-        <View className="flex flex-row justify-between items-center">
+        <View className="flex flex-row border-b border-b-black/10 justify-between items-center">
           <Text className="flex-1 font-[quilka]">Weekdays</Text>
           <Switch
             disabled={bedTimeMode === false}
@@ -148,11 +148,11 @@ const SetBedtime = () => {
       </View>
 
       <View
-        className="flex flex-col bg-white rounded-2xl p-3 mx-5"
+        className="flex flex-col  bg-white rounded-2xl pt-4 mx-5"
         aria-labelledby="bedtime controls"
       >
         <Text className="font-[quilka] text-center text-xl">Coming soon</Text>
-        <View className="flex border-b border-b-black/10 flex-row justify-between items-center">
+        <View className="flex border-b  border-b-black/10 py-3 flex-row justify-between items-center">
           <Text className="font-[abeezee] opacity-40 text-base text-text">
             Lock app during bedtime
           </Text>
@@ -167,7 +167,7 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex border-b border-b-black/10 flex-row justify-between items-center">
+        <View className="flex border-b  border-b-black/10 py-3 flex-row justify-between items-center">
           <Text className="font-[abeezee] opacity-40 text-base text-text">
             Dim screen during bedtime
           </Text>
@@ -182,7 +182,7 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex border-b border-b-black/10 flex-row justify-between items-center">
+        <View className="flex border-b py-3 border-b-black/10 flex-row justify-between items-center">
           <Text className="font-[abeezee] opacity-40 text-base text-text">
             Show bedtime reminder
           </Text>
@@ -197,7 +197,7 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex  flex-row justify-between items-center">
+        <View className="flex  flex-row py-3 justify-between items-center">
           <Text className="font-[abeezee] opacity-40 text-base text-text">
             Allow bedtime stories only{" "}
           </Text>
