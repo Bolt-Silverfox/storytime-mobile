@@ -1,38 +1,33 @@
-import { useNavigation } from "@react-navigation/native";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
-const useUpdateKids = () => {
+const useUpdateKids = ({
+  id,
+  onSuccess,
+}: {
+  id: string;
+  onSuccess?: () => void | null;
+}) => {
   const queryClient = useQueryClient();
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return useMutation({
     mutationFn: async (kids: {
-      id: string;
       name?: string;
       ageRange?: string;
-      isBedtimeEnabled?: boolean;
-      bedtimeStart?: string;
-      bedtimeEnd?: string;
-      bedtimeDays?: Array<"everyday" | "weekdays" | "weekends">;
-      preferredVoiceId?: string;
+      excludedTags?: string[];
     }) => {
-      const bedTimeDays = kids.bedtimeDays
-        ? getBedtimeDaysByString(kids.bedtimeDays[0])
-        : [0];
-      const request = await apiFetch(`${BASE_URL}/auth/kids/${kids.id}`, {
+      // const bedTimeDays = kids.bedtimeDays
+      //   ? getBedtimeDaysByString(kids.bedtimeDays[0])
+      //   : [0];
+      const request = await apiFetch(`${BASE_URL}/auth/kids/${id}`, {
         method: "PUT",
         body: JSON.stringify({
           name: kids.name,
           ageRange: kids.ageRange,
+          excludedTags: kids.excludedTags,
           // bedTimeDays,
-          isBedtimeEnabled: kids.isBedtimeEnabled,
-          bedtimeStart: kids.bedtimeStart,
-          bedtimeEnd: kids.bedtimeEnd,
-          preferredVoiceId: kids.preferredVoiceId,
         }),
       });
       const results = await request.json();
@@ -46,7 +41,10 @@ const useUpdateKids = () => {
       queryClient.invalidateQueries({
         queryKey: ["userKids"],
       });
-      navigator.navigate("manageChildProfiles");
+      queryClient.invalidateQueries({
+        queryKey: ["kidById", id],
+      });
+      onSuccess?.();
     },
     onError: (err) => {
       Alert.alert(err.message);
