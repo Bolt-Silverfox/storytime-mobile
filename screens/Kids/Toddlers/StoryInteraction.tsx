@@ -131,7 +131,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
         <View className="bg-white p-4 rounded-xl w-1/3 items-center justify-center">
           <Text className="text-lg font-[quilka] text-center">Age range</Text>
           <Text className="text-[#212121] font-[abeezee]">
-            {story.ageMin} - {story.ageMax}
+            {story.ageMin} - {story.ageMax} years
           </Text>
         </View>
         <View className="bg-white p-4 rounded-xl w-1/3 items-center justify-center">

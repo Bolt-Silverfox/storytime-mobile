@@ -1,18 +1,10 @@
 import React, { useEffect, useState } from "react";
-import {
-  Modal,
-  View,
-  Text,
-  Pressable,
-  Animated,
-  Easing,
-  StyleSheet,
-  Image,
-} from "react-native";
+import { Modal, View, Text, Pressable, Animated, Image } from "react-native";
 
 type Props = {
   visible: boolean;
   onClose: () => void;
+  onPrimaryPress?: () => void;
   title?: string;
   subtitle?: string;
   message?: string;
@@ -24,6 +16,7 @@ const StoryCompletionModal: React.FC<Props> = ({
   title = "Yayyyy!!!!!!!",
   subtitle = "You did it !",
   message = "You’ve completed your first story!",
+  onPrimaryPress,
 }) => {
   const opacity = React.useRef(new Animated.Value(0)).current;
   const scale = React.useRef(new Animated.Value(0.8)).current;
@@ -150,7 +143,10 @@ const StoryCompletionModal: React.FC<Props> = ({
       {/* Button that appears after 1 second */}
       {showButton && (
         <Pressable
-          onPress={() => {}}
+          onPress={() => {
+            if (onPrimaryPress) onPrimaryPress();
+            else onClose();
+          }}
           className="bg-[#866EFF] mb-24 p-4 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mt-4 rounded-full"
         >
           <Image
