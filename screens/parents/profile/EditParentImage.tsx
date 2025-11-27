@@ -26,14 +26,13 @@ export default function EditParentImage() {
   const { uploadAndUpdate, isLoading: isUpdating } = useUpdateProfileWithImage(
     data?.data?.id
   );
-  console.log(data?.data?.id);
+  // console.log(data?.data?.id);
 
   const handleSubmit = async () => {
     if (!image) {
       Alert.alert("Error", "Please select an image");
       return;
     }
-
     try {
       await uploadAndUpdate(image);
     } catch (err) {
