@@ -15,23 +15,27 @@ import { useNavigation } from "@react-navigation/native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import * as ImagePicker from "expo-image-picker";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
-import {
-  useGetProfile,
-  useUpdateProfileWithImage,
-} from "../../../hooks/tanstack/queryHooks/useGetUserImage";
+import { useUpdateProfileWithImage } from "../../../hooks/tanstack/queryHooks/useGetUserImage";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [open, setOpen] = useState(false);
-  const [image, setImage] = useState();
-  //   const profile = useGetUserProfile();
-// const { data: profile, isLoading } = useGetProfile(userId);
-//   const { uploadAndUpdate, isLoading: isUpdating } =
-//     useUpdateProfileWithImage(userId);
+  const [image, setImage] = useState("");
+  const { data } = useGetUserProfile();
+  const { uploadAndUpdate, isLoading: isUpdating } = useUpdateProfileWithImage(
+    data?.data?.id
+  );
+  console.log(data?.data?.id);
 
   const handleSubmit = async () => {
+    if (!image) {
+      Alert.alert("Error", "Please select an image");
+      return;
+    }
+
     try {
-    //   await uploadAndUpdate(image);
+      await uploadAndUpdate(image);
     } catch (err) {
       Alert.alert("could not upload file");
     }
@@ -69,7 +73,7 @@ export default function EditParentImage() {
           mediaTypes: ["images"],
           allowsEditing: true,
           aspect: [4, 3],
-          quality: 1,
+          quality: 0.8,
         });
         if (!result.canceled) {
           saveImage(result.assets[0].uri);
@@ -158,7 +162,11 @@ export default function EditParentImage() {
           )}
         </View>
         <View className="flex-1 justify-center px-4 gap-6">
-          <Pressable onPress={() => navigator.navigate("indexPage")}>
+          <Pressable
+            onPress={() => {
+              handleSubmit();
+            }}
+          >
             <Text
               style={[defaultStyles.defaultText, { color: "white" }]}
               className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${image ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
@@ -167,7 +175,7 @@ export default function EditParentImage() {
             </Text>
           </Pressable>
           {image && (
-            <Pressable onPress={() => setImage(undefined)}>
+            <Pressable onPress={() => setImage("")}>
               <Text
                 style={[defaultStyles.defaultText, { color: "black" }]}
                 className="border-[#212121] border-[0.5px]  rounded-[99px] py-3 px-2 text-center mx-auto w-full"
@@ -184,6 +192,7 @@ export default function EditParentImage() {
         onPressCamera={() => UploadImage()}
         onPressFile={() => UploadImage("gallery")}
       />
+      <LoadingOverlay label="Uplaoding" visible={isUpdating} />
     </View>
   );
 }

@@ -1,15 +1,34 @@
 import { Alert, Modal, Pressable, Text, View } from "react-native";
 
 type Props = {
-  open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  open: "delete" | "logout" | boolean;
+  setOpen: React.Dispatch<React.SetStateAction<"delete" | "logout" | boolean>>;
   logout: () => void;
+  deleteAccount: () => void;
 };
 
-const LogoutModal = ({ open, setOpen, logout }: Props) => {
+const ParentProfileModal = ({
+  open,
+  setOpen,
+  logout,
+  deleteAccount,
+}: Props) => {
+  let modalData;
+  if (open === "logout") {
+    modalData = {
+      prompt: "Are you sure you want to logout of this device?",
+      confirm: "Yes,log out",
+    };
+  } else {
+    modalData = {
+      prompt: "Are you sure you want to delete your account?",
+      confirm: "Yes, Delete my account",
+    };
+  }
+
   return (
     <Modal
-      visible={open}
+      visible={open != false ? true : false}
       transparent
       animationType="slide"
       // onRequestClose={on}
@@ -24,7 +43,7 @@ const LogoutModal = ({ open, setOpen, logout }: Props) => {
 
         <View className="flex flex-col gap-y-3 mt-5">
           <Text className="text-2xl font-[quilka] mb-4 text-center px-5">
-            Are you sure you want to logout of this device?
+            {modalData?.prompt}
           </Text>
           <Pressable
             onPress={() => setOpen(false)}
@@ -38,13 +57,17 @@ const LogoutModal = ({ open, setOpen, logout }: Props) => {
             onPress={() => {
               setOpen(false);
               setTimeout(() => {
-                logout();
-              }, 1000);
+                if (open === "logout") {
+                  logout();
+                } else {
+                  deleteAccount();
+                }
+              }, 500);
             }}
             className="bg-transparent border border-primary py-4 w-full max-w-96 rounded-full mx-auto"
           >
             <Text className="text-black font-[abeezee] text-center text-base">
-              Yes,Log out
+              {modalData?.confirm}
             </Text>
           </Pressable>
         </View>
@@ -53,4 +76,4 @@ const LogoutModal = ({ open, setOpen, logout }: Props) => {
   );
 };
 
-export default LogoutModal;
+export default ParentProfileModal;
