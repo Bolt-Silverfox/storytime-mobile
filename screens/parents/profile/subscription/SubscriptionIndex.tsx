@@ -79,7 +79,7 @@ export default function SubscriptionIndex() {
               onSelect={setSelected}
             /> */}
             <Pressable
-              style={styles.radioContainer} className=" opacity-15"
+              style={styles.radioContainer} className="opacity-15"
             >
               <View style={styles.radioCircle}>
               </View>
