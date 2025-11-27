@@ -28,10 +28,7 @@ const SetBedtime = () => {
     data,
   } = useGetKidById(params.childId);
 
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
-  const [bedTimeMode, setBedtimeMode] = useState(
-    data.isBedtimeEnabled ?? false
-  );
+  const [bedTimeMode, setBedtimeMode] = useState(false);
   const [bedtimeControls, setBedtimeControls] = useState({
     lockDuringBedtime: true,
     dimDuringBedtime: true,
@@ -42,14 +39,15 @@ const SetBedtime = () => {
     "everyday" | "weekdays" | "weekends"
   >("weekdays");
   const [schedule, setSchedule] = useState({
-    startTime: data.bedtimeStart ?? "9:00 PM",
-    stopTime: data.bedtimeEnd ?? "07:00 AM",
+    startTime: "9:00 PM",
+    stopTime: "07:00 AM",
   });
   const [isTimeModalOpen, setIsTimeModalOpen] = useState<
     "start" | "stop" | null
   >(null);
-  const { mutate, isPending, error } = useUpdateKids();
-  console.log("kids data", data);
+  // const { mutate, isPending, error } = useUpdateKids();
+  // console.log("kids data", data);
+  if (isLoading) return <LoadingOverlay visible={isLoading} />;
   if (fetcherror)
     return <ErrorComponent refetch={refetch} message={fetcherror.message} />;
   return (
@@ -58,7 +56,7 @@ const SetBedtime = () => {
       contentContainerClassName="min-h-full pb-10 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full"
     >
       <PageTitle title="Bedtime Mode" goBack={() => navigator.goBack()} />
-      {error?.message && <ErrorMessageDisplay errorMessage={error?.message} />}
+      {/* {error?.message && <ErrorMessageDisplay errorMessage={error?.message} />} */}
       <View className="p-5 mx-5  flex flex-col gap-y-2 rounded-2xl bg-white">
         <View className="flex flex-row items-center justify-between">
           <Text className="text-xl font-[abeezee] text- mb-2">
@@ -190,16 +188,17 @@ const SetBedtime = () => {
         </View>
       </View>
       <CustomButton
-        onPress={() =>
-          mutate({
-            id: params.childId,
-            isBedtimeEnabled: bedTimeMode,
-            bedtimeStart: schedule.startTime,
-            bedtimeEnd: schedule.stopTime,
-            bedtimeDays: [repeatDays],
-          })
-        }
-        text={isPending ? "Saving" : "Save changes"}
+        // onPress={() =>
+        //   mutate({
+        //     id: params.childId,
+        //     isBedtimeEnabled: bedTimeMode,
+        //     bedtimeStart: schedule.startTime,
+        //     bedtimeEnd: schedule.stopTime,
+        //     bedtimeDays: [repeatDays],
+        //   })
+        // }
+        // text={isPending ? "Saving" : "Save changes"}
+        text="Save changes"
       />
       <TimePickerOverlay
         visible={isTimeModalOpen === "start"}
@@ -213,7 +212,8 @@ const SetBedtime = () => {
         onClose={() => setIsTimeModalOpen(null)}
         onConfirm={(string) => setSchedule((s) => ({ ...s, stopTime: string }))}
       />
-      <LoadingOverlay visible={isPending || isLoading} />
+      {/* <LoadingOverlay visible={isPending || isLoading} /> */}
+      <LoadingOverlay visible={isLoading} />
     </ScrollView>
   );
 };
