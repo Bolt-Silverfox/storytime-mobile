@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { lazy, Suspense, useEffect, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import {
@@ -10,7 +10,6 @@ import {
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import ErrorComponent from "../../../components/ErrorComponent";
-// import StorytimeVoices from "../../../components/StorytimeVoices";
 const StorytimeVoices = lazy(
   () => import("../../../components/StorytimeVoices")
 );
@@ -69,7 +68,7 @@ const CustomizeReadingVoice = () => {
         </Pressable>
       </View>
       {activeTab === "storytime" ? (
-        <Suspense fallback={<LoadingOverlay visible={true} />}>
+        <Suspense fallback={<ActivityIndicator size={"large"} />}>
           <StorytimeVoices
             currentlyActiveVoiceId={currentlyActiveVoiceId}
             childId={params.childId}

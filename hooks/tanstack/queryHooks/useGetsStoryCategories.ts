@@ -1,6 +1,6 @@
-import { useQuery } from "@tanstack/react-query";
-import { BASE_URL } from "../../../constants";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
+import { BASE_URL } from "../../../constants";
 
 type Response = {
   statusCode: number;
@@ -16,7 +16,7 @@ type Categories = {
   description: string;
 };
 const useGetStoryCategories = () => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["storyCategories"],
     queryFn: async () => {
       const url = `${BASE_URL}/stories/categories`;

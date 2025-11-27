@@ -1,17 +1,24 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Pressable, ScrollView, Switch, Text, View } from "react-native";
+import { Suspense, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import {
   ParentControlNavigatorParamList,
   ParentControlNavigatorProp,
 } from "../../../Navigation/ParentControlsNavigator";
+import ContentFilterCategories from "../../../components/ContentFilterCategories";
+import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
-import { useEffect, useState } from "react";
-import ErrorComponent from "../../../components/ErrorComponent";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
-import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsStoryCategories";
-import LoadingOverlay from "../../../components/LoadingOverlay";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 
 type ContentFilterPropList = RouteProp<
   ParentControlNavigatorParamList,
@@ -28,12 +35,6 @@ const ContentFilter = () => {
     id: params.childId,
     onSuccess: () => navigator.goBack(),
   });
-  const {
-    data: categories,
-    isPending: isLoadingCategories,
-    error: categoriesError,
-    refetch: refetchCategories,
-  } = useGetStoryCategories();
 
   useEffect(() => {
     data?.preferredCategories.map((category) =>
@@ -44,13 +45,6 @@ const ContentFilter = () => {
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
-  if (categoriesError)
-    return (
-      <ErrorComponent
-        message={categoriesError.message}
-        refetch={refetchCategories}
-      />
-    );
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -122,28 +116,12 @@ const ContentFilter = () => {
             Select the categories you prefer
           </Text>
         </View>
-
-        {categories && categories.length > 0 ? (
-          categories.map((category) => (
-            <Pressable
-              key={category.id}
-              className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-              onPress={() => toggleCategory(category.id)}
-            >
-              <Text className="flex-1 text-base text-black font-[abeezee]">
-                {category.name}
-              </Text>
-              <Switch
-                value={selectedCategories.includes(category.id)}
-                onValueChange={() => toggleCategory(category.id)}
-              />
-            </Pressable>
-          ))
-        ) : (
-          <Text className="text-xl font-[abeezee] text-center">
-            No categories yet
-          </Text>
-        )}
+        <Suspense fallback={<ActivityIndicator size={"large"} />}>
+          <ContentFilterCategories
+            selectedCategories={selectedCategories}
+            toggleCategory={toggleCategory}
+          />
+        </Suspense>
       </View>
       <View className="m-10">
         <CustomButton
@@ -157,7 +135,7 @@ const ContentFilter = () => {
           }
         />
       </View>
-      <LoadingOverlay visible={isPending || isLoadingCategories} />
+      <LoadingOverlay visible={isPending} />
     </ScrollView>
   );
 };
