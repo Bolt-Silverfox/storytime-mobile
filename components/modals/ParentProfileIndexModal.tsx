@@ -23,6 +23,7 @@ const ParentProfileModal = ({
     modalData = {
       prompt: "Are you sure you want to delete your account?",
       confirm: "Yes, Delete my account",
+      info: "If you proceed, all information connected to this account will be permanently deleted from our database.",
     };
   }
 
@@ -39,18 +40,21 @@ const ParentProfileModal = ({
       />
 
       <View className="bg-white rounded-t-3xl p-6 pb-12 absolute px-3 bottom-0 w-full">
-        <View className="h-[6px] w-[68px] bg-[#C5C5C5] mx-auto rounded-[32px] my-[28px]" />
+        <View className="h-[6px] w-[68px] bg-[#C5C5C5] mx-auto rounded-[32px] mb-[28px]" />
 
         <View className="flex flex-col gap-y-3 mt-5">
           <Text className="text-2xl font-[quilka] mb-4 text-center px-5">
             {modalData?.prompt}
+          </Text>
+          <Text className="text-lg text-[#616161] font-[abeezee] mb-4 text-center px-5">
+            {modalData?.info}
           </Text>
           <Pressable
             onPress={() => setOpen(false)}
             className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
           >
             <Text className="text-white font-[abeezee] text-center text-base">
-              cancel
+            Cancel
             </Text>
           </Pressable>
           <Pressable
