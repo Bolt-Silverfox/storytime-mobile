@@ -5,107 +5,77 @@ import {
   Image,
   Pressable,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight, ChevronLeft } from "lucide-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ProtectedRoutesParamList } from "../../../Navigation/ProtectedNavigator";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
 
-const SAMPLE_WORDS = [
-  { id: "1", word: "Voyage", meaning: "A long journey, especially by sea." },
-  { id: "2", word: "Brave", meaning: "Ready to face danger or pain." },
-  { id: "3", word: "Companion", meaning: "A friend or travel partner." },
-];
-
-type Props = NativeStackScreenProps<
-  KidsSetupNavigatorParamList,
-  "storyReader"
->;
+type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "challenge">;
 
 const ChallengeScreen: React.FC<Props> = ({ navigation }) => {
   return (
-    <View className="flex-1 bg-[#9F50E5] p-6">
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
-        
-        {/* Top header */}
-        <Text className="text-white text-lg mb-1">09:51</Text>
-        <Text className="text-white text-3xl font-[quilka] mb-6">
-          Today’s Challenge
-        </Text>
+    <View className="flex-1 bg-[#866EFF]">
+      <SafeAreaView />
+      <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 48 }}>
+        {/* Header: left icon, centered title, right spacer */}
+        <View className="relative mb-4">
+          <View className="flex-row items-center justify-between">
+            <Pressable
+              onPress={() => navigation.goBack()}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              className="w-10"
+              accessibilityLabel="Back"
+            >
+              <ChevronLeft color="#fff" size={34} />
+            </Pressable>
 
-        {/* White card */}
-        <View className="bg-white rounded-3xl p-6 border-4 border-[#7130AB]">
-          
-          {/* Stars row */}
-          <View className="flex-row justify-center mb-4">
-            {[1, 2, 3].map((i) => (
-              <Image
-                key={i}
-                source={require("../assets/star.png")}
-                style={{ width: 32, height: 32, marginHorizontal: 6 }}
-                resizeMode="contain"
-              />
-            ))}
+            {/* right spacer keeps title truly centered */}
+            <View className="w-10" />
           </View>
 
-          {/* Greeting */}
-          <Text className="text-2xl font-[quilka] text-center text-[#2D0B55]">
-            Welldone Tim!
-          </Text>
-
-          <Text className="text-base text-center text-gray-700 mt-2 mb-6">
-            Good job completing the story.  
-            Now let’s learn some new words from the story.
-          </Text>
-
-          {/* Word preview */}
-          <View className="bg-[#F7EFFF] rounded-2xl p-4 mb-5">
-            <Text className="text-sm text-gray-500 mb-3">New words</Text>
-
-            {SAMPLE_WORDS.map((w) => (
-              <View key={w.id} className="flex-row mb-3">
-                <View className="w-8 items-center">
-                  <View className="bg-[#E3D4FF] rounded-full w-6 h-6 items-center justify-center">
-                    <Text className="text-xs text-[#5A3BAA] font-semibold">
-                      {w.id}
-                    </Text>
-                  </View>
-                </View>
-                <View className="flex-1">
-                  <Text className="text-base font-semibold text-[#2D0B55]">
-                    {w.word}
-                  </Text>
-                  <Text className="text-sm text-gray-600">{w.meaning}</Text>
-                </View>
-              </View>
-            ))}
-          </View>
-
-          {/* Estimated time / activity */}
-          <View className="flex-row justify-between mb-5">
-            <View>
-              <Text className="text-sm text-gray-500">Activity</Text>
-              <Text className="text-lg font-semibold text-[#2D0B55]">
-                Word Match
-              </Text>
-            </View>
-            <View className="items-end">
-              <Text className="text-sm text-gray-500">Estimated</Text>
-              <Text className="text-lg font-semibold">5 min</Text>
-            </View>
-          </View>
-
-          {/* CTA button */}
-          <Pressable
-            className="bg-[#6F2CD8] py-3 rounded-full flex-row items-center justify-center"
-          >
-            <Text className="text-white text-lg font-[quilka] mr-3">
-              Let’s go
+          {/* Absolutely center the title so it's visually centered regardless of icon widths */}
+          <View className="absolute left-0 right-0 top-1/2 -translate-y-1/2 items-center">
+            <Text className="text-white text-3xl font-[quilka]">
+              Today’s Challenge
             </Text>
-            <ArrowRight color="white" size={18} />
-          </Pressable>
-
+          </View>
         </View>
+
+        {/* Avatar */}
+        <View className="items-center mb-6">
+          <Image
+            source={require("../../../assets/avatars/zylo.png")}
+            className="w-80 h-80 my-12"
+            resizeMode="contain"
+          />
+        </View>
+
+        {/* Greeting card */}
+        <View className="bg-white/30 border border-white p-5 rounded-3xl mb-6">
+          <Text className="text-3xl font-[quilka] text-center text-white mb-2">
+            Well done, Tim!
+          </Text>
+
+          <Text className="text-base text-center text-white font-[abeezee] leading-relaxed">
+            Good job completing the story. Now let’s learn some new words from
+            the story.
+          </Text>
+        </View>
+
+        {/* CTA button */}
+        <Pressable
+          onPress={() => navigation.navigate("storyReader", { storyId: "1" })}
+          className="bg-white py-3 rounded-full flex-row items-center justify-center mt-2"
+          android_ripple={{ color: "rgba(0,0,0,0.05)" }}
+          accessibilityRole="button"
+          accessibilityLabel="Start challenge"
+        >
+          <Text className="text-[#866EFF] text-3xl font-[quilka] mr-3">
+            Let’s go
+          </Text>
+          <ArrowRight color="#866EFF" size={48} />
+        </Pressable>
       </ScrollView>
     </View>
   );
