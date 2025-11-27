@@ -19,11 +19,13 @@ const useUpdateKids = ({
       excludedTags?: string[];
       preferredVoiceId?: string;
       preferredCategoryIds?: string[];
+      isBedtimeEnabled?: boolean;
+      bedtimeStart?: string;
+      bedtimeEnd?: string;
+      bedtimeDays?: number[];
     }) => {
-      console.log("voice data", kids);
-      // const bedTimeDays = kids.bedtimeDays
-      //   ? getBedtimeDaysByString(kids.bedtimeDays[0])
-      //   : [0];
+      console.log("update kids data", kids);
+      console.log("kid data", id);
       const request = await apiFetch(`${BASE_URL}/auth/kids/${id}`, {
         method: "PUT",
         body: JSON.stringify({
@@ -32,7 +34,10 @@ const useUpdateKids = ({
           excludedTags: kids.excludedTags,
           preferredVoiceId: kids.preferredVoiceId,
           preferredCategoryIds: kids.preferredCategoryIds,
-          // bedTimeDays,
+          isBedtimeEnabled: kids.isBedtimeEnabled,
+          bedtimeStart: kids.bedtimeStart,
+          bedtimeEnd: kids.bedtimeEnd,
+          bedtimeDays: kids.bedtimeDays,
         }),
       });
       const results = await request.json();
@@ -58,15 +63,3 @@ const useUpdateKids = ({
 };
 
 export default useUpdateKids;
-
-const getBedtimeDaysByString = (
-  input: "everyday" | "weekdays" | "weekends"
-): number[] => {
-  if (input === "everyday") {
-    return [0, 1, 2, 3, 4, 5, 6];
-  } else if (input === "weekdays") {
-    return [1, 2, 3, 4, 5];
-  } else {
-    return [6, 1];
-  }
-};
