@@ -116,8 +116,10 @@ export default function DeleteAccount() {
             />
           </View>
         )}
-        <View className="flex-1 justify-center  gap-6 mt-8">
-          <Pressable>
+        <View className="flex-1 justify-center  gap-6 mt-8 ">
+          <Pressable
+            onPress={() => navigator.navigate("deleteAccountConfirmation")}
+          >
             <Text
               style={[defaultStyles.defaultText, { color: "white" }]}
               className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${true ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}

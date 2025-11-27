@@ -106,6 +106,7 @@ const ProfileScreen: FC = () => {
             icon={<CreditCard size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
+            onPress={() => navigator.navigate("subscriptionIndex")}
           />
           <MenuItem
             icon={<HelpCircle size={isTablet ? 20 : 18} />}
