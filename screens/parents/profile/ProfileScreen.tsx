@@ -25,13 +25,16 @@ import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import MenuItem from "../../../components/MenuItem";
 import Avatar from "../../../components/Avatar";
-import LogoutModal from "../../../components/modals/LogoutModal";
+import LogoutModal from "../../../components/modals/ParentProfileIndexModal";
+import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const [openLogout, setOpenLogout] = useState(false);
+  const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
+    false
+  );
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
@@ -83,7 +86,7 @@ const ProfileScreen: FC = () => {
         <View style={styles.menuList}>
           <MenuItem
             icon={<User size={isTablet ? 20 : 18} />}
-            label="Manage Child  Profiles"
+            label="Manage Child Profiles"
             onPress={() => navigator.navigate("manageChildProfiles")}
             isTablet={isTablet}
           />
@@ -114,17 +117,23 @@ const ProfileScreen: FC = () => {
             icon={<LogOut size={isTablet ? 20 : 18} />}
             label="Log Out"
             isTablet={isTablet}
-            onPress={() => setOpenLogout(true)}
+            onPress={() => setOpenModal("logout")}
           />
           <MenuItem
             icon={<Trash size={isTablet ? 20 : 18} />}
             label="Delete Account"
             textColor="#DC2626"
             isTablet={isTablet}
+            onPress={() => setOpenModal("delete")}
           />
         </View>
       </ScrollView>
-      <LogoutModal open={openLogout} setOpen={setOpenLogout} logout={logout} />
+      <ParentProfileModal
+        open={openModal}
+        setOpen={setOpenModal}
+        logout={logout}
+        deleteAccount={() => navigator.navigate("deleteAccount")}
+      />
       <LoadingOverlay visible={isLoading} />
     </View>
   );
