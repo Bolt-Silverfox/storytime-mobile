@@ -18,8 +18,10 @@ type RootNavigatorParamList = {
   profile: NavigatorScreenParams<ProfileNavigatorParamList>;
   protected: undefined;
 };
+
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
+
 
 const RootNavigator = () => {
   const { user, logout } = useAuth();

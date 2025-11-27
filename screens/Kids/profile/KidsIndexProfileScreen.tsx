@@ -6,12 +6,13 @@ import {
   ScrollView,
   Pressable,
 } from "react-native";
-import defaultStyles from "../../styles";
 import { CloudMinus, MagicStar } from "iconsax-react-nativejs";
 import { useNavigation } from "@react-navigation/native";
+import defaultStyles from "../../../styles";
+import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
 
-const KidsProfileScreen = () => {
-  const navigator = useNavigation();
+const KidsIndexProfileScreen = () => {
+  const navigator = useNavigation<kidsProfileNavigatorProp>();
   return (
     <ScrollView className=" flex-1">
       <View>
@@ -28,7 +29,7 @@ const KidsProfileScreen = () => {
             style={{ position: "absolute", right: 10 }}
           />
           <Image
-            source={require("../../assets/avatars/Avatars-3.png")}
+            source={require("../../../assets/avatars/Avatars-3.png")}
             className="mx-auto"
           />
           <Text className="font-[quilka] text-xl">Tim</Text>
@@ -46,49 +47,60 @@ const KidsProfileScreen = () => {
         <View className="mt-[66] gap-[30] mx-auto ">
           <View className="flex-row justify-between max-w-[390] gap-3">
             <Pressable
-              // onPress={()=> navigator.navigate('')}
+              onPress={() => navigator.navigate("changeKidAvatar")}
               className="bg-[#8681FF] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3B34DD]"
             >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#938FFE]" />
 
-              <Image source={require("../../assets/icons/changeAvatar.png")} />
+              <Image
+                source={require("../../../assets/icons/changeAvatar.png")}
+              />
               <Text className="text-[16px] text-[#0731EC] font-[abeezee]">
                 Change Avatar
               </Text>
               <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#5953F6]" />
             </Pressable>
 
-            <View className="bg-[#FEBADC] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#EC0794]">
+            <Pressable
+              onPress={() => navigator.navigate("readKidHistory")}
+              className="bg-[#FEBADC] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#EC0794]"
+            >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#FFD2E8]" />
 
-              <Image source={require("../../assets/icons/read.png")} />
+              <Image source={require("../../../assets/icons/read.png")} />
               <Text className="text-[16px] text-[#EC0794] font-[abeezee]">
                 Read history
               </Text>
               <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#FF66B2]" />
-            </View>
+            </Pressable>
           </View>
 
           <View className="flex-row justify-between  max-w-[390] ">
-            <View className="bg-[#EFCDFB]  border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]">
+            <Pressable
+              onPress={() => navigator.navigate("changeKidTheme")}
+              className="bg-[#EFCDFB]  border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]"
+            >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#FAEBFF]" />
 
-              <Image source={require("../../assets/icons/theme.png")} />
+              <Image source={require("../../../assets/icons/theme.png")} />
               <Text className="text-[16px] text-[#AF55CF] font-[abeezee]">
                 Change Theme
               </Text>
               <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#D786F5]" />
-            </View>
+            </Pressable>
 
-            <View className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]">
+            <Pressable
+              onPress={() => navigator.navigate("kidAchievement")}
+              className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]"
+            >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#CDFBF7]" />
 
-              <Image source={require("../../assets/icons/achieve.png")} />
+              <Image source={require("../../../assets/icons/achieve.png")} />
               <Text className="text-[16px] text-[#487F7B] font-[abeezee]">
                 Achievement
               </Text>
               <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#6FE6DC]" />
-            </View>
+            </Pressable>
           </View>
           <MagicStar
             color="#EC40071F"
@@ -107,4 +119,4 @@ const KidsProfileScreen = () => {
     </ScrollView>
   );
 };
-export default KidsProfileScreen;
+export default KidsIndexProfileScreen;
