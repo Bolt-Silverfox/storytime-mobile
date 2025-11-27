@@ -1,39 +1,50 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Pressable, ScrollView, Switch, Text, View } from "react-native";
+import { Suspense, useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import {
   ParentControlNavigatorParamList,
   ParentControlNavigatorProp,
 } from "../../../Navigation/ParentControlsNavigator";
+import ContentFilterCategories from "../../../components/ContentFilterCategories";
+import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
-import { useState } from "react";
+import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 
 type ContentFilterPropList = RouteProp<
   ParentControlNavigatorParamList,
   "contentFilter"
 >;
 
-type AgeFilter = "1 - 4" | "5 - 8" | "9 - 12";
-
-const CATEGORIES = [
-  "Adventure",
-  "Bedtime",
-  "Friendship",
-  "Family",
-  "Animals",
-  "Fairytales",
-  "Fantasy",
-  "Mystery",
-  "Folktale",
-  "Morales",
-  "Courage and Faith",
-];
-
 const ContentFilter = () => {
   const navigator = useNavigation<ParentControlNavigatorProp>();
-  const [filterByAge, setFilterByAge] = useState<AgeFilter>("1 - 4");
+  const [filterByAge, setFilterByAge] = useState("1 - 4");
   const { params } = useRoute<ContentFilterPropList>();
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const { data, isPending, error, refetch } = useGetKidById(params.childId);
+  const { mutate, isPending: isUpdating } = useUpdateKids({
+    id: params.childId,
+    onSuccess: () => navigator.goBack(),
+  });
+
+  useEffect(() => {
+    data?.preferredCategories.map((category) =>
+      setSelectedCategories((c) => [...c, category.id])
+    );
+    setFilterByAge(data?.ageRange ?? "");
+  }, [data]);
+
+  if (error)
+    return <ErrorComponent message={error.message} refetch={refetch} />;
 
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
@@ -97,29 +108,34 @@ const ContentFilter = () => {
       </View>
 
       <View className="flex flex-col mx-5 rounded-3xl p-4 bg-white mt-6">
-        <Text className="text-[18px] font-[abeezee] my-3">
-          FILTER BY CATEGORY
-        </Text>
-
-        {CATEGORIES.map((category) => (
-          <Pressable
-            key={category}
-            className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-            onPress={() => toggleCategory(category)}
-          >
-            <Text className="flex-1 text-base text-black font-[abeezee]">
-              {category}
-            </Text>
-            <Switch
-              value={selectedCategories.includes(category)}
-              onValueChange={() => toggleCategory(category)}
-            />
-          </Pressable>
-        ))}
+        <View className="my-3 flex flex-col gap-y-1">
+          <Text className="text-[18px] font-[abeezee] ">
+            FILTER BY CATEGORY
+          </Text>
+          <Text className="text-xs font-[abeezee]">
+            Select the categories you prefer
+          </Text>
+        </View>
+        <Suspense fallback={<ActivityIndicator size={"large"} />}>
+          <ContentFilterCategories
+            selectedCategories={selectedCategories}
+            toggleCategory={toggleCategory}
+          />
+        </Suspense>
       </View>
       <View className="m-10">
-        <CustomButton text="Save Changes" />
+        <CustomButton
+          disabled={isUpdating || !filterByAge}
+          text={isUpdating ? "Saving..." : "Save Changes"}
+          onPress={() =>
+            mutate({
+              ageRange: filterByAge,
+              preferredCategoryIds: selectedCategories,
+            })
+          }
+        />
       </View>
+      <LoadingOverlay visible={isPending} />
     </ScrollView>
   );
 };
