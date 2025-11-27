@@ -63,7 +63,7 @@ const ControlsIndexScreen = () => {
           className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
           onPress={() => openModal("excludeStoryTags")}
         >
-          <Icon name="Funnel" color={colours.primary} />
+          <Icon name="FunnelX" color={colours.primary} />
           <Text className="flex-1 text-base text-black font-[abeezee]">
             Exclude Story Tags{" "}
           </Text>
