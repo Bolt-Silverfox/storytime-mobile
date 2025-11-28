@@ -36,8 +36,6 @@ const ProfileScreen: FC = () => {
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
-  const { data } = useGetUserProfile();
-  console.log(data);
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
@@ -57,8 +55,13 @@ const ProfileScreen: FC = () => {
         >
           <Avatar
             onPress={() => {
-              // setUploaderVisible(true);
               navigator.navigate("editParentImage");
+            }}
+            style={{
+              position: "absolute",
+              left: "50%",
+              bottom: -56,
+              marginLeft: -56,
             }}
           />
         </ImageBackground>
