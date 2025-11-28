@@ -1,36 +1,81 @@
-import { useState } from "react";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useEffect, useState } from "react";
 import { ScrollView, Switch, Text, View } from "react-native";
+import {
+  ParentControlNavigatorParamList,
+  ParentControlNavigatorProp,
+} from "../../../Navigation/ParentControlsNavigator";
+import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
-import { useNavigation } from "@react-navigation/native";
-import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
+import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import CustomButton from "../../../components/UI/CustomButton";
 
 const screenLimit: Limit[] = [
-  "30 Minutes",
-  "1 Hours",
-  "2 Hours",
-  "3 Hours",
-  "4 Hours",
-  "5 Hours",
-  "6 Hours",
-  "7 Hours",
-  "No Limit",
+  {
+    text: "30 Minutes",
+    value: 30,
+  },
+  {
+    text: "1 hour",
+    value: 60,
+  },
+  {
+    text: "2 hours",
+    value: 120,
+  },
+  {
+    text: "3 hours",
+    value: 180,
+  },
+  {
+    text: "4 hours",
+    value: 240,
+  },
+  {
+    text: "5 hours",
+    value: 300,
+  },
+  {
+    text: "6 hours",
+    value: 360,
+  },
+  {
+    text: "7 hours",
+    value: 420,
+  },
+  {
+    text: "No Limit",
+    value: null,
+  },
 ];
 
-type Limit =
-  | "30 Minutes"
-  | "1 Hours"
-  | "2 Hours"
-  | "3 Hours"
-  | "4 Hours"
-  | "5 Hours"
-  | "6 Hours"
-  | "7 Hours"
-  | "No Limit";
+type Limit = {
+  text: string;
+  value: number | null;
+};
+
+type RouteProps = RouteProp<ParentControlNavigatorParamList, "setDailyLimit">;
 
 const SetDailyLimit = () => {
-  const [limit, setLimit] = useState<Limit>("No Limit");
+  const { params } = useRoute<RouteProps>();
+  const [limit, setLimit] = useState<Limit["value"]>(null);
   const navigator = useNavigation<ParentControlNavigatorProp>();
+  const { data, isPending, error, refetch } = useGetKidById(params.childId);
+  const { mutate, isPending: isUpdating } = useUpdateKids({
+    id: params.childId,
+    onSuccess: () => navigator.goBack(),
+  });
 
+  useEffect(() => {
+    setLimit(data?.dailyScreenTimeLimitMins ?? null);
+  }, [data]);
+
+  if (error)
+    return <ErrorComponent message={error.message} refetch={refetch} />;
+  console.log("local", limit);
+  console.log("remote", data?.dailyScreenTimeLimitMins);
   return (
     <ScrollView
       className="flex-1"
@@ -57,18 +102,28 @@ const SetDailyLimit = () => {
         <View className="flex flex-col rounded-2xl gap-y-5 ">
           {screenLimit.map((limitValue) => (
             <View
-              key={limitValue}
+              key={limitValue.value}
               className="bg-white flex flex-row justify-between items-center p-3 border-b border-b-black/10"
             >
-              <Text className="font-[quilka] text-sm">{limitValue}</Text>
+              <Text className="font-[quilka] text-sm">{limitValue.text}</Text>
               <Switch
-                value={limitValue === limit}
-                onValueChange={() => setLimit(limitValue)}
+                value={limitValue.value === limit}
+                onValueChange={() => setLimit(limitValue.value)}
               />
             </View>
           ))}
         </View>
       </View>
+      <CustomButton
+        disabled={isUpdating}
+        text={isUpdating ? "Saving changes..." : "Save"}
+        onPress={() =>
+          mutate({
+            dailyScreenTimeLimitMins: limit,
+          })
+        }
+      />
+      <LoadingOverlay visible={isPending} />
     </ScrollView>
   );
 };
