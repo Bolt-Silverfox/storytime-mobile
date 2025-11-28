@@ -35,7 +35,10 @@ const EditChildProfile = () => {
   const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
     "age" | "delete" | null
   >(null);
-  const { isPending, mutate } = useUpdateKids();
+  const { isPending, mutate } = useUpdateKids({
+    id: params.id,
+    onSuccess: () => navigator.navigate("manageChildProfiles"),
+  });
   const { isPending: isDeleting, mutate: deleteKid } = useDeleteKid();
 
   const handleSubmit = () => {
@@ -48,7 +51,7 @@ const EditChildProfile = () => {
       return;
     }
     setError("");
-    mutate({ id: params.id, name, ageRange: age });
+    mutate({ name, ageRange: age });
   };
 
   const handleCloseModals = () => {

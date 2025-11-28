@@ -1,17 +1,43 @@
-import { useNavigation } from "@react-navigation/native";
-import { Suspense, useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import PageTitle from "../../../components/PageTitle";
-import StorytimeVoices from "../../../components/StorytimeVoices";
 import CustomButton from "../../../components/UI/CustomButton";
-import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
+import {
+  ParentControlNavigatorParamList,
+  ParentControlNavigatorProp,
+} from "../../../Navigation/ParentControlsNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import ErrorComponent from "../../../components/ErrorComponent";
+const StorytimeVoices = lazy(
+  () => import("../../../components/StorytimeVoices")
+);
+
+type RouteProps = RouteProp<
+  ParentControlNavigatorParamList,
+  "customizeReadingVoices"
+>;
 
 const CustomizeReadingVoice = () => {
+  const { params } = useRoute<RouteProps>();
   const navigator = useNavigation<ParentControlNavigatorProp>();
+  const { data, isPending, error, refetch } = useGetKidById(params.childId);
+  const [currentlyActiveVoiceId, setCurrentlyActiveVoiceId] = useState(
+    data?.preferredVoiceId ?? ""
+  );
   const [activeTab, setActiveTab] = useState<"storytime" | "personal">(
     "storytime"
   );
+
+  useEffect(() => {
+    setCurrentlyActiveVoiceId(data?.preferredVoiceId ?? "");
+  }, [data]);
+
+  if (error)
+    return <ErrorComponent message={error.message} refetch={refetch} />;
+  console.log("remote", data?.preferredVoiceId);
+  console.log("local", currentlyActiveVoiceId);
 
   return (
     <View className="flex-1 min-h-full pb-10 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full">
@@ -42,8 +68,11 @@ const CustomizeReadingVoice = () => {
         </Pressable>
       </View>
       {activeTab === "storytime" ? (
-        <Suspense fallback={<LoadingOverlay visible={true} />}>
-          <StorytimeVoices />
+        <Suspense fallback={<ActivityIndicator size={"large"} />}>
+          <StorytimeVoices
+            currentlyActiveVoiceId={currentlyActiveVoiceId}
+            childId={params.childId}
+          />
         </Suspense>
       ) : null}
       {activeTab === "personal" ? (
@@ -54,6 +83,7 @@ const CustomizeReadingVoice = () => {
           <CustomButton disabled={true} text="Add Recording" />
         </View>
       ) : null}
+      <LoadingOverlay visible={isPending} />
     </View>
   );
 };

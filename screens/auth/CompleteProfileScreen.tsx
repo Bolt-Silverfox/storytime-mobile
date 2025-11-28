@@ -21,7 +21,10 @@ export default function CompleteProfileScreen() {
   const [language, setLanguage] = useState("English");
   const [country, setCountry] = useState("Nigeria");
   const [kids, setKids] = useState("1");
-  const { mutate, isPending } = useUpdateUserProfile(Number(kids));
+  const { mutate, isPending } = useUpdateUserProfile({
+    onSuccess: () =>
+      navigation.navigate("kidsInfoForm", { kidsCount: Number(kids) }),
+  });
   const [openDropdown, setOpenDropdown] = useState<
     "language" | "country" | "kids" | null
   >(null);
