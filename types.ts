@@ -57,4 +57,6 @@ type SystemAvatar = {
   createdAt: string;
 };
 
+
+
 export type { User, Profile, KidType, QueryResponse, SystemAvatar };
