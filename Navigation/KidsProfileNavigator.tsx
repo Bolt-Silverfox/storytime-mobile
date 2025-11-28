@@ -20,7 +20,7 @@ export type kidsProfileNavigatorProp =
   NativeStackNavigationProp<KidsProfileNavigatorParams>;
 const Stack = createNativeStackNavigator<KidsProfileNavigatorParams>();
 
-export default function kidsProfileNavigator() {
+export default function KidsProfileNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="indexPage" component={KidsIndexProfileScreen} />
