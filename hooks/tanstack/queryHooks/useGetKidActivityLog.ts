@@ -1,39 +1,34 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { QueryResponse } from "../../../types";
 
 type ActivityLog = {
-  statusCode: number;
-  success: boolean;
-  data: {
-    voice_id: string;
-    name: string;
-    category: string;
-    samples: string | null;
-    description: string;
-    preview_url: string;
-    label: {
-      accent: string;
-      gender: string;
-      age: string;
-    };
-  }[];
-
-  message: string;
+  voice_id: string;
+  name: string;
+  category: string;
+  samples: string | null;
+  description: string;
+  preview_url: string;
+  label: {
+    accent: string;
+    gender: string;
+    age: string;
+  };
 };
 
 const useGetKidActivityLog = (id: string) => {
   console.log("kidid", id);
   return useQuery({
-    queryKey: ["voices"],
+    queryKey: ["activityLog", id],
     queryFn: async () => {
       const URL = `${BASE_URL}/activity-logs/kid/${id}`;
       const request = await apiFetch(URL, {
         method: "GET",
       });
-      const response: ActivityLog = await request.json();
+      const response: QueryResponse<ActivityLog[]> = await request.json();
       console.log("activity log", response);
-      if (!response.success) throw new Error(response.message);
+      if (!response.success) throw new Error(response.mesage);
       return response;
     },
     staleTime: Infinity,

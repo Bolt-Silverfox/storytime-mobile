@@ -37,11 +37,27 @@ type KidType = {
     name: string;
     avatarId: string | null;
     ageRange: string;
+    dailyScreenTimeLimitMins: null | number;
     parentId: string;
+    currentReadingLevel: number;
     createdAt: string;
     updatedAt: string;
-    preferredVoiceId: null | string;
+    preferredVoiceId: string;
+    excludedTags: string[];
+    isBedtimeEnabled: boolean;
+    bedtimeStart: string | null;
+    bedtimeEnd: string | null;
+    bedtimeDays: number[];
+    bedtimeLockApp: boolean;
+    bedtimeDimScreen: boolean;
+    bedtimeReminder: boolean;
+    bedtimeStoriesOnly: boolean;
     avatar: string | null;
+    parent: {
+      id: string;
+      name: string;
+      email: string;
+    };
   }[];
   message: string;
 };
@@ -57,4 +73,31 @@ type SystemAvatar = {
   createdAt: string;
 };
 
-export type { User, Profile, KidType, QueryResponse, SystemAvatar };
+type UserProfile = {
+  avatar: null | string;
+  createdAt: string;
+  email: string;
+  enableBiometrics: boolean;
+  id: string;
+  name: string;
+  numberOfKids: number;
+  pinSet: boolean;
+  profile: {
+    country: string;
+    explicitContent: boolean;
+    language: string;
+    maxScreenTimeMins: null | string | number;
+  };
+  role: string;
+  title: string;
+  updatedAt: string;
+};
+
+export type {
+  User,
+  Profile,
+  KidType,
+  QueryResponse,
+  SystemAvatar,
+  UserProfile,
+};
