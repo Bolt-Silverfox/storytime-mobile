@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { QueryResponse, UserProfile } from "../../../types";
 
 const useGetUserProfile = () => {
   const { user } = useAuth();
@@ -16,8 +17,7 @@ const useGetUserProfile = () => {
         const response = await apiFetch(url, {
           method: "GET",
         });
-        const userProfile = await response.json();
-        // console.log("user profile data", userProfile);
+        const userProfile: QueryResponse<UserProfile> = await response.json();
         return userProfile;
       } catch (err) {
         const message =
