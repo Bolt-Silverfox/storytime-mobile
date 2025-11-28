@@ -49,6 +49,7 @@ const KidWelcomeScreen = () => {
           </Text>
           <Icon name="ArrowRight" color="white" />
         </Pressable>
+        ``
       </ImageBackground>
     </View>
   );
