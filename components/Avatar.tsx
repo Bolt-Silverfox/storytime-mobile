@@ -14,6 +14,7 @@ import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type AvatarProps = {
   size?: number;
+  edit?: boolean;
   initials?: string;
   backgroundColor?: string;
   onPress?: () => void;
@@ -22,17 +23,16 @@ type AvatarProps = {
 
 const Avatar: React.FC<AvatarProps> = ({
   size = 110,
+  edit,
   initials,
   backgroundColor = "#E5E7EB",
   onPress,
   style,
 }) => {
-  const [imageError, setImageError] = useState(false);
   const { data } = useGetUserProfile();
-  console.log(data?.data?.avatar.url);
   const uri = data?.data?.avatar.url;
 
-  const showImage = !!uri && !imageError;
+  const showImage = !!uri 
 
   const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
 
@@ -46,31 +46,33 @@ const Avatar: React.FC<AvatarProps> = ({
           className="rounded-full"
         />
       ) : (
-        <Profile size="100" variant="Bold" color="white" />
+        <Profile size={size} variant="Bold" color="white" />
       )}
     </>
   );
 
-  if (onPress) {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        // activeOpacity={0.8}
-        style={[
-          styles.addPhotoButton,
-          { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
-          imageStyle,
-        ]}
-      >
-        {Content}
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      // activeOpacity={0.8}
+      style={[
+        styles.addPhotoButton,
+        { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
+        imageStyle,
+        style,
+      ]}
+    >
+      {Content}
+
+      {edit && (
         <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
           <Image source={require("../assets/icons/pen.png")} />
         </View>
-      </TouchableOpacity>
-    );
-  }
+      )}
+    </TouchableOpacity>
+  );
 
-  return <View>{Content}</View>;
+  // return <View>{Content}</View>;
 };
 
 const styles = StyleSheet.create({
@@ -79,34 +81,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  placeholderInner: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: "100%",
-  },
-  addPhotoButton: {
-    position: "absolute",
-    left: "50%",
-    bottom: -56,
-    marginLeft: -56,
 
+  addPhotoButton: {
     borderRadius: 56,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 4,
-    borderColor: "#D1D5DB",
-    alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 5,
-  },
-  initials: {
-    color: "#374151",
-    fontWeight: "600",
   },
 });
 

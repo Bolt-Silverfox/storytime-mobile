@@ -3,9 +3,13 @@ import Icon from "../../../components/Icon";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useAuth from "../../../contexts/AuthContext";
 import CustomButton from "../../../components/UI/CustomButton";
+import Avatar from "../../../components/Avatar";
+import { useNavigation } from "@react-navigation/native";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 
 const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
+  const navigator = useNavigation<ParentsNavigatorProp>();
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -17,8 +21,14 @@ const ParentHomeScreen = () => {
         className="flex flex-row items-center gap-2 sticky top-0 "
       >
         <View>
-          <Image source={require("../../../assets/placeholder-pfp.png")} />
+          <Avatar
+            size={40}
+            onPress={() =>
+              navigator.navigate("profile", { screen: "indexPage" })
+            }
+          />
         </View>
+
         <View className="flex flex-1  flex-col gap-y-1.5">
           <Text className="font-[abeezee] text-base">
             {user?.title} {user?.name}
