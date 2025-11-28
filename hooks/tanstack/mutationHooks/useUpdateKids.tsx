@@ -24,6 +24,10 @@ const useUpdateKids = ({
       bedtimeEnd?: string;
       bedtimeDays?: number[];
       dailyScreenTimeLimitMins?: number | null;
+      bedtimeLockApp?: boolean;
+      bedtimeDimScreen?: boolean;
+      bedtimeReminder?: boolean;
+      bedtimeStoriesOnly?: boolean;
     }) => {
       console.log("update kids data", kids);
       console.log("kid data", id);
@@ -40,6 +44,10 @@ const useUpdateKids = ({
           bedtimeEnd: kids.bedtimeEnd,
           bedtimeDays: kids.bedtimeDays,
           dailyScreenTimeLimitMins: kids.dailyScreenTimeLimitMins,
+          bedtimeLockApp: kids.bedtimeLockApp,
+          bedtimeDimScreen: kids.bedtimeDimScreen,
+          bedtimeReminder: kids.bedtimeReminder,
+          bedtimeStoriesOnly: kids.bedtimeStoriesOnly,
         }),
       });
       const results = await request.json();
