@@ -17,7 +17,7 @@ const useGetUserProfile = () => {
           method: "GET",
         });
         const userProfile = await response.json();
-        console.log("user profile data", userProfile);
+        // console.log("user profile data", userProfile);
         return userProfile;
       } catch (err) {
         const message =
