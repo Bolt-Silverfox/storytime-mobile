@@ -33,7 +33,7 @@ const CustomizeReadingVoice = () => {
   useEffect(() => {
     setCurrentlyActiveVoiceId(data?.preferredVoiceId ?? "");
   }, [data]);
-
+  console.log("kids data", data);
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   console.log("remote", data?.preferredVoiceId);
@@ -89,3 +89,5 @@ const CustomizeReadingVoice = () => {
 };
 
 export default CustomizeReadingVoice;
+
+// 9c45b3e8-a20e-4ca6-9e54-377246aa4f86

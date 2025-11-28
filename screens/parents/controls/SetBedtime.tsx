@@ -14,6 +14,7 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import ErrorComponent from "../../../components/ErrorComponent";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
+import { flattenError } from "zod";
 
 type PropRoutes = RouteProp<ParentControlNavigatorParamList, "setBedtime">;
 
@@ -62,7 +63,12 @@ const SetBedtime = () => {
       stopTime: data?.bedtimeEnd ?? "07:00",
     });
     setRepeatDays(data?.bedtimeDays ?? []);
-    // setBedtimeControls()
+    setBedtimeControls({
+      lockDuringBedtime: data?.bedtimeLockApp ?? false,
+      dimDuringBedtime: data?.bedtimeDimScreen ?? false,
+      allowBedtimeStoriesOnly: data?.bedtimeStoriesOnly ?? false,
+      showBedTimeReminder: data?.bedtimeReminder ?? false,
+    });
   }, [data]);
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
@@ -151,13 +157,13 @@ const SetBedtime = () => {
         className="flex flex-col  bg-white rounded-2xl pt-4 mx-5"
         aria-labelledby="bedtime controls"
       >
-        <Text className="font-[quilka] text-center text-xl">Coming soon</Text>
-        <View className="flex border-b  border-b-black/10 py-3 flex-row justify-between items-center">
-          <Text className="font-[abeezee] opacity-40 text-base text-text">
+        <Text className="text-xl font-[abeezee]">BEDTIME CONTROLS</Text>
+        <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
+          <Text className="font-[abeezee]  text-base text-text">
             Lock app during bedtime
           </Text>
           <Switch
-            disabled={true}
+            disabled={bedTimeMode === false}
             value={bedtimeControls.lockDuringBedtime}
             onValueChange={() =>
               setBedtimeControls((b) => ({
@@ -167,12 +173,12 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex border-b  border-b-black/10 py-3 flex-row justify-between items-center">
-          <Text className="font-[abeezee] opacity-40 text-base text-text">
+        <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
+          <Text className="font-[abeezee]  text-base text-text">
             Dim screen during bedtime
           </Text>
           <Switch
-            disabled={true}
+            disabled={bedTimeMode === false}
             value={bedtimeControls.dimDuringBedtime}
             onValueChange={() =>
               setBedtimeControls((b) => ({
@@ -182,12 +188,12 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex border-b py-3 border-b-black/10 flex-row justify-between items-center">
-          <Text className="font-[abeezee] opacity-40 text-base text-text">
+        <View className="flex border-b py-3 border-b-black/10 px-4 flex-row justify-between items-center">
+          <Text className="font-[abeezee]  text-base text-text">
             Show bedtime reminder
           </Text>
           <Switch
-            disabled={true}
+            disabled={bedTimeMode === false}
             value={bedtimeControls.showBedTimeReminder}
             onValueChange={() =>
               setBedtimeControls((b) => ({
@@ -197,12 +203,12 @@ const SetBedtime = () => {
             }
           />
         </View>
-        <View className="flex  flex-row py-3 justify-between items-center">
-          <Text className="font-[abeezee] opacity-40 text-base text-text">
+        <View className="flex  flex-row py-3 justify-between px-4 items-center">
+          <Text className="font-[abeezee]  text-base text-text">
             Allow bedtime stories only{" "}
           </Text>
           <Switch
-            disabled={true}
+            disabled={bedTimeMode === false}
             value={bedtimeControls.allowBedtimeStoriesOnly}
             onValueChange={() =>
               setBedtimeControls((b) => ({
@@ -221,6 +227,10 @@ const SetBedtime = () => {
             bedtimeStart: schedule.startTime,
             bedtimeEnd: schedule.stopTime,
             bedtimeDays: repeatDays,
+            bedtimeLockApp: bedtimeControls.lockDuringBedtime,
+            bedtimeDimScreen: bedtimeControls.dimDuringBedtime,
+            bedtimeReminder: bedtimeControls.showBedTimeReminder,
+            bedtimeStoriesOnly: bedtimeControls.allowBedtimeStoriesOnly,
           })
         }
         text={isPending ? "Saving" : "Save changes"}

@@ -4,30 +4,31 @@ import { BASE_URL } from "../../../constants";
 import { Avatar } from "../../../types";
 
 type KidData = {
-  avatar: Avatar;
-  activityLogs: any[];
-  ageRange: string;
-  avatarId: string;
-  bedtimeDays: number[];
-  bedtimeEnd: string | null;
-  bedtimeStart: string | null;
-  createdAt: string;
-  currentReadingLevel: number;
-  dailyScreenTimeLimitMins: number | null;
-  excludedTags: string[];
   id: string;
-  isBedtimeEnabled: boolean;
   name: string;
-  notificationPreferences: any[];
+  avatarId: string | null;
+  ageRange: string;
+  dailyScreenTimeLimitMins: null | number;
   parentId: string;
-  preferredCategories: {
-    description: string;
-    id: string;
-    image: string;
-    name: string;
-  }[];
-  preferredVoiceId: null | string;
+  currentReadingLevel: number;
+  createdAt: string;
   updatedAt: string;
+  preferredVoiceId: string;
+  excludedTags: string[];
+  isBedtimeEnabled: boolean;
+  bedtimeStart: string | null;
+  bedtimeEnd: string | null;
+  bedtimeDays: number[];
+  bedtimeLockApp: boolean;
+  bedtimeDimScreen: boolean;
+  bedtimeReminder: boolean;
+  bedtimeStoriesOnly: boolean;
+  avatar: Avatar | null;
+  parent: {
+    id: string;
+    name: string;
+    email: string;
+  };
 };
 
 type Response = {

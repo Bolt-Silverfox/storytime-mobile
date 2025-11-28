@@ -25,7 +25,7 @@ export const useAssignKidAvatar = (kidId: string) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["kidAvatar", kidId],
+        queryKey: ["kidById", kidId],
       });
       navigator.navigate("indexPage");
     },
