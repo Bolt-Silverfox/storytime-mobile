@@ -27,6 +27,7 @@ import MenuItem from "../../../components/MenuItem";
 import Avatar from "../../../components/Avatar";
 import LogoutModal from "../../../components/modals/ParentProfileIndexModal";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -35,6 +36,8 @@ const ProfileScreen: FC = () => {
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
+  const { data } = useGetUserProfile();
+  console.log(data);
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
