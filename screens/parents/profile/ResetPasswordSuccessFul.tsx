@@ -17,6 +17,7 @@ export default function ResetPasswordSuccess() {
   );
 }
 
+
 export function SuccessScreen({
   onPress,
   message,
@@ -42,7 +43,7 @@ export function SuccessScreen({
           <Text style={[defaultStyles.heading, { fontSize: 28 }]}>
             Successfull
           </Text>
-          <Text className="mx-auto mt-10" style={[defaultStyles.defaultText]}>
+          <Text className="mx-auto mt-10 px-5 text-center" style={[defaultStyles.defaultText]}>
             {message}
           </Text>
         </View>
