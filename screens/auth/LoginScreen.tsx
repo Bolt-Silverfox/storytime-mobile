@@ -62,9 +62,10 @@ const LoginScreen = () => {
             }
             style={{ ...defaultStyles.linkText, textAlign: "right" }}
           >
-            Reset Password
+            Forgot Password?
           </Text>
         </View>
+
         <Pressable
           onPress={() => login(email, password)}
           disabled={isLoading}
@@ -74,15 +75,30 @@ const LoginScreen = () => {
         >
           <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
         </Pressable>
-        <Text style={{ ...styles.text, marginTop: 16 }}>
-          Don't have an account?{" "}
-          <Text
-            onPress={() => navigator.navigate("auth", { screen: "signUp" })}
-            style={{ ...defaultStyles.defaultText, color: colours.link }}
-          >
-            Register
+        <View className="flex flex-col gap-y-4 mt-10">
+          <Text style={{ ...styles.text }}>
+            Don't have an account?{" "}
+            <Text
+              onPress={() => navigator.navigate("auth", { screen: "signUp" })}
+              style={{ ...defaultStyles.defaultText, color: colours.link }}
+            >
+              Register
+            </Text>
           </Text>
-        </Text>
+          <Text style={{ ...styles.text }}>
+            Signed up but haven't verified?{" "}
+            <Text
+              onPress={() =>
+                navigator.navigate("auth", {
+                  screen: "requestEmailVerification",
+                })
+              }
+              style={{ ...defaultStyles.defaultText, color: colours.link }}
+            >
+              Verify email
+            </Text>
+          </Text>
+        </View>
       </View>
       <LoadingOverlay visible={isLoading} />
     </View>
@@ -134,34 +150,3 @@ const styles = StyleSheet.create({
     marginBottom: 44,
   },
 });
-
-// export function loginDat() {
-//   return {
-//     success: true,
-//     message: "welcome",
-//     data: {
-//       user: {
-//         id: "string",
-//         email: "jutindikonu8@gmail.com",
-//         name: "jutin",
-//         avatarUrl: "",
-//         role: "parent",
-//         createdAt: " string",
-//         updatedAt: "string",
-//         title: "mr",
-//         profile: {
-//           id: "string",
-//           explicitContent: true,
-//           maxScreenTimeMins: 50,
-//           language: "english",
-//           country: "nigeria",
-//           createdAt: "string",
-//           updatedAt: "string",
-//         },
-//         numberOfKids: 2,
-//       },
-//       jwt: "yes",
-//       refreshToken: "noo",
-//     },
-//   };
-// }

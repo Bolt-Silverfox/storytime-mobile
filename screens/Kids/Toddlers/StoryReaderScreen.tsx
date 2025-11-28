@@ -14,11 +14,10 @@ import VoiceSelectModal from "../../../components/modals/VoiceSelectModal";
 import { KidStory } from "./StoryInteraction";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
+import StoryCompletionModal from "../../../components/modals/StoryCompletionModal";
+import { LinearGradient } from "expo-linear-gradient";
 
-type Props = NativeStackScreenProps<
-  KidsSetupNavigatorParamList,
-  "storyReader"
->;
+type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "storyReader">;
 
 /**
  * Lightweight reader with page highlighting & controls.
@@ -60,6 +59,7 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const [isPlaying, setIsPlaying] = React.useState(false);
   const [dropdownVisible, setDropdownVisible] = React.useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = React.useState(false);
+  const [completionVisible, setCompletionVisible] = React.useState(false);
 
   // auto-advance simulation — advances a page every X ms while playing
   React.useEffect(() => {
@@ -92,6 +92,16 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
     // navigation passes voice to subsequent screens if required
   };
 
+  const handleFinish = () => {
+    setCompletionVisible(true);
+  };
+
+  const handleCompletionPrimary = () => {
+    setCompletionVisible(false);
+    const sid = (route.params as any)?.storyId;
+    navigation.navigate("challenge", { storyId: sid });
+  };
+
   const coverSource = passedStory?.coverImageUrl
     ? { uri: passedStory.coverImageUrl }
     : require("../../../assets/life-of-pi.png");
@@ -99,7 +109,20 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   return (
     <ImageBackground source={coverSource} className="flex-1" resizeMode="cover">
       {/* dim overlay so text is readable */}
-      <View className="absolute inset-0 bg-black/50" />
+      {/* <View className="absolute inset-0 bg-black/50" /> */}
+      <LinearGradient
+        colors={[
+          "rgba(88, 53, 180, 0)",
+          "rgba(88, 53, 180, 0.55)",
+          "rgba(88, 53, 180, 0.75)",
+          "rgba(38, 23, 78, 0.55)",
+          "rgba(38, 23, 78, 0.95)",
+          "rgba(38, 23, 78, 1)",
+        ]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        style={{ position: "absolute", inset: 0 }}
+      />
 
       {/* Safe header */}
       <SafeAreaView className="flex-row items-center justify-between px-4 py-2 z-20 mt-4">
@@ -120,16 +143,45 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
         </View>
 
         {/* dropdown */}
-        <Pressable
-          onPress={() => setDropdownVisible((v) => !v)}
-          className="absolute top-8 right-4 z-30"
-        >
-          <Image
-            source={require("../../../assets/story/more.png")}
-            className="w-12 h-12"
-            resizeMode="contain"
-          />
-        </Pressable>
+        <View className="flex-col items-end absolute top-8 right-4 z-30">
+          <Pressable
+            onPress={() => setDropdownVisible((v) => !v)}
+            // className="absolute top-8 right-4 z-30"
+          >
+            <Image
+              source={require("../../../assets/story/more.png")}
+              className="w-12 h-12"
+              resizeMode="contain"
+            />
+          </Pressable>
+          {dropdownVisible && (
+            <View className="mt-4 flex-col gap-4">
+              <Pressable
+                onPress={() => {
+                  setVoiceModalVisible(true);
+                }}
+              >
+                <Image
+                  source={require("../../../assets/story/read-mode.png")}
+                  className="w-12 h-12"
+                  resizeMode="contain"
+                />
+              </Pressable>
+              <Pressable
+                onPress={() => {
+                  setPageIndex(0);
+                  setDropdownVisible(false);
+                }}
+              >
+                <Image
+                  source={require("../../../assets/story/listen-mode.png")}
+                  className="w-12 h-12"
+                  resizeMode="contain"
+                />
+              </Pressable>
+            </View>
+          )}
+        </View>
       </SafeAreaView>
 
       {/* main area that pushes content to the bottom */}
@@ -149,13 +201,18 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
         {/* controls sit just under the story box */}
         <View className="px-6 pb-8 mt-12">
           <View className="flex-row items-center justify-between">
-            <Pressable onPress={goPrev}>
-              <Image
-                source={require("../../../assets/story/prev.png")}
-                className="w-12 h-12"
-                resizeMode="contain"
-              />
-            </Pressable>
+            {pageIndex > 0 ? (
+              <Pressable onPress={goPrev}>
+                <Image
+                  source={require("../../../assets/story/prev.png")}
+                  className="w-12 h-12"
+                  resizeMode="contain"
+                />
+              </Pressable>
+            ) : (
+              // keep spacing consistent when Prev hidden
+              <View className="w-12 h-12" />
+            )}
 
             <Pressable
               onPress={() => setIsPlaying((s) => !s)}
@@ -168,62 +225,40 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
               />
             </Pressable>
 
-            <Pressable onPress={goNext}>
-              <Image
-                source={require("../../../assets/story/next.png")}
-                className="w-12 h-12"
-                resizeMode="contain"
-              />
-            </Pressable>
+            {pageIndex + 1 >= total ? (
+              <Pressable
+                onPress={handleFinish}
+                className="bg-[#866EFF] px-4 py-3 rounded-full items-center justify-center"
+                accessibilityRole="button"
+              >
+                <Text className="text-white font-[abeezee]">Finish story</Text>
+              </Pressable>
+            ) : (
+              <Pressable onPress={goNext}>
+                <Image
+                  source={require("../../../assets/story/next.png")}
+                  className="w-12 h-12"
+                  resizeMode="contain"
+                />
+              </Pressable>
+            )}
           </View>
         </View>
       </View>
-
-      {/* Dropdown modal */}
-      <Modal
-        visible={dropdownVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setDropdownVisible(false)}
-      >
-        <Pressable
-          className="absolute inset-0 bg-black/40"
-          onPress={() => setDropdownVisible(false)}
-        />
-        <View className="absolute top-28 right-1.5 flex-col gap-2">
-          <Pressable
-            className="py-2 px-3"
-            onPress={() => {
-              setVoiceModalVisible(true);
-            }}
-          >
-            <Image
-              source={require("../../../assets/story/read-mode.png")}
-              className="w-12 h-12"
-              resizeMode="contain"
-            />
-          </Pressable>
-          <Pressable
-            className="py-2 px-3"
-            onPress={() => {
-              setPageIndex(0);
-              setDropdownVisible(false);
-            }}
-          >
-            <Image
-              source={require("../../../assets/story/listen-mode.png")}
-              className="w-12 h-12"
-              resizeMode="contain"
-            />
-          </Pressable>
-        </View>
-      </Modal>
 
       {/* Voice modal */}
       <VoiceSelectModal
         visible={voiceModalVisible}
         onClose={() => setVoiceModalVisible(false)}
         onSave={handleSaveVoice}
+      />
+      <StoryCompletionModal
+        visible={completionVisible}
+        onClose={() => setCompletionVisible(false)}
+        onPrimaryPress={handleCompletionPrimary}
+        title="Yayyyy!!!!!!!"
+        subtitle="You did it !"
+        message="You’ve completed your first story!"
       />
     </ImageBackground>
   );
