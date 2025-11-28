@@ -13,6 +13,10 @@ import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsSto
 import type { Category as UICategory } from "../../../types/parents.types";
 import { useNavigation } from "@react-navigation/native";
 import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
+import {
+  KidsTabNavigatorParamList,
+  KidsTabNavigatorProp,
+} from "../../../Navigation/KidsTabNavigator";
 
 type Kid = { id: string; name?: string };
 
@@ -21,6 +25,7 @@ const ParentHomeScreen = () => {
   const { data: kidsData = [] } = useGetUserKids();
   const categoriesQuery = useGetStoryCategories();
   const categories = categoriesQuery.data ?? [];
+  const navigator = useNavigation<KidsTabNavigatorProp>();
 
   const kids = kidsData.map((k: any) => ({
     id: k.id,
@@ -82,12 +87,7 @@ const ParentHomeScreen = () => {
         className="flex flex-row items-center gap-2 sticky top-0 "
       >
         <View>
-          <Avatar
-            size={40}
-            onPress={() =>
-              navigator.navigate("profile", { screen: "indexPage" })
-            }
-          />
+          <Avatar size={40} onPress={() => navigator.navigate("profile")} />
         </View>
 
         <View className="flex flex-1  flex-col gap-y-1.5">
@@ -219,9 +219,7 @@ const HorizontalList: React.FC<{
                 {item.category}
               </Text>
 
-              <Text className="text-lg font-[abeezee] mt-2">
-                {item.name}
-              </Text>
+              <Text className="text-lg font-[abeezee] mt-2">{item.name}</Text>
 
               <Text className="text-text text-base font-[abeezee] mt-4">
                 {item.kidName}'s progress
