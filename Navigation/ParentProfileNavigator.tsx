@@ -68,14 +68,14 @@ const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="indexPage" component={ProfileScreen} />
-      <Stack.Screen name="editParentImage" component={EditParentImage} />
+      <Stack.Screen name="editParentImage" component={EditParentImage}  />
 
       <Stack.Screen
         name="manageChildProfiles"
         component={ManageChildProfilesScreen}
       />
 
-      <Stack.Screen name="managePassword" component={ManagePassword} />
+      <Stack.Screen name="managePassword" component={ManagePassword}  />
       <Stack.Screen
         name="resetParentPassword"
         component={ResetParentPassword}
