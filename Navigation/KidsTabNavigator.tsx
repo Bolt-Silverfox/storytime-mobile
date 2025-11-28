@@ -7,8 +7,8 @@ import Icon from "../components/Icon";
 import colours from "../colours";
 import KidsLibraryScreen from "../screens/Kids/KidsLibraryScreen";
 import KidsProgressScreen from "../screens/Kids/KidsProgressScreen";
-import KidsProfileScreen from "../screens/Kids/KidsProfileScreen";
 import KidsLibraryNavigator from "./KidsLibraryNavigator";
+import kidsProfileNavigator from "./KidsProfileNavigator";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
@@ -79,7 +79,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="profile"
-        component={KidsProfileScreen}
+        component={kidsProfileNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
