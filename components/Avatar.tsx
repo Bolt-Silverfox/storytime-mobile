@@ -10,9 +10,9 @@ import {
   View,
   ViewStyle,
 } from "react-native";
+import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type AvatarProps = {
-  uri?: string | null;
   size?: number;
   initials?: string;
   backgroundColor?: string;
@@ -21,22 +21,18 @@ type AvatarProps = {
 };
 
 const Avatar: React.FC<AvatarProps> = ({
-  uri,
-  size = 48,
+  size = 110,
   initials,
   backgroundColor = "#E5E7EB",
   onPress,
   style,
 }) => {
   const [imageError, setImageError] = useState(false);
+  const { data } = useGetUserProfile();
+  console.log(data?.data?.avatar.url);
+  const uri = data?.data?.avatar.url;
 
   const showImage = !!uri && !imageError;
-
-  const wrapperStyle: StyleProp<ViewStyle> = [
-    styles.container,
-    { width: size, height: size, borderRadius: size / 2, backgroundColor },
-    style,
-  ];
 
   const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
 
@@ -47,7 +43,7 @@ const Avatar: React.FC<AvatarProps> = ({
           source={{ uri: uri as string }}
           style={imageStyle}
           resizeMode="cover"
-          onError={() => setImageError(true)}
+          className="rounded-full"
         />
       ) : (
         <Profile size="100" variant="Bold" color="white" />
@@ -63,6 +59,7 @@ const Avatar: React.FC<AvatarProps> = ({
         style={[
           styles.addPhotoButton,
           { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
+          imageStyle,
         ]}
       >
         {Content}
@@ -94,8 +91,7 @@ const styles = StyleSheet.create({
     left: "50%",
     bottom: -56,
     marginLeft: -56,
-    width: 112,
-    height: 112,
+
     borderRadius: 56,
     backgroundColor: "#FFFFFF",
     borderWidth: 4,

@@ -17,16 +17,15 @@ import * as ImagePicker from "expo-image-picker";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { useUpdateProfileWithImage } from "../../../hooks/tanstack/queryHooks/useGetUserImage";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import { useUploadImage } from "../../../hooks/tanstack/mutationHooks/UseUploadUserImage";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState("");
   const { data } = useGetUserProfile();
-  const { uploadAndUpdate, isLoading: isUpdating } = useUpdateProfileWithImage(
-    data?.data?.id
-  );
-  // console.log(data?.data?.id);
+  const userId = data?.data?.id;
+  const { mutateAsync: uploadImage, isPending } = useUploadImage(userId);
 
   const handleSubmit = async () => {
     if (!image) {
@@ -34,25 +33,10 @@ export default function EditParentImage() {
       return;
     }
     try {
-      await uploadAndUpdate(image);
+      await uploadImage(image);
     } catch (err) {
-      Alert.alert("could not upload file");
+      console.log(err);
     }
-
-    // if (!file) return;
-
-    // try {
-    //   await uploadAndUpdate(file, {
-    //     title: formData.get("title") as string,
-    //     name: formData.get("name") as string,
-    //     language: formData.get("language") as string,
-    //     country: formData.get("country") as string,
-    //   });
-
-    //   alert("Profile updated successfully!");
-    // } catch (error) {
-    //   alert("Failed to update profile");
-    // }
   };
 
   const UploadImage = async (mode?: string) => {
@@ -191,7 +175,7 @@ export default function EditParentImage() {
         onPressCamera={() => UploadImage()}
         onPressFile={() => UploadImage("gallery")}
       />
-      <LoadingOverlay label="Uplaoding" visible={isUpdating} />
+      <LoadingOverlay label="Uplaoding" visible={isPending} />
     </View>
   );
 }

@@ -1,6 +1,11 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { UpdateUserProfileData, useUpdateProfile } from "../mutationHooks/useUpdateProfile";
+import {
+  UpdateUserProfileData,
+  useUpdateProfile,
+} from "../mutationHooks/useUpdateProfile";
 import { BASE_URL } from "../../../constants";
+import apiFetch from "../../../apiFetch";
+import { useUploadImage } from "../mutationHooks/UseUploadUserImage";
 
 interface Avatar {
   id: string;
@@ -21,42 +26,9 @@ interface Profile {
   updatedAt: string;
 }
 
-export const useUploadImage = () => {
-  return useMutation({
-    mutationFn: async (imageUri: string): Promise<{ url: string }> => {
-      const formData = new FormData();
-      const filename = imageUri.split("/").pop() || "image.jpg";
-      const match = /\.(\w+)$/.exec(filename);
-      const type = match ? `image/${match[1]}` : "image/jpeg";
-
-      formData.append("file", {
-        uri: imageUri,
-        name: filename,
-        type: type,
-      } as any);
-
-      const response = await fetch(`${BASE_URL}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!response.ok) {
-        if (response.status === 413) {
-          throw new Error(
-            "Image file is too large. Please select a smaller image or reduce quality."
-          );
-        }
-        throw new Error("Failed to upload image");
-      }
-
-      return response.json();
-    },
-  });
-};
-
 // Combined hook for uploading image and updating profile
 export const useUpdateProfileWithImage = (userId: string) => {
-  const uploadImage = useUploadImage();
+  const uploadImage = useUploadImage(userId);
   const updateProfile = useUpdateProfile(userId);
 
   const uploadAndUpdate = async (
@@ -65,20 +37,17 @@ export const useUpdateProfileWithImage = (userId: string) => {
   ) => {
     try {
       const uploadResult = await uploadImage.mutateAsync(imageUri);
-      // const uploadResult = {
-      //   url: "https://res.cloudinary.com/billmal/image/upload/v1764241146/storytime/qrea6qt2zu997z6xjxif.jpg",
-      // };
+      // const updateResult = await updateProfile.mutateAsync({
+      //   ...profileData,
+      //   avatarUrl: uploadResult.url,
+      // });
 
-      const updateResult = await updateProfile.mutateAsync({
-        ...profileData,
-        avatarUrl: uploadResult.url,
-      });
+      console.log(uploadResult);
+      // console.log("profile update", updateResult);
 
-      console.log("profile update", updateResult);
-
-      return updateResult;
+      // return updateResult;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw error;
     }
   };
@@ -160,4 +129,3 @@ export const useUpdateProfileWithImage = (userId: string) => {
 //       Alert.alert("Error", "Please select an image");
 //       return;
 //     }
-
