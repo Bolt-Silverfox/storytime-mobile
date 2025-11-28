@@ -107,3 +107,101 @@ export const privacy = [
     description: "mail: support@storytimekids.com",
   },
 ];
+
+export const FAQ = {
+  parentAcountManagement: [
+    {
+      q: "Do I need a parent account to use the app?",
+      a: "Yes. A parent account is required to create child profiles, manage safety settings, and access subscription features",
+    },
+    {
+      q: "Can I add more than one child?",
+      a: "Yes! You can add multiple child profiles and personalize each child’s reading level and interests.",
+    },
+    {
+      q: " How do I edit or delete my child’s profile?",
+      a: " Go to Parent Dashboard → Child Profile → Edit / Delete.",
+    },
+    {
+      q: "Can I monitor my child’s activity?",
+      a: "Yes. You can see their recent stories, listening time, and reading progress.",
+    },
+  ],
+  safety: [
+    {
+      q: "Can I control what content my child sees?",
+      a: ` Absolutely, You can set filters by:
+  –Age
+  –Genre
+  –Reading difficulty
+  –Story themes`,
+    },
+    {
+      q: "Is the app child-safe?",
+      a: "Yes. The app follows child safety laws like COPPA and GDPR-K, and requires parent consent before a child profile is created.",
+    },
+    {
+      q: "Can my child make purchases inside the app?",
+      a: " No. All purchases are restricted to the parent section.",
+    },
+    {
+      q: " Can I set time limits?",
+      a: " Yes. You can set daily usage limits during onboarding or anytime in your settings.",
+    },
+  ],
+  storiesAndAudio: [
+    {
+      q: "Will stories always match my child’s age?",
+      a: "Yes. Stories are tagged by age and difficulty, and your child’s onboarding quiz helps us recommend the right content.",
+    },
+    {
+      q: "Can my child listen to stories instead of reading?",
+      a: " Yes. Every story has narration your child can listen to at their own pace",
+    },
+    {
+      q: "Are new stories added?",
+      a: "We add new stories and illustrations regularly, so the library stays fresh and exciting.",
+    },
+  ],
+  subscription: [
+    {
+      q: " Do I need a subscription?",
+      a: " You can enjoy free stories, but premium stories and full library features require a subscription.",
+    },
+    {
+      q: "How does the 14-day free trial work?",
+      a: "You get full access for 14 days. If you don’t cancel before the end of the trial, your plan will renew automatically.",
+    },
+    {
+      q: " What’s included in the family plan?",
+      a: " One subscription covers all child profiles under your account",
+    },
+    {
+      q: "How do I cancel my subscription?",
+      a: "You can cancel anytime from your App Store / Google Play settings or inside the Parent Dashboard.",
+    },
+    {
+      q: "Will I lose saved stories if I cancel?",
+      a: "No. You’ll still see your saved stories, but premium ones will be locked until you resubscribe.",
+    },
+  ],
+  privacy: [
+    {
+      q: "What information do you collect about my child?",
+      a: `Only what’s needed for personalization — age, interests, reading level
+ We never collect unnecessary personal details`,
+    },
+    {
+      q: "Do you share or sell my data?",
+      a: " No. Your family’s data is never sold or shared with third parties.",
+    },
+    {
+      q: " Is my child’s data used for AI training?",
+      a: " No. Child data is not used to train external AI models.",
+    },
+    {
+      q: ": Can I delete my child’s data?",
+      a: "Yes. When you delete a child profile, all related data is permanently removed.",
+    },
+  ],
+};

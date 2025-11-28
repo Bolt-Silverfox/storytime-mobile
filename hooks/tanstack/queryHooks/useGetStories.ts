@@ -52,6 +52,7 @@ const useGetStories = (id: string) => {
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error,try again later");
       }
+      console.log("available stories", response);
       return response;
     },
     refetchOnMount: false,
