@@ -9,29 +9,35 @@ import {
 import React from "react";
 import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  KidsProfileNavigatorParams,
+  kidsProfileNavigatorProp,
+} from "../../../Navigation/KidsProfileNavigator";
 import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
 import { SystemAvatar } from "../../../types";
-import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
+import { ChildContext } from "../../../Navigation/KidsTabNavigator";
+import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
+type RouteProps = RouteProp<KidsProfileNavigatorParams, "changeKidAvatar">;
 
 export default function ChangeKidAvatar() {
   const [selectedAvatarId, setSelectedAvatarId] = React.useState<string | null>(
     null
   );
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const route = useRoute();
-  const kidId = (route.params as any)?.kidId;
+  // const { params } = useRoute<RouteProps>();
+
+  const { childId } = React.useContext(ChildContext)!;
+
   const { width } = useWindowDimensions();
   const { data: avatars, isLoading } = useGetAvatars();
-  const { mutateAsync: updateKid, isPending } = useUpdateKids({ id: kidId });
+  const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(childId!);
   const kidsAvatars: SystemAvatar[] = avatars?.data?.data || [];
 
   const avatarSize = (width - 48) / 3;
 
   const handleSelectAvatar = (avatar: SystemAvatar) => {
     setSelectedAvatarId(avatar.id);
-    console.log("Selected avatar:", avatar.id);
   };
 
   const handleSave = () => {
@@ -39,15 +45,7 @@ export default function ChangeKidAvatar() {
       alert("Please select an avatar");
       return;
     }
-    // updateKid(
-    //   {
-    //     id: selectedAvatarId,
-    //     onSuccess: () => {
-    //       navigator.navigate("indexPage");
-    //     },
-    //   },
-    //   {}
-    // );
+    updateKid(selectedAvatarId);
   };
 
   return (
@@ -78,7 +76,7 @@ export default function ChangeKidAvatar() {
             style={{
               width: avatarSize,
               height: avatarSize,
-              borderRadius: '100%',
+              borderRadius: "100%",
               overflow: "hidden",
               borderWidth: selectedAvatarId === item.id ? 6 : 0,
               borderColor:

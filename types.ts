@@ -5,6 +5,17 @@ type QueryResponse<T> = {
   data: T;
 };
 
+export type Avatar = {
+  id: string;
+  name: string;
+  url: string;
+  isSystemAvatar: boolean;
+  isDeleted: boolean;
+  createdAt: string;
+  deletedAt: string | null;
+  displayName: string | null;
+  publicId: string | null;
+};
 type Profile = {
   id: string;
   explicitContent: boolean;
@@ -41,7 +52,7 @@ type KidType = {
     createdAt: string;
     updatedAt: string;
     preferredVoiceId: null | string;
-    avatar: string | null;
+    avatar: Avatar | null;
   }[];
   message: string;
 };
