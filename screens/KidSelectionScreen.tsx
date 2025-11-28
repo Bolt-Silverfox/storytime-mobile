@@ -8,10 +8,12 @@ import useAuth from "../contexts/AuthContext";
 import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
 import ChildrenEmptyState from "../components/emptyState/ChildrenEmptyState";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import KidAvatar from "../components/KidAvatar";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
   const { data, isPending, error, refetch } = useGetUserKids();
+  console.log(data);
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible={isPending} />;
 
@@ -60,10 +62,7 @@ const KidSelectionScreen = () => {
                 key={kid.id}
                 className="flex w-[100px]  items-center flex-col gap-y-3"
               >
-                <Image
-                  source={require("../assets/placeholder-pfp.png")}
-                  className="size-[90px]"
-                />
+                <KidAvatar uri={kid.avatar?.url} size={120} />
                 <View className="flex flex-col gap-y-1.5">
                   <Text className="text-2xl font-[abeezee] text-center">
                     {kid.name.split(" ").at(0)}

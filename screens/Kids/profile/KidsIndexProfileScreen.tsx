@@ -10,9 +10,19 @@ import { CloudMinus, MagicStar } from "iconsax-react-nativejs";
 import { useNavigation } from "@react-navigation/native";
 import defaultStyles from "../../../styles";
 import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import React from "react";
+import { ChildContext } from "../../../Navigation/KidsTabNavigator";
+import KidAvatar from "../../../components/KidAvatar";
 
 const KidsIndexProfileScreen = () => {
   const navigator = useNavigation<kidsProfileNavigatorProp>();
+  const { childId } = React.useContext(ChildContext)!;
+  const { data } = useGetKidById(childId!);
+  const kidAvatar = data?.avatar?.url;
+  const kidName = data?.name;
+  const kidAge = data?.ageRange;
+  console.log(data);
   return (
     <ScrollView className=" flex-1">
       <View>
@@ -28,12 +38,10 @@ const KidsIndexProfileScreen = () => {
             color="#EC40071F"
             style={{ position: "absolute", right: 10 }}
           />
-          <Image
-            source={require("../../../assets/avatars/Avatars-3.png")}
-            className="mx-auto"
-          />
-          <Text className="font-[quilka] text-xl">Tim</Text>
-          <Text className="font-[abeezee]">1-4 yrs</Text>
+          <KidAvatar uri={kidAvatar} size={100} />
+          <Image source={{ uri: kidAvatar }} className="mx-auto" />
+          <Text className="font-[quilka] text-xl">{kidName}</Text>
+          <Text className="font-[abeezee]">{kidAge}</Text>
           <MagicStar
             color="#EC40071F"
             style={{ position: "absolute", bottom: 20, left: 40 }}
