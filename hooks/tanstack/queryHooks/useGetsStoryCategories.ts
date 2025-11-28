@@ -33,7 +33,7 @@ const useGetStoryCategories = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
-    select: (res) => res.data,
+    select: (res) => res.data ?? [],
   });
 };
 
