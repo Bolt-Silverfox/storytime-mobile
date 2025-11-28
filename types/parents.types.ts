@@ -20,8 +20,8 @@ export interface Story {
 export interface Category {
   id: number;
   name: string;
-  color: string;
-  textColor: string,
+  colour: string;
+  bg: string,
 }
 
 export type StoryId = number;
