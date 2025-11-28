@@ -1,7 +1,7 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import CategoryCard from './CategoryCard';
-import { Category } from '../../types/parents.types';
+import React from "react";
+import { View, Text, TouchableOpacity, FlatList } from "react-native";
+import CategoryCard from "./CategoryCard";
+import { Category } from "../../types/parents.types";
 
 interface CategoryGridProps {
   categories: Category[];
@@ -9,58 +9,41 @@ interface CategoryGridProps {
   onViewAll: () => void;
 }
 
-const CategoryGrid: React.FC<CategoryGridProps> =  ({ categories, onCategoryPress, onViewAll }) => {
+const CategoryGrid: React.FC<CategoryGridProps> = ({
+  categories,
+  onCategoryPress,
+  onViewAll,
+}) => {
   return (
-    <View style={styles.container}>
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Categories</Text>
+    <View className="mt-6">
+      {/* Header */}
+      <View className="flex-row justify-between items-center mb-4">
+        <Text className="text-xl font-[quilka]">Categories</Text>
         <TouchableOpacity onPress={onViewAll}>
-          <Text style={styles.viewAll}>View all</Text>
+          <Text className="font-[abeezee] text-base text-link">View all</Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.categoriesGrid}>
-        {categories.map((category) => (
+      {/* TWO-COLUMN GRID */}
+      <FlatList
+        data={categories}
+        keyExtractor={(item) => item.id.toString()}
+        numColumns={2}
+        nestedScrollEnabled
+        columnWrapperStyle={{
+          justifyContent: "space-between",
+          marginBottom: 16,
+        }}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
           <CategoryCard
-            key={category.id}
-            category={category}
-            onPress={() => onCategoryPress(category.id)}
+            category={item}
+            onPress={() => onCategoryPress(item.id)}
           />
-        ))}
-      </View>
+        )}
+      />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    marginTop: 24,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 15,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#212121',
-    fontFamily: "Qilkabold",
-  },
-  viewAll: {
-    fontSize: 14,
-    color: '#0731EC',
-    fontWeight: '400',
-    fontFamily: "ABeeZee",
-  },
-  categoriesGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 12,
-    marginLeft: 10,
-  },
-});
 
 export default CategoryGrid;

@@ -7,13 +7,17 @@ import ChallengeTracker from "../screens/parents/home/ChallengeTracker";
 import DailyChallengeScreen from "../screens/parents/home/DailyChallengeScreen";
 import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStoriesScreen";
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
-import StoriesListScreen from "../screens/parents/StoriesListScreen";
+import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 // import ParentsHomeScreen from "../screens/parents/ParentsHomeScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
-  storiesList: undefined;
+  storiesList: {
+    categoryId?: string;
+    categoryName?: string;
+    kidId?: string;
+  };
   interactiveStories: undefined;
   plainStories: undefined;
   dailyChallenge: undefined;

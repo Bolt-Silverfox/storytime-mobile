@@ -11,7 +11,6 @@ import StoryModeSelector from "../screens/Kids/Toddlers/StoryModeSelector";
 import StoryInteractionScreen from "../screens/Kids/Toddlers/StoryInteraction";
 import StoryReaderScreen from "../screens/Kids/Toddlers/StoryReaderScreen";
 import ChallengeScreen from "../screens/Kids/Toddlers/DailyChallengeIntroScreen";
-// import ChallengeScreen from "../screens/Kids/ChallengeScreen"; // <-- import
 
 export type KidsSetupNavigatorParamList = {
   buddySelectionPage: { childId: string };
