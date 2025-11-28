@@ -84,7 +84,7 @@ const KidsIndexProfileScreen = () => {
           </View>
 
           <View className="flex-row justify-between  max-w-[390] ">
-            <Pressable
+            {/* <Pressable
               onPress={() => navigator.navigate("changeKidTheme")}
               className="bg-[#EFCDFB]  border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]"
             >
@@ -95,7 +95,7 @@ const KidsIndexProfileScreen = () => {
                 Change Theme
               </Text>
               <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#D786F5]" />
-            </Pressable>
+            </Pressable> */}
 
             <Pressable
               onPress={() => navigator.navigate("kidAchievement")}

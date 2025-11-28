@@ -54,9 +54,7 @@ export default function ChangekidTheme() {
       className="flex-1 m-2 rounded-[23] justify-center items-center h-36"
       style={[
         { backgroundColor: item.color },
-        selected == item.id
-          ? { borderColor: "#FF0000", borderWidth: 2, pa }
-          : {},
+        selected == item.id ? { borderColor: "#FF0000", borderWidth: 2 } : {},
       ]}
     >
       <Image source={item.image} className="w-18 h-218" resizeMode="contain" />

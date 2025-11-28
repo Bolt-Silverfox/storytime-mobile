@@ -60,7 +60,7 @@ const KidSelectionScreen = () => {
                 key={kid.id}
                 className="flex w-[100px]  items-center flex-col gap-y-3"
               >
-                <KidAvatar uri={kid.avatar?.url} size={120} />
+                <KidAvatar uri={kid.avatar?.url} size={87} />
                 <View className="flex flex-col gap-y-1.5">
                   <Text className="text-2xl font-[abeezee] text-center">
                     {kid.name.split(" ").at(0)}
