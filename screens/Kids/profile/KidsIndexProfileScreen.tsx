@@ -41,7 +41,7 @@ const KidsIndexProfileScreen = () => {
           <KidAvatar uri={kidAvatar} size={100} />
           <Image source={{ uri: kidAvatar }} className="mx-auto" />
           <Text className="font-[quilka] text-xl">{kidName}</Text>
-          <Text className="font-[abeezee]">{kidAge}</Text>
+          <Text className="font-[abeezee]">{kidAge} years</Text>
           <MagicStar
             color="#EC40071F"
             style={{ position: "absolute", bottom: 20, left: 40 }}

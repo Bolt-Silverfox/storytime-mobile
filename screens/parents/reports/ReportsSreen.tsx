@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { Share2 } from "lucide-react-native";
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import {
   ImageBackground,
   ScrollView,
@@ -17,7 +17,7 @@ import { Cup, ImportCurve, Notepad2, TimerStart } from "iconsax-react-nativejs";
 import ReportScore from "../../../components/ReportScore";
 import defaultStyles from "../../../styles";
 
-const ProfileScreen: FC = () => {
+const ReportScreen: FC = () => {
   const { user, isLoading, logout } = useAuth();
   // const navigator = useNavigation<ParentProfileNavigatorProp>();
 
@@ -28,7 +28,10 @@ const ProfileScreen: FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
         <ImageBackground
           source={require("../../../assets/bg-adaptive-image.png")}
           style={styles.header}
@@ -157,7 +160,7 @@ const ProfileScreen: FC = () => {
   );
 };
 
-export default ProfileScreen;
+export default ReportScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFFCFBFB" },

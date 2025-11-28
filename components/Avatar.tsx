@@ -11,6 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
+import { url } from "zod";
 
 type AvatarProps = {
   size?: number;
@@ -31,8 +32,9 @@ const Avatar: React.FC<AvatarProps> = ({
 }) => {
   const { data } = useGetUserProfile();
   const uri = data?.data?.avatar.url;
+  console.log(url);
 
-  const showImage = !!uri 
+  const showImage = !!uri;
 
   const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
 
