@@ -20,6 +20,10 @@ import FeedBackMessageSuccess from "../screens/parents/profile/FeedBackMessageSu
 import ContactUs from "../screens/parents/profile/ContactUs";
 import TermsAndConditions from "../screens/parents/profile/TermsAndConditions";
 import PrivacyAndPolicy from "../screens/parents/profile/privacy";
+import DeleteAccount from "../screens/parents/profile/DeleteAccount";
+import DeleteAccountConfirmation from "../screens/parents/profile/DeleteAccountConfirmation";
+import DeleteAccountSuccessful from "../screens/parents/profile/DeleteAccountSuccessful";
+import SubscriptionIndex from "../screens/parents/profile/subscription/SubscriptionIndex";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -48,6 +52,11 @@ type ParentProfileNavigatorParamList = {
   contactUs: undefined;
   termsAndConditions: undefined;
   privacyAndPolicy: undefined;
+
+  deleteAccount: undefined;
+  deleteAccountConfirmation: undefined;
+  deleteAccountSuccessful: undefined;
+  subscriptionIndex: undefined;
 
   hideStories: undefined;
   recordVoice: undefined;
@@ -101,6 +110,17 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="contactUs" component={ContactUs} />
       <Stack.Screen name="termsAndConditions" component={TermsAndConditions} />
       <Stack.Screen name="privacyAndPolicy" component={PrivacyAndPolicy} />
+
+      <Stack.Screen name="deleteAccount" component={DeleteAccount} />
+      <Stack.Screen
+        name="deleteAccountConfirmation"
+        component={DeleteAccountConfirmation}
+      />
+      <Stack.Screen
+        name="deleteAccountSuccessful"
+        component={DeleteAccountSuccessful}
+      />
+      <Stack.Screen name="subscriptionIndex" component={SubscriptionIndex} />
 
       {/* <Stack.Screen name="hideStories" component={HideStoriesScreen} />
       <Stack.Screen name="recordVoice" component={RecordVoice} />

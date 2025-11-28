@@ -2,6 +2,7 @@ import { FlatList, Image, ScrollView, Text, View } from "react-native";
 import Icon from "../../../components/Icon";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useAuth from "../../../contexts/AuthContext";
+import Avatar from "../../../components/Avatar";
 import CustomButton from "../../../components/UI/CustomButton";
 import { storyTrackerData } from "../../../data";
 import ProgressBar from "../../../components/parents/ProgressBar";
@@ -70,7 +71,6 @@ const ParentHomeScreen = () => {
       categoryName: cat.name,
     });
   };
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
@@ -82,8 +82,14 @@ const ParentHomeScreen = () => {
         className="flex flex-row items-center gap-2 sticky top-0 "
       >
         <View>
-          <Image source={require("../../../assets/placeholder-pfp.png")} />
+          <Avatar
+            size={40}
+            onPress={() =>
+              navigator.navigate("profile", { screen: "indexPage" })
+            }
+          />
         </View>
+
         <View className="flex flex-1  flex-col gap-y-1.5">
           <Text className="font-[abeezee] text-base">
             {user?.title} {user?.name}

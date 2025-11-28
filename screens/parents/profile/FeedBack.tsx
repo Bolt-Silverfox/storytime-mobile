@@ -113,7 +113,7 @@ export default function Feedback() {
             }}
             onChangeText={setMessage}
             value={message}
-            className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
+            className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.message ? "red" : colours.text}
             multiline
           />
