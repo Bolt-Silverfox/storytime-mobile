@@ -8,6 +8,7 @@ import useAuth from "../contexts/AuthContext";
 import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
 import ChildrenEmptyState from "../components/emptyState/ChildrenEmptyState";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Avatar from "../components/Avatar";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
@@ -27,10 +28,7 @@ const KidSelectionScreen = () => {
         aria-labelledby="User information"
         className="flex flex-row gap-x-2 items-center "
       >
-        <Image
-          source={require("../assets/placeholder-pfp.png")}
-          className="size-[50px]"
-        />
+        <Avatar size={50} />
         <View className="flex flex-col gap-y-1">
           <Text className="text-xs text-text">Welcome back</Text>
           <Text className="text-base font-[abeezee] capitalize">
