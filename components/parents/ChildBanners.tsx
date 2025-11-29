@@ -120,7 +120,7 @@ const ChildBanners: React.FC<Props> = ({ kids = [], onPressChild }) => {
         </Text>
 
         {/* Render full week, Sun -> Sat */}
-        <View className="flex-row flex-wrap gap-x-2 gap-y-4 justify-center items-center">
+        <View className="flex-row flex-wrap px-2 gap-x-2 gap-y-4 justify-center items-center">
           {WEEK_LABELS.map((lab) => (
             <View key={lab}>{renderDayPill(lab)}</View>
           ))}
