@@ -31,7 +31,7 @@ export default function CompleteProfileScreen() {
 
   const languages = ["English", "Spanish", "French"];
   const countries = ["Nigeria", "Ghana", "Kenya"];
-  const kidsCount = Array.from({ length: 12 }, (_, i) => (i + 2).toString());
+  const kidsCount = Array.from({ length: 12 }, (_, i) => (i + 1).toString());
 
   const renderDropdown = (
     label: string,
