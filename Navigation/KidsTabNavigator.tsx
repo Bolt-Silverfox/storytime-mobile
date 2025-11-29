@@ -15,9 +15,9 @@ import React from "react";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
-  library: undefined;
-  progress: undefined;
-  profile: undefined;
+  library: { childId: string };
+  progress: { childId: string };
+  profile: { childId: string };
 };
 
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
