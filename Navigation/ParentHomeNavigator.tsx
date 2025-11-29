@@ -12,7 +12,7 @@ import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 // import ParentsHomeScreen from "../screens/parents/ParentsHomeScreen";
 
 type ParentHomeNavigatorParamList = {
-  childStoryDetails: { storyId: string };
+  childStoryDetails: { storyId: string; mode?: string };
   storiesList: {
     categoryId?: string;
     categoryName?: string;

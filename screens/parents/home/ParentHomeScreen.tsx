@@ -13,19 +13,28 @@ import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsSto
 import type { Category as UICategory } from "../../../types/parents.types";
 import { useNavigation } from "@react-navigation/native";
 import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
-import {
-  KidsTabNavigatorParamList,
-  KidsTabNavigatorProp,
-} from "../../../Navigation/KidsTabNavigator";
+import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import ParentFooter from "../../../components/parents/ParentFooter";
+import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 
 type Kid = { id: string; name?: string };
 
 const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
-  const { data: kidsData = [] } = useGetUserKids();
+  const {
+    data: kidsData = [],
+    isLoading: kidsLoading,
+    isError: kidsIsError,
+    error: kidsError,
+    refetch: refetchKids,
+  } = useGetUserKids();
+
   const categoriesQuery = useGetStoryCategories();
   const categories = categoriesQuery.data ?? [];
-  const navigator = useNavigation<KidsTabNavigatorProp>();
+  const catsIsLoading = Boolean(categoriesQuery?.isLoading);
+  const catsIsError = Boolean(categoriesQuery?.isError);
+  const catsError = (categoriesQuery as any)?.error;
 
   const kids = kidsData.map((k: any) => ({
     id: k.id,
@@ -36,12 +45,12 @@ const ParentHomeScreen = () => {
   }));
 
   const PALETTE = [
-    { id: 1, name: "Adventure", colour: "#039222", bg: "#99CDA5" },
+    { id: 1, name: "Adventure", colour: "#039222", bg: "#CDFBD7" },
     { id: 2, name: "Coming of Age", colour: "#925403", bg: "#FBE5CD" },
     { id: 3, name: "Courage/Bravery", colour: "#926903", bg: "#FBF9CD" },
     { id: 4, name: "Mystery", colour: "#008D81", bg: "#CDFBF7" },
     { id: 5, name: "Fantasy", colour: "#5B007C", bg: "#EFCDFB" },
-    { id: 6, name: "Love & Family", colour: "#039222", bg: "#99CDA5" },
+    { id: 6, name: "Love & Family", colour: "#039222", bg: "#CDFBD7" },
     { id: 7, name: "Transformation", colour: "#925403", bg: "#FBE5CD" },
     { id: 8, name: "Honesty", colour: "#926903", bg: "#FBF9CD" },
   ];
@@ -49,7 +58,6 @@ const ParentHomeScreen = () => {
   const apiCats = Array.isArray(categories)
     ? categories
     : categoriesQuery?.data;
-  // map API -> UI Category shape expected by CategoryGrid
   const uiCategories: UICategory[] = apiCats.map((c: any, i: number) => {
     // try to find exact name match in palette
     const match = PALETTE.find(
@@ -59,7 +67,6 @@ const ParentHomeScreen = () => {
     return {
       id: String(c.id ?? pick.id ?? i),
       name: c.name ?? pick.name,
-      // UI expects `colour` and `bg`
       colour: pick.colour,
       bg: pick.bg,
       // optional fields
@@ -69,6 +76,7 @@ const ParentHomeScreen = () => {
   });
 
   const nav = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   const handleCategoryPress = (cat: { id: string | number; name?: string }) => {
     nav.navigate("storiesList", {
@@ -76,84 +84,120 @@ const ParentHomeScreen = () => {
       categoryName: cat.name,
     });
   };
-  return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      className="flex-1"
-      contentContainerClassName="flex min-h-full px-5 pt-4 pb-10 bg-white"
-    >
-      <View
-        aria-labelledby="user avatar container"
-        className="flex flex-row items-center gap-2 sticky top-0 "
-      >
-        <View>
-          <Avatar size={40} onPress={() => navigator.navigate("profile")} />
-        </View>
 
-        <View className="flex flex-1  flex-col gap-y-1.5">
-          <Text className="font-[abeezee] text-base">
-            {user?.title} {user?.name}
-          </Text>
-          <Text className="font-[abeezee] text-[12px] text-[#616161]">
-            Good Morning
-          </Text>
-        </View>
-        <Icon name="Bell" />
+  if (kidsIsError) {
+    return (
+      <View className="flex-1 p-4 bg-white">
+        <ErrorMessageDisplay
+          errorMessage={kidsError?.message ?? "Failed to load children."}
+        />
+        <CustomButton text="Retry" onPress={() => refetchKids?.()} />
       </View>
+    );
+  }
 
-      <View className="flex flex-col gap-y-2 my-7 max-w-screen-md mx-auto w-full">
-        <Text className="text-xl font-[quilka]">Daily Challenge</Text>
-        <ChildBanners kids={kids} />
-      </View>
-      <View
-        aria-labelledby="Child’s Story Tracker"
-        className="flex flex-col gap-y-2 mt-6"
-      >
-        <View className="flex flex-row justify-between items-center">
-          <Text className="text-xl font-[quilka]">Child’s Story Tracker</Text>
-          <Text className="font-[abeezee] text-base text-link">View all</Text>
-        </View>
-        <HorizontalList categories={uiCategories} kids={kids} />
-      </View>
-
-      <View
-        aria-labelledby="Categories"
-        className="flex flex-col max-w-screen-md flex-1 mx-auto w-full gap-y-2 mt-7"
-      >
-        <CategoryGrid
-          categories={uiCategories}
-          onCategoryPress={(idOrCat) => {
-            if (typeof idOrCat === "object") {
-              handleCategoryPress(idOrCat as any);
-            } else {
-              const clicked = uiCategories.find(
-                (c) => String(c.id) === String(idOrCat)
-              );
-              if (clicked) handleCategoryPress(clicked);
-            }
-          }}
-          onViewAll={() => {
-            console.log("View all pressed");
-            // navigate to full categories list
-          }}
+  if (catsIsError) {
+    return (
+      <View className="flex-1 p-4 bg-white">
+        <ErrorMessageDisplay
+          errorMessage={catsError?.message ?? "Failed to load categories."}
+        />
+        {/* if your hook exposes refetch: */}
+        <CustomButton
+          text="Retry"
+          onPress={() => (categoriesQuery as any)?.refetch?.()}
         />
       </View>
+    );
+  }
+  return (
+    <FlatList
+      data={[]} // no vertical items
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={{
+        paddingHorizontal: 20,
+        paddingTop: 16,
+        paddingBottom: 40,
+      }}
+      ListHeaderComponent={() => (
+        <View>
+          {/* avatar row */}
+          <View
+            aria-labelledby="user avatar container"
+            className="flex flex-row items-center gap-2 sticky top-0"
+          >
+            <View>
+              <Avatar
+                size={40}
+                onPress={() => navigator.navigate("indexPage")}
+              />
+            </View>
+            <View className="flex flex-1 flex-col gap-y-1.5">
+              <Text className="font-[abeezee] text-base">
+                {user?.title} {user?.name}
+              </Text>
+              <Text className="font-[abeezee] text-[12px] text-[#616161]">
+                Good Morning
+              </Text>
+            </View>
+            <Icon name="Bell" />
+          </View>
 
-      <View
-        aria-labelledby="Footer information"
-        className="flex flex-col gap-y-3 mt-16"
-      >
-        <Text className="font-[abeezee] text-xl  text-black text-center">
-          You are on free mode
-        </Text>
-        <Text className="font-[abeezee]  text-black text-center">
-          You can only access one story per day. Unlock our full library for
-          unlimited stories
-        </Text>
-        <CustomButton text="Subscribe to Storytime Premium" />
-      </View>
-      <LoadingOverlay visible={isLoading} />
-    </ScrollView>
+          {/* Daily challenge */}
+          <View className="flex flex-col gap-y-2 my-7 max-w-screen-md mx-auto w-full">
+            <Text className="text-xl font-[quilka]">Daily Challenge</Text>
+            <ChildBanners kids={kids} />
+          </View>
+
+          {/* Story tracker with horizontal list*/}
+          <View
+            aria-labelledby="Child’s Story Tracker"
+            className="flex flex-col gap-y-2 mt-6"
+          >
+            <View className="flex flex-row justify-between items-center">
+              <Text className="text-xl font-[quilka]">
+                Child’s Story Tracker
+              </Text>
+              <Text className="font-[abeezee] text-base text-link">
+                View all
+              </Text>
+            </View>
+            <HorizontalList categories={uiCategories} kids={kids} />
+          </View>
+
+          {/* Categories grid */}
+          <View
+            aria-labelledby="Categories"
+            className="flex flex-col max-w-screen-md flex-1 mx-auto w-full gap-y-2 mt-7"
+          >
+            <CategoryGrid
+              categories={uiCategories}
+              onCategoryPress={(idOrCat) => {
+                if (typeof idOrCat === "object") {
+                  handleCategoryPress(idOrCat as any);
+                } else {
+                  const clicked = uiCategories.find(
+                    (c) => String(c.id) === String(idOrCat)
+                  );
+                  if (clicked) handleCategoryPress(clicked);
+                }
+              }}
+              onViewAll={() => {
+                console.log("View all pressed");
+                // navigate to full categories list
+              }}
+            />
+          </View>
+
+          {/* Footer */}
+          <ParentFooter />
+
+          <LoadingOverlay visible={isLoading || kidsLoading || catsIsLoading} />
+        </View>
+      )}
+      renderItem={null}
+      keyExtractor={() => "empty"}
+    />
   );
 };
 export default ParentHomeScreen;

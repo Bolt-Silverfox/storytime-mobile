@@ -24,6 +24,9 @@ type KidData = {
   bedtimeReminder: boolean;
   bedtimeStoriesOnly: boolean;
   avatar: Avatar | null;
+  preferredCategories:
+    | { id: string; name: string; image: string; description: string }[]
+    | null;
   parent: {
     id: string;
     name: string;

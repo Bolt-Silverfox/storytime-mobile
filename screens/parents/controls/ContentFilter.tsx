@@ -37,9 +37,11 @@ const ContentFilter = () => {
   });
 
   useEffect(() => {
-    data?.preferredCategories.map((category) =>
-      setSelectedCategories((c) => [...c, category.id])
-    );
+    data?.preferredCategories
+      ? data.preferredCategories.map((category) =>
+          setSelectedCategories((c) => [...c, category.id])
+        )
+      : null;
     setFilterByAge(data?.ageRange ?? "");
   }, [data]);
 
