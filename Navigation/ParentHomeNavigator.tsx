@@ -18,8 +18,8 @@ type ParentHomeNavigatorParamList = {
     categoryName?: string;
     kidId?: string;
   };
-  interactiveStories: undefined;
-  plainStories: undefined;
+  interactiveStories: { storyId: string; mode?: "interactive" } | undefined;
+  plainStories: { storyId: string; mode?: "plain" } | undefined;
   dailyChallenge: undefined;
   challengeTracker: undefined;
   homePage: undefined;
