@@ -15,9 +15,9 @@ import React from "react";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
-  library: { childId: string };
-  progress: { childId: string };
-  profile: { childId: string };
+  library: undefined;
+  progress: undefined;
+  profile: undefined;
 };
 
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
@@ -25,9 +25,9 @@ type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
 const Tab = createBottomTabNavigator<KidsTabNavigatorParamList>();
 
 type KidsTabNavigatorRouteProp = RouteProp<KidsNavigatorParamList, "index">;
- export const ChildContext = React.createContext<
-   { childId: string | undefined } | undefined
- >(undefined);
+export const ChildContext = React.createContext<
+  { childId: string | undefined } | undefined
+>(undefined);
 
 const KidsTabNavigator = () => {
   const route = useRoute<KidsTabNavigatorRouteProp>();
@@ -61,7 +61,6 @@ const KidsTabNavigator = () => {
         <Tab.Screen
           name="library"
           component={KidsLibraryNavigator}
-          initialParams={{ childId: childId! }}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon
@@ -78,7 +77,6 @@ const KidsTabNavigator = () => {
         <Tab.Screen
           name="progress"
           component={KidsProgressScreen}
-          initialParams={{ childId: childId! }}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon
@@ -95,7 +93,6 @@ const KidsTabNavigator = () => {
         <Tab.Screen
           name="profile"
           component={kidsProfileNavigator}
-          initialParams={{ childId: childId! }}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon

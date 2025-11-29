@@ -53,6 +53,7 @@ const KidAvatar: React.FC<AvatarProps> = ({
         <Image
           source={require("../assets/avatars/Avatars-5.png")}
           className="mx-auto"
+          style={imageStyle}
         />
       )}
     </>

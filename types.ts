@@ -63,7 +63,7 @@ type KidType = {
     bedtimeDimScreen: boolean;
     bedtimeReminder: boolean;
     bedtimeStoriesOnly: boolean;
-    avatar: string | null;
+    avatar: Avatar | null;
     parent: {
       id: string;
       name: string;
@@ -85,7 +85,7 @@ type SystemAvatar = {
 };
 
 type UserProfile = {
-  avatar: null | string;
+  avatar: Avatar | null;
   createdAt: string;
   email: string;
   enableBiometrics: boolean;
