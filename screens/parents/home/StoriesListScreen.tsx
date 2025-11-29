@@ -384,15 +384,7 @@ const StoriesListScreen: React.FC = () => {
           <StoryModeModal
             visible={showModeModal}
             onClose={() => setShowModeModal(false)}
-            onConfirm={(mode) => {
-              setShowModeModal(false);
-              if (selectedStoryId) {
-                nav.navigate("childStoryDetails", {
-                  storyId: selectedStoryId,
-                  mode,
-                });
-              }
-            }}
+            storyId={selectedStoryId}
           />
         </>
       )}
