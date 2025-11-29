@@ -86,7 +86,7 @@ type SystemAvatar = {
 };
 
 type UserProfile = {
-  avatar: null | string;
+  avatar: Avatar | null;
   createdAt: string;
   email: string;
   enableBiometrics: boolean;

@@ -7,17 +7,18 @@ import KidsHomeScreen from "../screens/Kids/KidsHomeScreen";
 import Icon from "../components/Icon";
 import colours from "../colours";
 import KidsLibraryScreen from "../screens/Kids/KidsLibraryScreen";
-import KidsProgressScreen from "../screens/Kids/KidsProgressScreen";
+import KidsProgressScreen from "../screens/Kids/Progress/KidsProgressScreen";
 import KidsLibraryNavigator from "./KidsLibraryNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
 import { KidsNavigatorParamList } from "./KidsNavigator";
 import React from "react";
+import KidsProgressNavigator from "./KidsProgressNavigator";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
-  library: { childId: string };
-  progress: { childId: string };
-  profile: { childId: string };
+  library: undefined;
+  progress: undefined;
+  profile: undefined;
 };
 
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
@@ -25,9 +26,9 @@ type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
 const Tab = createBottomTabNavigator<KidsTabNavigatorParamList>();
 
 type KidsTabNavigatorRouteProp = RouteProp<KidsNavigatorParamList, "index">;
- export const ChildContext = React.createContext<
-   { childId: string | undefined } | undefined
- >(undefined);
+export const ChildContext = React.createContext<
+  { childId: string | undefined } | undefined
+>(undefined);
 
 const KidsTabNavigator = () => {
   const route = useRoute<KidsTabNavigatorRouteProp>();
@@ -61,7 +62,6 @@ const KidsTabNavigator = () => {
         <Tab.Screen
           name="library"
           component={KidsLibraryNavigator}
-          initialParams={{ childId: childId! }}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon
@@ -77,8 +77,7 @@ const KidsTabNavigator = () => {
         />
         <Tab.Screen
           name="progress"
-          component={KidsProgressScreen}
-          initialParams={{ childId: childId! }}
+          component={KidsProgressNavigator}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon
@@ -95,7 +94,6 @@ const KidsTabNavigator = () => {
         <Tab.Screen
           name="profile"
           component={kidsProfileNavigator}
-          initialParams={{ childId: childId! }}
           options={{
             tabBarIcon: ({ focused }) => (
               <Icon
