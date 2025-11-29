@@ -1,19 +1,16 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { lazy, Suspense } from "react";
+import { ActivityIndicator, Image, Text, View } from "react-native";
+import ErrorComponent from "../../components/ErrorComponent";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import useGetUserKids from "../../hooks/tanstack/queryHooks/useGetUserKids";
 import {
   KidsTabNavigatorParamList,
   KidsTabNavigatorProp,
 } from "../../Navigation/KidsTabNavigator";
-import useGetUserKids from "../../hooks/tanstack/queryHooks/useGetUserKids";
-import ErrorComponent from "../../components/ErrorComponent";
-import LoadingOverlay from "../../components/LoadingOverlay";
-import { childDetailsData } from "../../data";
-import {
-  KidsSetupNavigatorParamList,
-  KidsSetupProp,
-} from "../../Navigation/KidsSetupNavigator";
-import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-
+const KidsHomeScreenStories = lazy(
+  () => import("../../components/KidsHomeScreenStories")
+);
 
 type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
@@ -21,12 +18,6 @@ const KidHomeScreen = () => {
   const { params } = useRoute<RouteProps>();
   const { isPending, error, data, refetch } = useGetUserKids();
   const navigation = useNavigation<KidsTabNavigatorProp>();
-  const navigator = useNavigation<KidsSetupProp>();
-
-  const parent =
-    navigation.getParent<
-      NativeStackNavigationProp<KidsSetupNavigatorParamList>
-    >();
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -47,11 +38,8 @@ const KidHomeScreen = () => {
     );
 
   return (
-    <ScrollView
-      stickyHeaderIndices={[0]}
-      contentContainerStyle={{ padding: 20 }}
-    >
-      <View className="flex flex-row items-center gap-x-3">
+    <View style={{ padding: 20 }} className="flex-1">
+      <View className="flex flex-row pb-4  items-center gap-x-3">
         <Image
           source={require("../../assets/placeholder-pfp.png")}
           className="size-[50px]"
@@ -62,28 +50,12 @@ const KidHomeScreen = () => {
           className="size-[50px]"
         />
       </View>
-      <View className="flex flex-row flex-wrap justify-around gap-6 mt-6">
-        {childDetailsData.map((data) => (
-          <Pressable
-            key={data.id}
-            onPress={() => {
-              // always pass id = "1" for testing
-              // change to { storyId: data.id } when real ids are available
-              navigation.navigate("setup" as any, {
-                screen: "storyInteraction",
-                params: { storyId: "1" },
-              });
-            }}
-            className="overflow-hidden rounded-lg"
-          >
-            <Image source={data.source} className="h-[228px] w-[187px]" />
-          </Pressable>
-        ))}
-      </View>
+      <Suspense fallback={<ActivityIndicator size={"large"} />}>
+        <KidsHomeScreenStories id={params.childId} />
+      </Suspense>
 
       <LoadingOverlay visible={isPending} />
-    </ScrollView>
-
+    </View>
   );
 };
 
