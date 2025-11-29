@@ -23,10 +23,10 @@ type KidData = {
   bedtimeDimScreen: boolean;
   bedtimeReminder: boolean;
   bedtimeStoriesOnly: boolean;
+  avatar: Avatar | null;
   preferredCategories:
     | { id: string; name: string; image: string; description: string }[]
     | null;
-  avatar: string | null;
   parent: {
     id: string;
     name: string;
