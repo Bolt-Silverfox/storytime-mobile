@@ -154,7 +154,7 @@ const SetBedtime = () => {
       </View>
 
       <View
-        className="flex flex-col  bg-white rounded-2xl pt-4 mx-5"
+        className="flex flex-col  bg-white rounded-2xl p-5 pt-4 mx-5"
         aria-labelledby="bedtime controls"
       >
         <Text className="text-xl font-[abeezee]">BEDTIME CONTROLS</Text>
