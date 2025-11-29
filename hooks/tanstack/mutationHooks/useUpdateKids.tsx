@@ -73,3 +73,6 @@ const useUpdateKids = ({
 };
 
 export default useUpdateKids;
+
+// pnpm run generate
+// pnpm start
