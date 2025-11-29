@@ -2,12 +2,12 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import ReportDetailsScreen from "../screens/parents/reports/ReportDetailsScreen";
 import ReportsSreen from "../screens/parents/reports/ReportsSreen";
+import ReportDetailScreen from "../screens/parents/reports/ReportDetailScreen";
 
 type ParentReportNavigatorParamList = {
   home: undefined;
-  reportDetails: undefined;
+  reportDetails: {childId:string};
 };
 
 type ParntReportNavigatorProp =
@@ -18,7 +18,7 @@ const ParentReportNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="home" component={ReportsSreen} />
-      <Stack.Screen name="reportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="reportDetails" component={ReportDetailScreen} />
     </Stack.Navigator>
   );
 };

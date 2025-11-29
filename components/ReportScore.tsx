@@ -3,7 +3,7 @@ import React from "react";
 
 type ReportScoreProps = {
   icon: any;
-  score: number;
+  score: number | string;
   color: string;
   title: string;
 };
@@ -17,7 +17,7 @@ export default function ReportScore({
   return (
     <View
       style={styles.container}
-      className="gap-4 px-[18] w-[160] py-[31] items-center rounded-[20px] bg-white"
+      className="gap-4  px-[18] w-[160] py-[31] items-center rounded-[20px] bg-white"
     >
       <View
         style={{ backgroundColor: color }}
@@ -25,8 +25,8 @@ export default function ReportScore({
       >
         {icon}
       </View>
-      <Text className="font-[quilka]  text-[20px]">{score}</Text>
-      <Text className="font-[abeezee] text-[#616161] ">{title}</Text>
+      <Text className="font-[quilka] text-center  text-[20px]">{score}</Text>
+      <Text className="font-[abeezee] text-center text-[#616161] ">{title}</Text>
     </View>
   );
 }
