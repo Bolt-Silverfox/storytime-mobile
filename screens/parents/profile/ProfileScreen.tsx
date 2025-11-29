@@ -27,7 +27,6 @@ import MenuItem from "../../../components/MenuItem";
 import Avatar from "../../../components/Avatar";
 import LogoutModal from "../../../components/modals/ParentProfileIndexModal";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
-import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -92,7 +91,7 @@ const ProfileScreen: FC = () => {
         <View style={styles.menuList}>
           <MenuItem
             icon={<User size={isTablet ? 20 : 18} />}
-            label="Manage Child Profiles"
+            label="Manage Child Profile"
             onPress={() => navigator.navigate("manageChildProfiles")}
             isTablet={isTablet}
           />
