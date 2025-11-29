@@ -77,17 +77,18 @@ const KidSelectionScreen = () => {
         <ChildrenEmptyState navigate={() => navigation.navigate("addChild")} />
       )}
 
-      <View className="px-6 py-3 rounded-2xl bg-[#EEE8FF]  flex flex-row items-center gap-3">
+      <Pressable
+        onPress={() => navigation.navigate("parents")}
+        className="px-6 py-3 rounded-2xl bg-[#EEE8FF]  flex flex-row items-center gap-3"
+      >
         <View className="flex flex-col flex-1 gap-y-2">
           <Text className="font-[abeezee] text-2xl">Access Parent Account</Text>
           <Text className="text-base font-[abeezee]">
             Create and manage your child's storytelling world.
           </Text>
         </View>
-        <Pressable onPress={() => navigation.navigate("parents")}>
-          <Icon color="black" name="ChevronRight" />
-        </Pressable>
-      </View>
+        <Icon color="black" name="ChevronRight" />
+      </Pressable>
     </ScrollView>
   );
 };
