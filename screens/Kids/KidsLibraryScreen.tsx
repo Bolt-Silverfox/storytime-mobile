@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Image, ScrollView, Text, View } from "react-native";
+import { ActivityIndicator, Image, ScrollView, Text, View } from "react-native";
 import {
   KidsTabNavigatorParamList,
   KidsTabNavigatorProp,
@@ -11,10 +11,8 @@ import { lazy, Suspense, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const KidStories = lazy(() => import("../../components/KidStories"));
-// type RouteProps = RouteProp<KidsTabNavigatorParamList, "library">;
 
 const KidsLibraryScreen = () => {
-  // const { params } = useRoute<RouteProps>();
   const { isPending, error, data, refetch } = useGetUserKids();
   const [currentKidId, setCurrentKidId] = useState<string | null>(null);
 
@@ -31,14 +29,14 @@ const KidsLibraryScreen = () => {
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
-  if (!data)
+  if (!data && !isPending)
     return (
       <ErrorComponent
         message="You have no kids yet"
         refetch={() => navigation.goBack()}
       />
     );
-  const kid = data.find((kid) => kid.id === currentKidId);
+  const kid = data?.find((kid) => kid.id === currentKidId);
   if (!kid)
     return (
       <ErrorComponent
@@ -48,11 +46,8 @@ const KidsLibraryScreen = () => {
     );
 
   return (
-    <ScrollView
-      stickyHeaderIndices={[0]}
-      contentContainerStyle={{ padding: 20 }}
-    >
-      <View className="flex flex-row items-center gap-x-3">
+    <View className="flex-1" style={{ padding: 20 }}>
+      <View className="flex flex-row items-center gap-x-3 pb-4">
         <Image
           source={require("../../assets/placeholder-pfp.png")}
           className="size-[50px]"
@@ -63,12 +58,12 @@ const KidsLibraryScreen = () => {
           className="size-[50px]"
         />
       </View>
-      <Suspense fallback={<Text>Loading kid stories</Text>}>
+      <Suspense fallback={<ActivityIndicator size={"large"} />}>
         <KidStories id={currentKidId!} />
       </Suspense>
 
       <LoadingOverlay visible={isPending} />
-    </ScrollView>
+    </View>
   );
 };
 

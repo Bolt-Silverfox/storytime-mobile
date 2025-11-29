@@ -40,36 +40,37 @@ type User = {
   numberOfKids: number;
 };
 
+type KidProfile = {
+  id: string;
+  name: string;
+  avatarId: string | null;
+  ageRange: string;
+  dailyScreenTimeLimitMins: null | number;
+  parentId: string;
+  currentReadingLevel: number;
+  createdAt: string;
+  updatedAt: string;
+  preferredVoiceId: string;
+  excludedTags: string[];
+  isBedtimeEnabled: boolean;
+  bedtimeStart: string | null;
+  bedtimeEnd: string | null;
+  bedtimeDays: number[];
+  bedtimeLockApp: boolean;
+  bedtimeDimScreen: boolean;
+  bedtimeReminder: boolean;
+  bedtimeStoriesOnly: boolean;
+  avatar: string | null;
+  parent: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};
 type KidType = {
   statusCode: number;
   success: boolean;
-  data: {
-    id: string;
-    name: string;
-    avatarId: string | null;
-    ageRange: string;
-    dailyScreenTimeLimitMins: null | number;
-    parentId: string;
-    currentReadingLevel: number;
-    createdAt: string;
-    updatedAt: string;
-    preferredVoiceId: string;
-    excludedTags: string[];
-    isBedtimeEnabled: boolean;
-    bedtimeStart: string | null;
-    bedtimeEnd: string | null;
-    bedtimeDays: number[];
-    bedtimeLockApp: boolean;
-    bedtimeDimScreen: boolean;
-    bedtimeReminder: boolean;
-    bedtimeStoriesOnly: boolean;
-    avatar: Avatar | null;
-    parent: {
-      id: string;
-      name: string;
-      email: string;
-    };
-  }[];
+  data: KidProfile[];
   message: string;
 };
 
@@ -111,4 +112,5 @@ export type {
   QueryResponse,
   SystemAvatar,
   UserProfile,
+  KidProfile,
 };

@@ -1,7 +1,6 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type StoryRequest = {
   statusCode: number;
@@ -38,7 +37,6 @@ type Story = {
 };
 
 const useGetStories = (id: string) => {
-  console.log("get stories id", id);
   return useSuspenseQuery({
     queryKey: ["getStories", id],
     queryFn: async () => {
