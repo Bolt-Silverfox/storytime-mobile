@@ -8,11 +8,15 @@ import {
   useAudioRecorderState,
 } from "expo-audio";
 import { useEffect, useRef, useState } from "react";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Alert, Image, Pressable, Text, TextInput, View } from "react-native";
 import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import Icon from "../../../components/Icon";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
+import CustomModal from "../../../components/modals/CustomModal";
+import useUploadVoice from "../../../hooks/tanstack/mutationHooks/useUploadVoice";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import colours from "../../../colours";
 
 const RecordVoice = () => {
   const audioRecorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -203,9 +207,56 @@ const RecordVoice = () => {
           </Text>
         </Pressable>
       </View>
-      {saveVoiceModal && <Text>Voice modal is open</Text>}
+      {saveVoiceModal && (
+        <CustomModal
+          onClose={() => setSaveVoiceModal(false)}
+          isOpen={saveVoiceModal}
+        >
+          <AddVoiceForm recordingUrl={audioRecorder.uri!} />
+        </CustomModal>
+      )}
     </View>
   );
 };
 
 export default RecordVoice;
+
+const AddVoiceForm = ({ recordingUrl }: { recordingUrl: string }) => {
+  const [recordingName, setRecordingName] = useState("");
+  const { mutate, isPending } = useUploadVoice();
+
+  const onSubmit = () => {
+    if (!recordingName.trim().length) {
+      Alert.alert("Enter a valid recording name");
+      return;
+    }
+    mutate({
+      name: recordingName,
+      file: recordingUrl,
+    });
+  };
+  return (
+    <View className="flex flex-col gap-y-3 px-5">
+      <Text className="text-center font-[quilka] text-2xl mb-10">
+        Save recording
+      </Text>
+      <View className="flex flex-col gap-y-2">
+        <Text className="font-[abeezee] text-base">Save as:</Text>
+        <TextInput
+          className="rounded-full h-[40px] border border-primary px-5"
+          value={recordingName}
+          onChangeText={setRecordingName}
+          placeholderTextColor={colours.text}
+          placeholderClassName="font-[abeezee]"
+          placeholder="Recording 1"
+        />
+      </View>
+      <CustomButton
+        disabled={isPending}
+        text="Save Recording"
+        onPress={onSubmit}
+      />
+      <LoadingOverlay visible={isPending} />
+    </View>
+  );
+};
