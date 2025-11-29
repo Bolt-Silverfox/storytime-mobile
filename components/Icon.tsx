@@ -1,5 +1,4 @@
 import { icons } from "lucide-react-native";
-import { Pressable } from "react-native";
 
 type IconName = keyof typeof icons;
 
@@ -15,11 +14,7 @@ const Icon = ({
   onPress?: () => void;
 }) => {
   const LucideIcon = icons[name];
-  return (
-    <Pressable onPress={onPress}>
-      <LucideIcon color={color} size={size} />;
-    </Pressable>
-  );
+  return <LucideIcon onPress={onPress} color={color} size={size} />;
 };
 
 export default Icon;
