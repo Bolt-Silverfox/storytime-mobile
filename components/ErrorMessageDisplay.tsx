@@ -6,7 +6,7 @@ const ErrorMessageDisplay = ({
   errorMessage: string | string[] | undefined;
 }) => {
   return (
-    <View>
+    <View className="">
       {Array.isArray(errorMessage) && errorMessage.length ? (
         errorMessage.map((message) => (
           <Text key={message} className="text-red-600 text-sm">

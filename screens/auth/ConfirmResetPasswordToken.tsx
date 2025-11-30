@@ -17,19 +17,19 @@ type VerifyEmailRouteProp = RouteProp<
 const ConfirmResetPasswordTokenScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
+  const [error, setError] = useState("");
   const [otp, setOtp] = useState("");
   const [successMessage, setSuccesMessage] = useState("");
-  const {
-    isLoading,
-    validatePasswordReset,
-    errorMessage,
-    resendVerificationEmail,
-  } = useAuth();
+  const { isLoading, validatePasswordReset, resendVerificationEmail } =
+    useAuth();
   const [countDown, setCountdown] = useState(59);
 
   const handleResendEmail = async () => {
     setSuccesMessage("");
-    const data = await resendVerificationEmail(route.params.email);
+    const data = await resendVerificationEmail({
+      email: route.params.email.trim(),
+      setErrorCb: setError,
+    });
     if (data.success) {
       setCountdown(60);
       setSuccesMessage("Otp resent successfully");
@@ -66,7 +66,7 @@ const ConfirmResetPasswordTokenScreen = () => {
             Enter the verification code sent to your email {route.params.email}
           </Text>
         </View>
-        <ErrorMessageDisplay errorMessage={errorMessage} />
+        <ErrorMessageDisplay errorMessage={error} />
         <View style={styles.container}>
           <OtpInput
             numberOfDigits={6}
@@ -93,7 +93,13 @@ const ConfirmResetPasswordTokenScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => validatePasswordReset(route.params.email, otp)}
+          onPress={() =>
+            validatePasswordReset({
+              email: route.params.email.trim(),
+              token: otp,
+              setErrorCb: setError,
+            })
+          }
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }

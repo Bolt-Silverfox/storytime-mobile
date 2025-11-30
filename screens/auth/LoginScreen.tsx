@@ -20,7 +20,8 @@ const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const { login, errorMessage, isLoading } = useAuth();
+  const [error, setError] = useState("");
+  const { login, isLoading } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -42,13 +43,13 @@ const LoginScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
-              placeholderTextColor={errorMessage ? "red" : colours.text}
+              placeholderTextColor={error ? "red" : colours.text}
               onChangeText={setEmail}
               value={email}
             />
-            <ErrorMessageDisplay errorMessage={errorMessage} />
+            <ErrorMessageDisplay errorMessage={error} />
           </View>
           <PasswordInput
             label="Password:"
@@ -67,7 +68,7 @@ const LoginScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => login(email, password)}
+          onPress={() => login({ email, password, setErrorCb: setError })}
           disabled={isLoading}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
