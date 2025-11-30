@@ -169,8 +169,7 @@ const KidsSection: React.FC = () => {
   }
 
   return (
-    <View className="flex flex-col gap-y-2 my-7 max-w-screen-md mx-auto w-full">
-      <Text className="text-xl font-[quilka]">Daily Challenge</Text>
+    <View className="flex my-7 max-w-screen-md mx-auto w-full">
       <ChildBanners kids={kids} />
     </View>
   );
@@ -361,7 +360,7 @@ const HorizontalList: React.FC<{
               shadowRadius: 3.5,
               elevation: 4,
             }}
-            className="w-[300px] h-100 sm:h-[250px] sm:w-[250px] mr-6 my-2 rounded-2xl bg-white"
+            className="w-[250px] h-100 sm:h-[250px] sm:w-[250px] mr-6 my-2 rounded-2xl bg-white"
           >
             <Image
               source={item.source}
