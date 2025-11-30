@@ -9,6 +9,7 @@ import {
   ImageBackground,
   StyleSheet,
   Pressable,
+  Alert,
 } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
@@ -25,6 +26,8 @@ import { ChevronLeft, Funnel, Heart, Search } from "lucide-react-native";
 import CustomButton from "../../../components/UI/CustomButton";
 import ParentFooter from "../../../components/parents/ParentFooter";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
+import useAddFavorites from "../../../hooks/tanstack/mutationHooks/useAddFavorites";
+import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 
 type StoriesRouteProp = RouteProp<ParentHomeNavigatorParamList, "storiesList">;
 
@@ -42,6 +45,8 @@ const StoriesListScreen: React.FC = () => {
     isPending: kidsLoading,
     error: kidsError,
   } = useGetUserKids();
+  const addFavoriteMutation = useAddFavorites();
+
   const chosenKidId = passedKidId ?? kids[0]?.id ?? undefined;
 
   if (kidsLoading)
@@ -58,6 +63,7 @@ const StoriesListScreen: React.FC = () => {
   }
 
   const storiesResult = useGetStories(String(chosenKidId));
+  const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
 
   // normalize to an array and optional loading/error flags
   const stories: Story[] = Array.isArray(storiesResult)
@@ -187,10 +193,33 @@ const StoriesListScreen: React.FC = () => {
               }}
               keyExtractor={(s: any) => String(s.id)}
               renderItem={({ item }: { item: Story }) => {
-                const source =
-                  !imgFailed && item.coverImageUrl
-                    ? { uri: item.coverImageUrl }
-                    : require("../../../assets/parents/unseen-world.jpg");
+
+                const handleToggleFavorite = () => {
+                  if (!passedKidId) {
+                    Alert.alert(
+                      "Select child",
+                      "Please select a child before adding favorites."
+                    );
+                    return;
+                  }
+                  if (!item?.id) {
+                    console.warn("No story id available:", item);
+                    return;
+                  }
+                  addFavoriteMutation.mutate(
+                    { kidId: passedKidId, storyId: item.id },
+                    {
+                      onError: (err) => {
+                        // optional per-call handling
+                        console.warn("Add favorite failed", err);
+                        Alert.alert("Could not add favorite");
+                      },
+                      onSuccess: () => {
+                        Alert.alert("Story was successfully added to faves");
+                      },
+                    }
+                  );
+                };
 
                 return (
                   <TouchableOpacity
@@ -209,23 +238,17 @@ const StoriesListScreen: React.FC = () => {
                     }}
                   >
                     <View className="relative w-full">
-                      <Image
-                        source={source}
-                        className="w-full h-[200px] rounded-2xl"
+                      <ImageWithFallback
+                        sourceUri={item.coverImageUrl}
+                        fallbackRequire={FALLBACK}
+                        className="w-full h-[250px] rounded-2xl"
                         resizeMode="cover"
-                        onError={() => {
-                          console.warn(
-                            "Image failed, switching to fallback:",
-                            item.coverImageUrl
-                          );
-                          setImgFailed(true);
-                        }}
                       />
 
                       {/* Fav Icon */}
                       <TouchableOpacity
-                        className="absolute top-2 right-2 p-2 rounded-full"
-                        onPress={() => console.log("Toggle favorite")}
+                        className="absolute top-2 right-2 p-4 rounded-full"
+                        onPress={handleToggleFavorite}
                         style={{
                           shadowColor: "#000",
                           shadowOpacity: 0.2,
@@ -296,24 +319,52 @@ const StoriesListScreen: React.FC = () => {
               ) : (
                 <FlatList
                   data={finalStories}
-                  numColumns={2} // ← 2 columns
+                  numColumns={2}
                   keyExtractor={(s: any) => String(s.id)}
-                  scrollEnabled={false} // ← allow outer list to scroll
+                  scrollEnabled={false}
                   columnWrapperStyle={{
                     justifyContent: "space-between",
                     paddingHorizontal: 16,
                   }}
                   contentContainerStyle={{ paddingBottom: 16, paddingTop: 8 }}
                   renderItem={({ item }) => {
-                    // Use your existing vertical card layout but make it grid-friendly
                     const source =
                       !imgFailed && item.coverImageUrl
                         ? { uri: item.coverImageUrl }
                         : require("../../../assets/parents/unseen-world.jpg");
 
+                    const handleToggleFavorite = () => {
+                      if (!passedKidId) {
+                        Alert.alert(
+                          "Select child",
+                          "Please select a child before adding favorites."
+                        );
+                        return;
+                      }
+                      if (!item?.id) {
+                        console.warn("No story id available:", item);
+                        return;
+                      }
+                      addFavoriteMutation.mutate(
+                        { kidId: passedKidId, storyId: item.id },
+                        {
+                          onError: (err) => {
+                            // optional per-call handling
+                            console.warn("Add favorite failed", err);
+                            Alert.alert("Could not add favorite");
+                          },
+                          onSuccess: () => {
+                            Alert.alert(
+                              "Story was successfully added to faves"
+                            );
+                          },
+                        }
+                      );
+                    };
+
                     return (
                       <TouchableOpacity
-                        className="bg-white mb-4 p-2 w-[48%] mt-3"
+                        className="bg-white p-2 w-[48%] gap-1 justify-between mt-3"
                         style={{
                           shadowColor: "#000",
                           shadowOffset: { width: 0, height: 2 },
@@ -328,21 +379,17 @@ const StoriesListScreen: React.FC = () => {
                         }}
                       >
                         <View className="relative w-full">
-                          <Image
-                            source={source}
-                            className="w-full h-[120px]"
-                            style={{ borderRadius: 20 }}
+                          <ImageWithFallback
+                            sourceUri={item.coverImageUrl}
+                            fallbackRequire={FALLBACK}
+                            className="w-full h-[120px] rounded-2xl"
                             resizeMode="cover"
-                            onError={() => {
-                              console.warn("Image failed:", item.coverImageUrl);
-                              setImgFailed(true);
-                            }}
                           />
 
                           {/* Fav Icon */}
                           <TouchableOpacity
                             className="absolute top-2 right-2 p-2 rounded-full"
-                            onPress={() => console.log("Toggle favorite")}
+                            onPress={handleToggleFavorite}
                             style={{
                               shadowColor: "#000",
                               shadowOpacity: 0.15,
@@ -354,20 +401,20 @@ const StoriesListScreen: React.FC = () => {
                           </TouchableOpacity>
                         </View>
 
-                        <Text className="text-sm font-[abeezee] mt-2 px-2">
+                        <Text className="text-sm font-[abeezee] px-2">
                           {getDifficultyLabel(item.difficultyLevel)} years
                         </Text>
-                        <Text className="text-base font-[abeezee] mt-2 px-2">
+                        <Text className="text-base font-[abeezee] px-2">
                           {item.title}
                         </Text>
 
                         <Text
-                          className="text-text font-[abeezee] mt-1 px-2"
+                          className="text-text font-[abeezee] px-2"
                           numberOfLines={3}
                         >
                           {item.description}
                         </Text>
-                        <Text className="font-[abeezee] text-text text-sm mt-2 px-2 pb-2">
+                        <Text className="font-[abeezee] text-text text-sm px-2 pb-2">
                           Written by: Samuel Liu
                         </Text>
                       </TouchableOpacity>

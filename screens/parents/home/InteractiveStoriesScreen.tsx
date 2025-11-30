@@ -26,6 +26,7 @@ import RecommendStoryModal from "../../../components/modals/RecommendStoryModal"
 import CustomButton from "../../../components/UI/CustomButton";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import { Switch } from "react-native";
 
 export default function InteractiveStoryScreen({ route, navigation }: any) {
   const { storyId, mode } = route.params ?? {};
@@ -60,6 +61,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
   const [voicePickerOpen, setVoicePickerOpen] = useState(false);
   const [preferredVoiceId, setPreferredVoiceId] = useState("fanice");
   const [preferredVoiceName, setPreferredVoiceName] = useState("Fanice");
+  const [chunkIndex, setChunkIndex] = useState(0);
 
   const submitAnswer = async (questionId: string, optionIndex: number) => {
     // TODO: send to backend if you have an endpoint
@@ -137,20 +139,56 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
     });
   };
 
-  const onNext = () => {
-    if (currentIdx < questions.length - 1) {
-      setCurrentIdx((i) => i + 1);
-    } else {
-      // finished interactive questions — you decide what to do
-      Alert.alert("Done", "You've completed the questions for this story.");
-      // optionally reset or navigate
-    }
+  const paragraphs: string[] =
+    story?.textContent
+      ?.split(/\n\s*\n/)
+      .map((p: string) => p.trim())
+      .filter((p: string) => Boolean(p)) ?? [];
+
+  const totalChunks = paragraphs.length;
+  const chunkDuration = 15;
+  const duration = totalChunks * chunkDuration;
+
+  const currentChunk = paragraphs[chunkIndex] ?? "";
+  // total duration (seconds) from API or fallback
+  const fmt = (s: number) => {
+    const m = Math.floor(s / 60)
+      .toString()
+      .padStart(2, "0");
+    const ss = Math.floor(s % 60)
+      .toString()
+      .padStart(2, "0");
+    return `${m}:${ss}`;
   };
 
-  const onPlayPause = () => setIsPlaying((p) => !p);
-  const onSkipBack = () => setElapsed((e) => Math.max(e - 15, 0));
-  const onSkipForward = () =>
-    setElapsed((e) => Math.min(story?.durationSeconds ?? 20 * 60, e + 15));
+  const onPlayPause = () => {
+    setIsPlaying((p) => {
+      const now = !p;
+      // TODO: integrate actual player play/pause using story.audioUrl or storyId
+      return now;
+    });
+  };
+
+  const onNextChunk = () => {
+    setChunkIndex((i) => Math.min(i + 1, paragraphs.length - 1));
+  };
+  const onPrevChunk = () => {
+    setChunkIndex((i) => Math.max(i - 1, 0));
+  };
+
+  const onSkipBack = () => {
+    // rewind 15s
+    setElapsed((e) => Math.max(e - 15, 0));
+    // go to previous text chunk
+    onPrevChunk();
+  };
+
+  const onSkipForward = () => {
+    // forward 15s (cap at story duration if available)
+    setElapsed((e) => Math.min(e + 15, duration));
+    // go to next text chunk
+    onNextChunk();
+  };
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -214,6 +252,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
                 resizeMode="contain"
               />
               <TouchableOpacity
+                activeOpacity={0.85}
                 className="flex-row items-center bg-[#FEE3D6] px-6 py-2 rounded-full border"
                 style={{ borderColor: "#EC4007" }}
                 onPress={() => setVoicePickerOpen(true)}
@@ -229,13 +268,11 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
           {/* story content lines shown when Cosmo ON */}
           {on && (
             <Text
-              className="text-base font-[abeezee] text-text w-full leading-6"
+              className="text-lg font-[abeezee] text-text w-full leading-6"
               numberOfLines={5}
               ellipsizeMode="tail"
             >
-              {story?.textContent ??
-                story?.description ??
-                "No story text available yet."}
+              {currentChunk}
             </Text>
           )}
           {/* interactive question block (uses story.questions) */}
@@ -312,7 +349,12 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
-            <Toggle value={on} onValueChange={setOn} />
+            <Switch
+              value={on}
+              onValueChange={setOn}
+              trackColor={{ false: "#d4d4d4", true: "#4f46e5" }}
+              thumbColor={on ? "#fff" : "#f4f4f4"}
+            />
           </View>
         </View>
       </View>
@@ -321,9 +363,9 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
 
       {/* player */}
       <View className="px-4 pt-3 pb-3 bg-white flex-row items-center justify-center gap-6">
-        <View className="w-6 h-6"></View>
+        <View className="w-5 h-5"></View>
         <View className="flex-row gap-4 justify-center items-center mt-4">
-          <TouchableOpacity onPress={onSkipBack}>
+          <TouchableOpacity onPress={onSkipBack} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/rewind.png")}
               className="w-8 h-8 rounded-full mr-3"
@@ -343,25 +385,30 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onSkipForward}>
+          <TouchableOpacity onPress={onSkipForward} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/forward.png")}
-              className="w-8 h-8 rounded-full mr-3"
+              className="w-8 h-8 rounded-full ml-2"
               resizeMode="contain"
             />
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={onSkipForward} className="mt-1">
+        <TouchableOpacity onPress={onSkipForward} className="mt-2">
           <Text className="text-[abeezee]">5xp</Text>
         </TouchableOpacity>
       </View>
 
-      {/* elapsed / total time (no real time in schema) */}
+      {/* elapsed / total time row */}
       <View className="flex-row justify-center items-center pb-8">
-        <Text className="font-[abeezee] text-gray-600 mr-2">0:00</Text>
+        <Text className="font-[abeezee] text-gray-600 mr-2">
+          {fmt(elapsed)}
+        </Text>
         <Text className="font-[abeezee] text-gray-400">/</Text>
-        <Text className="font-[abeezee] text-gray-600 ml-2">20:13</Text>
+        <Text className="font-[abeezee] text-gray-600 ml-2">
+          {" "}
+          {fmt(duration)}
+        </Text>
       </View>
 
       <RecommendStoryModal
