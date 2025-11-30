@@ -1,4 +1,4 @@
-// hooks/tanstack/mutationHooks/useAddFavorites.ts
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
@@ -18,7 +18,7 @@ const useAddFavorites = () => {
         throw new Error("kidId and storyId are required to add a favorite.");
       }
 
-      const response = await apiFetch(`${BASE_URL}/api/v1/stories/favorites`, {
+      const response = await apiFetch(`${BASE_URL}/stories/favorites`, {
         method: "POST",
         body: JSON.stringify(body),
       });
