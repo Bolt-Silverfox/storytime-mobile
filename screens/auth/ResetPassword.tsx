@@ -17,7 +17,8 @@ import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 const ResetPasswordScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
-  const { isLoading, errorMessage, requestPasswordReset } = useAuth();
+  const [error, setError] = useState("");
+  const { isLoading, requestPasswordReset } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -39,17 +40,19 @@ const ResetPasswordScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errorMessage ? "red" : colours.text}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${error ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={error ? "red" : colours.text}
               placeholder="Enter your email"
               onChangeText={setEmail}
               value={email}
             />
-            <ErrorMessageDisplay errorMessage={errorMessage} />
+            <ErrorMessageDisplay errorMessage={error} />
           </View>
         </View>
         <Pressable
-          onPress={() => requestPasswordReset(email.trim())}
+          onPress={() =>
+            requestPasswordReset({ email: email.trim(), setErrorCb: setError })
+          }
           disabled={isLoading}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
