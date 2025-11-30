@@ -92,7 +92,7 @@ export default function StoryTellerVoice({
   if (isPending) {
     return (
       <View className="flex-1 items-center justify-center py-8">
-        <ActivityIndicator />
+        <ActivityIndicator size="large" />
       </View>
     );
   }
@@ -115,7 +115,7 @@ export default function StoryTellerVoice({
 
           return (
             <View
-              className={`w-[48%] mx-1 bg-white rounded-3xl ${selected ? "border border-primary px-3 py-6" : "px-3 py-6 "}`}
+              className={`w-[48%] mx-1 bg-white rounded-3xl flex-col justify-between ${selected ? "border border-primary px-3 py-6" : "px-3 py-6 "}`}
               style={{ minHeight: 120 }}
             >
               <Text className="text-lg font-[quilka] text-black text-center mb-4">
@@ -133,6 +133,8 @@ export default function StoryTellerVoice({
                 <View className="flex-row items-center gap-2">
                   <Switch
                     value={selected}
+                    trackColor={{ false: "#d4d4d4", true: "#4f46e5" }}
+                    thumbColor={selected ? "#fff" : "#f4f4f4"}
                     onValueChange={() => handleToggleSelect(item.voice_id)}
                   />
                 </View>

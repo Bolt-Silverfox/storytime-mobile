@@ -9,19 +9,11 @@ import {
   StyleSheet,
   ScrollView,
   ImageBackground,
+  Switch,
 } from "react-native";
-import {
-  Play,
-  Pause,
-  SkipForward,
-  SkipBack,
-  Heart,
-  ChevronLeft,
-  PencilLine,
-} from "lucide-react-native";
+import { Play, Pause, ChevronLeft, PencilLine } from "lucide-react-native";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
-import Toggle from "../../../components/UI/Toggle";
 import RecommendStoryModal from "../../../components/modals/RecommendStoryModal";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
@@ -48,6 +40,7 @@ export default function PlainStoryScreen({ route, navigation }: any) {
   const [voicePickerOpen, setVoicePickerOpen] = useState(false);
   const [preferredVoiceId, setPreferredVoiceId] = useState("fanice");
   const [preferredVoiceName, setPreferredVoiceName] = useState("Fanice");
+  const [chunkIndex, setChunkIndex] = useState(0);
 
   // auto-play when opened in plain mode
   useEffect(() => {
@@ -72,8 +65,17 @@ export default function PlainStoryScreen({ route, navigation }: any) {
       </View>
     );
 
+  const paragraphs =
+    story?.textContent
+      ?.split(/\n\s*\n/) // split on blank lines
+      .map((p) => p.trim())
+      .filter(Boolean) ?? [];
+  const totalChunks = paragraphs.length;
+  const chunkDuration = 15;
+  const duration = totalChunks * chunkDuration;
+
+  const currentChunk = paragraphs[chunkIndex] ?? "";
   // total duration (seconds) from API or fallback
-  const totalTime = "20:10";
   const fmt = (s: number) => {
     const m = Math.floor(s / 60)
       .toString()
@@ -87,12 +89,30 @@ export default function PlainStoryScreen({ route, navigation }: any) {
   const onPlayPause = () => {
     setIsPlaying((p) => {
       const now = !p;
-      // TODO: integrate actual player play/pause using story.audioUrl or storyId
       return now;
     });
   };
-  const onSkipBack = () => setElapsed((e) => Math.max(e - 15, 0));
-  const onSkipForward = () => setElapsed((e) => Math.max(15 - e, 0));
+
+  const onNextChunk = () => {
+    setChunkIndex((i) => Math.min(i + 1, paragraphs.length - 1));
+  };
+  const onPrevChunk = () => {
+    setChunkIndex((i) => Math.max(i - 1, 0));
+  };
+
+  const onSkipBack = () => {
+    // rewind 15s
+    setElapsed((e) => Math.max(e - 15, 0));
+    // go to previous text chunk
+    onPrevChunk();
+  };
+
+  const onSkipForward = () => {
+    // forward 15s (cap at story duration if available)
+    setElapsed((e) => Math.min(e + 15, duration));
+    // go to next text chunk
+    onNextChunk();
+  };
 
   return (
     <ScrollView className="flex-1 bg-white">
@@ -144,7 +164,6 @@ export default function PlainStoryScreen({ route, navigation }: any) {
 
               {/* Fanice button (compact) */}
               <TouchableOpacity
-                activeOpacity={0.85}
                 onPress={() => setVoicePickerOpen(true)}
                 className="flex-row items-center bg-[#FEE3D6] px-4 py-2 rounded-full shadow-sm border border-primary"
               >
@@ -164,6 +183,7 @@ export default function PlainStoryScreen({ route, navigation }: any) {
               />
 
               <TouchableOpacity
+                activeOpacity={0.85}
                 className="flex-row items-center gap-4 py-2 px-4 rounded-full border border-primary"
                 style={{ backgroundColor: "rgba(254, 195, 175, 0.25)" }}
                 onPress={() => setVoicePickerOpen(true)}
@@ -178,14 +198,8 @@ export default function PlainStoryScreen({ route, navigation }: any) {
 
           {/* Story text content */}
           {on && (
-            <Text
-              className="text-base font-[abeezee] text-text w-full leading-6"
-              numberOfLines={5}
-              ellipsizeMode="tail"
-            >
-              {story?.textContent ??
-                story?.description ??
-                "No story text available yet. This area will show the story content when Cosmo is turned on."}
+            <Text className="text-lg font-[abeezee] text-text w-full leading-6">
+              {currentChunk}
             </Text>
           )}
 
@@ -194,16 +208,21 @@ export default function PlainStoryScreen({ route, navigation }: any) {
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
-            <Toggle value={on} onValueChange={setOn} />
+            <Switch
+              value={on}
+              onValueChange={setOn}
+              trackColor={{ false: "#d4d4d4", true: "#4f46e5" }}
+              thumbColor={on ? "#fff" : "#f4f4f4"}
+            />
           </View>
         </View>
       </View>
       <View className="flex-1" />
       {/* player */}
       <View className="px-4 pt-3 pb-3 bg-white flex-row items-center justify-center gap-6">
-        <View className="w-4 h-4"></View>
+        <View className="w-6 h-3"></View>
         <View className="flex-row gap-4 justify-center items-center mt-4">
-          <TouchableOpacity onPress={onSkipBack}>
+          <TouchableOpacity onPress={onSkipBack} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/rewind.png")}
               className="w-8 h-8 rounded-full mr-3"
@@ -223,15 +242,15 @@ export default function PlainStoryScreen({ route, navigation }: any) {
             )}
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onSkipForward}>
+          <TouchableOpacity onPress={onSkipForward} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/forward.png")}
-              className="w-8 h-8 rounded-full mr-3"
+              className="w-8 h-8 rounded-full ml-2"
               resizeMode="contain"
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onSkipForward} className="mt-1">
+        <TouchableOpacity onPress={onSkipForward} className="mt-2">
           <Text className="text-[abeezee]">5xp</Text>
         </TouchableOpacity>
       </View>
@@ -241,7 +260,10 @@ export default function PlainStoryScreen({ route, navigation }: any) {
           {fmt(elapsed)}
         </Text>
         <Text className="font-[abeezee] text-gray-400">/</Text>
-        <Text className="font-[abeezee] text-gray-600 ml-2">{totalTime}</Text>
+        <Text className="font-[abeezee] text-gray-600 ml-2">
+          {" "}
+          {fmt(duration)}
+        </Text>
       </View>
 
       <RecommendStoryModal
