@@ -30,7 +30,7 @@ const KidsHomeScreenStories = ({ id }: { id: string }) => {
           onPress={() => {
             navigation.navigate("setup" as any, {
               screen: "storyInteraction",
-              params: { storyId: "1" },
+              params: { storyId: item.id },
             });
           }}
           className="overflow-hidden rounded-lg flex-1 mb-10"
