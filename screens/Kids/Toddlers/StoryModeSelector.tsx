@@ -1,4 +1,3 @@
-// screens/StoryStartScreen.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -7,45 +6,26 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
 import VoiceSelectModal from "../../../components/modals/VoiceSelectModal";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
+import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 
-type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "storyModeSelector">;
-
-const MOCK_STORIES = [
-  {
-    id: "1",
-    title: "Life of PI",
-    content:
-      "Once upon a time a little kite wanted to touch the clouds. It learned to fly with the wind and made a new friend along the way.",
-    description:
-      "Pi learns how to survive on the ocean, make peace with the tiger and find his way back to safety.",
-    ageMin: 1,
-    ageMax: 4,
-    duration: "8-10 mins",
-    pages: 16,
-    coverImageUrl: undefined,
-  },
-  {
-    id: "2",
-    title: "Moonlight Picnic",
-    content:
-      "On a clear night, siblings packed a picnic and discovered that the moon likes sandwiches too. They laughed and told stories until sunrise.",
-    coverImageUrl: undefined,
-  },
-];
+type Props = NativeStackScreenProps<
+  KidsSetupNavigatorParamList,
+  "storyModeSelector"
+>;
 
 const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
   const { storyId } = route.params;
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState(true);
 
   // If you later use the real hook, replace this lookup with the hook and loading/error handling.
-  // const { data: story, isLoading, error } = useGetStory(storyId);
-  const story =
-    MOCK_STORIES.find((s) => s.id === String(storyId)) ?? MOCK_STORIES[0];
+  const { data: story } = useGetStory(storyId);
 
   const coverSource = story?.coverImageUrl
     ? { uri: story.coverImageUrl }
@@ -60,7 +40,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
     setSelectedVoice(voiceId);
     setVoiceModalVisible(false);
     navigation.navigate("storyReader", {
-      storyId: story.id,
+      storyId: storyId,
       mode: "readalong",
       voice: voiceId,
     } as any);
@@ -68,15 +48,27 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
 
   const onListenPress = () => {
     navigation.navigate("storyInteraction", {
-      storyId: story.id,
+      storyId: storyId,
       mode: "narration",
     } as any);
   };
 
   return (
-    <ImageBackground source={coverSource} className="flex-1" resizeMode="cover">
+    <ImageBackground
+      source={coverSource}
+      className="flex-1"
+      resizeMode="cover"
+      onLoadStart={() => setImageLoading(true)}
+      onLoadEnd={() => setImageLoading(false)}
+    >
+      {imageLoading && (
+        <View className="absolute inset-0 bg-[#f0f0f0] items-center justify-center">
+          <ActivityIndicator size="large" color="#866EFF" />
+        </View>
+      )}
+
       <Pressable
-        className="absolute top-8 left-4 z-20 rounded-full p-2 bg-black/50"
+        className="absolute top-8 left-4 z-20 rounded-full"
         onPress={() => navigation.goBack()}
       >
         <Image
