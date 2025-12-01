@@ -75,150 +75,169 @@ const SetBedtime = () => {
   if (fetcherror)
     return <ErrorComponent refetch={refetch} message={fetcherror.message} />;
   return (
-    <ScrollView
-      className="flex-1"
-      contentContainerClassName="min-h-full pb-10 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full"
-    >
-      <PageTitle title="Bedtime Mode" goBack={() => navigator.goBack()} />
-      {error?.message && (
-        <ErrorMessageDisplay
-          errorMessage={error?.message || "Error updating kids, try again."}
-        />
-      )}
-      <View className="p-5 mx-5  flex flex-col gap-y-2 rounded-2xl bg-white">
-        <View className="flex flex-row items-center justify-between">
-          <Text className="text-xl font-[abeezee] text- mb-2">
-            ENABLE BEDTIME MODE{" "}
-          </Text>
-          <Switch value={bedTimeMode} onValueChange={setBedtimeMode} />
-        </View>
-        <Text className="text-text text-sm font-[abeezee] text-center">
-          keep your child off StoryTime during bedtime
-        </Text>
-      </View>
-
-      <View
-        aria-labelledby="Bedtime schedule"
-        className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
+    <View className="flex-1 bg-bgLight pb-5">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerClassName="min-h-full pb-5 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full"
       >
-        <Text className="text-xl font-[abeezee]">SCHEDULE</Text>
-        <Pressable
-          onPress={() => setIsTimeModalOpen("start")}
-          className="flex border-b border-b-black/10 pb-2 flex-row justify-between items-center"
+        <PageTitle title="Bedtime Mode" goBack={() => navigator.goBack()} />
+        {error?.message && (
+          <ErrorMessageDisplay
+            errorMessage={error?.message || "Error updating kids, try again."}
+          />
+        )}
+        <View className="p-5 mx-5  flex flex-col gap-y-2 rounded-2xl bg-white">
+          <View className="flex flex-row items-center justify-between">
+            <Text className="text-xl font-[abeezee] text- mb-2">
+              ENABLE BEDTIME MODE{" "}
+            </Text>
+            <Switch value={bedTimeMode} onValueChange={setBedtimeMode} />
+          </View>
+          <Text className="text-text text-sm font-[abeezee] text-center">
+            keep your child off StoryTime during bedtime
+          </Text>
+        </View>
+
+        <View
+          aria-labelledby="Bedtime schedule"
+          className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
         >
-          <Text className="flex-1 font-[quilka]">Start Time</Text>
-          <Text>{schedule.startTime}</Text>
-          <Text>
+          <Text className="text-xl font-[abeezee]">SCHEDULE</Text>
+          <Pressable
+            onPress={() => setIsTimeModalOpen("start")}
+            className="flex border-b border-b-black/10 pb-2 flex-row justify-between items-center"
+          >
+            <Text className="flex-1 font-[quilka]">Start Time</Text>
+            <Text>{schedule.startTime}</Text>
+            <Text>
+              <Icon name="ChevronRight" />
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setIsTimeModalOpen("stop")}
+            className="flex flex-row justify-between items-center"
+          >
+            <Text className="flex-1 font-[quilka]">Stop Time</Text>
+            <Text>{schedule.stopTime}</Text>
             <Icon name="ChevronRight" />
-          </Text>
-        </Pressable>
-        <Pressable
-          onPress={() => setIsTimeModalOpen("stop")}
-          className="flex flex-row justify-between items-center"
+          </Pressable>
+        </View>
+
+        <View
+          aria-labelledby="Bedtime schedule"
+          className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
         >
-          <Text className="flex-1 font-[quilka]">Stop Time</Text>
-          <Text>{schedule.stopTime}</Text>
-          <Icon name="ChevronRight" />
-        </Pressable>
-      </View>
+          <Text className="text-xl font-[abeezee]">REPEAT</Text>
+          <View className="flex border-b border-b-black/10 pb-2 flex-row justify-between items-center">
+            <Text className="flex-1 font-[quilka]">Everyday</Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={arraysMatch(repeatDays, everyday)}
+              onValueChange={() => setRepeatDays(everyday)}
+            />
+          </View>
+          <View className="flex flex-row border-b border-b-black/10 justify-between items-center">
+            <Text className="flex-1 font-[quilka]">Weekdays</Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={arraysMatch(repeatDays, weekDays)}
+              onValueChange={() => setRepeatDays(weekDays)}
+            />
+          </View>
+          <View className="flex flex-row justify-between items-center">
+            <Text className="flex-1 font-[quilka]">Weekends</Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={arraysMatch(repeatDays, weekEnds)}
+              onValueChange={() => setRepeatDays(weekEnds)}
+            />
+          </View>
+        </View>
 
-      <View
-        aria-labelledby="Bedtime schedule"
-        className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
-      >
-        <Text className="text-xl font-[abeezee]">REPEAT</Text>
-        <View className="flex border-b border-b-black/10 pb-2 flex-row justify-between items-center">
-          <Text className="flex-1 font-[quilka]">Everyday</Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={arraysMatch(repeatDays, everyday)}
-            onValueChange={() => setRepeatDays(everyday)}
-          />
+        <View
+          className="flex flex-col  bg-white rounded-2xl p-5 pt-4 mx-5"
+          aria-labelledby="bedtime controls"
+        >
+          <Text className="text-xl font-[abeezee]">BEDTIME CONTROLS</Text>
+          <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
+            <Text className="font-[abeezee]  text-base text-text">
+              Lock app during bedtime
+            </Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={bedtimeControls.lockDuringBedtime}
+              onValueChange={() =>
+                setBedtimeControls((b) => ({
+                  ...b,
+                  lockDuringBedtime: !b.lockDuringBedtime,
+                }))
+              }
+            />
+          </View>
+          <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
+            <Text className="font-[abeezee]  text-base text-text">
+              Dim screen during bedtime
+            </Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={bedtimeControls.dimDuringBedtime}
+              onValueChange={() =>
+                setBedtimeControls((b) => ({
+                  ...b,
+                  dimDuringBedtime: !b.dimDuringBedtime,
+                }))
+              }
+            />
+          </View>
+          <View className="flex border-b py-3 border-b-black/10 px-4 flex-row justify-between items-center">
+            <Text className="font-[abeezee]  text-base text-text">
+              Show bedtime reminder
+            </Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={bedtimeControls.showBedTimeReminder}
+              onValueChange={() =>
+                setBedtimeControls((b) => ({
+                  ...b,
+                  showBedTimeReminder: !b.showBedTimeReminder,
+                }))
+              }
+            />
+          </View>
+          <View className="flex  flex-row py-3 justify-between px-4 items-center">
+            <Text className="font-[abeezee]  text-base text-text">
+              Allow bedtime stories only{" "}
+            </Text>
+            <Switch
+              disabled={bedTimeMode === false}
+              value={bedtimeControls.allowBedtimeStoriesOnly}
+              onValueChange={() =>
+                setBedtimeControls((b) => ({
+                  ...b,
+                  allowBedtimeStoriesOnly: !b.allowBedtimeStoriesOnly,
+                }))
+              }
+            />
+          </View>
         </View>
-        <View className="flex flex-row border-b border-b-black/10 justify-between items-center">
-          <Text className="flex-1 font-[quilka]">Weekdays</Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={arraysMatch(repeatDays, weekDays)}
-            onValueChange={() => setRepeatDays(weekDays)}
-          />
-        </View>
-        <View className="flex flex-row justify-between items-center">
-          <Text className="flex-1 font-[quilka]">Weekends</Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={arraysMatch(repeatDays, weekEnds)}
-            onValueChange={() => setRepeatDays(weekEnds)}
-          />
-        </View>
-      </View>
 
-      <View
-        className="flex flex-col  bg-white rounded-2xl p-5 pt-4 mx-5"
-        aria-labelledby="bedtime controls"
-      >
-        <Text className="text-xl font-[abeezee]">BEDTIME CONTROLS</Text>
-        <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
-          <Text className="font-[abeezee]  text-base text-text">
-            Lock app during bedtime
-          </Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={bedtimeControls.lockDuringBedtime}
-            onValueChange={() =>
-              setBedtimeControls((b) => ({
-                ...b,
-                lockDuringBedtime: !b.lockDuringBedtime,
-              }))
-            }
-          />
-        </View>
-        <View className="flex border-b  border-b-black/10 px-4 py-3 flex-row justify-between items-center">
-          <Text className="font-[abeezee]  text-base text-text">
-            Dim screen during bedtime
-          </Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={bedtimeControls.dimDuringBedtime}
-            onValueChange={() =>
-              setBedtimeControls((b) => ({
-                ...b,
-                dimDuringBedtime: !b.dimDuringBedtime,
-              }))
-            }
-          />
-        </View>
-        <View className="flex border-b py-3 border-b-black/10 px-4 flex-row justify-between items-center">
-          <Text className="font-[abeezee]  text-base text-text">
-            Show bedtime reminder
-          </Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={bedtimeControls.showBedTimeReminder}
-            onValueChange={() =>
-              setBedtimeControls((b) => ({
-                ...b,
-                showBedTimeReminder: !b.showBedTimeReminder,
-              }))
-            }
-          />
-        </View>
-        <View className="flex  flex-row py-3 justify-between px-4 items-center">
-          <Text className="font-[abeezee]  text-base text-text">
-            Allow bedtime stories only{" "}
-          </Text>
-          <Switch
-            disabled={bedTimeMode === false}
-            value={bedtimeControls.allowBedtimeStoriesOnly}
-            onValueChange={() =>
-              setBedtimeControls((b) => ({
-                ...b,
-                allowBedtimeStoriesOnly: !b.allowBedtimeStoriesOnly,
-              }))
-            }
-          />
-        </View>
-      </View>
+        <TimePickerOverlay
+          visible={isTimeModalOpen === "start"}
+          onClose={() => setIsTimeModalOpen(null)}
+          onConfirm={(string) =>
+            setSchedule((s) => ({ ...s, startTime: string }))
+          }
+        />
+        <TimePickerOverlay
+          visible={isTimeModalOpen === "stop"}
+          onClose={() => setIsTimeModalOpen(null)}
+          onConfirm={(string) =>
+            setSchedule((s) => ({ ...s, stopTime: string }))
+          }
+        />
+        <LoadingOverlay visible={isPending || isLoading} />
+      </ScrollView>
       <CustomButton
         disabled={isPending}
         onPress={() =>
@@ -235,20 +254,7 @@ const SetBedtime = () => {
         }
         text={isPending ? "Saving" : "Save changes"}
       />
-      <TimePickerOverlay
-        visible={isTimeModalOpen === "start"}
-        onClose={() => setIsTimeModalOpen(null)}
-        onConfirm={(string) =>
-          setSchedule((s) => ({ ...s, startTime: string }))
-        }
-      />
-      <TimePickerOverlay
-        visible={isTimeModalOpen === "stop"}
-        onClose={() => setIsTimeModalOpen(null)}
-        onConfirm={(string) => setSchedule((s) => ({ ...s, stopTime: string }))}
-      />
-      <LoadingOverlay visible={isPending || isLoading} />
-    </ScrollView>
+    </View>
   );
 };
 

@@ -48,14 +48,14 @@ type Errors = Partial<Record<keyof RegisterSchema, string>>;
 
 const SignupForm = () => {
   const [errors, setErrors] = useState<Errors>({});
+  const [apiError, setApiError] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [title, setTitle] = useState("");
   const [titleModal, setTitleModal] = useState(false);
-  const { isLoading, errorMessage, signUp } = useAuth();
-  const navigator = useNavigation<RootNavigatorProp>();
+  const { isLoading, signUp } = useAuth();
 
   const onRegister = async () => {
     setErrors({});
@@ -78,13 +78,19 @@ const SignupForm = () => {
       setErrors(formatted);
       return;
     }
-    await signUp(email, password, fullName.trim(), title);
+    await signUp({
+      email,
+      password,
+      fullName: fullName.trim(),
+      title,
+      setErrorCb: setApiError,
+    });
   };
 
   return (
     <View>
       <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={errorMessage} />
+        <ErrorMessageDisplay errorMessage={apiError} />
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Title:</Text>
           <Pressable

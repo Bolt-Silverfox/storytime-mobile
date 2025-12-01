@@ -16,13 +16,16 @@ const VerifyEmailScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [otp, setOtp] = useState("");
   const [successMessage, setSuccesMessage] = useState("");
-  const { isLoading, verifyEmail, errorMessage, resendVerificationEmail } =
-    useAuth();
+  const [error, setError] = useState("");
+  const { isLoading, verifyEmail, resendVerificationEmail } = useAuth();
   const [countDown, setCountdown] = useState(59);
 
   const handleResendEmail = async () => {
     setSuccesMessage("");
-    const data = await resendVerificationEmail(route.params.email);
+    const data = await resendVerificationEmail({
+      email: route.params.email,
+      setErrorCb: setError,
+    });
     if (data.success) {
       setCountdown(59);
       setSuccesMessage("Otp resent successfully");
@@ -59,7 +62,7 @@ const VerifyEmailScreen = () => {
             Enter the verification code sent to your email {route.params.email}
           </Text>
         </View>
-        <ErrorMessageDisplay errorMessage={errorMessage} />
+        <ErrorMessageDisplay errorMessage={error} />
         <View style={styles.container}>
           <OtpInput
             numberOfDigits={6}
@@ -86,7 +89,7 @@ const VerifyEmailScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => verifyEmail(otp)}
+          onPress={() => verifyEmail({ token: otp, setErrorCb: setError })}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
@@ -135,6 +138,7 @@ const styles = StyleSheet.create({
 
   container: {
     paddingHorizontal: 20,
+    paddingTop: 10,
   },
   box: {
     borderWidth: 1,

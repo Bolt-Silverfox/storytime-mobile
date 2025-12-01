@@ -15,27 +15,85 @@ import { emailRegex } from "../constants";
 import { User } from "../types";
 import auth from "../utils/auth";
 
-type Login = (email: string, password: string) => void;
-type SignUp = (
-  email: string,
-  password: string,
-  fullName: string,
-  title: string
-) => void;
+type AuthFnTypes = {
+  login: ({
+    email,
+    password,
+    setErrorCb,
+  }: {
+    email: string;
+    password: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  signUp: ({
+    email,
+    password,
+    fullName,
+    title,
+    setErrorCb,
+  }: {
+    email: string;
+    password: string;
+    fullName: string;
+    title: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  verifyEmail: ({
+    token,
+    setErrorCb,
+  }: {
+    token: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  requestPasswordReset: ({
+    email,
+    setErrorCb,
+  }: {
+    email: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  resendVerificationEmail: ({
+    email,
+    setErrorCb,
+  }: {
+    email: string;
+    setErrorCb: SetErrorCallback;
+  }) => Promise<AuthResponse>;
+  validatePasswordReset: ({
+    email,
+    token,
+    setErrorCb,
+  }: {
+    email: string;
+    token: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  resetPassword: ({
+    email,
+    token,
+    newPassword,
+    setErrorCb,
+  }: {
+    email: string;
+    token: string;
+    newPassword: string;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+};
 
 type AuthContextType = {
+  isLoading: boolean;
+  errorMessage: string | undefined | string[];
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
   logout: () => void;
-  login: Login;
-  signUp: SignUp;
-  isLoading: boolean;
-  errorMessage: string | undefined | string[];
-  verifyEmail: (token: string) => void;
-  requestPasswordReset: (email: string) => void;
-  resendVerificationEmail: (email: string) => Promise<AuthResponse>;
-  validatePasswordReset: (email: string, token: string) => void;
-  resetPassword: (email: string, token: string, newPassword: string) => void;
+  login: AuthFnTypes["login"];
+  signUp: AuthFnTypes["signUp"];
+  verifyEmail: AuthFnTypes["verifyEmail"];
+  requestPasswordReset: AuthFnTypes["requestPasswordReset"];
+  resendVerificationEmail: AuthFnTypes["resendVerificationEmail"];
+  validatePasswordReset: AuthFnTypes["validatePasswordReset"];
+  resetPassword: AuthFnTypes["resetPassword"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -56,6 +114,8 @@ type AuthErrorResponse = {
 type AuthResponse<T = { messaege: string }> =
   | AuthSuccessResponse<T>
   | AuthErrorResponse;
+
+type SetErrorCallback = Dispatch<SetStateAction<string>>;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -128,9 +188,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, []);
 
-  const login: Login = async (email, password) => {
+  const login: AuthFnTypes["login"] = async ({
+    email,
+    password,
+    setErrorCb,
+  }) => {
     if (!emailRegex.test(email)) {
-      setErrorMessage("Invalid Email");
+      setErrorCb("Invalid Email");
       return;
     }
 
@@ -141,8 +205,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         refreshToken: string;
       }>
     >(() => auth.login(email, password));
+    setErrorCb("");
     if (!loginData.success) {
-      setErrorMessage(loginData.message);
+      setErrorCb(loginData.message);
       return;
     }
     await AsyncStorage.setItem("accessToken", loginData.data.jwt);
@@ -151,7 +216,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(loginData.data.user);
   };
 
-  const signUp: SignUp = async (email, password, fullName, title) => {
+  const signUp: AuthFnTypes["signUp"] = async ({
+    email,
+    password,
+    fullName,
+    title,
+    setErrorCb,
+  }) => {
+    setErrorCb("");
     const signupData = await authTryCatch<
       AuthResponse<{
         user: User;
@@ -160,7 +232,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }>
     >(() => auth.signup({ email, password, fullName, title }));
     if (!signupData.success) {
-      setErrorMessage(signupData.message);
+      setErrorCb(signupData.message);
       return;
     }
     navigator.navigate("auth", {
@@ -171,12 +243,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const verifyEmail = async (token: string) => {
+  const verifyEmail: AuthFnTypes["verifyEmail"] = async ({
+    token,
+    setErrorCb,
+  }) => {
+    setErrorCb("");
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
       auth.verifyEmail(token)
     );
+    console.log("verify eail data", verifyEmailData);
     if (!verifyEmailData.success) {
-      setErrorMessage(verifyEmailData.message);
+      setErrorCb(verifyEmailData.message);
       return;
     }
     navigator.navigate("auth", {
@@ -184,33 +261,37 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const resendVerificationEmail = async (
-    email: string
-  ): Promise<AuthResponse> => {
-    if (!emailRegex.test(email)) {
-      setErrorMessage("invalid email");
-      throw new Error("invalid email, try again");
-    }
-    const resendData = await authTryCatch(() =>
-      auth.resendVerificationEmail(email)
-    );
-    if (!resendData.success) {
-      setErrorMessage(resendData.message);
+  const resendVerificationEmail: AuthFnTypes["resendVerificationEmail"] =
+    async ({ email, setErrorCb }) => {
+      setErrorCb("");
+      if (!emailRegex.test(email)) {
+        setErrorCb("invalid email");
+        throw new Error("invalid email, try again");
+      }
+      const resendData = await authTryCatch(() =>
+        auth.resendVerificationEmail(email)
+      );
+      if (!resendData.success) {
+        setErrorCb(resendData.message);
+        return resendData;
+      }
       return resendData;
-    }
-    return resendData;
-  };
+    };
 
-  const requestPasswordReset = async (email: string) => {
+  const requestPasswordReset: AuthFnTypes["requestPasswordReset"] = async ({
+    email,
+    setErrorCb,
+  }) => {
+    setErrorCb("");
     if (!emailRegex.test(email)) {
-      setErrorMessage("Invalid email");
+      setErrorCb("Invalid email");
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.requestPasswordReset(email)
     );
     if (!requestData.success) {
-      setErrorMessage(requestData.message);
+      setErrorCb(requestData.message);
       return;
     }
     navigator.navigate("auth", {
@@ -221,16 +302,21 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const validatePasswordReset = async (email: string, token: string) => {
+  const validatePasswordReset: AuthFnTypes["validatePasswordReset"] = async ({
+    email,
+    token,
+    setErrorCb,
+  }) => {
+    setErrorCb("");
     if (!emailRegex.test(email)) {
-      setErrorMessage("Invalid email");
+      setErrorCb("Invalid email");
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.vaildateResetToken(email, token)
     );
     if (!requestData.success) {
-      setErrorMessage(requestData.message);
+      setErrorCb(requestData.message);
       return;
     }
     navigator.navigate("auth", {
@@ -242,16 +328,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const resetPassword = async (
-    email: string,
-    token: string,
-    newPassword: string
-  ) => {
+  const resetPassword: AuthFnTypes["resetPassword"] = async ({
+    email,
+    token,
+    newPassword,
+    setErrorCb,
+  }) => {
+    setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.resetpassword(email, token, newPassword)
     );
     if (!requestData.success) {
-      setErrorMessage(requestData.message);
+      setErrorCb(requestData.message);
       return;
     }
     navigator.reset({
