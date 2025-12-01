@@ -7,18 +7,22 @@ import {
   Pressable,
 } from "react-native";
 import { CloudMinus, MagicStar } from "iconsax-react-nativejs";
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import defaultStyles from "../../../styles";
-import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import {
+  KidsProfileNavigatorParams,
+  kidsProfileNavigatorProp,
+} from "../../../Navigation/KidsProfileNavigator";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import React from "react";
-import { ChildContext } from "../../../Navigation/KidsTabNavigator";
 import KidAvatar from "../../../components/KidAvatar";
+
+type RouteProps = RouteProp<KidsProfileNavigatorParams, "indexPage">;
 
 const KidsIndexProfileScreen = () => {
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const { childId } = React.useContext(ChildContext)!;
-  const { data } = useGetKidById(childId!);
+  const { params } = useRoute<RouteProps>();
+  const { data } = useGetKidById(params.childId);
   const kidAvatar = data?.avatar?.url;
   const kidName = data?.name;
   const kidAge = data?.ageRange;
@@ -55,7 +59,12 @@ const KidsIndexProfileScreen = () => {
         <View className="mt-[66] gap-[30] mx-auto ">
           <View className="flex-row justify-between max-w-[390] gap-3">
             <Pressable
-              onPress={() => navigator.navigate("changeKidAvatar")}
+              onPress={() => {
+                if (!params.childId) return;
+                navigator.navigate("changeKidAvatar", {
+                  childId: params.childId,
+                });
+              }}
               className="bg-[#8681FF] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3B34DD]"
             >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#938FFE]" />
