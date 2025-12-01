@@ -13,7 +13,7 @@ const useGetSystemAvatars = () => {
       });
       const response: QueryResponse<SystemAvatar[]> = await request.json();
       if (!response.success) {
-        throw new Error(response.mesage);
+        throw new Error(response.message);
       }
       return response;
     },

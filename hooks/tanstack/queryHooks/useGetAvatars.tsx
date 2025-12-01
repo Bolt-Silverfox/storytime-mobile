@@ -17,7 +17,6 @@ const useGetAvatars = () => {
           method: "GET",
         });
         const avatars = await response.json();
-        console.log("avatars", avatars);
         return avatars;
       } catch (err) {
         const message =
