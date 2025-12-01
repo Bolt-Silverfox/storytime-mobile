@@ -25,7 +25,7 @@ export default function EditParentImage() {
   const [image, setImage] = useState("");
   const { data } = useGetUserProfile();
   const userId = data?.data?.id;
-  const { mutateAsync: uploadImage, isPending } = useUploadImage(userId);
+  const { mutateAsync: uploadImage, isPending } = useUploadImage(userId!);
 
   const handleSubmit = async () => {
     if (!image) {

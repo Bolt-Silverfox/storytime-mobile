@@ -16,7 +16,7 @@ type KidsTabNavigatorParamList = {
   home: { childId: string };
   library: { childId: string };
   progress: undefined;
-  profile: undefined;
+  profile: { childId: string };
 };
 
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
@@ -89,6 +89,7 @@ const KidsTabNavigator = () => {
       <Tab.Screen
         name="profile"
         component={kidsProfileNavigator}
+        initialParams={{ childId: childId! }}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -101,6 +102,7 @@ const KidsTabNavigator = () => {
             textTransform: "capitalize",
           },
         }}
+        
       />
     </Tab.Navigator>
   );
