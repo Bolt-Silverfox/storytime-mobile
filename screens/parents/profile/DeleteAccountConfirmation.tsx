@@ -11,9 +11,12 @@ import { ChevronLeft } from "lucide-react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { useNavigation } from "@react-navigation/native";
 import defaultStyles from "../../../styles";
-import { Checkbox } from "expo-checkbox";
 import z from "zod";
 import colours from "../../../colours";
+import useAuth from "../../../contexts/AuthContext";
+import PageTitle from "../../../components/PageTitle";
+import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const feedBack = z.object({
   email: z.email("Invalid email, try again"),
@@ -26,6 +29,8 @@ export default function DeleteAccount() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Errors>({});
+  const [apiError, setApiError] = useState("");
+  const { deleteAccount, isLoading } = useAuth();
 
   const handleSubmit = async () => {
     setErrors({});
@@ -41,23 +46,13 @@ export default function DeleteAccount() {
       setErrors(formatted);
       return;
     }
-    // await signUp(email, password, fullName.trim(), title);
-    navigator.navigate('deleteAccountSuccessful');
+    deleteAccount(setApiError);
+    // navigator.navigate("deleteAccountSuccessful");
   };
 
   return (
     <View className="flex-1 ">
-      <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
-        <Pressable className="absolute left-0 p-4">
-          <ChevronLeft onPress={() => navigator.goBack()} />
-        </Pressable>
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
-          className="self-center text-center  "
-        >
-          Delete Account
-        </Text>
-      </View>
+      <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
       <ScrollView
         className="mx-[16] flex-1 "
         showsVerticalScrollIndicator={false}
@@ -82,9 +77,10 @@ export default function DeleteAccount() {
           {errors.email && (
             <Text className="text-red-600 text-sm">{errors.email}</Text>
           )}
+          {apiError && <ErrorMessageDisplay errorMessage={apiError} />}
         </View>
       </ScrollView>
-      <View className="flex justify-center mx-[16]  gap-6 mt-8">
+      <View className="flex justify-center mx-[16]  gap-6 my-8">
         <Pressable onPress={handleSubmit}>
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
@@ -96,7 +92,10 @@ export default function DeleteAccount() {
 
         <Pressable
           onPress={() => {
-            navigator.navigate("indexPage");
+            navigator.reset({
+              index: 0,
+              routes: [{ name: "indexPage" }],
+            });
           }}
         >
           <Text
@@ -107,10 +106,10 @@ export default function DeleteAccount() {
           </Text>
         </Pressable>
       </View>
+      <LoadingOverlay visible={isLoading} label="Deleting your account..." />
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   text: {
