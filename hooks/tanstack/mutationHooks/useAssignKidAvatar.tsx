@@ -6,7 +6,7 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 import { Alert } from "react-native";
 import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
 
-export const useAssignKidAvatar = (kidId: string) => {
+export const useAssignKidAvatar = (kidId: string, redirect?: () => void) => {
   const navigator = useNavigation<kidsProfileNavigatorProp>();
   const queryClient = useQueryClient();
   return useMutation({
@@ -27,7 +27,7 @@ export const useAssignKidAvatar = (kidId: string) => {
       queryClient.invalidateQueries({
         queryKey: ["kidById", kidId],
       });
-      navigator.navigate("indexPage");
+      redirect?.();
     },
     onError: (err) => {
       console.log(err);
