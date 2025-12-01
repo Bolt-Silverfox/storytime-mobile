@@ -91,7 +91,6 @@ const KidsTabNavigator = () => {
         name="profile"
         initialParams={{ childId }}
         component={kidsProfileNavigator}
-        initialParams={{ childId: childId! }}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon

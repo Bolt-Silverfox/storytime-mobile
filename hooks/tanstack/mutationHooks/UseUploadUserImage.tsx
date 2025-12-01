@@ -42,6 +42,7 @@ export const useUploadImage = (userId: string, redirect?: () => void) => {
       queryClient.invalidateQueries({
         queryKey: ["userProfile", userId],
       });
+      redirect?.();
     },
     onError: () => {
       Alert.alert("Could not upload file ");
