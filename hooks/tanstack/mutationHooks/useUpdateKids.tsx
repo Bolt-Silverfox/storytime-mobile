@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
 
 const useUpdateKids = ({
   id,
@@ -11,6 +12,7 @@ const useUpdateKids = ({
   onSuccess?: () => void | null;
 }) => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (kids: {
@@ -63,6 +65,9 @@ const useUpdateKids = ({
       });
       queryClient.invalidateQueries({
         queryKey: ["kidById", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userReport", user?.id],
       });
       onSuccess?.();
     },
