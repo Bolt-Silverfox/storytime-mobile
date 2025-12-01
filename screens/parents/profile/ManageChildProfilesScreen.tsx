@@ -10,6 +10,7 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import { KidProfile } from "../../../types";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ManageChildProfilesScreen = () => {
   const parentNavigator = useNavigation<ParentsNavigatorProp>();
@@ -23,43 +24,46 @@ const ManageChildProfilesScreen = () => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   return (
-    <ScrollView
-      className="flex-1"
-      contentContainerClassName="flex min-h-full  flex-col gap-y-12"
-    >
-      <PageTitle
-        title="Manage Child Profiles"
-        goBack={() =>
-          parentNavigator.navigate("profile", { screen: "indexPage" })
-        }
-      />
-      {data.length ? (
-        <View className="flex flex-col gap-y-4 mx-4 mb-5 flex-1 sm:mx-auto max-w-screen-md sm:w-full">
-          <View className="flex-1 flex-col gap-4 sm:gap-10">
-            {data.map((kid) => (
-              <ChildItem
-                kid={kid}
-                key={kid.id}
-                selectedKid={selectedKid}
-                setSelectedKid={setSelectedKid}
-              />
-            ))}
+    <View className="flex-1 bg-bgLight pb-5">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerClassName="flex min-h-full  flex-col gap-y-12"
+      >
+        <PageTitle
+          title="Manage Child Profiles"
+          goBack={() =>
+            parentNavigator.navigate("profile", { screen: "indexPage" })
+          }
+        />
+        {data.length ? (
+          <View className="flex flex-col gap-y-4 mx-4 mb-5 flex-1 sm:mx-auto max-w-screen-md sm:w-full">
+            <View className="flex-1 flex-col gap-4 sm:gap-10">
+              {data.map((kid) => (
+                <ChildItem
+                  kid={kid}
+                  key={kid.id}
+                  selectedKid={selectedKid}
+                  setSelectedKid={setSelectedKid}
+                />
+              ))}
+            </View>
           </View>
-          <CustomButton
-            text="Add Child"
-            onPress={() =>
+        ) : (
+          <ChildrenEmptyState
+            navigate={() =>
               parentNavigator.navigate("profile", { screen: "addChild" })
             }
           />
-        </View>
-      ) : (
-        <ChildrenEmptyState
-          navigate={() =>
-            parentNavigator.navigate("profile", { screen: "addChild" })
-          }
-        />
-      )}
-    </ScrollView>
+        )}
+      </ScrollView>
+      <CustomButton
+        text="Add Child"
+        onPress={() =>
+          parentNavigator.navigate("profile", { screen: "addChild" })
+        }
+      />
+    </View>
   );
 };
 
@@ -75,6 +79,7 @@ const ChildItem = ({
   setSelectedKid: Dispatch<SetStateAction<string | null>>;
 }) => {
   const parentNavigator = useNavigation<ParentsNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
 
   const toggleShowKid = (id: string) => {
     console.log("kid id", id);
@@ -111,10 +116,21 @@ const ChildItem = ({
         >
           <Icon name="Pen" />
         </Pressable>
-        <Icon name="EllipsisVertical" onPress={() => toggleShowKid(kid.id)} />
+        {selectedKid === kid.id ? (
+          <Icon name="X" onPress={() => toggleShowKid(kid.id)} />
+        ) : (
+          <Icon name="EllipsisVertical" onPress={() => toggleShowKid(kid.id)} />
+        )}
         {selectedKid === kid.id ? (
           <View className="absolute bottom-10 z-10 right-0 py-4  bg-bgLight rounded-3xl px-10">
-            <Pressable onPress={() => console.log("current kid", selectedKid)}>
+            <Pressable
+              onPress={() =>
+                navigator.navigate("kid", {
+                  screen: "index",
+                  params: { childId: kid.id },
+                })
+              }
+            >
               <Text>View kid</Text>
             </Pressable>
           </View>

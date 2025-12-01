@@ -57,75 +57,79 @@ const ContentFilter = () => {
   };
 
   return (
-    <ScrollView
-      className="flex-1"
-      contentContainerClassName="min-h-full max-w-screen-md mx-auto w-full "
-    >
-      <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
+    <View className="flex-1">
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="min-h-full max-w-screen-md mx-auto w-full "
+      >
+        <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
 
-      <Text className="text-base font-[abeezee] my-5 text-center">
-        Select the stories your child can read
-      </Text>
-      <View className="flex flex-col mx-5 rounded-3xl p-4 bg-white">
-        <Text className="text-[18px] font-[abeezee] my-3">FILTER BY AGE</Text>
+        <Text className="text-base font-[abeezee] my-5 text-center">
+          Select the stories your child can read
+        </Text>
+        <View className="flex flex-col mx-5 rounded-3xl p-4 bg-white">
+          <Text className="text-[18px] font-[abeezee] my-3">FILTER BY AGE</Text>
 
-        <Pressable
-          className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => setFilterByAge("1 - 4")}
-        >
-          <Text className="flex-1 text-base text-black font-[abeezee]">
-            1 – 4 years
-          </Text>
-          <Switch
-            value={filterByAge === "1 - 4"}
-            onValueChange={() => setFilterByAge("1 - 4")}
-          />
-        </Pressable>
+          <Pressable
+            className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
+            onPress={() => setFilterByAge("1 - 4")}
+          >
+            <Text className="flex-1 text-base text-black font-[abeezee]">
+              1 – 4 years
+            </Text>
+            <Switch
+              value={filterByAge === "1 - 4"}
+              onValueChange={() => setFilterByAge("1 - 4")}
+            />
+          </Pressable>
 
-        <Pressable
-          className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
-          onPress={() => setFilterByAge("5 - 8")}
-        >
-          <Text className="flex-1 text-base text-black font-[abeezee]">
-            5 – 8 years
-          </Text>
-          <Switch
-            value={filterByAge === "5 - 8"}
-            onValueChange={() => setFilterByAge("5 - 8")}
-          />
-        </Pressable>
+          <Pressable
+            className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
+            onPress={() => setFilterByAge("5 - 8")}
+          >
+            <Text className="flex-1 text-base text-black font-[abeezee]">
+              5 – 8 years
+            </Text>
+            <Switch
+              value={filterByAge === "5 - 8"}
+              onValueChange={() => setFilterByAge("5 - 8")}
+            />
+          </Pressable>
 
-        <Pressable
-          className="flex py-4 flex-row items-center gap-x-10"
-          onPress={() => setFilterByAge("9 - 12")}
-        >
-          <Text className="flex-1 text-base text-black font-[abeezee]">
-            9+ years
-          </Text>
-          <Switch
-            value={filterByAge === "9 - 12"}
-            onValueChange={() => setFilterByAge("9 - 12")}
-          />
-        </Pressable>
-      </View>
-
-      <View className="flex flex-col mx-5 rounded-3xl p-4 bg-white mt-6">
-        <View className="my-3 flex flex-col gap-y-1">
-          <Text className="text-[18px] font-[abeezee] ">
-            FILTER BY CATEGORY
-          </Text>
-          <Text className="text-xs font-[abeezee]">
-            Select the categories you prefer
-          </Text>
+          <Pressable
+            className="flex py-4 flex-row items-center gap-x-10"
+            onPress={() => setFilterByAge("9 - 12")}
+          >
+            <Text className="flex-1 text-base text-black font-[abeezee]">
+              9+ years
+            </Text>
+            <Switch
+              value={filterByAge === "9 - 12"}
+              onValueChange={() => setFilterByAge("9 - 12")}
+            />
+          </Pressable>
         </View>
-        <Suspense fallback={<ActivityIndicator size={"large"} />}>
-          <ContentFilterCategories
-            selectedCategories={selectedCategories}
-            toggleCategory={toggleCategory}
-          />
-        </Suspense>
-      </View>
-      <View className="m-10">
+
+        <View className="flex flex-col mx-5 rounded-3xl p-4 bg-white mt-6">
+          <View className="my-3 flex flex-col gap-y-1">
+            <Text className="text-[18px] font-[abeezee] ">
+              FILTER BY CATEGORY
+            </Text>
+            <Text className="text-xs font-[abeezee]">
+              Select the categories you prefer
+            </Text>
+          </View>
+          <Suspense fallback={<ActivityIndicator size={"large"} />}>
+            <ContentFilterCategories
+              selectedCategories={selectedCategories}
+              toggleCategory={toggleCategory}
+            />
+          </Suspense>
+        </View>
+
+        <LoadingOverlay visible={isPending} />
+      </ScrollView>
+      <View className="mb-5">
         <CustomButton
           disabled={isUpdating || !filterByAge}
           text={isUpdating ? "Saving..." : "Save Changes"}
@@ -137,8 +141,7 @@ const ContentFilter = () => {
           }
         />
       </View>
-      <LoadingOverlay visible={isPending} />
-    </ScrollView>
+    </View>
   );
 };
 export default ContentFilter;
