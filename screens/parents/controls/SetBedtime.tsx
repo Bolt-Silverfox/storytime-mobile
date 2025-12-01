@@ -100,6 +100,7 @@ const SetBedtime = () => {
         </View>
 
         <View
+          style={{ opacity: bedTimeMode ? 1 : 0.5 }}
           aria-labelledby="Bedtime schedule"
           className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
         >
@@ -125,6 +126,7 @@ const SetBedtime = () => {
         </View>
 
         <View
+          style={{ opacity: bedTimeMode ? 1 : 0.5 }}
           aria-labelledby="Bedtime schedule"
           className="p-5 flex flex-col gap-y-6 bg-white mx-5 rounded-2xl"
         >
@@ -156,6 +158,7 @@ const SetBedtime = () => {
         </View>
 
         <View
+          style={{ opacity: bedTimeMode ? 1 : 0.5 }}
           className="flex flex-col  bg-white rounded-2xl p-5 pt-4 mx-5"
           aria-labelledby="bedtime controls"
         >

@@ -7,38 +7,56 @@ import ChangeKidAvatar from "../screens/Kids/profile/ChangeKidAvatar";
 import ChangekidTheme from "../screens/Kids/profile/ChangekidTheme";
 import KidAchievement from "../screens/Kids/profile/KidAchievement";
 import ReadKidHistory from "../screens/Kids/profile/ReadKidHistory";
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
+import { RouteProp, useRoute } from "@react-navigation/native";
 
 export type KidsProfileNavigatorParams = {
   indexPage: { childId: string };
   changeKidAvatar: { childId: string };
-  readKidHistory: undefined;
-  changeKidTheme: undefined;
-  kidAchievement: undefined;
+  readKidHistory: { childId: string };
+  changeKidTheme: { childId: string };
+  kidAchievement: { childId: string };
 };
 
 export type kidsProfileNavigatorProp =
   NativeStackNavigationProp<KidsProfileNavigatorParams>;
 const Stack = createNativeStackNavigator<KidsProfileNavigatorParams>();
 
-type RouteProps = RouteProp<KidsTabNavigatorParamList, "profile">;
+type KidsTabNavigatorRouteProp = RouteProp<
+  KidsTabNavigatorParamList,
+  "profile"
+>;
 
 export default function KidsProfileNavigator() {
-  const route = useRoute<RouteProps>();
-  const childId = route.params?.childId;
-
+  const { params } = useRoute<KidsTabNavigatorRouteProp>();
+  const childId = params.childId;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen
         name="indexPage"
         component={KidsIndexProfileScreen}
-        initialParams={{ childId: childId! }}
+        initialParams={{ childId }}
       />
-      <Stack.Screen name="changeKidAvatar" component={ChangeKidAvatar} />
-      <Stack.Screen name="readKidHistory" component={ReadKidHistory} />
-      <Stack.Screen name="changeKidTheme" component={ChangekidTheme} />
-      <Stack.Screen name="kidAchievement" component={KidAchievement} />
+      <Stack.Screen
+        name="changeKidAvatar"
+        component={ChangeKidAvatar}
+        initialParams={{ childId }}
+      />
+      <Stack.Screen
+        name="readKidHistory"
+        component={ReadKidHistory}
+        initialParams={{ childId }}
+      />
+      <Stack.Screen
+        name="changeKidTheme"
+        component={ChangekidTheme}
+        initialParams={{ childId }}
+      />
+      <Stack.Screen
+        name="kidAchievement"
+        component={KidAchievement}
+        initialParams={{ childId }}
+      />
     </Stack.Navigator>
   );
 }
