@@ -14,7 +14,6 @@ import Avatar from "../components/Avatar";
 const KidSelectionScreen = () => {
   const { user } = useAuth();
   const { data, isPending, error, refetch } = useGetUserKids();
-  console.log(data);
   const navigation = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible={isPending} />;
 
@@ -23,6 +22,7 @@ const KidSelectionScreen = () => {
 
   return (
     <ScrollView
+      showsVerticalScrollIndicator={false}
       style={{ flex: 1 }}
       contentContainerClassName="gap-16 p-8 min-h-full max-w-screen-md mx-auto w-full"
     >

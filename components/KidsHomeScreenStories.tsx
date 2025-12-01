@@ -15,7 +15,6 @@ const KidsHomeScreenStories = ({ id }: { id: string }) => {
         message={error.message ?? "Unexpected error"}
       />
     );
-  console.log("data from kids home stories", data);
   return (
     <FlatList
       data={data}

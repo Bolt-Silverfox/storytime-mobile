@@ -43,7 +43,10 @@ const ProfileScreen: FC = () => {
 
   return (
     <View style={styles.container}>
-      <ScrollView contentContainerStyle={styles.scrollContent}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
         <ImageBackground
           source={require("../../../assets/bg-adaptive-image.png")}
           style={styles.header}

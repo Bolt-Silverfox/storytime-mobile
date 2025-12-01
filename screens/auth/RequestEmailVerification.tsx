@@ -13,14 +13,19 @@ import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import LoadingOverlay from "../../components/LoadingOverlay";
 
 const RequestEmailVerification = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [email, setEmail] = useState("");
-  const { isLoading, errorMessage, resendVerificationEmail } = useAuth();
+  const { isLoading, resendVerificationEmail } = useAuth();
+  const [error, setError] = useState("");
 
   const handleRequestVerfication = async () => {
-    const response = await resendVerificationEmail(email);
+    const response = await resendVerificationEmail({
+      email: email.trim(),
+      setErrorCb: setError,
+    });
     if (response.success) {
       navigator.navigate("auth", {
         screen: "verifyEmail",
@@ -50,13 +55,13 @@ const RequestEmailVerification = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errorMessage ? "red" : colours.text}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${error ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={error ? "red" : colours.text}
               placeholder="Enter your email"
               onChangeText={setEmail}
               value={email}
             />
-            <ErrorMessageDisplay errorMessage={errorMessage} />
+            <ErrorMessageDisplay errorMessage={error} />
           </View>
         </View>
         <Pressable
@@ -71,6 +76,7 @@ const RequestEmailVerification = () => {
           </Text>
         </Pressable>
       </View>
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 };

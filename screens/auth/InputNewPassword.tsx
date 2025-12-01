@@ -32,9 +32,10 @@ type PropRoutes = RouteProp<AuthNavigatorParamList, "inputNewPassword">;
 const InputNewPassword = () => {
   const route = useRoute<PropRoutes>();
   const [errors, setErrors] = useState<Errors>({});
+  const [apiError, setApiError] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { isLoading, errorMessage, resetPassword } = useAuth();
+  const { isLoading, resetPassword } = useAuth();
 
   const onRegister = async () => {
     setErrors({});
@@ -54,11 +55,12 @@ const InputNewPassword = () => {
       setErrors(formatted);
       return;
     }
-    await resetPassword(
-      route.params.email,
-      route.params.token,
-      confirmPassword
-    );
+    await resetPassword({
+      email: route.params.email.trim(),
+      token: route.params.token.trim(),
+      newPassword: confirmPassword,
+      setErrorCb: setApiError,
+    });
   };
 
   return (
@@ -67,7 +69,7 @@ const InputNewPassword = () => {
         Input your New Password
       </Text>
       <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={errorMessage} />
+        <ErrorMessageDisplay errorMessage={apiError} />
 
         <PasswordInput
           label="Password:"
