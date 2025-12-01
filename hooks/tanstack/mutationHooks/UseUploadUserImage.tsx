@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { Alert } from "react-native";
 
-export const useUploadImage = (userId: string) => {
+export const useUploadImage = (userId: string, redirect?: () => void) => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const queryClient = useQueryClient();
   return useMutation({
@@ -42,10 +42,10 @@ export const useUploadImage = (userId: string) => {
       queryClient.invalidateQueries({
         queryKey: ["userProfile", userId],
       });
-      navigator.navigate("indexPage");
+      redirect?.();
     },
     onError: () => {
-      Alert.alert("could not upload file");
+      Alert.alert("Could not upload file ");
     },
   });
 };
