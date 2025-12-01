@@ -28,7 +28,7 @@ const useGetKidActivityLog = (id: string) => {
       });
       const response: QueryResponse<ActivityLog[]> = await request.json();
       console.log("activity log", response);
-      if (!response.success) throw new Error(response.mesage);
+      if (!response.success) throw new Error(response.message);
       return response;
     },
     staleTime: Infinity,

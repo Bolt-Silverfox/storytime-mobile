@@ -14,6 +14,7 @@ import defaultStyles from "../../../styles";
 import { Checkbox } from "expo-checkbox";
 import z from "zod";
 import colours from "../../../colours";
+import PageTitle from "../../../components/PageTitle";
 
 const feedBack = z.object({
   message: z.string().min(1, "feedback should not be empty"),
@@ -56,18 +57,8 @@ export default function DeleteAccount() {
   };
   return (
     <View className="flex-1 ">
-      <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
-        <Pressable className="absolute left-0 p-4">
-          <ChevronLeft onPress={() => navigator.goBack()} />
-        </Pressable>
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
-          className="self-center text-center  "
-        >
-          Delete Account
-        </Text>
-      </View>
-      <ScrollView className="mx-[16]" showsVerticalScrollIndicator={false}>
+      <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
+      <ScrollView className="mx-4" showsVerticalScrollIndicator={false}>
         <View className="mt-12  items-center">
           <Text style={[defaultStyles.heading, { fontSize: 20 }]}>
             We are sorry to see you go
@@ -124,7 +115,7 @@ export default function DeleteAccount() {
               style={[defaultStyles.defaultText, { color: "white" }]}
               className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${true ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
             >
-              Delete Acount
+              Next
             </Text>
           </Pressable>
 
