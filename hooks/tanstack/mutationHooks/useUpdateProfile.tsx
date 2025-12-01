@@ -11,10 +11,8 @@ export type UpdateUserProfileData = {
   country?: string;
 };
 
-
 export const useUpdateProfile = (userId: string) => {
   const queryClient = useQueryClient();
-  console.log(userId);
 
   return useMutation({
     mutationFn: async (data: UpdateUserProfileData): Promise<User> => {
@@ -25,12 +23,10 @@ export const useUpdateProfile = (userId: string) => {
       });
 
       const profileUpdate = await response.json();
-      console.log(profileUpdate);
 
       if (!response.ok) {
         throw new Error("Failed to update profile");
       }
-      console.log("response", profileUpdate);
 
       return profileUpdate;
     },

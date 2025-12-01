@@ -17,7 +17,7 @@ const ParentProfileModal = ({
   if (open === "logout") {
     modalData = {
       prompt: "Are you sure you want to logout of this device?",
-      confirm: "Yes,log out",
+      confirm: "Yes, log out",
     };
   } else {
     modalData = {
@@ -54,7 +54,7 @@ const ParentProfileModal = ({
             className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
           >
             <Text className="text-white font-[abeezee] text-center text-base">
-            Cancel
+              Cancel
             </Text>
           </Pressable>
           <Pressable

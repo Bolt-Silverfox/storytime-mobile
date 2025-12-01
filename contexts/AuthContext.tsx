@@ -24,6 +24,7 @@ import {
   isSuccessResponse,
 } from "@react-native-google-signin/google-signin";
 import { Alert } from "react-native";
+import apiFetch from "../apiFetch";
 
 type AuthFnTypes = {
   login: ({
@@ -90,6 +91,7 @@ type AuthFnTypes = {
     setErrorCb: SetErrorCallback;
   }) => void;
   handleGoogleAuth: () => void;
+  deleteAccount: (setErrorCb: SetErrorCallback) => void;
 };
 
 type AuthContextType = {
@@ -106,6 +108,7 @@ type AuthContextType = {
   validatePasswordReset: AuthFnTypes["validatePasswordReset"];
   resetPassword: AuthFnTypes["resetPassword"];
   handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  deleteAccount: AuthFnTypes["deleteAccount"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -140,7 +143,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigator = useNavigation<RootNavigatorProp>();
 
   useEffect(() => {
-    console.log("web client id", WEB_CLIENT_ID);
     GoogleSignin.configure({
       // iosClientId: IOS_CLIENT_ID,
       webClientId: WEB_CLIENT_ID,
@@ -160,7 +162,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         console.log("access token", storedToken);
-        console.log("user id", localStoredSession);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
@@ -272,7 +273,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
       auth.verifyEmail(token)
     );
-    console.log("verify eail data", verifyEmailData);
     if (!verifyEmailData.success) {
       setErrorCb(verifyEmailData.message);
       return;
@@ -397,8 +397,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
       });
       const response = await request.json();
-      console.log("response sign in", response);
-      console.log("google token", idToken);
       if (!response.success) {
         throw new Error(response.message);
       }
@@ -411,6 +409,30 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
       Alert.alert(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteAccount: AuthFnTypes["deleteAccount"] = async (setErrorCb) => {
+    try {
+      setIsLoading(true);
+      setErrorCb("");
+      const url = `${BASE_URL}/user/me`;
+      const request = await apiFetch(url, {
+        method: "DELETE",
+      });
+      const response = await request.json();
+      console.log("delete account data", response);
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      logout();
+      console.log("deleted account sucessfully");
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Unexpected error, try again";
+      setErrorCb(message);
     } finally {
       setIsLoading(false);
     }
@@ -430,6 +452,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     validatePasswordReset,
     resetPassword,
     handleGoogleAuth,
+    deleteAccount,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>
