@@ -245,11 +245,23 @@ const storyTrackerData: {
   ];
 
 
+const PALETTE = [
+  { id: 1, name: "Adventure", colour: "#039222", bg: "#CDFBD7" },
+  { id: 2, name: "Coming of Age", colour: "#925403", bg: "#FBE5CD" },
+  { id: 3, name: "Courage/Bravery", colour: "#926903", bg: "#FBF9CD" },
+  { id: 4, name: "Mystery", colour: "#008D81", bg: "#CDFBF7" },
+  { id: 5, name: "Fantasy", colour: "#5B007C", bg: "#EFCDFB" },
+  { id: 6, name: "Love & Family", colour: "#039222", bg: "#CDFBD7" },
+  { id: 7, name: "Transformation", colour: "#925403", bg: "#FBE5CD" },
+  { id: 8, name: "Honesty", colour: "#926903", bg: "#FBF9CD" },
+];
+
 export {
   categories,
   popularSuggestions,
   childDetailsData,
   privacyPolicyData,
   termsAndConditionsData,
-  storyTrackerData
+  storyTrackerData,
+  PALETTE
 };
