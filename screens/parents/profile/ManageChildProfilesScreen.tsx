@@ -89,11 +89,16 @@ const ChildItem = ({
     }
     setSelectedKid(id);
   };
+  
 
   return (
     <View className="flex  px-3 bg-white  py-3.5 rounded-2xl items-center flex-row gap-x-2.5">
       <Image
-        source={require("../../../assets/placeholder-pfp.png")}
+        source={
+          kid.avatar?.url
+            ? { uri: kid?.avatar?.url }
+            : require("../../../assets/avatars/Avatars-3.png")
+        }
         className="size-[60px]"
       />
       <View className="flex flex-1 flex-col gap-y-2.5">
@@ -108,7 +113,7 @@ const ChildItem = ({
               params: {
                 ageRange: kid.ageRange,
                 name: kid.name,
-                imageUrl: kid.avatar,
+                imageUrl: kid.avatar?.url,
                 id: kid.id,
               },
             })

@@ -59,7 +59,7 @@ const AddChildScreen = () => {
       </View>
       <View className=" ">
         <Image
-          source={require("../../../assets/placeholder-pfp.png")}
+          source={require("../../../assets/avatars/Avatars-3.png")}
           className="size-[80px] self-center"
         />
         <Pressable className="absolute bottom-0 right-0"></Pressable>

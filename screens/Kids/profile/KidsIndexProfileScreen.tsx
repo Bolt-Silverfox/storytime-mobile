@@ -16,12 +16,15 @@ import {
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import React from "react";
 import KidAvatar from "../../../components/KidAvatar";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
 
 type ProfileParams = RouteProp<KidsProfileNavigatorParams, "indexPage">;
 const KidsIndexProfileScreen = () => {
   const { params } = useRoute<ProfileParams>();
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const { data } = useGetKidById(params.childId);
+  const tabsNavigator = useNavigation<KidsTabNavigatorProp>();
+  const { data, isLoading, isFetching } = useGetKidById(params.childId);
   const kidAvatar = data?.avatar?.url;
   const kidName = data?.name;
   const kidAge = data?.ageRange;
@@ -78,7 +81,7 @@ const KidsIndexProfileScreen = () => {
 
             <Pressable
               onPress={() =>
-                navigator.navigate("readKidHistory", {
+                tabsNavigator.navigate("library", {
                   childId: params.childId,
                 })
               }
@@ -110,9 +113,7 @@ const KidsIndexProfileScreen = () => {
 
             <Pressable
               onPress={() =>
-                navigator.navigate("kidAchievement", {
-                  childId: params.childId,
-                })
+                tabsNavigator.navigate("progress", { childId: params.childId })
               }
               className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]"
             >
@@ -139,6 +140,7 @@ const KidsIndexProfileScreen = () => {
           />
         </View>
       </View>
+      <LoadingOverlay visible={isLoading || isFetching} />
     </ScrollView>
   );
 };
