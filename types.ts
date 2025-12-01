@@ -105,6 +105,25 @@ type UserProfile = {
   updatedAt: string;
 };
 
+type KidReport = {
+  kidId: string;
+  kidName: string;
+  avatarUrl?: string;
+  rank: number;
+  storiesCompleted: number;
+  screenTimeMins: number;
+  starsEarned: number;
+  badgesEarned: number;
+};
+
+type WeeklyReport = {
+  weekStartDate: string;
+  weekEndDate: string;
+  kids: KidReport[];
+  totalStoriesCompleted: number;
+  totalScreenTimeMins: number;
+};
+
 export type {
   User,
   Profile,
@@ -113,4 +132,6 @@ export type {
   SystemAvatar,
   UserProfile,
   KidProfile,
+  WeeklyReport,
+  KidReport,
 };

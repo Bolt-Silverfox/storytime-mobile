@@ -1,11 +1,11 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import Icon from "../../../components/Icon";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import CustomDateRangeModal from "./DateRangeModalComponent";
 import ShareReportModal from "./ShareReportModalComponent";
-import {  Share2, Star, Target } from "lucide-react-native";
+import { Share2, Star, Target } from "lucide-react-native";
 import {
   Award,
   Clock,
@@ -17,6 +17,9 @@ import {
   Timer,
 } from "iconsax-react-nativejs";
 import ReportScore from "../../../components/ReportScore";
+import { ParentReportNavigatorParamList } from "../../../Navigation/ParentsReportNavigator";
+import useGetReportByKidId from "../../../hooks/tanstack/queryHooks/useGetReportByKidId";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 type ReportPeriod = "thisWeek" | "lastWeek" | "custom";
 
@@ -24,11 +27,16 @@ interface ScreenTimeData {
   date: string;
   hours: number;
 }
+type RouteProps = RouteProp<ParentReportNavigatorParamList, "reportDetails">;
 
 const ReportDetailScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const route = useRoute();
-  const { childId } = route.params as { childId: string };
+  const { params } = useRoute<RouteProps>();
+  const childId = params.childId;
+  const { data, isLoading ,isFetching} = useGetReportByKidId(childId);
+  console.log(childId)
+
+  console.log(data);
 
   const [selectedPeriod, setSelectedPeriod] =
     useState<ReportPeriod>("thisWeek");
@@ -40,21 +48,21 @@ const ReportDetailScreen = () => {
   } | null>(null);
 
   // Mock data - replace with actual data
-  const childName = "Jacob Luke";
-  const todayScreenTime = 2;
-  const remainingTime = "1 hour 30 minutes";
-  const weekRange = "Nov 18, 2025 - Nov 24, 2025";
+  // const childName = "Jacob Luke";
+  // const todayScreenTime = 2;
+  // const remainingTime = "1 hour 30 minutes";
+  // const weekRange = "Nov 18, 2025 - Nov 24, 2025";
 
-  const stats = {
-    storiesCompleted: 10,
-    rightAnswers: 12,
-    starsEarned: 6,
-    badgesEarned: 2,
-    totalScreenTime: "8 hours",
-    challengesCompleted: 5,
-    favourites: 5,
-    lastActive: "20 mins ago",
-  };
+  // const stats = {
+  //   storiesCompleted: 10,
+  //   rightAnswers: 12,
+  //   starsEarned: 6,
+  //   badgesEarned: 2,
+  //   totalScreenTime: "8 hours",
+  //   challengesCompleted: 5,
+  //   favourites: 5,
+  //   lastActive: "20 mins ago",
+  // };
 
   const screenTimeData: ScreenTimeData[] = [
     { date: "13/11", hours: 2.5 },
@@ -89,6 +97,22 @@ const ReportDetailScreen = () => {
     setIsDateModalOpen(false);
   };
 
+  function getLast7Days() {
+    const today = new Date();
+    const last7 = new Date();
+    last7.setDate(today.getDate() - 6); // today counts as day 1
+
+    return `${last7.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })} - ${today.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    })}`;
+  }
+
   const getWeekDisplay = () => {
     if (selectedPeriod === "custom" && customDateRange) {
       const formatDate = (date: Date) => {
@@ -100,8 +124,12 @@ const ReportDetailScreen = () => {
       };
       return `${formatDate(customDateRange.start)} - ${formatDate(customDateRange.end)}`;
     }
-    return weekRange;
+    return getLast7Days();
   };
+
+  if (isLoading ||isFetching ) {
+    return <LoadingOverlay visible={isLoading} label="Loading Report" />;
+  }
 
   return (
     <ScrollView className="flex-1 bg-[#FFFCFBFB]">
@@ -110,8 +138,8 @@ const ReportDetailScreen = () => {
         <Pressable onPress={() => navigator.goBack()}>
           <Icon name="ChevronLeft" size={24} />
         </Pressable>
-        <Text className="text-lg font-[abeezee] ">{childName}</Text>
-        <View className="flex flex-row gap-x-3">
+        <Text className="text-lg font-[abeezee] ">{data?.kidName}</Text>
+        <View style={{opacity:0}} className="flex flex-row gap-x-3">
           <Pressable onPress={handleDownloadPDF}>
             <ImportCurve size={24} />
           </Pressable>
@@ -124,21 +152,23 @@ const ReportDetailScreen = () => {
       {/* Today's Screen Time */}
       <View className="px-4 mt-6 mx-2 bg-white py-4 rounded-[20]">
         <Text className="text-xl font-bold mb-3 font-[quilka] text-[20px]">
-          Today's Screen Time: {todayScreenTime} Hours
+          Today's Screen Time: {data?.screenTimeMins} Hours
         </Text>
         <View className="bg-[#E6E6FA] border-b-[2px] border-[#9AA8EF] p-1.5 rounded-full h-10 overflow-hidden">
           <View className="w-full bg-[#B0BAFF] rounded-full">
             <View
               className="bg-[#0731EC] h-full rounded-full"
               style={{
-                width: `${(todayScreenTime / (todayScreenTime + 1.5)) * 100}%`,
+                width: `${(data?.screenTimeMins! / (data?.screenTimeMins! + 1.5)) * 100}%`,
               }}
             />
           </View>
         </View>
-        <Text className="text-sm text-gray-600 mt-2">
-          {remainingTime} remaining
-        </Text>
+        {data?.screenTimeLimitMins && (
+          <Text className="text-sm text-gray-600 mt-2">
+            {data?.screenTimeLimitMins} remaining
+          </Text>
+        )}
       </View>
 
       {/* Weekly Report Overview */}
@@ -148,7 +178,7 @@ const ReportDetailScreen = () => {
         </Text>
 
         {/* Period Selection */}
-        <View className="flex flex-row gap-x-5 mb-4 mx-auto">
+        <View className="flex flex-row gap-x-5 mb-4 ">
           <Pressable
             onPress={() => handlePeriodChange("thisWeek")}
             className={`px-6 py-2 rounded-full ${
@@ -165,7 +195,7 @@ const ReportDetailScreen = () => {
               This week
             </Text>
           </Pressable>
-          <Pressable
+          {/* <Pressable
             onPress={() => handlePeriodChange("lastWeek")}
             className={`px-6 py-2 rounded-full ${
               selectedPeriod === "lastWeek"
@@ -180,8 +210,8 @@ const ReportDetailScreen = () => {
             >
               Last week
             </Text>
-          </Pressable>
-          <Pressable
+          </Pressable> */}
+          {/* <Pressable
             onPress={() => handlePeriodChange("custom")}
             className={`px-6 py-2 rounded-full ${
               selectedPeriod === "custom"
@@ -196,7 +226,7 @@ const ReportDetailScreen = () => {
             >
               Custom
             </Text>
-          </Pressable>
+          </Pressable> */}
         </View>
 
         {/* Week Display */}
@@ -213,19 +243,14 @@ const ReportDetailScreen = () => {
           <View className="flex flex-row justify-around">
             <ReportScore
               icon={<Cup color="#0731EC" />}
-              score={stats.storiesCompleted}
+              score={data?.storiesCompleted!}
               color="#5776FF33"
               title={"Stories Completed"}
             />
-            {/* <ReportScore
-              icon={<TimerStart color="#FF8771" />}
-              score={stats.storiesCompleted}
-              color="#FB958333"
-              title="Screen Time"
-            /> */}
+
             <ReportScore
               icon={<TickCircle color="#4CAF50" />}
-              score={stats.rightAnswers}
+              score={data?.rightAnswers!}
               color="#D4F4DD"
               title="Right Answers"
             />
@@ -235,13 +260,13 @@ const ReportDetailScreen = () => {
           <View className="flex flex-row justify-around">
             <ReportScore
               icon={<Star color="#FFD700" />}
-              score={stats.starsEarned}
+              score={data?.starsEarned!}
               color="#FFF9E6"
               title="Stars Earned"
             />
             <ReportScore
               icon={<MedalStar color="#9C27B0" />}
-              score={stats.starsEarned}
+              score={data?.badgesEarned!}
               color="#E6E6FA"
               title=" Badges Earned"
             />
@@ -251,13 +276,13 @@ const ReportDetailScreen = () => {
           <View className="flex flex-row justify-around">
             <ReportScore
               icon={<Timer color="#2196F3" />}
-              score={stats.totalScreenTime}
+              score={data?.screenTimeMins}
               color="#E3F2FD"
               title="Total Screen Time"
             />
             <ReportScore
               icon={<Target color="#FF9800" />}
-              score={stats.challengesCompleted}
+              score={0}
               color="#FFF3E0"
               title="Challenges Completed"
             />
@@ -267,13 +292,13 @@ const ReportDetailScreen = () => {
           <View className="flex flex-row justify-around">
             <ReportScore
               icon={<Heart color="#E91E63" />}
-              score={stats.favourites}
+              score={data?.favoritesCount}
               color="#EC079433"
               title="Favourites"
             />
             <ReportScore
               icon={<Clock color="#FF6B6B" />}
-              score={stats.lastActive}
+              score={0}
               color="#FFE4E1"
               title="Last Active"
             />
@@ -283,11 +308,11 @@ const ReportDetailScreen = () => {
 
       {/* Screen Time Distribution */}
       <View className="px-4 mt-10 mb-8">
-        <Text className="text-xl font-[abeezee] mb-6">
+        {/* <Text className="text-xl font-[abeezee] mb-6">
           SCREEN TIME DISTRIBUTION
-        </Text>
+        </Text> */}
 
-        <View className="flex flex-row items-start justify-start h-64 px-2">
+        {/* <View className="flex flex-row items-start justify-start h-64 px-2">
           {screenTimeData.map((data, index) => {
             const heightPercentage = (data.hours / maxHours) * 100;
             const darkHeight = (data.hours / maxHours) * 60; // Striped portion
@@ -314,36 +339,36 @@ const ReportDetailScreen = () => {
               </View>
             );
           })}
-        </View>
+        </View> */}
 
         {/* Y-axis labels */}
-        <View className="absolute right-4 top-12 flex flex-col justify-between h-64">
+        {/* <View className="absolute right-4 top-12 flex flex-col justify-between h-64">
           <Text className="text-xs text-gray-500">5hrs</Text>
           <Text className="text-xs text-gray-500">4hrs</Text>
           <Text className="text-xs text-gray-500">3hrs</Text>
           <Text className="text-xs text-gray-500">2hrs</Text>
           <Text className="text-xs text-gray-500">1hr</Text>
           <Text className="text-xs text-gray-500">0hr</Text>
-        </View>
+        </View> */}
       </View>
 
       {/* Custom Date Range Modal */}
-      {isDateModalOpen && (
+      {/* {isDateModalOpen && (
         <CustomDateRangeModal
           isOpen={isDateModalOpen}
           onClose={() => setIsDateModalOpen(false)}
           onSelectRange={handleCustomDateSelect}
         />
-      )}
+      )} */}
 
       {/* Share Report Modal */}
-      {isShareModalOpen && (
+      {/* {isShareModalOpen && (
         <ShareReportModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
-          childName={childName}
+          childName={data?.kidName!}
         />
-      )}
+      )} */}
     </ScrollView>
   );
 };
