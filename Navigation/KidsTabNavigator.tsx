@@ -15,7 +15,7 @@ import KidsProgressNavigator from "./KidsProgressNavigator";
 type KidsTabNavigatorParamList = {
   home: { childId: string };
   library: { childId: string };
-  progress: undefined;
+  progress: { childId: string };
   profile: { childId: string };
 };
 
@@ -72,6 +72,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="progress"
+        initialParams={{ childId }}
         component={KidsProgressNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -88,6 +89,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="profile"
+        initialParams={{ childId }}
         component={kidsProfileNavigator}
         initialParams={{ childId: childId! }}
         options={{

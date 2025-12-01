@@ -21,7 +21,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isLoading } = useAuth();
+  const { login, isLoading, handleGoogleAuth } = useAuth();
 
   return (
     <View style={styles.screen}>
@@ -76,6 +76,22 @@ const LoginScreen = () => {
         >
           <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
         </Pressable>
+        <View className="flex flex-row gap-x-4 items-center mt-10  mb-5">
+          <View className="border-b border-black flex-1" />
+          <Text className="text-center">Or Continue with</Text>
+          <View className="border-b border-black flex-1" />
+        </View>
+        <View className="flex flex-row justify-center items-center gap-x-20 ">
+          <Pressable
+            onPress={handleGoogleAuth}
+            className="bg-white size-20 rounded-full flex justify-center items-center"
+          >
+            <Image source={require("../../assets/icons/google-icon.png")} />
+          </Pressable>
+          <Pressable className="bg-white size-20 rounded-full flex justify-center items-center">
+            <Image source={require("../../assets/icons/apple-icon.png")} />
+          </Pressable>
+        </View>
         <View className="flex flex-col gap-y-4 mt-10">
           <Text style={{ ...styles.text }}>
             Don't have an account?{" "}

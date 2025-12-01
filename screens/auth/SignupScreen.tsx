@@ -11,9 +11,12 @@ import colours from "../../colours";
 import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import useAuth from "../../contexts/AuthContext";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
+  const { isLoading, handleGoogleAuth } = useAuth();
   return (
     <ScrollView
       contentContainerStyle={{
@@ -36,6 +39,22 @@ const SignupScreen = () => {
           <Text style={styles.text}>The world's first kids story library</Text>
         </View>
         <SignupForm />
+        <View className="flex flex-row gap-x-4 items-center mt-10 mb-14">
+          <View className="border-b border-black flex-1" />
+          <Text className="text-center">Or sign up with</Text>
+          <View className="border-b border-black flex-1" />
+        </View>
+        <View className="flex flex-row mb-14 justify-center items-center gap-x-20 ">
+          <Pressable
+            onPress={handleGoogleAuth}
+            className="bg-white size-20 rounded-full flex justify-center items-center"
+          >
+            <Image source={require("../../assets/icons/google-icon.png")} />
+          </Pressable>
+          <Pressable className="bg-white size-20 rounded-full flex justify-center items-center">
+            <Image source={require("../../assets/icons/apple-icon.png")} />
+          </Pressable>
+        </View>
         <Text style={{ ...styles.text, marginTop: 16 }}>
           If you already have an account{" "}
           <Text
@@ -68,6 +87,7 @@ const SignupScreen = () => {
           </Text>
         </Text>
       </View>
+      <LoadingOverlay visible={isLoading} />
     </ScrollView>
   );
 };
@@ -117,7 +137,7 @@ const styles = StyleSheet.create({
     marginBottom: 44,
   },
   footer: {
-    paddingTop: 84,
+    paddingTop: 54,
     paddingBottom: 82,
     backgroundColor: colours["bg-light"],
     paddingHorizontal: 16,
