@@ -16,7 +16,6 @@ import {
 } from "../../../Navigation/KidsProfileNavigator";
 import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
 import { SystemAvatar } from "../../../types";
-import { ChildContext } from "../../../Navigation/KidsTabNavigator";
 import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
 type RouteProps = RouteProp<KidsProfileNavigatorParams, "changeKidAvatar">;
 
@@ -25,13 +24,13 @@ export default function ChangeKidAvatar() {
     null
   );
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  // const { params } = useRoute<RouteProps>();
-
-  const { childId } = React.useContext(ChildContext)!;
-
+  const { params } = useRoute<RouteProps>();
   const { width } = useWindowDimensions();
   const { data: avatars, isLoading } = useGetAvatars();
-  const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(childId!);
+  const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(
+    params.childId,
+    () => navigator.goBack()
+  );
   const kidsAvatars: SystemAvatar[] = avatars?.data?.data || [];
 
   const avatarSize = (width - 48) / 3;
