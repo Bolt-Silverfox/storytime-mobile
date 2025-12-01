@@ -1,6 +1,6 @@
 type QueryResponse<T> = {
   success: boolean;
-  mesage: string;
+  message: string;
   statusCode: number;
   data: T;
 };

@@ -3,6 +3,10 @@ import { ImageBackground, Pressable, Text, View } from "react-native";
 import { KidsNavigatorProp } from "../../Navigation/KidsNavigator";
 import Icon from "../../components/Icon";
 import { KidsSetupNavigatorParamList } from "../../Navigation/KidsSetupNavigator";
+import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
+import useGetStoryBuddyById from "../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import ErrorComponent from "../../components/ErrorComponent";
 
 type KidWelcomeScreenRouteProp = RouteProp<
   KidsSetupNavigatorParamList,
@@ -11,12 +15,30 @@ type KidWelcomeScreenRouteProp = RouteProp<
 const KidWelcomeScreen = () => {
   const { params } = useRoute<KidWelcomeScreenRouteProp>();
   const navigator = useNavigation<KidsNavigatorProp>();
-  const defaultName = "Tim";
+  const {
+    data: kid,
+    isPending,
+    error,
+    refetch: refetchKidData,
+  } = useGetKidById(params.childId);
+  const {
+    data,
+    isPending: isLoading,
+    error: storyBuddyError,
+    refetch,
+  } = useGetStoryBuddyById(params.selected);
+
+  if (error)
+    return <ErrorComponent refetch={refetchKidData} message={error.message} />;
+  if (storyBuddyError)
+    return (
+      <ErrorComponent refetch={refetch} message={storyBuddyError.message} />
+    );
   return (
     <View className="flex  flex-col gap-y-10  flex-1 max-w-screen-md mx-auto w-full">
       <ImageBackground
         source={
-          params.selected === "zylo"
+          data?.name?.toLowerCase() === "zylo"
             ? require("../../assets/avatars/zylo-bg.png")
             : require("../../assets/avatars/lumina-bg.png")
         }
@@ -24,11 +46,11 @@ const KidWelcomeScreen = () => {
         resizeMode="cover"
       >
         <View
-          className={`flex-1 my-20  ${params.selected === "lumina" ? " translate-y-72" : null}`}
+          className={`flex-1 my-20  ${data?.name === "lumina" ? " translate-y-72" : null}`}
         >
           <View className="p-7 self-center bg-[#FFFCFB] rounded-2xl">
             <Text className="text-[22px] font-[abeezee] text-black">
-              Hello {defaultName}, i am {params.selected}.{" "}
+              Hello {kid?.name}, i am {data?.name}{" "}
             </Text>
             <Text className="text-[22px] font-[abeezee] text-black">
               I am your Storytime Buddy.
@@ -50,9 +72,9 @@ const KidWelcomeScreen = () => {
           <Icon name="ArrowRight" color="white" />
         </Pressable>
       </ImageBackground>
+      <LoadingOverlay visible={isPending || isLoading} />
     </View>
   );
 };
-
 
 export default KidWelcomeScreen;
