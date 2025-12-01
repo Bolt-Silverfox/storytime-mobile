@@ -77,14 +77,14 @@ const ParentProfileNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="indexPage" component={ProfileScreen} />
-      <Stack.Screen name="editParentImage" component={EditParentImage}  />
+      <Stack.Screen name="editParentImage" component={EditParentImage} />
 
       <Stack.Screen
         name="manageChildProfiles"
         component={ManageChildProfilesScreen}
       />
 
-      <Stack.Screen name="managePassword" component={ManagePassword}  />
+      <Stack.Screen name="managePassword" component={ManagePassword} />
       <Stack.Screen
         name="resetParentPassword"
         component={ResetParentPassword}
@@ -121,18 +121,6 @@ const ParentProfileNavigator = () => {
         component={DeleteAccountSuccessful}
       />
       <Stack.Screen name="subscriptionIndex" component={SubscriptionIndex} />
-
-      {/* <Stack.Screen name="hideStories" component={HideStoriesScreen} />
-      <Stack.Screen name="recordVoice" component={RecordVoice} />
-      <Stack.Screen name="recordingDetails" component={RecordingDetails} />
-      <Stack.Screen
-        name="customizeReadingVoice"
-        component={CustomizeReadingVoice}
-      />
-      <Stack.Screen name="addVoice" component={AddVoice} />
-      <Stack.Screen name="bedTimeMode" component={BedTimeMode} />
-      <Stack.Screen name="dailyLimit" component={DailyLimit} />
-      <Stack.Screen name="activityLog" component={ActivityLog} /> */}
     </Stack.Navigator>
   );
 };

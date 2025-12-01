@@ -6,9 +6,7 @@ import {
 import KidSetupNavigator, {
   KidsSetupNavigatorParamList,
 } from "./KidsSetupNavigator";
-import KidsTabNavigator, {
-  KidsTabNavigatorParamList,
-} from "./KidsTabNavigator";
+import KidsTabNavigator from "./KidsTabNavigator";
 
 type KidsNavigatorParamList = {
   setup: NavigatorScreenParams<KidsSetupNavigatorParamList>;

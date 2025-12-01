@@ -38,7 +38,13 @@ const KidStories = ({ id }: { id: string }) => {
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => (
         <Pressable
-          onPress={() => navigator.navigate("bookDetails", { bookId: item.id })}
+          // onPress={() => navigator.navigate("bookDetails", { bookId: item.id })}
+          onPress={() =>
+            navigator.navigate("setup" as any, {
+              screen: "storyInteraction",
+              params: { storyId: item.id },
+            })
+          }
           key={item.id}
           className="border-b gap-x-5 flex flex-row border-b-black/10 py-5"
         >
