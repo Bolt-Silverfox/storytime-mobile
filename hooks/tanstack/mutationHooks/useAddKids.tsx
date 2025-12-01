@@ -60,7 +60,6 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
         body: JSON.stringify(kids),
       });
       const results = await response.json();
-      console.log("results", results);
       if (!results.success) {
         throw new Error(results.message);
       }
