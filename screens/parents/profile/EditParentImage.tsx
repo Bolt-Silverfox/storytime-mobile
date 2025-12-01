@@ -1,12 +1,4 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  Modal,
-  Alert,
-  ImageURISource,
-} from "react-native";
+import { View, Text, Pressable, Image, Modal, Alert } from "react-native";
 import React, { useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
@@ -15,9 +7,9 @@ import { useNavigation } from "@react-navigation/native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import * as ImagePicker from "expo-image-picker";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
-import { useUpdateProfileWithImage } from "../../../hooks/tanstack/queryHooks/useGetUserImage";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import { useUploadImage } from "../../../hooks/tanstack/mutationHooks/UseUploadUserImage";
+import * as ImageManipulator from "expo-image-manipulator";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -25,15 +17,21 @@ export default function EditParentImage() {
   const [image, setImage] = useState("");
   const { data } = useGetUserProfile();
   const userId = data?.data?.id;
-  const { mutateAsync: uploadImage, isPending } = useUploadImage(userId!);
+  const { mutateAsync: uploadImage, isPending } = useUploadImage(
+    userId!,
+    () => {
+      navigator.goBack();
+    }
+  );
 
   const handleSubmit = async () => {
     if (!image) {
-      Alert.alert("Error", "Please select an image");
+      Alert.alert("No image selected", "Please select an image");
       return;
     }
     try {
-      await uploadImage(image);
+      const compressedUri = await compressImage(image);
+      await uploadImage(compressedUri);
     } catch (err) {
       console.log(err);
     }
@@ -98,6 +96,47 @@ export default function EditParentImage() {
     } catch (err) {
       throw err;
     }
+  };
+
+  const compressImage = async (uri: string): Promise<string> => {
+    const MAX_SIZE = 1 * 1024 * 1024;
+    let quality = 0.9;
+    let compressedUri = uri;
+
+    const getFileSize = async (fileUri: string): Promise<number> => {
+      const response = await fetch(fileUri);
+      const blob = await response.blob();
+      return blob.size;
+    };
+
+    let fileSize = await getFileSize(uri);
+    while (fileSize > MAX_SIZE && quality > 0.1) {
+      const manipResult = await ImageManipulator.manipulateAsync(
+        compressedUri,
+        [{ resize: { width: 1024 } }],
+        {
+          compress: quality,
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+
+      compressedUri = manipResult.uri;
+      fileSize = await getFileSize(compressedUri);
+      quality -= 0.1;
+    }
+
+    if (fileSize > MAX_SIZE) {
+      const manipResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 512 } }],
+        {
+          compress: 0.7,
+          format: ImageManipulator.SaveFormat.JPEG,
+        }
+      );
+      compressedUri = manipResult.uri;
+    }
+    return compressedUri;
   };
 
   return (
@@ -175,7 +214,7 @@ export default function EditParentImage() {
         onPressCamera={() => UploadImage()}
         onPressFile={() => UploadImage("gallery")}
       />
-      <LoadingOverlay label="Uplaoding" visible={isPending} />
+      <LoadingOverlay label="Uploading" visible={isPending} />
     </View>
   );
 }
