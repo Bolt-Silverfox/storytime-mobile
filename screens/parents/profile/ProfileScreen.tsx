@@ -9,7 +9,7 @@ import {
   Trash,
   User,
 } from "lucide-react-native";
-import React, { FC, useState } from "react";
+import React, { FC, useLayoutEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -47,6 +47,21 @@ const ProfileScreen: FC = () => {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
+  // useLayoutEffect(() => {
+  //   const parent = navigator.getParent();
+
+  //   parent?.setOptions({
+  //     tabBarStyle: { display: "none" },
+  //   });
+
+  //   return () => {
+  //     // Show tab bar when leaving
+  //     parent?.setOptions({
+  //       tabBarStyle: { display: "flex" },
+  //     });
+  //   };
+  // }, [navigator]);
+
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
 
   return (
@@ -68,11 +83,12 @@ const ProfileScreen: FC = () => {
               navigator.navigate("editParentImage");
             }}
             edit={true}
+            size={80}
             style={{
-              position: "absolute",
-              left: "50%",
-              bottom: -56,
-              marginLeft: -56,
+              // position: "absolute",
+              bottom: -30,
+              margin: "auto",
+              // marginLeft: -56,
             }}
           />
         </ImageBackground>
@@ -160,7 +176,7 @@ const ProfileScreen: FC = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFCFBFB" },
+  container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
   scrollContent: { paddingBottom: 100 },
   header: {
     width: "100%",
@@ -188,7 +204,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   addPhotoText: { fontSize: 10, color: "#6B7280", marginTop: 4 },
-  nameContainer: { alignItems: "center", marginTop: 56 },
+  nameContainer: { alignItems: "center", marginTop: 30 },
   menuList: {
     marginTop: 29,
     paddingTop: 15,

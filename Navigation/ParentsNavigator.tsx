@@ -10,7 +10,10 @@ import ParentProfileNavigator, {
   ParentProfileNavigatorParamList,
 } from "./ParentProfileNavigator";
 import ParentReportNavigator from "./ParentsReportNavigator";
-import { NavigatorScreenParams } from "@react-navigation/native";
+import {
+  getFocusedRouteNameFromRoute,
+  NavigatorScreenParams,
+} from "@react-navigation/native";
 
 type ParentsNavigatorParamList = {
   home: undefined;
@@ -99,17 +102,35 @@ const ParentsTabNavigator = () => {
       <Tab.Screen
         name="profile"
         component={ParentProfileNavigator}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              name="User"
-              color={focused ? colours.primary : colours.black}
-            />
-          ),
-          tabBarActiveTintColor: colours.primary,
-          tabBarLabelStyle: {
-            textTransform: "capitalize",
-          },
+        // options={{
+        //   tabBarIcon: ({ focused }) => (
+        //     <Icon
+        //       name="User"
+        //       color={focused ? colours.primary : colours.black}
+        //     />
+        //   ),
+        //   tabBarActiveTintColor: colours.primary,
+        //   tabBarLabelStyle: {
+        //     textTransform: "capitalize",
+        //   },
+        // }},
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? "indexPage";
+          return {
+            tabBarIcon: ({ focused }) => (
+              <Icon
+                name="User"
+                color={focused ? colours.primary : colours.black}
+              />
+            ),
+            tabBarActiveTintColor: colours.primary,
+            tabBarLabelStyle: {
+              textTransform: "capitalize",
+            },
+            tabBarStyle: {
+              opacity: routeName === "indexPage" ? 100 : 0,
+            },
+          };
         }}
       />
     </Tab.Navigator>

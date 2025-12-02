@@ -1,4 +1,5 @@
 import { Profile } from "iconsax-react-nativejs";
+import { Edit } from "lucide-react-native";
 import React, { useState } from "react";
 import {
   Image,
@@ -15,28 +16,19 @@ type AvatarProps = {
   uri?: string | null;
   size?: number;
   initials?: string;
-  backgroundColor?: string;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
+  edit?: boolean;
 };
 
 const KidAvatar: React.FC<AvatarProps> = ({
   uri,
-  size = 48,
-  initials,
-  backgroundColor = "#E5E7EB",
+  size = 80,
   onPress,
   style,
+  edit,
 }) => {
-  const [imageError, setImageError] = useState(false);
-
-  const showImage = !!uri && !imageError;
-
-  const wrapperStyle: StyleProp<ViewStyle> = [
-    styles.container,
-    { width: size, height: size, borderRadius: size / 2, backgroundColor },
-    style,
-  ];
+  const showImage = !!uri;
 
   const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
 
@@ -44,40 +36,36 @@ const KidAvatar: React.FC<AvatarProps> = ({
     <>
       {showImage ? (
         <Image
-          source={{ uri: uri as string }}
+          source={{ uri: uri }}
           style={imageStyle}
-          resizeMode="cover"
-          onError={() => setImageError(true)}
+          className="rounded-full"
         />
       ) : (
         <Image
-          source={require("../assets/avatars/Avatars-5.png")}
-          className="mx-auto"
+          source={require("../assets/avatars/Avatars-3.png")}
           style={imageStyle}
         />
       )}
     </>
   );
 
-  if (onPress) {
-    return (
-      <TouchableOpacity
-        onPress={onPress}
-        // activeOpacity={0.8}
-        style={[
-          styles.addPhotoButton,
-          { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
-        ]}
-      >
-        {Content}
-        <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
-          <Image source={require("../assets/icons/pen.png")} />
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.addPhotoButton, imageStyle]}
+    >
+      {Content}
+      {edit && (
+        <View
+          className="absolute bottom-0 right-2 bg-white p-1 rounded-full"
+          style={{ zIndex: 11 }}
+        >
+          {/* <Image source={require("../assets/icons/pen.png")} /> */}
+          <Edit size={13} />
         </View>
-      </TouchableOpacity>
-    );
-  }
-
-  return <View>{Content}</View>;
+      )}
+    </TouchableOpacity>
+  );
 };
 
 const styles = StyleSheet.create({
@@ -86,35 +74,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  placeholderInner: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    width: "100%",
-    height: "100%",
-  },
+
   addPhotoButton: {
-    position: "absolute",
-    left: "50%",
-    bottom: -56,
-    marginLeft: -56,
-    width: 112,
-    height: 112,
     borderRadius: 56,
-    backgroundColor: "#FFFFFF",
-    borderWidth: 4,
-    borderColor: "#D1D5DB",
-    alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#000",
     shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 5,
-  },
-  initials: {
-    color: "#374151",
-    fontWeight: "600",
   },
 });
 

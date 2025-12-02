@@ -14,7 +14,7 @@ import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { url } from "zod";
 import { Pencil } from "lucide-react-native";
 
-type AvatarProps = {
+export type AvatarProps = {
   size?: number;
   edit?: boolean;
   initials?: string;
@@ -73,11 +73,11 @@ const Avatar: React.FC<AvatarProps> = ({
 
       {edit && (
         <View
-          className="absolute bottom-0 right-1 bg-white p-2 rounded-full"
+          className="absolute bottom-0 right-0 bg-white p-2 rounded-full"
           style={{ zIndex: 11 }}
         >
           {/* <Image source={require("../assets/icons/pen.png")} /> */}
-          <Edit size={20} />
+          <Edit size={15} />
         </View>
       )}
     </TouchableOpacity>
