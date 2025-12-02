@@ -1,4 +1,4 @@
-import { Image, Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
 import useGetStoryBuddies from "../hooks/tanstack/queryHooks/useGetStoryBuddies";
 import ErrorComponent from "./ErrorComponent";
 
@@ -9,7 +9,8 @@ const BuddySelectionComponent = ({
   selected: string;
   setSelected: (str: string) => void;
 }) => {
-  const { data, error, refetch } = useGetStoryBuddies();
+  const { data, error, refetch, isPending } = useGetStoryBuddies();
+  if (isPending) return <ActivityIndicator size={"large"} />;
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
   return (
