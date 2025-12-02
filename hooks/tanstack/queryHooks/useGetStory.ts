@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
-import type { Story } from "./useGetStories"; // adjust path if needed
+import type { Story } from "./useGetStories";
 
 type SingleStoryRequest = {
   statusCode?: number;
@@ -43,7 +43,7 @@ const useGetStory = (storyId?: string | null) => {
 
       return (json as Story) ?? null;
     },
-    enabled: !!storyId && !!user, 
+    enabled: !!storyId && !!user,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (data) => data,
