@@ -57,12 +57,14 @@ const ManageChildProfilesScreen = () => {
           />
         )}
       </ScrollView>
-      <CustomButton
-        text="Add Child"
-        onPress={() =>
-          parentNavigator.navigate("profile", { screen: "addChild" })
-        }
-      />
+      {data.length > 0 && (
+        <CustomButton
+          text="Add Child"
+          onPress={() =>
+            parentNavigator.navigate("profile", { screen: "addChild" })
+          }
+        />
+      )}
     </View>
   );
 };
@@ -89,7 +91,6 @@ const ChildItem = ({
     }
     setSelectedKid(id);
   };
-  
 
   return (
     <View className="flex  px-3 bg-white  py-3.5 rounded-2xl items-center flex-row gap-x-2.5">
