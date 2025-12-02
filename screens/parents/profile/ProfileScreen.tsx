@@ -59,6 +59,7 @@ const ProfileScreen: FC = () => {
             onPress={() => {
               navigator.navigate("editParentImage");
             }}
+            edit={true}
             style={{
               position: "absolute",
               left: "50%",

@@ -45,7 +45,11 @@ const KidHomeScreen = () => {
     <View style={{ padding: 20 }} className="flex-1">
       <View className="flex flex-row pb-4  items-center gap-x-3">
         <Image
-          source={require("../../assets/placeholder-pfp.png")}
+          source={
+            data.avatar?.url
+              ? { uri: data.avatar?.url }
+              : require("../../assets/avatars/Avatars-3.png")
+          }
           className="size-[50px]"
         />
         <Text className="text-xl font-[abeezee] flex-1">
@@ -60,7 +64,7 @@ const KidHomeScreen = () => {
           className="size-[50px]"
         />
       </View>
-      <Text>{buddyData?.profileAvatarUrl}</Text>
+      {/* <Text>{buddyData?.profileAvatarUrl}</Text> */}
       <Suspense fallback={<ActivityIndicator size={"large"} />}>
         <KidsHomeScreenStories id={params.childId} />
       </Suspense>

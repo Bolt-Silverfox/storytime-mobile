@@ -27,6 +27,9 @@ export const useAssignKidAvatar = (kidId: string, redirect?: () => void) => {
       queryClient.invalidateQueries({
         queryKey: ["kidById", kidId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["userKids"],
+      });
       redirect?.();
     },
     onError: (err) => {

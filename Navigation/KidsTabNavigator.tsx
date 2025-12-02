@@ -72,7 +72,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="progress"
-        initialParams={{ childId }}
+        initialParams={{ childId: childId }}
         component={KidsProgressNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
@@ -89,8 +89,8 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="profile"
-        initialParams={{ childId }}
         component={kidsProfileNavigator}
+        initialParams={{ childId: childId! }}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -103,7 +103,6 @@ const KidsTabNavigator = () => {
             textTransform: "capitalize",
           },
         }}
-        
       />
     </Tab.Navigator>
   );

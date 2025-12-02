@@ -2,9 +2,16 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import ReportScore from "../../../components/ReportScore";
 import { Image } from "react-native";
 import defaultStyles from "../../../styles";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { KidsTabNavigatorParamList } from "../../../Navigation/KidsTabNavigator";
+
+type RouteProps = RouteProp<KidsTabNavigatorParamList, "progress">;
 
 const KidsProgressScreen = () => {
   const days = ["S", "M", "T", "W", "T", "F", "S"];
+  const { params } = useRoute<RouteProps>();
+  const childId = params?.childId;
+  console.log("childid", childId);
 
   return (
     <ScrollView className="bg-[#FFFCFBFB] flex-1">
