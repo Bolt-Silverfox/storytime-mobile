@@ -19,10 +19,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
-import {
-  GoogleSignin,
-  isSuccessResponse,
-} from "@react-native-google-signin/google-signin";
+// import {
+//   GoogleSignin,
+//   isSuccessResponse,
+// } from "@react-native-google-signin/google-signin";
 import { Alert } from "react-native";
 
 type AuthFnTypes = {
