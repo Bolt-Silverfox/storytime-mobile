@@ -24,7 +24,7 @@ const KidSelectionScreen = () => {
     <ScrollView
       showsVerticalScrollIndicator={false}
       style={{ flex: 1 }}
-      contentContainerClassName="gap-16 p-8 min-h-full max-w-screen-md mx-auto w-full"
+      contentContainerClassName="gap-14 p-8 min-h-full max-w-screen-md mx-auto w-full"
     >
       <View
         aria-labelledby="User information"
@@ -44,7 +44,7 @@ const KidSelectionScreen = () => {
           <Text className="font-[quilka] text-[18px]">
             Whose Storytime is it?
           </Text>
-          <View className="flex flex-row justify-around flex-wrap gap-y-6 gap-x-10">
+          <View className="flex flex-row justify-around flex-wrap gap-y-6 gap-x-1">
             {data.map((kid) => (
               <Pressable
                 onPress={async () => {

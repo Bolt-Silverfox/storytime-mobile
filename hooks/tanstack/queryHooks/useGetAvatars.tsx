@@ -2,6 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { SystemAvatar } from "../../../types";
+
+
+type Response = {
+  data: { data: SystemAvatar[] };
+  success: boolean;
+  message: string;
+  statusCode: number;
+};
 
 const useGetAvatars = () => {
   const { user } = useAuth();
@@ -16,7 +25,7 @@ const useGetAvatars = () => {
         const response = await apiFetch(url, {
           method: "GET",
         });
-        const avatars = await response.json();
+        const avatars: Response = await response.json();
         return avatars;
       } catch (err) {
         const message =
@@ -24,6 +33,7 @@ const useGetAvatars = () => {
         throw new Error(message);
       }
     },
+    select: (res) => res?.data,
   });
 };
 

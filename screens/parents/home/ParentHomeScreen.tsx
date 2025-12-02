@@ -30,6 +30,7 @@ import { Story } from "../../../hooks/tanstack/queryHooks/useGetStories";
 import useGetRecommendedStories from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ErrorComponent from "../../../components/ErrorComponent";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import { ProfileNavigatorProp } from "../../../Navigation/ProfileNavigator";
 
@@ -47,7 +48,8 @@ const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
 const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
   const nav = useNavigation<ParntHomeNavigatorProp>();
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const navigator = useNavigation<ParentsNavigatorProp>();
+  // const navigator = useNavigation<ParentProfileNavigatorProp>();
   const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
 
   const handleCategoryPress = (cat: { id: string | number; name?: string }) => {
@@ -96,7 +98,9 @@ const ParentHomeScreen = () => {
             <View>
               <Avatar
                 size={40}
-                onPress={() => navigator.navigate("indexPage")}
+                onPress={() =>
+                  navigator.navigate("profile", { screen: "indexPage" })
+                }
               />
             </View>
             <View className="flex flex-1 flex-col gap-y-1.5">

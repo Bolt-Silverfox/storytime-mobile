@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import {
   Image,
@@ -12,11 +12,23 @@ import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import Icon from "../../../components/Icon";
 import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
 import useAddKids from "../../../hooks/tanstack/mutationHooks/useAddKids";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import {
+  ParentProfileNavigatorParamList,
+  ParentProfileNavigatorProp,
+} from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import KidAvatar from "../../../components/KidAvatar";
+import { ChevronDown } from "lucide-react-native";
+import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
+import { SystemAvatar } from "../../../types";
+
+type RouteProps = RouteProp<ParentProfileNavigatorParamList, "addChild">;
 
 const AddChildScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const { params } = useRoute<RouteProps>();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [userName, setUsername] = useState("");
@@ -30,6 +42,11 @@ const AddChildScreen = () => {
       routes: [{ name: "manageChildProfiles" }],
     })
   );
+  const { data } = useGetAvatars();
+  const avatars = data?.data;
+  const avatarUrl = avatars?.find(
+    (avatar: SystemAvatar) => avatar.id === params?.avatarId
+  )?.url;
 
   const handleSubmit = () => {
     if (!name.trim().length) {
@@ -41,7 +58,7 @@ const AddChildScreen = () => {
       return;
     }
     setError("");
-    mutate([{ name, ageRange: age }]);
+    mutate([{ name, ageRange: age, avatarId: params?.avatarId! }]);
   };
 
   const handleCloseModals = () => {
@@ -57,11 +74,14 @@ const AddChildScreen = () => {
           Add Child
         </Text>
       </View>
-      <View className=" ">
-        <Image
-          source={require("../../../assets/avatars/Avatars-3.png")}
-          className="size-[80px] self-center"
+      <View className=" justify-center items-center">
+        <KidAvatar
+          onPress={() => navigator.navigate("childAvatar")}
+          size={80}
+          edit={true}
+          uri={avatarUrl}
         />
+
         <Pressable className="absolute bottom-0 right-0"></Pressable>
       </View>
       <View className="flex flex-col gap-y-5 px-5">
@@ -71,7 +91,8 @@ const AddChildScreen = () => {
           <TextInput
             value={name}
             onChangeText={setName}
-            className="border border-border px-4 py-3 rounded-full w-full"
+            placeholder="Enter child's name"
+            className="border placeholder:text-black border-border px-4 py-3 rounded-full w-full"
           />
         </View>
         <View className="w-full max-w-xl mx-auto ">
@@ -79,11 +100,12 @@ const AddChildScreen = () => {
 
           <Pressable
             onPress={() => setCurrentlyOpenModal("age")}
-            className="border border-border px-4 py-3 rounded-full w-full"
+            className="border border-border flex-row justify-between px-4 py-3 rounded-full w-full"
           >
             <Text className="text-base text-black font-[abeezee]">
-              {age || "Select age"}
+              {age || "Select child's age range"}
             </Text>
+            <ChevronDown className="self-center" />
           </Pressable>
         </View>
         {/* <View className="w-full max-w-xl mx-auto ">

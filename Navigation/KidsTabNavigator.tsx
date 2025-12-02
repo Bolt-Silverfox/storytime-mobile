@@ -34,6 +34,7 @@ const KidsTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
+        
       }}
     >
       <Tab.Screen
