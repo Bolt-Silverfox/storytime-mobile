@@ -3,7 +3,7 @@ import React from "react";
 
 type ReportScoreProps = {
   icon: any;
-  score: number | string;
+  score: number | string | undefined;
   color: string;
   title: string;
 };

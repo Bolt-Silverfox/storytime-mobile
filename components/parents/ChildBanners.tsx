@@ -103,7 +103,7 @@ const ChildBanners: React.FC<Props> = ({ kids = [], onPressChild }) => {
         className="rounded-2xl py-6"
         style={{
           backgroundColor: bg,
-          width: isSingle ? SCREEN_WIDTH - 32 : 300,
+          width: isSingle ? SCREEN_WIDTH - 40 : 300,
           shadowColor: "#000",
           shadowOffset: { width: 0, height: 4 },
           shadowOpacity: 0.12,

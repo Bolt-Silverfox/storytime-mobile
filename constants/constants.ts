@@ -85,7 +85,7 @@ export const privacy = [
   },
   {
     title: "III. How We Protect Your Data",
-    description: ` We use secure storage systems, encrypted data handling, and safe parental login features. We do not use third-party trackers that collect personal information from children.`,
+    description: `We use secure storage systems, encrypted data handling, and safe parental login features. We do not use third-party trackers that collect personal information from children.`,
   },
   {
     title: "IV. Parents’ Rights",
@@ -119,8 +119,8 @@ export const FAQ = {
       a: "Yes! You can add multiple child profiles and personalize each child’s reading level and interests.",
     },
     {
-      q: " How do I edit or delete my child’s profile?",
-      a: " Go to Parent Dashboard → Child Profile → Edit / Delete.",
+      q: "How do I edit or delete my child’s profile?",
+      a: "Go to Parent Dashboard → Child Profile → Edit / Delete.",
     },
     {
       q: "Can I monitor my child’s activity?",
@@ -130,7 +130,7 @@ export const FAQ = {
   safety: [
     {
       q: "Can I control what content my child sees?",
-      a: ` Absolutely, You can set filters by:
+      a: `Absolutely, You can set filters by:
   –Age
   –Genre
   –Reading difficulty
@@ -142,11 +142,11 @@ export const FAQ = {
     },
     {
       q: "Can my child make purchases inside the app?",
-      a: " No. All purchases are restricted to the parent section.",
+      a: "No. All purchases are restricted to the parent section.",
     },
     {
-      q: " Can I set time limits?",
-      a: " Yes. You can set daily usage limits during onboarding or anytime in your settings.",
+      q: "Can I set time limits?",
+      a: "Yes. You can set daily usage limits during onboarding or anytime in your settings.",
     },
   ],
   storiesAndAudio: [
@@ -156,7 +156,7 @@ export const FAQ = {
     },
     {
       q: "Can my child listen to stories instead of reading?",
-      a: " Yes. Every story has narration your child can listen to at their own pace",
+      a: "Yes. Every story has narration your child can listen to at their own pace",
     },
     {
       q: "Are new stories added?",
@@ -165,16 +165,16 @@ export const FAQ = {
   ],
   subscription: [
     {
-      q: " Do I need a subscription?",
-      a: " You can enjoy free stories, but premium stories and full library features require a subscription.",
+      q: "Do I need a subscription?",
+      a: "You can enjoy free stories, but premium stories and full library features require a subscription.",
     },
     {
       q: "How does the 14-day free trial work?",
       a: "You get full access for 14 days. If you don’t cancel before the end of the trial, your plan will renew automatically.",
     },
     {
-      q: " What’s included in the family plan?",
-      a: " One subscription covers all child profiles under your account",
+      q: "What’s included in the family plan?",
+      a: "One subscription covers all child profiles under your account",
     },
     {
       q: "How do I cancel my subscription?",
@@ -188,19 +188,18 @@ export const FAQ = {
   privacy: [
     {
       q: "What information do you collect about my child?",
-      a: `Only what’s needed for personalization — age, interests, reading level
- We never collect unnecessary personal details`,
+      a: `Only what’s needed for personalization — age, interests, reading level We never collect unnecessary personal details`,
     },
     {
       q: "Do you share or sell my data?",
-      a: " No. Your family’s data is never sold or shared with third parties.",
+      a: "No. Your family’s data is never sold or shared with third parties.",
     },
     {
-      q: " Is my child’s data used for AI training?",
-      a: " No. Child data is not used to train external AI models.",
+      q: "Is my child’s data used for AI training?",
+      a: "No. Child data is not used to train external AI models.",
     },
     {
-      q: ": Can I delete my child’s data?",
+      q: "Can I delete my child’s data?",
       a: "Yes. When you delete a child profile, all related data is permanently removed.",
     },
   ],
