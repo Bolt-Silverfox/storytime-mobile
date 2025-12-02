@@ -7,6 +7,7 @@ type StoryBuddy = {
   data: {
     id: string;
     name: string;
+    displayName: string;
     description: string;
     type: string;
     imageUrl: string;

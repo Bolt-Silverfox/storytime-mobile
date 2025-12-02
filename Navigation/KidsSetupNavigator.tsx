@@ -1,4 +1,3 @@
-// Navigation/KidsSetupNavigator.tsx
 import React from "react";
 import {
   createNativeStackNavigator,
