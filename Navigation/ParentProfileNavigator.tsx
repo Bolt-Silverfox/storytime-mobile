@@ -32,7 +32,7 @@ type ParentProfileNavigatorParamList = {
   editChildProfile: {
     name: string;
     ageRange: string;
-    imageUrl: string | null;
+    imageUrl: string | undefined;
     userName?: string;
     id: string;
   };
