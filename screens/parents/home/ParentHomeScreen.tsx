@@ -66,6 +66,15 @@ const ParentHomeScreen = () => {
     refetch: refetchKids,
   } = useGetUserKids();
 
+  const getGreeting = () => {
+  const hour = new Date().getHours();
+
+  if (hour < 12) return "Good Morning";
+  if (hour < 18) return "Good Afternoon";
+  return "Good Evening";
+};
+
+
   return (
     <FlatList
       data={[]} // no vertical items
@@ -93,7 +102,7 @@ const ParentHomeScreen = () => {
                 {user?.title} {user?.name}
               </Text>
               <Text className="font-[abeezee] text-[12px] text-[#616161]">
-                Good Morning
+               {getGreeting()}
               </Text>
             </View>
             <Icon name="Bell" />
