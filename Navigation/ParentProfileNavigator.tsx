@@ -24,6 +24,7 @@ import DeleteAccount from "../screens/parents/profile/DeleteAccount";
 import DeleteAccountConfirmation from "../screens/parents/profile/DeleteAccountConfirmation";
 import DeleteAccountSuccessful from "../screens/parents/profile/DeleteAccountSuccessful";
 import SubscriptionIndex from "../screens/parents/profile/subscription/SubscriptionIndex";
+import ChildAvatar from "../screens/parents/profile/ChildAvatar";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -36,7 +37,9 @@ type ParentProfileNavigatorParamList = {
     userName?: string;
     id: string;
   };
-  addChild: undefined;
+  addChild: { avatarId: string } | undefined;
+  childAvatar: undefined;
+
   deleteProfileSucessful: undefined;
 
   managePassword: undefined;
@@ -98,6 +101,8 @@ const ParentProfileNavigator = () => {
 
       <Stack.Screen name="editChildProfile" component={EditChildProfile} />
       <Stack.Screen name="addChild" component={AddChildScreen} />
+      <Stack.Screen name="childAvatar" component={ChildAvatar} />
+
       <Stack.Screen name="deleteProfileSucessful" component={DeleteSuccess} />
 
       <Stack.Screen name="helpAndSupport" component={HelpAndSupport} />
