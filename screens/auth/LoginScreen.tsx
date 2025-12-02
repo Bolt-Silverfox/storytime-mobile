@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   Image,
   Pressable,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -24,7 +25,7 @@ const LoginScreen = () => {
   const { login, isLoading, handleGoogleAuth } = useAuth();
 
   return (
-    <View style={styles.screen}>
+    <ScrollView style={styles.screen}>
       <Pressable
         onPress={() => navigator.goBack()}
         style={{ paddingHorizontal: 16 }}
@@ -68,7 +69,13 @@ const LoginScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => login({ email, password, setErrorCb: setError })}
+          onPress={() =>
+            login({
+              email: email.trim().toLowerCase(),
+              password,
+              setErrorCb: setError,
+            })
+          }
           disabled={isLoading}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
@@ -118,7 +125,7 @@ const LoginScreen = () => {
         </View>
       </View>
       <LoadingOverlay visible={isLoading} />
-    </View>
+    </ScrollView>
   );
 };
 

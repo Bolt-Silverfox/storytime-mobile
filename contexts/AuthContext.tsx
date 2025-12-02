@@ -19,10 +19,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
- import {
+import {
   GoogleSignin,
   isSuccessResponse,
- } from "@react-native-google-signin/google-signin";
+} from "@react-native-google-signin/google-signin";
 import { Alert } from "react-native";
 
 type AuthFnTypes = {
@@ -105,7 +105,7 @@ type AuthContextType = {
   resendVerificationEmail: AuthFnTypes["resendVerificationEmail"];
   validatePasswordReset: AuthFnTypes["validatePasswordReset"];
   resetPassword: AuthFnTypes["resetPassword"];
-   handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -140,10 +140,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigator = useNavigation<RootNavigatorProp>();
 
   useEffect(() => {
-    console.log("web client id", WEB_CLIENT_ID);
     GoogleSignin.configure({
-       iosClientId: IOS_CLIENT_ID,
-     webClientId: WEB_CLIENT_ID,
+      iosClientId: IOS_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
       profileImageSize: 200,
     });
   }, []);
@@ -376,22 +375,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-   const handleGoogleAuth = async () => {
-     try {
-       setIsLoading(true);
-       const googlePlayService = await GoogleSignin.hasPlayServices();
-       if (!googlePlayService)
+  const handleGoogleAuth = async () => {
+    try {
+      setIsLoading(true);
+      const googlePlayService = await GoogleSignin.hasPlayServices();
+      if (!googlePlayService)
         throw new Error(
           "You don't have google play services enabled, enable it and try again."
         );
       const googleResponse = await GoogleSignin.signIn();
-       if (!isSuccessResponse(googleResponse)) {
-         throw new Error("Authentication unsuccesful, try again");
-       }
-       const { idToken } = googleResponse.data;
-       const request = await fetch(`${BASE_URL}/auth/google`, {
-         headers: {
-           "Content-Type": "application/json",
+      if (!isSuccessResponse(googleResponse)) {
+        throw new Error("Authentication unsuccesful, try again");
+      }
+      const { idToken } = googleResponse.data;
+      const request = await fetch(`${BASE_URL}/auth/google`, {
+        headers: {
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ id_token: idToken }),
         method: "POST",
@@ -429,7 +428,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     resendVerificationEmail,
     validatePasswordReset,
     resetPassword,
-   handleGoogleAuth,
+    handleGoogleAuth,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>

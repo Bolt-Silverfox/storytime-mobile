@@ -30,6 +30,8 @@ import { Story } from "../../../hooks/tanstack/queryHooks/useGetStories";
 import useGetRecommendedStories from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ErrorComponent from "../../../components/ErrorComponent";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { ProfileNavigatorProp } from "../../../Navigation/ProfileNavigator";
 
 type Kid = { id: string; name?: string };
 
@@ -46,6 +48,7 @@ const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
   const nav = useNavigation<ParntHomeNavigatorProp>();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
 
   const handleCategoryPress = (cat: { id: string | number; name?: string }) => {
     nav.navigate("storiesList", {
@@ -67,13 +70,12 @@ const ParentHomeScreen = () => {
   } = useGetUserKids();
 
   const getGreeting = () => {
-  const hour = new Date().getHours();
+    const hour = new Date().getHours();
 
-  if (hour < 12) return "Good Morning";
-  if (hour < 18) return "Good Afternoon";
-  return "Good Evening";
-};
-
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
 
   return (
     <FlatList
@@ -102,11 +104,38 @@ const ParentHomeScreen = () => {
                 {user?.title} {user?.name}
               </Text>
               <Text className="font-[abeezee] text-[12px] text-[#616161]">
-               {getGreeting()}
+                {getGreeting()}
               </Text>
             </View>
             <Icon name="Bell" />
           </View>
+          {user && !user.numberOfKids && (
+            <View className="mt-5 mb-8 bg-[#6121AF] max-w-screen-md w-full mx-auto rounded-2xl flex justify-between items-center flex-row gap-x-2 pl-2.5">
+              <Pressable
+                onPress={() =>
+                  parentNav.navigate("userProfile", {
+                    screen: "completeProfile",
+                  })
+                }
+                className="bg-white size-16 flex justify-center self-center  items-center rounded-full"
+              >
+                <Icon name="Plus" color="black" />
+              </Pressable>
+              <View className="flex flex-1  flex-col gap-y-2">
+                <Text className="font-[abeezee] text-[#EEC607] text-sm">
+                  Add a child
+                </Text>
+                <Text className="font-[abeezee] leading-[130%] text-white text-[11px]">
+                  Add child’s profile to unlock personalized stories, safer
+                  content, and a calmer bedtime routine.
+                </Text>
+              </View>
+              <Image
+                className="size-[133px]"
+                source={require("../../../assets/images/mother-and-child.png")}
+              />
+            </View>
+          )}
           {/* Kids */}
 
           {/* kids loading / error */}
@@ -125,13 +154,13 @@ const ParentHomeScreen = () => {
               {Array.isArray(kidsData) && kidsData.length > 0 ? (
                 <>
                   <Suspense fallback={<ActivityIndicator size="large" />}>
-                      <KidsSection />
+                    <KidsSection />
                   </Suspense>
 
                   <Suspense fallback={<ActivityIndicator size="large" />}>
-                      <StoryTrackerSection
-                        handleCategoryPress={handleCategoryPress}
-                      />
+                    <StoryTrackerSection
+                      handleCategoryPress={handleCategoryPress}
+                    />
                   </Suspense>
                 </>
               ) : (
