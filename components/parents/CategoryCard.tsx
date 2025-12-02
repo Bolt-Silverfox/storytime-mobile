@@ -33,14 +33,6 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, onPress }) => {
 };
 
 const styles = StyleSheet.create({
-  // categoryCard: {
-  //   width: 193,
-  //   height: 91,
-  //   paddingVertical: 20,
-  //   borderRadius: 12,
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   categoryText: {
     fontSize: 14,
     fontWeight: "600",

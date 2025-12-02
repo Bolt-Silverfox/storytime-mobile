@@ -27,6 +27,7 @@ type Story = {
   createdAt: string;
   updatedAt: string;
   images: string[];
+  categories: string[];
   questions: {
     id: string;
     storyId: string;

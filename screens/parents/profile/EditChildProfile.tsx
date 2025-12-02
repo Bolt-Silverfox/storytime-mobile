@@ -62,7 +62,11 @@ const EditChildProfile = () => {
       <PageTitle title="Edit Child Profile" goBack={() => navigator.goBack()} />
       <View className=" ">
         <Image
-          source={require("../../../assets/placeholder-pfp.png")}
+          source={
+            params.imageUrl
+              ? { uri: params.imageUrl }
+              : require("../../../assets/avatars/Avatars-3.png")
+          }
           className="size-[80px] self-center"
         />
         <Pressable className="absolute bottom-0 right-0"></Pressable>

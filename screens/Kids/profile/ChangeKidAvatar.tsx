@@ -17,6 +17,7 @@ import {
 import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
 import { SystemAvatar } from "../../../types";
 import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 type RouteProps = RouteProp<KidsProfileNavigatorParams, "changeKidAvatar">;
 
 export default function ChangeKidAvatar() {
@@ -26,7 +27,7 @@ export default function ChangeKidAvatar() {
   const navigator = useNavigation<kidsProfileNavigatorProp>();
   const { params } = useRoute<RouteProps>();
   const { width } = useWindowDimensions();
-  const { data: avatars, isLoading } = useGetAvatars();
+  const { data: avatars, isLoading, isFetching } = useGetAvatars();
   const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(
     params.childId,
     () => navigator.goBack()
@@ -103,6 +104,7 @@ export default function ChangeKidAvatar() {
           </Text>
         </Pressable>
       </View>
+      <LoadingOverlay visible={isLoading || isFetching} />
     </View>
   );
 }

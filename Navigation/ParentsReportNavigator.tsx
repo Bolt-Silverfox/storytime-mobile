@@ -5,9 +5,9 @@ import {
 import ReportsSreen from "../screens/parents/reports/ReportsSreen";
 import ReportDetailScreen from "../screens/parents/reports/ReportDetailScreen";
 
-type ParentReportNavigatorParamList = {
+export type ParentReportNavigatorParamList = {
   home: undefined;
-  reportDetails: {childId:string};
+  reportDetails: { childId: string };
 };
 
 type ParntReportNavigatorProp =

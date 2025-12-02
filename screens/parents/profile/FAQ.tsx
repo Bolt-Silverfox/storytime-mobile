@@ -53,8 +53,13 @@ export default function FaQ() {
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
           >
-            {FAQ.parentAcountManagement.map((faq) => (
-              <MenuItem label={faq.q} isTablet={isTablet} description={faq.a} />
+            {FAQ.parentAcountManagement.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
             ))}
           </View>
         </View>
@@ -69,8 +74,13 @@ export default function FaQ() {
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
           >
-            {FAQ.safety.map((faq) => (
-              <MenuItem label={faq.q} isTablet={isTablet} description={faq.a} />
+            {FAQ.safety.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
             ))}
           </View>
         </View>
@@ -86,8 +96,13 @@ export default function FaQ() {
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
           >
-            {FAQ.storiesAndAudio.map((faq) => (
-              <MenuItem label={faq.q} isTablet={isTablet} description={faq.a} />
+            {FAQ.storiesAndAudio.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
             ))}
           </View>
         </View>
@@ -103,8 +118,13 @@ export default function FaQ() {
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
           >
-            {FAQ.subscription.map((faq) => (
-              <MenuItem label={faq.q} isTablet={isTablet} description={faq.a} />
+            {FAQ.subscription.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
             ))}
           </View>
         </View>
