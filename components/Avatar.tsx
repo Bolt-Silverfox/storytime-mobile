@@ -18,7 +18,6 @@ type AvatarProps = {
   size?: number;
   edit?: boolean;
   initials?: string;
-  backgroundColor?: string;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
 };
@@ -27,28 +26,29 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 110,
   edit,
   initials,
-  backgroundColor = "#E5E7EB",
   onPress,
   style,
 }) => {
   const { data } = useGetUserProfile();
   const uri = data?.data?.avatar?.url;
 
-  const showImage = false;
+  const showImage = !!uri;
 
-  const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
+  const imageStyle: StyleProp<ImageStyle> = {
+    width: size,
+    height: size,
+    zIndex: 10,
+  };
 
   const Content = (
     <>
-      {showImage ? (
+      {showImage && (
         <Image
           source={{ uri: uri as string }}
           style={imageStyle}
           resizeMode="cover"
           className="rounded-full"
         />
-      ) : (
-        <Profile size={size} variant="Bold" color="white" />
       )}
     </>
   );
@@ -64,10 +64,18 @@ const Avatar: React.FC<AvatarProps> = ({
       ]}
     >
       {Content}
-      <Profile size={size} variant="Bold" color="white" />      
+      <Profile
+        size={size}
+        style={{ position: "absolute" }}
+        variant="Bold"
+        color="white"
+      />
 
       {edit && (
-        <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
+        <View
+          className="absolute bottom-0 right-1 bg-white p-2 rounded-full"
+          style={{ zIndex: 11 }}
+        >
           {/* <Image source={require("../assets/icons/pen.png")} /> */}
           <Edit size={20} />
         </View>
