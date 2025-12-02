@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   CreditCard,
   HelpCircle,
+  Key,
   Lock,
   LogOut,
   Phone,
@@ -27,6 +28,13 @@ import MenuItem from "../../../components/MenuItem";
 import Avatar from "../../../components/Avatar";
 import LogoutModal from "../../../components/modals/ParentProfileIndexModal";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
+import {
+  FingerScan,
+  Logout,
+  LogoutCurve,
+  Profile2User,
+  TrushSquare,
+} from "iconsax-react-nativejs";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -94,43 +102,43 @@ const ProfileScreen: FC = () => {
 
         <View style={styles.menuList}>
           <MenuItem
-            icon={<User size={isTablet ? 20 : 18} />}
+            icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Manage Child Profile"
             onPress={() => navigator.navigate("manageChildProfiles")}
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Lock size={isTablet ? 20 : 18} />}
+            icon={<Key color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Manage Password/Pin"
             onPress={() => navigator.navigate("managePassword")}
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Phone size={isTablet ? 20 : 18} />}
+            icon={<FingerScan color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Enable Finger Print / Face ID"
             onPress={() => navigator.navigate("enableBiometrics")}
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<CreditCard size={isTablet ? 20 : 18} />}
+            icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
             onPress={() => navigator.navigate("subscriptionIndex")}
           />
           <MenuItem
-            icon={<HelpCircle size={isTablet ? 20 : 18} />}
+            icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
             label="Help & Support"
             isTablet={isTablet}
             onPress={() => navigator.navigate("helpAndSupport")}
           />
           <MenuItem
-            icon={<LogOut size={isTablet ? 20 : 18} />}
+            icon={<Logout color="#EC4007" size={isTablet ? 20 : 18} />}
             label="Log Out"
             isTablet={isTablet}
             onPress={() => setOpenModal("logout")}
           />
           <MenuItem
-            icon={<Trash size={isTablet ? 20 : 18} />}
+            icon={<TrushSquare color="#EC4007" size={isTablet ? 20 : 18} />}
             label="Delete Account"
             textColor="#DC2626"
             isTablet={isTablet}
@@ -152,7 +160,7 @@ const ProfileScreen: FC = () => {
 export default ProfileScreen;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#FFFCFBFB" },
   scrollContent: { paddingBottom: 100 },
   header: {
     width: "100%",
@@ -182,9 +190,17 @@ const styles = StyleSheet.create({
   addPhotoText: { fontSize: 10, color: "#6B7280", marginTop: 4 },
   nameContainer: { alignItems: "center", marginTop: 56 },
   menuList: {
-    marginTop: 24,
+    marginTop: 29,
+    paddingTop: 15,
     paddingHorizontal: 16,
     alignSelf: "center",
     width: "90%",
+    backgroundColor: "white",
+    borderRadius: 20,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 2,
   },
 });
