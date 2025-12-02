@@ -14,7 +14,6 @@ import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
 import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
 import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
-import HomeScree from "../screens/HomeScree";
 import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
 import PrivacyScreen from "../screens/auth/PrivacyScreen";
 import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
@@ -75,7 +74,6 @@ const AuthNavigator = () => {
         component={KidsDetailsUploadScreen}
       />
       <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
-      <Stack.Screen name="home" component={HomeScree} />
       <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
       <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
