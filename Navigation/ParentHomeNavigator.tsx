@@ -9,6 +9,7 @@ import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStories
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
+import CategoriesListScreen from "../screens/parents/home/CategoriesList";
 // import ParentsHomeScreen from "../screens/parents/ParentsHomeScreen";
 
 type ParentHomeNavigatorParamList = {
@@ -17,12 +18,14 @@ type ParentHomeNavigatorParamList = {
     categoryId?: string;
     categoryName?: string;
     kidId?: string;
+    storyId?: string;
   };
   interactiveStories: { storyId: string; mode?: "interactive" } | undefined;
   plainStories: { storyId: string; mode?: "plain" } | undefined;
   dailyChallenge: undefined;
   challengeTracker: undefined;
   homePage: undefined;
+  categoriesList: undefined;
 };
 
 type ParntHomeNavigatorProp =
@@ -42,6 +45,7 @@ const ParentHomeNavigator = () => {
       <Stack.Screen name="plainStories" component={PlainStoriesScreen} />
       <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
       <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
+      <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
     </Stack.Navigator>
   );
 };

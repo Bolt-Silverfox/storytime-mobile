@@ -28,6 +28,8 @@ import ParentFooter from "../../../components/parents/ParentFooter";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
 import useAddFavorites from "../../../hooks/tanstack/mutationHooks/useAddFavorites";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
+import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 type StoriesRouteProp = RouteProp<ParentHomeNavigatorParamList, "storiesList">;
 
@@ -56,9 +58,13 @@ const StoriesListScreen: React.FC = () => {
 
   if (!chosenKidId) {
     return (
-      <View className="flex-1 items-center justify-center p-4 bg-white">
-        <Text>No child selected — add a child first.</Text>
-      </View>
+      <ChildrenEmptyState
+        navigate={() =>
+          nav.navigate("profile" as any, {
+            screen: "addChild",
+          })
+        }
+      />
     );
   }
 
@@ -179,8 +185,10 @@ const StoriesListScreen: React.FC = () => {
 
           {/* Horizontal carousel */}
           {filtered.length === 0 ? (
-            <View className="items-center justify-center px-4">
-              <Text>No stories found for this category.</Text>
+            <View className="items-center justify-center px-4 py-8">
+              <Text className="font-[abeezee] text-lg text-text">
+                No stories found for this category.
+              </Text>
             </View>
           ) : (
             <FlatList
@@ -193,7 +201,6 @@ const StoriesListScreen: React.FC = () => {
               }}
               keyExtractor={(s: any) => String(s.id)}
               renderItem={({ item }: { item: Story }) => {
-
                 const handleToggleFavorite = () => {
                   if (!passedKidId) {
                     Alert.alert(
@@ -328,11 +335,6 @@ const StoriesListScreen: React.FC = () => {
                   }}
                   contentContainerStyle={{ paddingBottom: 16, paddingTop: 8 }}
                   renderItem={({ item }) => {
-                    const source =
-                      !imgFailed && item.coverImageUrl
-                        ? { uri: item.coverImageUrl }
-                        : require("../../../assets/parents/unseen-world.jpg");
-
                     const handleToggleFavorite = () => {
                       if (!passedKidId) {
                         Alert.alert(
