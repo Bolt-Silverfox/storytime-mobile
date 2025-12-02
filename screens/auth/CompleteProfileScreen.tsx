@@ -185,7 +185,7 @@ export default function CompleteProfileScreen() {
             onPress={() => mutate({ country, language })}
           >
             <CustomText className="text-white font-medium mr-2">
-              proceed
+              Proceed
             </CustomText>
           </TouchableOpacity>
         </View>
