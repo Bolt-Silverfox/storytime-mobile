@@ -58,12 +58,14 @@ const ManageChildProfilesScreen = () => {
         )}
       </ScrollView>
       <View className="justify-center">
-        <CustomButton
-          text="Add Child"
-          onPress={() =>
-            parentNavigator.navigate("profile", { screen: "addChild" })
-          }
-        />
+        {data.length > 0 && (
+          <CustomButton
+            text="Add Child"
+            onPress={() =>
+              parentNavigator.navigate("profile", { screen: "addChild" })
+            }
+          />
+        )}
       </View>
     </View>
   );

@@ -7,19 +7,23 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import useAddKids from "../../hooks/tanstack/mutationHooks/useAddKids";
 import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
 import defaultStyles from "../../styles";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 
 export default function KidsInfoFormScreen() {
   const route = useRoute();
   const params = (route.params as { kidsCount: number }) || {};
   const { kidsCount } = params;
   const navigation = useNavigation<ProfileNavigatorProp>();
+  const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
   const [kids, setKids] = useState<Kid[]>(
     Array.from({ length: kidsCount }).map(() => ({
       name: "",
       ageRange: "",
     }))
   );
-  const { mutate, isPending } = useAddKids(kids.length);
+  const { mutate, isPending } = useAddKids(kids.length, () =>
+    parentNav.navigate("parents")
+  );
 
   const updateKid = (index: number, patch: Partial<Kid>) => {
     setKids((prev) => {
@@ -30,7 +34,7 @@ export default function KidsInfoFormScreen() {
   };
 
   const onSkip = () => {
-    navigation.navigate("homeScreen");
+    parentNav.navigate("parents");
   };
 
   return (

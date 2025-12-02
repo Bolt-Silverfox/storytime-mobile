@@ -11,9 +11,11 @@ import CustomText from "../../components/CustomText";
 import useUpdateUserProfile from "../../hooks/tanstack/mutationHooks/useUpdateUserProfile";
 import { ProfileNavigatorProp } from "../../Navigation/ProfileNavigator";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 
 export default function CompleteProfileScreen() {
   const navigation = useNavigation<ProfileNavigatorProp>();
+  const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const containerWidth = isTablet ? Math.min(width * 0.55, 600) : "100%";
@@ -125,7 +127,7 @@ export default function CompleteProfileScreen() {
           backgroundColor: "white",
         }}
       >
-        <TouchableOpacity className="mb-12" onPress={() => navigation.goBack()}>
+        <TouchableOpacity className="mb-12" onPress={() => parentNav.goBack()}>
           <View className="w-3 h-3 border-t-2 border-l-2 border-black -rotate-45" />
         </TouchableOpacity>
 
@@ -185,7 +187,7 @@ export default function CompleteProfileScreen() {
             onPress={() => mutate({ country, language })}
           >
             <CustomText className="text-white font-medium mr-2">
-              proceed
+              Proceed
             </CustomText>
           </TouchableOpacity>
         </View>

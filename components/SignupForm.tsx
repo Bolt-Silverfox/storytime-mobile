@@ -21,18 +21,27 @@ import LoadingOverlay from "./LoadingOverlay";
 const registerSchema = z
   .object({
     fullName: z.string().trim().min(1, "Name is required"),
-
     email: z.email("Invalid email, try again"),
-
     title: z.string().trim().min(1, "Title is required"),
-
     password: z
       .string()
-      .min(8, "Password should be at least 8 characters long"),
-
+      .min(8, "Password must be at least 8 characters long")
+      .regex(
+        /(?=.*[a-z])/,
+        "Password must contain at least one lowercase letter"
+      )
+      .regex(
+        /(?=.*[A-Z])/,
+        "Password must contain at least one uppercase letter"
+      )
+      .regex(/(?=.*\d)/, "Password must contain at least one number"),
     confirmPassword: z
       .string()
-      .min(8, "Password should be at least 8 characters long"),
+      .min(8, "Password should be at least 8 characters long")
+      .regex(
+        /(?=.*[!@#$%^&*])/,
+        "Password must contain at least one special character (!@#$%^&*)"
+      ),
   })
   .refine((data) => data.fullName.split(" ").length >= 2, {
     path: ["fullName"],
@@ -79,7 +88,7 @@ const SignupForm = () => {
       return;
     }
     await signUp({
-      email,
+      email: email.trim().toLowerCase(),
       password,
       fullName: fullName.trim(),
       title,
