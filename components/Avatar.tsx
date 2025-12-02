@@ -1,4 +1,4 @@
-import { Profile } from "iconsax-react-nativejs";
+import { Edit, Profile } from "iconsax-react-nativejs";
 import React, { useState } from "react";
 import {
   Image,
@@ -12,12 +12,12 @@ import {
 } from "react-native";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { url } from "zod";
+import { Pencil } from "lucide-react-native";
 
-type AvatarProps = {
+export type AvatarProps = {
   size?: number;
   edit?: boolean;
   initials?: string;
-  backgroundColor?: string;
   onPress?: () => void;
   style?: StyleProp<ViewStyle>;
 };
@@ -26,7 +26,6 @@ const Avatar: React.FC<AvatarProps> = ({
   size = 110,
   edit,
   initials,
-  backgroundColor = "#E5E7EB",
   onPress,
   style,
 }) => {
@@ -35,19 +34,21 @@ const Avatar: React.FC<AvatarProps> = ({
 
   const showImage = !!uri;
 
-  const imageStyle: StyleProp<ImageStyle> = { width: size, height: size };
+  const imageStyle: StyleProp<ImageStyle> = {
+    width: size,
+    height: size,
+    zIndex: 10,
+  };
 
   const Content = (
     <>
-      {showImage ? (
+      {showImage && (
         <Image
           source={{ uri: uri as string }}
           style={imageStyle}
           resizeMode="cover"
           className="rounded-full"
         />
-      ) : (
-        <Profile size={size} variant="Bold" color="white" />
       )}
     </>
   );
@@ -55,7 +56,6 @@ const Avatar: React.FC<AvatarProps> = ({
   return (
     <TouchableOpacity
       onPress={onPress}
-      // activeOpacity={0.8}
       style={[
         styles.addPhotoButton,
         { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
@@ -64,10 +64,20 @@ const Avatar: React.FC<AvatarProps> = ({
       ]}
     >
       {Content}
+      <Profile
+        size={size}
+        style={{ position: "absolute" }}
+        variant="Bold"
+        color="white"
+      />
 
       {edit && (
-        <View className="absolute bottom-0 right-1 bg-white p-2 rounded-full">
-          <Image source={require("../assets/icons/pen.png")} />
+        <View
+          className="absolute bottom-0 right-0 bg-white p-2 rounded-full"
+          style={{ zIndex: 11 }}
+        >
+          {/* <Image source={require("../assets/icons/pen.png")} /> */}
+          <Edit size={15} />
         </View>
       )}
     </TouchableOpacity>

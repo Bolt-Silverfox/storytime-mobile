@@ -137,7 +137,7 @@ export default function EditParentImage() {
   };
 
   return (
-    <View className="flex-1 bg-[#FFFCFBFB] ">
+    <View className="flex-1 bg-[bg-light] ">
       <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
         <Pressable className="absolute left-0 p-4">
           <ChevronLeft onPress={() => navigator.goBack()} />

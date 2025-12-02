@@ -24,21 +24,19 @@ const ManageChildProfilesScreen = () => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   return (
-    <View className="flex-1 bg-bgLight pb-5">
+    <View className="flex-1 bg-[bgLight] pb-5">
+      <PageTitle
+        title="Manage Child Profiles"
+        goBack={() => parentNavigator.goBack()}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"
-        contentContainerClassName="flex min-h-full  flex-col gap-y-12"
+        // contentContainerClassName="flex min-h-full  flex-col gap-y-12"
       >
-        <PageTitle
-          title="Manage Child Profiles"
-          goBack={() =>
-            parentNavigator.navigate("profile", { screen: "indexPage" })
-          }
-        />
         {data.length ? (
-          <View className="flex flex-col gap-y-4 mx-4 mb-5 flex-1 sm:mx-auto max-w-screen-md sm:w-full">
-            <View className="flex-1 flex-col gap-4 sm:gap-10">
+          <View className="flex mt-12  flex-col gap-y-4 mx-4 mb-5 flex-1 sm:mx-auto max-w-screen-md sm:w-full">
+            <View className="flex-1 flex-col  gap-4 sm:gap-10">
               {data.map((kid) => (
                 <ChildItem
                   kid={kid}
@@ -50,21 +48,25 @@ const ManageChildProfilesScreen = () => {
             </View>
           </View>
         ) : (
-          <ChildrenEmptyState
-            navigate={() =>
+          <View className="mt-20">
+            <ChildrenEmptyState
+            // navigate={() =>
+            //   parentNavigator.navigate("profile", { screen: "addChild" })
+            // }
+            />
+          </View>
+        )}
+      </ScrollView>
+      <View className="justify-center">
+        {data.length > 0 && (
+          <CustomButton
+            text="Add Child"
+            onPress={() =>
               parentNavigator.navigate("profile", { screen: "addChild" })
             }
           />
         )}
-      </ScrollView>
-      {data.length > 0 && (
-        <CustomButton
-          text="Add Child"
-          onPress={() =>
-            parentNavigator.navigate("profile", { screen: "addChild" })
-          }
-        />
-      )}
+      </View>
     </View>
   );
 };

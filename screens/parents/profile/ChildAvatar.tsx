@@ -9,29 +9,20 @@ import {
 import React from "react";
 import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import {
-  KidsProfileNavigatorParams,
-  kidsProfileNavigatorProp,
-} from "../../../Navigation/KidsProfileNavigator";
+import { useNavigation } from "@react-navigation/native";
+
 import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
 import { SystemAvatar } from "../../../types";
-import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-type RouteProps = RouteProp<KidsProfileNavigatorParams, "changeKidAvatar">;
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
-export default function ChangeKidAvatar() {
+export default function ChildAvatar() {
   const [selectedAvatarId, setSelectedAvatarId] = React.useState<string | null>(
     null
   );
-  const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const { params } = useRoute<RouteProps>();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { width } = useWindowDimensions();
   const { data: avatars, isLoading, isFetching } = useGetAvatars();
-  const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(
-    params.childId,
-    () => navigator.goBack()
-  );
   const kidsAvatars: SystemAvatar[] = avatars?.data || [];
 
   const avatarSize = (width - 48) / 3;
@@ -45,11 +36,12 @@ export default function ChangeKidAvatar() {
       alert("Please select an avatar");
       return;
     }
-    updateKid(selectedAvatarId);
+    console.log("nav");
+    navigator.navigate("addChild", { avatarId: selectedAvatarId });
   };
 
   return (
-    <View className="flex-1 bg-white ">
+    <View className="flex-1 bg-[bg-light] ">
       <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
         <Pressable
           className="absolute left-0 p-4"
@@ -93,14 +85,12 @@ export default function ChangeKidAvatar() {
         scrollEnabled
       />
       <View className=" justify-end  px-4 gap-6">
-        <Pressable className="pb-10" disabled={isPending} onPress={handleSave}>
+        <Pressable className="pb-10" onPress={handleSave}>
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
-            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${
-              isPending ? "bg-gray-400" : "bg-[#EC4007]"
-            }`}
+            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${"bg-[#EC4007]"}`}
           >
-            {isPending ? "Saving..." : "Save"}
+            Select
           </Text>
         </Pressable>
       </View>
