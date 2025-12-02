@@ -60,7 +60,6 @@ const KidHomeScreen = () => {
           className="size-[50px]"
         />
       </View>
-      <Text>{buddyData?.profileAvatarUrl}</Text>
       <Suspense fallback={<ActivityIndicator size={"large"} />}>
         <KidsHomeScreenStories id={params.childId} />
       </Suspense>

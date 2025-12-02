@@ -27,7 +27,8 @@ const KidWelcomeScreen = () => {
     error: storyBuddyError,
     refetch,
   } = useGetStoryBuddyById(params.selected);
-
+  if (isPending || isLoading)
+    return <LoadingOverlay visible={isLoading || isPending} />;
   if (error)
     return <ErrorComponent refetch={refetchKidData} message={error.message} />;
   if (storyBuddyError)
@@ -46,7 +47,7 @@ const KidWelcomeScreen = () => {
         resizeMode="cover"
       >
         <View
-          className={`flex-1 my-20  ${data?.name === "lumina" ? " translate-y-72" : null}`}
+          className={`flex-1 my-20 ${data?.name.toLowerCase() === "lumina" ? "translate-y-72" : ""}`}
         >
           <View className="p-7 self-center bg-[#FFFCFB] rounded-2xl">
             <Text className="text-[22px] font-[abeezee] text-black">
