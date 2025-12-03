@@ -1,4 +1,9 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  CommonActions,
+  RouteProp,
+  useNavigation,
+  useRoute,
+} from "@react-navigation/native";
 import { useState } from "react";
 import {
   Image,
@@ -19,6 +24,10 @@ import {
   ParentProfileNavigatorParamList,
   ParentProfileNavigatorProp,
 } from "../../../Navigation/ParentProfileNavigator";
+import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
+import { SystemAvatar } from "../../../types";
+import KidAvatar from "../../../components/KidAvatar";
+import ChooseChildAvatarModal from "../../../components/modals/ChooseChildAvatarModal";
 
 type EditChildProfileRouteProp = RouteProp<
   ParentProfileNavigatorParamList,
@@ -30,6 +39,8 @@ const EditChildProfile = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [name, setName] = useState(params.name ?? "");
   const [age, setAge] = useState(params.ageRange ?? "");
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [chooseAvatarOpen, setChooseAvatarOpen] = useState(false);
   const [userName, setUsername] = useState(params?.userName ?? "");
   const [error, setError] = useState("");
   const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
@@ -37,9 +48,18 @@ const EditChildProfile = () => {
   >(null);
   const { isPending, mutate } = useUpdateKids({
     id: params.id,
-    onSuccess: () => navigator.navigate("manageChildProfiles"),
+    onSuccess: () =>
+      navigator.reset({
+        index: 1,
+        routes: [{ name: "indexPage" },{ name: "manageChildProfiles" }],
+      }),
   });
   const { isPending: isDeleting, mutate: deleteKid } = useDeleteKid();
+  const { data } = useGetAvatars();
+  const avatars = data?.data;
+  const avatarUrl = avatars?.find(
+    (avatar: SystemAvatar) => avatar.id === selectedAvatarId
+  )?.url;
 
   const handleSubmit = () => {
     if (!name.trim().length) {
@@ -51,7 +71,11 @@ const EditChildProfile = () => {
       return;
     }
     setError("");
-    mutate({ name, ageRange: age });
+    if (selectedAvatarId) {
+      mutate({ name, ageRange: age, avatarId: selectedAvatarId });
+    } else {
+      mutate({ name, ageRange: age });
+    }
   };
 
   const handleCloseModals = () => {
@@ -60,14 +84,12 @@ const EditChildProfile = () => {
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-y-12">
       <PageTitle title="Edit Child Profile" goBack={() => navigator.goBack()} />
-      <View className=" ">
-        <Image
-          source={
-            params.imageUrl
-              ? { uri: params.imageUrl }
-              : require("../../../assets/avatars/Avatars-3.png")
-          }
-          className="size-[80px] self-center"
+      <View className="items-center ">
+        <KidAvatar
+          onPress={() => setChooseAvatarOpen(true)}
+          size={90}
+          edit={true}
+          uri={selectedAvatarId ? avatarUrl : params.imageUrl}
         />
         <Pressable className="absolute bottom-0 right-0"></Pressable>
       </View>
@@ -136,6 +158,12 @@ const EditChildProfile = () => {
           name={name}
         />
       )}
+      <ChooseChildAvatarModal
+        isOpen={chooseAvatarOpen}
+        onClose={() => setChooseAvatarOpen(false)}
+        setSelectedAvatarId={setSelectedAvatarId}
+        selectedAvatarId={selectedAvatarId}
+      />
       <LoadingOverlay
         visible={isPending || isDeleting}
         label="Saving changes..."

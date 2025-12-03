@@ -24,11 +24,15 @@ const DeleteChildModal = ({
     >
       <Pressable onPress={onClose} className="flex-1 bg-black/40" />
 
-      <View className="bg-white rounded-t-3xl p-6 pb-12 absolute px-3 bottom-0 w-full">
-        <Text className="text-lg font-[quilka] mb-4 text-center">
+      <View
+        style={{ borderTopRightRadius: 30, borderTopLeftRadius: 30 }}
+        className="bg-white p-6 pb-12 absolute px-3 bottom-0 w-full"
+      >
+        <View className="h-[6px] w-[68px] mx-auto bg-[#C5C5C5] mb-10 rounded-full" />
+        <Text className="text-2xl font-[quilka] mb-4 text-center">
           Delete child's profile
         </Text>
-        <Text className="text-base font-[abeezee] text-center mb-3">
+        <Text className="text-base font-[abeezee] text-center mb-10">
           Are you sure you want to delete {name} profile?
         </Text>
 
