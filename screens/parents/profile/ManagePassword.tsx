@@ -1,9 +1,9 @@
 import { View, Text, Switch, Pressable } from "react-native";
 import React, { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ArrowLeft2, ArrowRight2 } from "iconsax-react-nativejs";
 
 export default function ManagePassword() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -31,7 +31,7 @@ export default function ManagePassword() {
     <View className="bg-[#FFFCFBFB] flex-1">
       <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
         <Pressable className="absolute left-0 p-4">
-          <ChevronLeft onPress={() => navigator.goBack()} />
+          <ArrowLeft2 onPress={() => navigator.goBack()} />
         </Pressable>
         <Text
           style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
@@ -48,15 +48,7 @@ export default function ManagePassword() {
           >
             Reset Password
           </Text>
-          <View>
-            <Switch
-              trackColor={{ false: "#E0E0E0", true: "#4807EC" }}
-              thumbColor={isResetPassWord ? "#ffffff" : "#ffffff"}
-              ios_backgroundColor="#E0E0E0"
-              onValueChange={toggleSwitch}
-              value={isResetPassWord}
-            />
-          </View>
+          <ArrowRight2 />
         </View>
         <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white">
           <Text
@@ -65,15 +57,7 @@ export default function ManagePassword() {
           >
             Set pin
           </Text>
-          <View>
-            <Switch
-              trackColor={{ false: "#E0E0E0", true: "#4807EC" }}
-              thumbColor={isSetpin ? "#ffffff" : "#ffffff"}
-              ios_backgroundColor="#E0E0E0"
-              onValueChange={toggleSwitchPin}
-              value={isSetpin}
-            />
-          </View>
+          <ArrowRight2 />
         </View>
       </View>
       <View className="flex-1 justify-end  px-4 gap-6">
