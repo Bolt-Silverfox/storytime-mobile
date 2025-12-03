@@ -38,7 +38,7 @@ export default function PrivacyAndPolicy() {
             >
               {term.title}
             </Text>
-            <Text style={[defaultStyles.defaultText, { marginTop: 13 }]}>
+            <Text style={[defaultStyles.defaultText, { marginVertical: 15 }]}>
               {term.description}
             </Text>
           </View>

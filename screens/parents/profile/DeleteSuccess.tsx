@@ -2,39 +2,24 @@ import { useNavigation } from "@react-navigation/native";
 import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
 import { ArrowLeft2 } from "iconsax-react-nativejs";
 
 export default function DeleteSuccess() {
-  const inset = useSafeAreaInsets();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   const onNavigate = () => {
     navigator.reset({
-      index: 0,
-      routes: [{ name: "manageChildProfiles" }],
+      index: 1,
+      routes: [{ name: "indexPage" }, { name: "manageChildProfiles" }],
     });
   };
   return (
-    <View
-      style={{ paddingTop: inset.top, paddingBottom: inset.bottom }}
-      className="flex-1 bg-[#FFFCFBFB]"
-    >
-      <View className="px-5">
-        <Pressable
-          // style={{
-          //   shadowColor: "#000",
-          //   shadowOffset: { width: 3, height: 1 },
-          //   shadowOpacity: 1,
-          //   shadowRadius: 8,
-          //   elevation: 4,
-          // }}
-          className="w-8 py-2"
-          onPress={onNavigate}
-        >
-          <ArrowLeft2 size={25} />
+    <View className="flex-1 ">
+      <View className="px-5 my-5">
+        <Pressable className="w-8 py-2" onPress={onNavigate}>
+          <ChevronLeft size={25} />
         </Pressable>
       </View>
       <View
