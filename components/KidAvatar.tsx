@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import {
   Image,
   ImageStyle,
+  Pressable,
   StyleProp,
   StyleSheet,
   Text,
@@ -37,20 +38,20 @@ const KidAvatar: React.FC<AvatarProps> = ({
       {showImage ? (
         <Image
           source={{ uri: uri }}
-          style={imageStyle}
+          style={[imageStyle]}
           className="rounded-full"
         />
       ) : (
         <Image
           source={require("../assets/avatars/Avatars-3.png")}
-          style={imageStyle}
+          style={[imageStyle]}
         />
       )}
     </>
   );
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       style={[styles.addPhotoButton, imageStyle]}
     >
@@ -64,7 +65,7 @@ const KidAvatar: React.FC<AvatarProps> = ({
           <Edit size={13} />
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
