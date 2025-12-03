@@ -140,8 +140,13 @@ export default function FaQ() {
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
           >
-            {FAQ.privacy.map((faq,i) => (
-              <MenuItem key={i}  label={faq.q} isTablet={isTablet} description={faq.a} />
+            {FAQ.privacy.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
             ))}
           </View>
         </View>

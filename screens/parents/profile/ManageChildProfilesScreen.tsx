@@ -11,17 +11,28 @@ import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import { KidProfile } from "../../../types";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { ChevronRight } from "lucide-react-native";
+import MaximumChildAlert from "../../../components/modals/MaximumChildAlert";
 
 const ManageChildProfilesScreen = () => {
   const parentNavigator = useNavigation<ParentsNavigatorProp>();
   const { data, isPending, error, refetch } = useGetUserKids();
   const [selectedKid, setSelectedKid] = useState<string | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
 
   if (isPending)
     return <LoadingOverlay visible={isPending} label="Loading..." />;
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+
+  const addChild = () => {
+    if (data.length >= 4) {
+      setIsOpen(true);
+    } else {
+      parentNavigator.navigate("profile", { screen: "addChild" });
+    }
+  };
 
   return (
     <View className="flex-1 bg-[bgLight] pb-5">
@@ -58,15 +69,16 @@ const ManageChildProfilesScreen = () => {
         )}
       </ScrollView>
       <View className="justify-center">
-        {data.length > 0 && (
-          <CustomButton
-            text="Add Child"
-            onPress={() =>
-              parentNavigator.navigate("profile", { screen: "addChild" })
-            }
-          />
-        )}
+        <CustomButton text="Add Child" onPress={addChild} />
       </View>
+      <MaximumChildAlert
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        subscribe={() => {
+          setIsOpen(false);
+          parentNavigator.navigate("profile", { screen: "subscriptionIndex" });
+        }}
+      />
     </View>
   );
 };
@@ -95,41 +107,43 @@ const ChildItem = ({
   };
 
   return (
-    <View className="flex  px-3 bg-white  py-3.5 rounded-2xl items-center flex-row gap-x-2.5">
+    <Pressable
+      onPress={() =>
+        parentNavigator.navigate("profile", {
+          screen: "editChildProfile",
+          params: {
+            ageRange: kid.ageRange,
+            name: kid.name,
+            imageUrl: kid.avatar?.url,
+            id: kid.id,
+          },
+        })
+      }
+      className="flex  px-3 bg-white  py-3.5 rounded-2xl items-center flex-row gap-x-2.5"
+    >
       <Image
         source={
           kid.avatar?.url
             ? { uri: kid?.avatar?.url }
             : require("../../../assets/avatars/Avatars-3.png")
         }
-        className="size-[60px]"
+        className="size-[80px]"
       />
       <View className="flex flex-1 flex-col gap-y-2.5">
         <Text className="font-[quilka] text-xl capitalize">{kid.name}</Text>
-        <Text className="text-sm font-[abeezee]">Age {kid.ageRange} Years</Text>
+        <Text className="text-sm font-[abeezee]">
+          Age: {kid.ageRange} Years
+        </Text>
       </View>
       <View className="flex flex-row gap-x-3  relative">
-        <Pressable
-          onPress={() =>
-            parentNavigator.navigate("profile", {
-              screen: "editChildProfile",
-              params: {
-                ageRange: kid.ageRange,
-                name: kid.name,
-                imageUrl: kid.avatar?.url,
-                id: kid.id,
-              },
-            })
-          }
-        >
-          <Icon name="Pen" />
-        </Pressable>
-        {selectedKid === kid.id ? (
+        {/* <Icon name="Pen" /> */}
+        <ChevronRight />
+        {/* {selectedKid === kid.id ? (
           <Icon name="X" onPress={() => toggleShowKid(kid.id)} />
         ) : (
           <Icon name="EllipsisVertical" onPress={() => toggleShowKid(kid.id)} />
-        )}
-        {selectedKid === kid.id ? (
+        )} */}
+        {/* {selectedKid === kid.id ? (
           <View className="absolute bottom-10 z-10 right-0 py-4  bg-bgLight rounded-3xl px-10">
             <Pressable
               onPress={() =>
@@ -142,8 +156,8 @@ const ChildItem = ({
               <Text>View kid</Text>
             </Pressable>
           </View>
-        ) : null}
+        ) : null} */}
       </View>
-    </View>
+    </Pressable>
   );
 };
