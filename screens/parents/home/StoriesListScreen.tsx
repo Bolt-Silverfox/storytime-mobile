@@ -1,5 +1,5 @@
 // screens/parents/StoriesListScreen.tsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -10,6 +10,8 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  GestureResponderEvent,
+  ActivityIndicator,
 } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
@@ -30,6 +32,9 @@ import useAddFavorites from "../../../hooks/tanstack/mutationHooks/useAddFavorit
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import useAddParentFavorite from "../../../hooks/tanstack/mutationHooks/useAddParentFavorites";
+import useGetParentFavorites from "../../../hooks/tanstack/queryHooks/useGetParentFavorites";
+import useDeleteParentFavorite from "../../../hooks/tanstack/mutationHooks/useDeleteParentFavorite";
 
 type StoriesRouteProp = RouteProp<ParentHomeNavigatorParamList, "storiesList">;
 
@@ -37,19 +42,41 @@ const StoriesListScreen: React.FC = () => {
   const route = useRoute<StoriesRouteProp>();
   const { categoryId, categoryName, kidId: passedKidId } = route.params ?? {};
   const nav = useNavigation<ParntHomeNavigatorProp>();
-  const [imgFailed, setImgFailed] = useState(false);
   const [difficultyFilter, setDifficultyFilter] = useState<number | null>(1);
   const [showModeModal, setShowModeModal] = useState(false);
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
+  const [heartLoading, setHeartLoading] = useState(false);
 
   const {
     data: kids = [],
     isPending: kidsLoading,
     error: kidsError,
   } = useGetUserKids();
-  const addFavoriteMutation = useAddFavorites();
+  const addFavorite = useAddParentFavorite();
+  const deleteFavorite = useDeleteParentFavorite();
 
   const chosenKidId = passedKidId ?? kids[0]?.id ?? undefined;
+
+  // Get parent favorites so we can show which stories are favorited
+  const {
+    data: rawFavorites = [],
+    isLoading: favsLoading,
+    error: favsError,
+    refetch: refetchFavs,
+  } = useGetParentFavorites();
+
+  // Normalize favorites into an array then a set of story ids for O(1) checks
+  const favoritesArray =
+    (rawFavorites as any)?.data ?? (rawFavorites as any) ?? ([] as any[]);
+  const favoriteIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const f of favoritesArray) {
+      const item = (f as any)?.data ?? f;
+      const sid = item?.storyId ?? item?.id ?? item?._id ?? null;
+      if (sid != null) set.add(String(sid));
+    }
+    return set;
+  }, [favoritesArray]);
 
   if (kidsLoading)
     return <LoadingOverlay visible label="Loading children..." />;
@@ -70,6 +97,7 @@ const StoriesListScreen: React.FC = () => {
 
   const storiesResult = useGetStories(String(chosenKidId));
   const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
+  const FAVORITE_IMG = require("../../../assets/parents/favorite.png");
 
   // normalize to an array and optional loading/error flags
   const stories: Story[] = Array.isArray(storiesResult)
@@ -142,6 +170,47 @@ const StoriesListScreen: React.FC = () => {
     return "";
   };
 
+  const toggleFavorite = (storyId: string, e?: GestureResponderEvent) => {
+    if (!storyId) return;
+
+    e?.stopPropagation();
+
+    if (heartLoading) return;
+    setHeartLoading(true);
+
+    const loading =
+      addFavorite.status === "pending" || deleteFavorite.status === "pending";
+    if (loading) return;
+
+    const isFav = favoriteIds.has(String(storyId));
+
+    if (isFav) {
+      // delete
+      deleteFavorite.mutate(storyId, {
+        onSuccess: () => {
+          refetchFavs?.();
+        },
+        onError: (err) => {
+          console.warn("Delete favorite failed", err);
+          Alert.alert("Could not remove favorite");
+        },
+        onSettled: () => setHeartLoading(false),
+      });
+    } else {
+      // add
+      addFavorite.mutate(storyId, {
+        onSuccess: () => {
+          refetchFavs?.();
+        },
+        onError: (err) => {
+          console.warn("Add favorite failed", err);
+          Alert.alert("Could not add favorite");
+        },
+        onSettled: () => setHeartLoading(false),
+      });
+    }
+  };
+
   return (
     <FlatList
       data={[]}
@@ -201,31 +270,25 @@ const StoriesListScreen: React.FC = () => {
               }}
               keyExtractor={(s: any) => String(s.id)}
               renderItem={({ item }: { item: Story }) => {
+                const isFavorited = favoriteIds.has(String(item.id));
+
                 const handleToggleFavorite = () => {
-                  if (!passedKidId) {
-                    Alert.alert(
-                      "Select child",
-                      "Please select a child before adding favorites."
-                    );
-                    return;
-                  }
                   if (!item?.id) {
                     console.warn("No story id available:", item);
                     return;
                   }
-                  addFavoriteMutation.mutate(
-                    { kidId: passedKidId, storyId: item.id },
-                    {
-                      onError: (err) => {
-                        // optional per-call handling
-                        console.warn("Add favorite failed", err);
-                        Alert.alert("Could not add favorite");
-                      },
-                      onSuccess: () => {
-                        Alert.alert("Story was successfully added to faves");
-                      },
-                    }
-                  );
+
+                  addFavorite.mutate(item.id, {
+                    onError: (err) => {
+                      console.warn("Add favorite failed", err);
+                      Alert.alert("Could not add favorite");
+                    },
+                    onSuccess: () => {
+                      Alert.alert("Story was successfully added to favorites");
+                      // optionally refetch favorites to update UI
+                      refetchFavs?.();
+                    },
+                  });
                 };
 
                 return (
@@ -255,14 +318,20 @@ const StoriesListScreen: React.FC = () => {
                       {/* Fav Icon */}
                       <TouchableOpacity
                         className="absolute top-2 right-2 p-4 rounded-full"
-                        onPress={handleToggleFavorite}
+                        onPress={(e) => toggleFavorite(String(item.id), e)}
                         style={{
                           shadowColor: "#000",
                           shadowOpacity: 0.2,
                           shadowRadius: 3,
                         }}
                       >
-                        <Heart color="#fff" />
+                        {heartLoading ? (
+                          <ActivityIndicator size="small" />
+                        ) : isFavorited ? (
+                          <Image source={FAVORITE_IMG} />
+                        ) : (
+                          <Heart color="#fff" />
+                        )}
                       </TouchableOpacity>
                     </View>
 
@@ -335,34 +404,7 @@ const StoriesListScreen: React.FC = () => {
                   }}
                   contentContainerStyle={{ paddingBottom: 16, paddingTop: 8 }}
                   renderItem={({ item }) => {
-                    const handleToggleFavorite = () => {
-                      if (!passedKidId) {
-                        Alert.alert(
-                          "Select child",
-                          "Please select a child before adding favorites."
-                        );
-                        return;
-                      }
-                      if (!item?.id) {
-                        console.warn("No story id available:", item);
-                        return;
-                      }
-                      addFavoriteMutation.mutate(
-                        { kidId: passedKidId, storyId: item.id },
-                        {
-                          onError: (err) => {
-                            // optional per-call handling
-                            console.warn("Add favorite failed", err);
-                            Alert.alert("Could not add favorite");
-                          },
-                          onSuccess: () => {
-                            Alert.alert(
-                              "Story was successfully added to faves"
-                            );
-                          },
-                        }
-                      );
-                    };
+                    const isFavorited = favoriteIds.has(String(item.id));
 
                     return (
                       <TouchableOpacity
@@ -391,7 +433,7 @@ const StoriesListScreen: React.FC = () => {
                           {/* Fav Icon */}
                           <TouchableOpacity
                             className="absolute top-2 right-2 p-2 rounded-full"
-                            onPress={handleToggleFavorite}
+                            onPress={(e) => toggleFavorite(String(item.id), e)}
                             style={{
                               shadowColor: "#000",
                               shadowOpacity: 0.15,
@@ -399,7 +441,13 @@ const StoriesListScreen: React.FC = () => {
                               elevation: 3,
                             }}
                           >
-                            <Heart size={18} color="#fff" />
+                            {heartLoading ? (
+                              <ActivityIndicator size="small" />
+                            ) : isFavorited ? (
+                              <Image source={FAVORITE_IMG} />
+                            ) : (
+                              <Heart color="#fff" />
+                            )}
                           </TouchableOpacity>
                         </View>
 
