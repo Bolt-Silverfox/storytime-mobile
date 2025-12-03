@@ -20,6 +20,9 @@ import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import { Funnel, Heart, Search, X } from "lucide-react-native";
 import useDeleteParentFavorite from "../../../hooks/tanstack/mutationHooks/useDeleteParentFavorite";
 import useAddParentFavorite from "../../../hooks/tanstack/mutationHooks/useAddParentFavorites";
+import { useNavigation } from "@react-navigation/native";
+import StoryModeModal from "../../../components/modals/StoryModeModal";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 
 type FavoriteItemRowProps = {
   favorite: ParentFavorite;
@@ -207,6 +210,9 @@ const FavoritesScreen: React.FC = () => {
   const [selectedAge, setSelectedAge] = useState<AgeRangeKey>("ALL");
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const nav = useNavigation<ParentsNavigatorProp>();
+  const [showModeModal, setShowModeModal] = useState(false);
+  const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -219,6 +225,22 @@ const FavoritesScreen: React.FC = () => {
 
   const openStory = (story: Story | null) => {
     if (!story) return;
+    setSelectedStoryId(story.id ?? null);
+    setShowModeModal(true);
+  };
+
+  const handleModalSelect = (
+    mode: "plain" | "interactive",
+    storyId: string
+  ) => {
+    setShowModeModal(false);
+    setSelectedStoryId(null);
+
+    const routeName = mode === "plain" ? "plainStories" : "interactiveStories";
+    nav.navigate("home" as any, {
+      screen: routeName,
+      params: { storyId, mode },
+    });
   };
 
   const renderItem: ListRenderItem<ParentFavorite> = ({ item }) => (
@@ -365,6 +387,12 @@ const FavoritesScreen: React.FC = () => {
           ItemSeparatorComponent={() => <View className="h-3" />}
         />
       </View>
+      <StoryModeModal
+        visible={showModeModal}
+        storyId={selectedStoryId}
+        onClose={() => setShowModeModal(false)}
+        onSelect={handleModalSelect}
+      />
     </View>
   );
 };

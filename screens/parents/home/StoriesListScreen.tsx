@@ -211,6 +211,17 @@ const StoriesListScreen: React.FC = () => {
     }
   };
 
+  const handleModalSelect = (
+    mode: "plain" | "interactive",
+    storyId: string
+  ) => {
+    setShowModeModal(false);
+    setSelectedStoryId(null);
+
+    const routeName = mode === "plain" ? "plainStories" : "interactiveStories";
+    nav.navigate(routeName, { storyId, mode } as any);
+  };
+
   return (
     <FlatList
       data={[]}
@@ -482,6 +493,7 @@ const StoriesListScreen: React.FC = () => {
             visible={showModeModal}
             onClose={() => setShowModeModal(false)}
             storyId={selectedStoryId}
+            onSelect={handleModalSelect}
           />
         </>
       )}
