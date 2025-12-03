@@ -10,6 +10,7 @@ import ChildrenEmptyState from "../components/emptyState/ChildrenEmptyState";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import KidAvatar from "../components/KidAvatar";
 import Avatar from "../components/Avatar";
+import defaultStyles from "../styles";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
@@ -31,8 +32,13 @@ const KidSelectionScreen = () => {
         className="flex flex-row gap-x-2 items-center "
       >
         <Avatar size={50} />
-        <View className="flex flex-col gap-y-1">
-          <Text className="text-xs text-text">Welcome back</Text>
+        <View className="flex flex-col gap-y-1 ">
+          <Text
+            style={[defaultStyles.defaultText, { fontSize: 15 }]}
+            className=" text-text"
+          >
+            Welcome back 👋🏾
+          </Text>
           <Text className="text-base font-[abeezee] capitalize">
             {user?.title} {user?.name}
           </Text>
@@ -58,9 +64,22 @@ const KidSelectionScreen = () => {
                   });
                 }}
                 key={kid.id}
-                className="flex w-[100px]  items-center flex-col gap-y-3"
+                className="flex w-[100px] items-center flex-col gap-y-3"
               >
-                <KidAvatar uri={kid.avatar?.url} size={87} />
+                <KidAvatar
+                  uri={kid.avatar?.url}
+                  size={87}
+                  onPress={async () => {
+                    await AsyncStorage.setItem("currentKid", kid.id);
+                    navigation.navigate("kid", {
+                      screen: "setup",
+                      params: {
+                        screen: "buddySelectionPage",
+                        params: { childId: kid.id },
+                      },
+                    });
+                  }}
+                />
                 <View className="flex flex-col gap-y-1.5">
                   <Text className="text-2xl font-[abeezee] text-center">
                     {kid.name.split(" ").at(0)}

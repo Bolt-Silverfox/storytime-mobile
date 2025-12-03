@@ -1,9 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import { ChevronLeft } from "lucide-react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
 
 export default function DeleteSuccess() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
