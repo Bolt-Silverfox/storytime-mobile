@@ -8,16 +8,17 @@ import defaultStyles from "../../../styles";
 export default function DeleteSuccess() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
-  const onNavigate = () => {
-    navigator.reset({
-      index: 1,
-      routes: [{ name: "indexPage" }, { name: "manageChildProfiles" }],
-    });
-  };
+  const toNavigate = () => {
+  navigator.reset({
+    index: 0,
+    routes: [{ name: "manageChildProfiles" }],
+  });
+};
+
   return (
     <View className="flex-1 ">
       <View className="px-5 my-5">
-        <Pressable className="w-8 py-2" onPress={onNavigate}>
+        <Pressable className="w-8 py-2" onPress={toNavigate}>
           <ChevronLeft size={25} />
         </Pressable>
       </View>
@@ -33,12 +34,12 @@ export default function DeleteSuccess() {
             Successfull
           </Text>
           <Text className="mx-auto mt-10" style={[defaultStyles.defaultText]}>
-            Child profile as been deleted successfully
+            Child profile has been deleted successfully
           </Text>
         </View>
       </View>
       <View className="justify-center w-[95%] mx-auto h-[250px] ">
-        <Pressable style={[defaultStyles.button]} onPress={onNavigate}>
+        <Pressable style={[defaultStyles.button]} onPress={toNavigate}>
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
             className="text-center text-white"
