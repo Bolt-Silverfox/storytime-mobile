@@ -2,26 +2,21 @@ import { useNavigation } from "@react-navigation/native";
 import { ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
 
 export default function DeleteSuccess() {
-  const inset = useSafeAreaInsets();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   const onNavigate = () => {
     navigator.reset({
-      index: 0,
-      routes: [{ name: "manageChildProfiles" }],
+      index: 1,
+      routes: [{ name: "indexPage" }, { name: "manageChildProfiles" }],
     });
   };
   return (
-    <View
-      style={{ paddingTop: inset.top, paddingBottom: inset.bottom }}
-      className="flex-1 bg-[#FFFCFBFB]"
-    >
-      <View className="px-5">
+    <View className="flex-1 ">
+      <View className="px-5 my-5">
         <Pressable className="w-8 py-2" onPress={onNavigate}>
           <ChevronLeft size={25} />
         </Pressable>

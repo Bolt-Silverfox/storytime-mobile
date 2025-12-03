@@ -1,20 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import {
-  CreditCard,
-  HelpCircle,
-  Key,
-  Lock,
-  LogOut,
-  Phone,
-  Trash,
-  User,
-} from "lucide-react-native";
-import React, { FC, useLayoutEffect, useState } from "react";
+import { CreditCard, HelpCircle, Key } from "lucide-react-native";
+import React, { FC, useState } from "react";
 import {
   Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
+  Text,
   TouchableOpacity,
   useWindowDimensions,
   View,
@@ -35,6 +27,7 @@ import {
   Profile2User,
   TrushSquare,
 } from "iconsax-react-nativejs";
+import defaultStyles from "../../../styles";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
@@ -46,21 +39,6 @@ const ProfileScreen: FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
-
-  // useLayoutEffect(() => {
-  //   const parent = navigator.getParent();
-
-  //   parent?.setOptions({
-  //     tabBarStyle: { display: "none" },
-  //   });
-
-  //   return () => {
-  //     // Show tab bar when leaving
-  //     parent?.setOptions({
-  //       tabBarStyle: { display: "flex" },
-  //     });
-  //   };
-  // }, [navigator]);
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
 
@@ -78,6 +56,11 @@ const ProfileScreen: FC = () => {
             borderBottomRightRadius: 24,
           }}
         >
+          <Text
+            style={[defaultStyles.heading, { bottom: -40, margin: "auto" }]}
+          >
+            Profile
+          </Text>
           <Avatar
             onPress={() => {
               navigator.navigate("editParentImage");
