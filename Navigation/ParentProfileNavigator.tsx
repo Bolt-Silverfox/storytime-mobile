@@ -100,7 +100,11 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="enableBiometrics" component={EnableBiometrics} />
 
       <Stack.Screen name="editChildProfile" component={EditChildProfile} />
-      <Stack.Screen name="addChild" component={AddChildScreen} />
+      <Stack.Screen
+        name="addChild"
+        component={AddChildScreen}
+       
+      />
       <Stack.Screen name="childAvatar" component={ChildAvatar} />
 
       <Stack.Screen name="deleteProfileSucessful" component={DeleteSuccess} />

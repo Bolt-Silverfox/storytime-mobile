@@ -33,6 +33,7 @@ const ParentsTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
+        // tabBarStyle: { backgroundColor: "#FFFCFBFB" },
       }}
     >
       <Tab.Screen

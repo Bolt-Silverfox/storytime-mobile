@@ -19,10 +19,9 @@ import {
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import KidAvatar from "../../../components/KidAvatar";
 import { ChevronDown } from "lucide-react-native";
-import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
 import { SystemAvatar } from "../../../types";
+import ChooseChildAvatarModal from "../../../components/modals/ChooseChildAvatarModal";
 
 type RouteProps = RouteProp<ParentProfileNavigatorParamList, "addChild">;
 
@@ -33,19 +32,24 @@ const AddChildScreen = () => {
   const [age, setAge] = useState("");
   const [userName, setUsername] = useState("");
   const [error, setError] = useState("");
+  const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
+  const [chooseAvatarOpen, setChooseAvatarOpen] = useState(false);
   const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
     "age" | "delete" | null
   >(null);
   const { isPending, mutate } = useAddKids(1, () =>
     navigator.reset({
-      index: 0,
-      routes: [{ name: "manageChildProfiles" }],
+      index: 1,
+      routes: [
+        { name: "indexPage" },
+        { name: "manageChildProfiles" },
+      ],
     })
   );
   const { data } = useGetAvatars();
   const avatars = data?.data;
   const avatarUrl = avatars?.find(
-    (avatar: SystemAvatar) => avatar.id === params?.avatarId
+    (avatar: SystemAvatar) => avatar.id === selectedAvatarId
   )?.url;
 
   const handleSubmit = () => {
@@ -58,7 +62,13 @@ const AddChildScreen = () => {
       return;
     }
     setError("");
-    mutate([{ name, ageRange: age, avatarId: params?.avatarId! }]);
+    mutate([
+      {
+        name,
+        ageRange: age,
+        avatarId: selectedAvatarId ?? "cmiinivni0004qlto05vvzicv",
+      },
+    ]);
   };
 
   const handleCloseModals = () => {
@@ -76,8 +86,8 @@ const AddChildScreen = () => {
       </View>
       <View className=" justify-center items-center">
         <KidAvatar
-          onPress={() => navigator.navigate("childAvatar")}
-          size={80}
+          onPress={() => setChooseAvatarOpen(true)}
+          size={90}
           edit={true}
           uri={avatarUrl}
         />
@@ -121,10 +131,18 @@ const AddChildScreen = () => {
         <Pressable
           disabled={isPending}
           onPress={handleSubmit}
-          className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+          className="bg-primary py-3 w-full max-w-96 rounded-full mx-auto"
         >
           <Text className="text-white font-[abeezee] text-center text-base">
             Save
+          </Text>
+        </Pressable>
+        <Pressable
+          onPress={() => navigator.goBack()}
+          className="border-[black] border py-3 w-full max-w-96 rounded-full mx-auto"
+        >
+          <Text className="text-[black] font-[abeezee] text-center text-base">
+            Cancel
           </Text>
         </Pressable>
       </View>
@@ -135,6 +153,12 @@ const AddChildScreen = () => {
           selectAge={setAge}
         />
       )}
+      <ChooseChildAvatarModal
+        isOpen={chooseAvatarOpen}
+        onClose={() => setChooseAvatarOpen(false)}
+        setSelectedAvatarId={setSelectedAvatarId}
+        selectedAvatarId={selectedAvatarId}
+      />
       <LoadingOverlay visible={isPending} label="Adding child..." />
     </ScrollView>
   );
