@@ -18,6 +18,7 @@ const useUpdateKids = ({
     mutationFn: async (kids: {
       name?: string;
       ageRange?: string;
+      avatarId?: string;
       excludedTags?: string[];
       preferredVoiceId?: string;
       preferredCategoryIds?: string[];
@@ -38,6 +39,7 @@ const useUpdateKids = ({
         body: JSON.stringify({
           name: kids.name,
           ageRange: kids.ageRange,
+          avatarId: kids.avatarId,
           excludedTags: kids.excludedTags,
           preferredVoiceId: kids.preferredVoiceId,
           preferredCategoryIds: kids.preferredCategoryIds,
