@@ -49,7 +49,6 @@ const ParentHomeScreen = () => {
   const { user, isLoading } = useAuth();
   const nav = useNavigation<ParntHomeNavigatorProp>();
   const navigator = useNavigation<ParentsNavigatorProp>();
-  // const navigator = useNavigation<ParentProfileNavigatorProp>();
   const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
 
   const handleCategoryPress = (cat: { id: string | number; name?: string }) => {
@@ -99,7 +98,10 @@ const ParentHomeScreen = () => {
               <Avatar
                 size={40}
                 onPress={() =>
-                  navigator.navigate("profile", { screen: "indexPage" })
+                  parentNav.reset({
+                    index: 0,
+                    routes: [{ name: "selection" }],
+                  })
                 }
               />
             </View>
