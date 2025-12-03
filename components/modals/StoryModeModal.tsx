@@ -19,6 +19,7 @@ type Props = {
   storyId?: string | null;
   initialMode?: StoryMode | null;
   onClose: () => void;
+  onSelect?: (mode: StoryMode, storyId: string) => void;
 };
 
 const Card: React.FC<{
@@ -70,6 +71,7 @@ export default function StoryModeModal({
   storyId,
   initialMode = null,
   onClose,
+  onSelect
 }: Props) {
   const nav = useNavigation<ParntHomeNavigatorProp>();
   const [selected, setSelected] = useState<StoryMode | null>(
@@ -87,19 +89,15 @@ export default function StoryModeModal({
 
     if (!storyId) {
       console.warn(
-        "StoryModeModal: no storyId passed; cannot navigate to story screen."
+        "StoryModeModal: no storyId passed; cannot proceed with selection."
       );
       return;
     }
 
-    // Navigate to the correct screen based on selection
-    if (mode === "plain") {
-      nav.navigate("plainStories", { storyId, mode: "plain" });
-    } else {
-      nav.navigate("interactiveStories", { storyId, mode: "interactive" });
+    if (onSelect) {
+      onSelect(mode, storyId); // hand off navigation to caller
     }
   };
-
   return (
     <Modal
       visible={visible}
