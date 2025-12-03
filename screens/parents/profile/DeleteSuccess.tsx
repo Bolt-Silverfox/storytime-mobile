@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { ChevronLeft } from "lucide-react-native";
+import { ArrowLeft, ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
 
 export default function DeleteSuccess() {
   const inset = useSafeAreaInsets();
@@ -22,8 +23,18 @@ export default function DeleteSuccess() {
       className="flex-1 bg-[#FFFCFBFB]"
     >
       <View className="px-5">
-        <Pressable className="w-8 py-2" onPress={onNavigate}>
-          <ChevronLeft size={25} />
+        <Pressable
+          // style={{
+          //   shadowColor: "#000",
+          //   shadowOffset: { width: 3, height: 1 },
+          //   shadowOpacity: 1,
+          //   shadowRadius: 8,
+          //   elevation: 4,
+          // }}
+          className="w-8 py-2"
+          onPress={onNavigate}
+        >
+          <ArrowLeft2 size={25} />
         </Pressable>
       </View>
       <View
@@ -38,7 +49,7 @@ export default function DeleteSuccess() {
             Successfull
           </Text>
           <Text className="mx-auto mt-10" style={[defaultStyles.defaultText]}>
-            Child profile as been deleted successfully
+            Child profile has been deleted successfully
           </Text>
         </View>
       </View>
