@@ -14,6 +14,8 @@ import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
+import { AlignBottom, Profile, SecurityUser } from "iconsax-react-nativejs";
+import { Heart } from "lucide-react-native";
 
 type ParentsNavigatorParamList = {
   home: undefined;
@@ -33,7 +35,6 @@ const ParentsTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
-        // tabBarStyle: { backgroundColor: "#FFFCFBFB" },
       }}
     >
       <Tab.Screen
@@ -57,10 +58,7 @@ const ParentsTabNavigator = () => {
         component={ParentReportNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Icon
-              name="ChartColumnIncreasing"
-              color={focused ? colours.primary : colours.black}
-            />
+            <AlignBottom color={focused ? colours.primary : colours.black} />
           ),
           tabBarActiveTintColor: colours.primary,
           tabBarLabelStyle: {
@@ -73,10 +71,7 @@ const ParentsTabNavigator = () => {
         component={ParentControlNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Icon
-              name="ShieldUser"
-              color={focused ? colours.primary : colours.black}
-            />
+            <SecurityUser color={focused ? colours.primary : colours.black} />
           ),
           tabBarActiveTintColor: colours.primary,
           tabBarLabelStyle: {
@@ -89,10 +84,7 @@ const ParentsTabNavigator = () => {
         component={FavouriteScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Icon
-              name="Heart"
-              color={focused ? colours.primary : colours.black}
-            />
+            <Heart color={focused ? colours.primary : colours.black} />
           ),
           tabBarActiveTintColor: colours.primary,
           tabBarLabelStyle: {
@@ -119,18 +111,15 @@ const ParentsTabNavigator = () => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "indexPage";
           return {
             tabBarIcon: ({ focused }) => (
-              <Icon
-                name="User"
-                color={focused ? colours.primary : colours.black}
-              />
+              <Profile color={focused ? colours.primary : colours.black} />
             ),
             tabBarActiveTintColor: colours.primary,
             tabBarLabelStyle: {
               textTransform: "capitalize",
             },
-            tabBarStyle: {
-              opacity: routeName === "indexPage" ? 100 : 0,
-            },
+            // tabBarStyle: {
+            //   opacity: routeName === "indexPage" ? 100 : 0,
+            // },
           };
         }}
       />
