@@ -9,7 +9,7 @@ const PageTitle = ({
   title: string;
 }) => {
   return (
-    <View className="flex flex-row bg-white py-5 px-4">
+    <View className="flex flex-row border-b border-b-black/10 bg-white py-5 px-4">
       <Pressable onPress={goBack}>
         <Icon name="ChevronLeft" />
       </Pressable>

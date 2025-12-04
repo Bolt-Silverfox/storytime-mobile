@@ -128,7 +128,7 @@ const SignupForm = () => {
         />
 
         <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Name:</Text>
+          <Text style={defaultStyles.label}>Full Name:</Text>
           <TextInput
             className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.fullName ? "red" : colours.text}

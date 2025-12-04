@@ -90,6 +90,48 @@ type AuthFnTypes = {
     setErrorCb: SetErrorCallback;
   }) => void;
   handleGoogleAuth: () => void;
+  setInAppPin: ({
+    pin,
+    setErrorCb,
+    onSuccess,
+  }: {
+    pin: string;
+    setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
+  }) => void;
+  verifyInAppPin: ({
+    pin,
+    setErrorCb,
+    onSuccess,
+  }: {
+    pin: string;
+    setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
+  }) => void;
+  updateInAppPin: ({
+    oldPin,
+    newPin,
+    confirmNewPin,
+    setErrorCb,
+    onSuccess,
+  }: {
+    oldPin: string;
+    newPin: string;
+    confirmNewPin: string;
+    setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
+  }) => void;
+  changePassword: ({
+    oldPassword,
+    newPassword,
+    setErrorCb,
+    onSuccess,
+  }: {
+    oldPassword: string;
+    newPassword: string;
+    setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
+  }) => void;
 };
 
 type AuthContextType = {
@@ -106,6 +148,10 @@ type AuthContextType = {
   validatePasswordReset: AuthFnTypes["validatePasswordReset"];
   resetPassword: AuthFnTypes["resetPassword"];
   handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  changePassword: AuthFnTypes["changePassword"];
+  setInAppPin: AuthFnTypes["setInAppPin"];
+  verifyInAppPin: AuthFnTypes["verifyInAppPin"];
+  updateInAppPin: AuthFnTypes["updateInAppPin"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -376,6 +422,74 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
+  const setInAppPin: AuthFnTypes["setInAppPin"] = async ({
+    pin,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.setInAppPin(pin)
+    );
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+  const verifyInAppPin: AuthFnTypes["verifyInAppPin"] = async ({
+    pin,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.setInAppPin(pin)
+    );
+    console.log("verify in app pin", requestData);
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+
+  const updateInAppPin: AuthFnTypes["updateInAppPin"] = async ({
+    oldPin,
+    newPin,
+    confirmNewPin,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
+    );
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+
+  const changePassword: AuthFnTypes["changePassword"] = async ({
+    oldPassword,
+    newPassword,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.changePassword(oldPassword, newPassword)
+    );
+    console.log("change password data", requestData);
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+
   const handleGoogleAuth = async () => {
     try {
       setIsLoading(true);
@@ -430,6 +544,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     validatePasswordReset,
     resetPassword,
     handleGoogleAuth,
+    setInAppPin,
+    updateInAppPin,
+    verifyInAppPin,
+    changePassword,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>
