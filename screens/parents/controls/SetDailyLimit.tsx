@@ -77,15 +77,15 @@ const SetDailyLimit = () => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
   return (
     <View className="flex-1 bg-bgLight pb-5">
+      <PageTitle
+        title="Set Daily Usage Limit"
+        goBack={() => navigator.goBack()}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"
         contentContainerClassName="min-h-full pb-10 bg-light flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full"
       >
-        <PageTitle
-          title="Set Daily Usage Limit"
-          goBack={() => navigator.goBack()}
-        />
         <View className="p-5 mx-5  flex flex-col gap-y-2 rounded-2xl bg-white">
           <Text className="text-xl font-[abeezee] text-center mb-2">
             DEFAULT SCREEN LIMIT :{" "}
