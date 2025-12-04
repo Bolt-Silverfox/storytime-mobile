@@ -1,13 +1,14 @@
-import { View, Text, Pressable } from "react-native";
-import React, { useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import PasswordInput from "../../../components/PasswordInput";
+import React, { useState } from "react";
+import { Alert, Pressable, Text, View } from "react-native";
 import { z } from "zod";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import PageTitle from "../../../components/PageTitle";
+import PasswordInput from "../../../components/PasswordInput";
 import useAuth from "../../../contexts/AuthContext";
+import defaultStyles from "../../../styles";
 
 const resetPasswordSchema = z
   .object({
@@ -36,7 +37,8 @@ export default function ResetParentPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
-  const { isLoading, errorMessage, signUp } = useAuth();
+  const [error, setError] = useState("");
+  const { isLoading, changePassword } = useAuth();
 
   const onResetPassword = async () => {
     setErrors({});
@@ -57,33 +59,26 @@ export default function ResetParentPassword() {
       setErrors(formatted);
       return;
     }
-    // await signUp(email, password, fullName.trim(), title);
-    // if (success) {
-      navigator.navigate('resetPasswordSuccessful');
-    // }
+    changePassword({
+      oldPassword,
+      newPassword,
+      onSuccess: () => {
+        Alert.alert("Password changed");
+        navigator.goBack();
+      },
+      setErrorCb: setError,
+    });
   };
 
   return (
     <View className="flex-1">
-      <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
-        <Pressable className="absolute left-0 p-4">
-          <ChevronLeft onPress={() => navigator.goBack()} />
-        </Pressable>
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
-          className="self-center text-center  "
-        >
-          Manage Password/Pin
-        </Text>
-      </View>
+      <PageTitle
+        title="Reset your password"
+        goBack={() => navigator.goBack()}
+      />
       <View className="mx-[17]  ">
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 16 }]}
-          className="mt-8 mx-auto"
-        >
-          Reset your Password
-        </Text>
-        <View className="mt-[60] gap-[16]">
+        <View className="mt-[60] gap-[16px]">
+          {error && <ErrorMessageDisplay errorMessage={error} />}
           <PasswordInput
             label="Enter old password:"
             setPassword={setOldPassword}
@@ -119,7 +114,7 @@ export default function ResetParentPassword() {
           </Text>
         </Pressable>
       </View>
-      {/* <LoadingOverlay visible={isLoading} /> */}
+      <LoadingOverlay visible={isLoading} />
     </View>
   );
 }

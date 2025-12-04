@@ -37,17 +37,18 @@ const ViewActivityLog = () => {
       <PageTitle goBack={() => navigator.goBack()} title="Activity Log" />
       {data.length > 0 ? (
         <View className="flex flex-col gap-y-4">
-          {activityDummyData.map((activity) => (
+          {data.map((activity) => (
             <View
               className="p-4 rounded-2xl bg-slate-200 mx-5"
-              key={activity.date}
+              key={activity.id}
             >
               <Text className="text-xl font-[abeezee] mb-10">
-                {activity.date}
+                {new Date(activity.createdAt).toLocaleString()}
               </Text>
               <Text>Device : {activity.deviceName}</Text>
-              <Text>IP : {activity.IP}</Text>
+              <Text>IP : {activity.ipAddress}</Text>
               <Text>Status : {activity.status}</Text>
+              <Text>Detail : {activity.details}</Text>
             </View>
           ))}
         </View>

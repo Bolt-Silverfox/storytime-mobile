@@ -4,17 +4,17 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 
 type ActivityLog = {
-  voice_id: string;
-  name: string;
-  category: string;
-  samples: string | null;
-  description: string;
-  preview_url: string;
-  label: {
-    accent: string;
-    gender: string;
-    age: string;
-  };
+  id: string;
+  userId: string;
+  kidId: string;
+  action: string;
+  status: string;
+  deviceName: string;
+  deviceModel: string;
+  os: string;
+  ipAddress: string;
+  details: string;
+  createdAt: string;
 };
 
 const useGetKidActivityLog = (id: string) => {
@@ -27,7 +27,6 @@ const useGetKidActivityLog = (id: string) => {
         method: "GET",
       });
       const response: QueryResponse<ActivityLog[]> = await request.json();
-      console.log("activity log", response);
       if (!response.success) throw new Error(response.message);
       return response;
     },
