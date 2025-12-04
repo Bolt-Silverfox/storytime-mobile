@@ -5,7 +5,7 @@ import { BASE_URL } from "../../../constants";
 type StoryRequest = {
   statusCode: number;
   success: boolean;
-  data: Story[];
+  data: { data: Story[] };
   message: string;
 };
 
@@ -37,11 +37,11 @@ type Story = {
   };
 };
 
-const useGetStories = (id: string) => {
+const useGetStories = (id?: string) => {
   return useSuspenseQuery({
     queryKey: ["getStories", id],
     queryFn: async () => {
-      const url = `${BASE_URL}/stories?kidId=${id}`;
+      const url = `${BASE_URL}/stories/?kidId=${id}`;
       console.log("kid id", id);
 
       const request = await apiFetch(url, {
@@ -55,7 +55,7 @@ const useGetStories = (id: string) => {
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    select: (res) => res.data,
+    select: (res) => res.data.data,
   });
 };
 

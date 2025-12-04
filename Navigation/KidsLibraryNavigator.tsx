@@ -2,7 +2,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import KidsLibraryScreen from "../screens/Kids/KidsLibraryScreen";
+import KidsLibraryScreen from "../screens/Kids/library/KidsLibraryScreen";
 import BookDetailsScreen from "../screens/Kids/BookDetailsScreen";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { KidsTabNavigatorParamList } from "./KidsTabNavigator";

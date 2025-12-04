@@ -11,6 +11,7 @@ import KidsLibraryNavigator from "./KidsLibraryNavigator";
 import { KidsNavigatorParamList } from "./KidsNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
 import KidsProgressNavigator from "./KidsProgressNavigator";
+import { Book } from "iconsax-react-nativejs";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
@@ -60,8 +61,7 @@ const KidsTabNavigator = () => {
         component={KidsLibraryNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Icon
-              name="Book"
+            <Book
               color={focused ? colours.primary : colours.black}
             />
           ),
