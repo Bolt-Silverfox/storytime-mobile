@@ -164,9 +164,9 @@ const ParentHomeScreen = () => {
                   </Suspense>
 
                   <Suspense fallback={<ActivityIndicator size="large" />}>
-                    <StoryTrackerSection
+                    {/* <StoryTrackerSection
                       handleCategoryPress={handleCategoryPress}
-                    />
+                    /> */}
                   </Suspense>
                 </>
               ) : (
@@ -186,10 +186,10 @@ const ParentHomeScreen = () => {
               </View>
             }
           >
-            <CategoriesSection
+            {/* <CategoriesSection
               onCategoryPress={handleCategoryPress}
               onViewCategories={handleViewCategories}
-            />
+            /> */}
           </Suspense>
 
           {/* Footer */}

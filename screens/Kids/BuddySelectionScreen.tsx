@@ -29,7 +29,6 @@ const BuddySelectionScreen = () => {
     kidId: params.childId,
     id: selected,
     onSuccess: () => {
-     
       navigator.getParent()?.navigate("index", {
         childId: params.childId,
       });
