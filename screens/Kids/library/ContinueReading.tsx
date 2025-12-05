@@ -12,18 +12,27 @@ import useGetStories, {
 import { Ellipsis } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useGetContinueReading, {
+  ContinueReading,
+} from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 
-export default function ContinueReading() {
+export default function ContinueReadingLibrary() {
   const { params } = useRoute<RotuteProps>();
   const [isOpen, setIsOpen] = useState(false);
 
   const { isPending, error, data, refetch } = useGetKidById(params.childId);
   const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
+    isPending: ContinueReadingIsPending,
+    error: ContinueReadingError,
+    refetch: refetchContinueReadingStories,
+    data: continueReading,
+  } = useGetContinueReading(params.childId);
+  // const {
+  //   isPending: storiesIsPending,
+  //   error: storiesError,
+  //   refetch: refetchStories,
+  //   data: stories,
+  // } = useGetStories(params.childId);
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   return (
     <View className="flex-1 bg-[#866EFF]  items-center gap-x-3 pb-2 h-[60vh]">
@@ -43,9 +52,19 @@ export default function ContinueReading() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {stories.map((story) => (
-          <BookReading key={story.id} story={story} setIsOpen={setIsOpen} />
-        ))}
+        {continueReading?.length === 0 || !continueReading ? (
+          <Text
+            style={[defaultStyles.defaultText, { color: "#fff", fontSize: 14 }]}
+          >
+            No stories yet
+          </Text>
+        ) : (
+          <>
+            {continueReading?.map((story, i) => (
+              <BookReading key={i} story={story} setIsOpen={setIsOpen} />
+            ))}
+          </>
+        )}
       </ScrollView>
       <ToddlerBookActionsModal
         isOpen={isOpen}
@@ -59,14 +78,11 @@ const BookReading = ({
   story,
   setIsOpen,
 }: {
-  story: Story;
+  story: ContinueReading;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <Pressable
-      key={story.id}
-      className="bg-white flex-row mt-5 rounded-xl p-4 gap-3"
-    >
+    <Pressable className="bg-white flex-row mt-5 rounded-xl p-4 gap-3">
       <Image
         source={{ uri: story.coverImageUrl }}
         // style={{ position: "absolute", right: 0 }}

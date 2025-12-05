@@ -12,6 +12,8 @@ import useGetStories, {
 import { Ellipsis } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import { ContinueReading } from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 
 export default function LibraryCompleted() {
   const { params } = useRoute<RotuteProps>();
@@ -25,6 +27,8 @@ export default function LibraryCompleted() {
     data: stories,
   } = useGetStories(params.childId);
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
+  const { data: completedStories } = useGetCompletedStories(params.childId);
+
   return (
     <View className="flex-1 bg-[#866EFF]  items-center gap-x-3 pb-2 h-[60vh]">
       <View className="flex-row p-4">
@@ -35,7 +39,7 @@ export default function LibraryCompleted() {
           style={[defaultStyles.defaultText, { fontSize: 18, color: "#fff" }]}
           className="flex-1 w-full  text-center"
         >
-          Continue reading
+          Completed stories
         </Text>
       </View>
 
@@ -43,8 +47,8 @@ export default function LibraryCompleted() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {stories.map((story) => (
-          <BookReading key={story.id} story={story} setIsOpen={setIsOpen} />
+        {completedStories?.map((story,i) => (
+          <BookReading key={i} story={story} setIsOpen={setIsOpen} />
         ))}
       </ScrollView>
       <ToddlerBookActionsModal
@@ -59,12 +63,11 @@ const BookReading = ({
   story,
   setIsOpen,
 }: {
-  story: Story;
+  story: ContinueReading;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
     <Pressable
-      key={story.id}
       className="bg-white flex-row mt-5 rounded-xl p-4 gap-3"
     >
       <Image

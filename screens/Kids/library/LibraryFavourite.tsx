@@ -12,6 +12,7 @@ import useGetStories, {
 import { Ellipsis } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
 
 export default function LibraryFavourite() {
   const { params } = useRoute<RotuteProps>();
@@ -24,6 +25,12 @@ export default function LibraryFavourite() {
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
+    const { data: kidsFavorites } = useGetKidFavorites(params.childId);
+    const favouriteStoryIds = kidsFavorites?.map((f) => f.storyId);
+    const favouriteStories = stories.filter((story) =>
+      favouriteStoryIds?.includes(story.id)
+    );
+
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   return (
     <View className="flex-1 bg-[#866EFF]  items-center gap-x-3 pb-2 h-[60vh]">
@@ -43,7 +50,7 @@ export default function LibraryFavourite() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {stories.map((story) => (
+        {favouriteStories.map((story) => (
           <BookReading key={story.id} story={story} setIsOpen={setIsOpen} />
         ))}
       </ScrollView>
