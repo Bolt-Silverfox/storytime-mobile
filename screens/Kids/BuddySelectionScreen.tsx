@@ -40,7 +40,9 @@ const BuddySelectionScreen = () => {
       <Text className="text-center font-[quilka] text-2xl">
         Hi, {data?.name ?? "User"}
       </Text>
-      <Text className="text-center font-[abeezee]">Choose your Storytime Buddy</Text>
+      <Text className="text-center font-[abeezee]">
+        Choose your Storytime Buddy
+      </Text>
 
       <Suspense fallback={<ActivityIndicator size="large" />}>
         <BuddySelectionComponent selected={selected} setSelected={setSelected} />
