@@ -18,6 +18,7 @@ const useGetUserProfile = () => {
           method: "GET",
         });
         const userProfile: QueryResponse<UserProfile> = await response.json();
+        if (!userProfile.success) throw new Error(userProfile.message);
         return userProfile;
       } catch (err) {
         const message =
@@ -25,6 +26,9 @@ const useGetUserProfile = () => {
         throw new Error(message);
       }
     },
+    refetchOnMount: false,
+    staleTime: Infinity,
+    select: (res) => res?.data,
   });
 };
 

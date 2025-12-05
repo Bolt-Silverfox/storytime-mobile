@@ -30,7 +30,7 @@ const Avatar: React.FC<AvatarProps> = ({
   style,
 }) => {
   const { data } = useGetUserProfile();
-  const uri = data?.data?.avatar?.url;
+  const uri = data?.avatar?.url;
 
   const showImage = !!uri;
 

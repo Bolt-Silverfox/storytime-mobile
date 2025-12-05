@@ -16,7 +16,7 @@ export default function EditParentImage() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState("");
   const { data } = useGetUserProfile();
-  const userId = data?.data?.id;
+  const userId = data?.id;
   const { mutateAsync: uploadImage, isPending } = useUploadImage(userId!, () =>
     navigator.goBack()
   );

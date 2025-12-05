@@ -76,12 +76,12 @@ const SetBedtime = () => {
     return <ErrorComponent refetch={refetch} message={fetcherror.message} />;
   return (
     <View className="flex-1 bg-bgLight pb-5">
+      <PageTitle title="Bedtime Mode" goBack={() => navigator.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1"
         contentContainerClassName="min-h-full pb-5 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full"
       >
-        <PageTitle title="Bedtime Mode" goBack={() => navigator.goBack()} />
         {error?.message && (
           <ErrorMessageDisplay
             errorMessage={error?.message || "Error updating kids, try again."}

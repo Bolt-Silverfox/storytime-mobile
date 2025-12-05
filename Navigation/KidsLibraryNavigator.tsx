@@ -43,7 +43,7 @@ const KidsLibraryNavigator = () => {
   const returningUser = true;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!returningUser ? (
+      {returningUser ? (
         <Stack.Screen
           name="returningUser"
           component={ReturningUser}

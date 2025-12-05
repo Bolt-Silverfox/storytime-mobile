@@ -1,11 +1,12 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { ContinueReading } from "./useGetContinueReading";
 
 type StoryRequest = {
   statusCode: number;
   success: boolean;
-  data: {data:Story[]};
+  data: { data: ContinueReading[] };
   message: string;
 };
 
@@ -37,12 +38,11 @@ type Story = {
   };
 };
 
-const useGetStories = (id?: string) => {
+const useGetStoriesById = (id: string) => {
   return useSuspenseQuery({
     queryKey: ["getStories", id],
     queryFn: async () => {
-      const url = `${BASE_URL}/stories/?kidId=${id}`;
-      console.log("kid id", id);
+      const url = `${BASE_URL}/stories/${id}`;
 
       const request = await apiFetch(url, {
         method: "GET",
@@ -55,10 +55,10 @@ const useGetStories = (id?: string) => {
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
-    select: (res) => res.data.data,
+    select: (res) => res.data,
   });
 };
 
 export type { Story, StoryRequest };
 
-export default useGetStories;
+export default useGetStoriesById;

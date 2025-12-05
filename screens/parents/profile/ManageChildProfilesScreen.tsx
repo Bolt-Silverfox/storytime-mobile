@@ -61,9 +61,9 @@ const ManageChildProfilesScreen = () => {
         ) : (
           <View className="mt-20">
             <ChildrenEmptyState
-            // navigate={() =>
-            //   parentNavigator.navigate("profile", { screen: "addChild" })
-            // }
+              navigate={() =>
+                parentNavigator.navigate("profile", { screen: "addChild" })
+              }
             />
           </View>
         )}
