@@ -23,6 +23,7 @@ const TitleModal = ({
         }}
       >
         <View
+        
           style={{
             backgroundColor: "white",
             padding: 20,
