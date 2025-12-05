@@ -20,7 +20,7 @@ const ChildButton = ({ disabled, onPress, text, icon }: Props) => {
     >
       {text && (
         <Text className="text-center text-white font-[quilka] text-2xl">
-          {"Continue"}
+          {text ? text : "Continue"}
         </Text>
       )}
       {icon && <Icon name={icon} color="white" />}
