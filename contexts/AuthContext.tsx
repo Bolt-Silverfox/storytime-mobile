@@ -26,107 +26,73 @@ import {
 import { Alert } from "react-native";
 
 type AuthFnTypes = {
-  login: ({
-    email,
-    password,
-    setErrorCb,
-  }: {
+  login: (data: {
     email: string;
     password: string;
     setErrorCb: SetErrorCallback;
   }) => void;
-  signUp: ({
-    email,
-    password,
-    fullName,
-    title,
-    setErrorCb,
-  }: {
+  signUp: (data: {
     email: string;
     password: string;
     fullName: string;
     title: string;
     setErrorCb: SetErrorCallback;
   }) => void;
-  verifyEmail: ({
-    token,
-    setErrorCb,
-  }: {
-    token: string;
-    setErrorCb: SetErrorCallback;
-  }) => void;
-  requestPasswordReset: ({
-    email,
-    setErrorCb,
-  }: {
+  verifyEmail: (data: { token: string; setErrorCb: SetErrorCallback }) => void;
+  requestPasswordReset: (data: {
     email: string;
     setErrorCb: SetErrorCallback;
   }) => void;
-  resendVerificationEmail: ({
-    email,
-    setErrorCb,
-  }: {
+  resendVerificationEmail: (data: {
     email: string;
     setErrorCb: SetErrorCallback;
   }) => Promise<AuthResponse>;
-  validatePasswordReset: ({
-    email,
-    token,
-    setErrorCb,
-  }: {
+  validatePasswordReset: (data: {
     email: string;
     token: string;
     setErrorCb: SetErrorCallback;
   }) => void;
-  resetPassword: ({
-    email,
-    token,
-    newPassword,
-    setErrorCb,
-  }: {
+  resetPassword: (data: {
     email: string;
     token: string;
     newPassword: string;
     setErrorCb: SetErrorCallback;
   }) => void;
   handleGoogleAuth: () => void;
-  setInAppPin: ({
-    pin,
-    setErrorCb,
-    onSuccess,
-  }: {
+  setInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
-  verifyInAppPin: ({
-    pin,
-    setErrorCb,
-    onSuccess,
-  }: {
+  verifyInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
-  updateInAppPin: ({
-    oldPin,
-    newPin,
-    confirmNewPin,
-    setErrorCb,
-    onSuccess,
-  }: {
+  updateInAppPin: (data: {
     oldPin: string;
     newPin: string;
     confirmNewPin: string;
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
-  changePassword: ({
-    oldPassword,
-    newPassword,
-    setErrorCb,
-    onSuccess,
-  }: {
+  requestPinReset: (data: {
+    onSuccess: () => void;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  validatePinResetOtp: (data: {
+    otp: string;
+    onSuccess: () => void;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  resetPinWithOtp: (data: {
+    otp: string;
+    newPin: string;
+    confirmNewPin: string;
+    onSuccess: () => void;
+    setErrorCb: SetErrorCallback;
+  }) => void;
+  changePassword: (data: {
     oldPassword: string;
     newPassword: string;
     setErrorCb: SetErrorCallback;
@@ -151,6 +117,9 @@ type AuthContextType = {
   changePassword: AuthFnTypes["changePassword"];
   setInAppPin: AuthFnTypes["setInAppPin"];
   verifyInAppPin: AuthFnTypes["verifyInAppPin"];
+  requestPinReset: AuthFnTypes["requestPinReset"];
+  validatePinResetOtp: AuthFnTypes["validatePinResetOtp"];
+  resetPinWithOtp: AuthFnTypes["resetPinWithOtp"];
   updateInAppPin: AuthFnTypes["updateInAppPin"];
 };
 
@@ -477,6 +446,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     onSuccess();
   };
+
   const verifyInAppPin: AuthFnTypes["verifyInAppPin"] = async ({
     pin,
     setErrorCb,
@@ -484,7 +454,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.setInAppPin(pin)
+      auth.verifyInAppPin(pin)
     );
     console.log("verify in app pin", requestData);
     if (!requestData.success) {
@@ -504,6 +474,54 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
+    );
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+  const requestPinReset: AuthFnTypes["requestPinReset"] = async ({
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.requestPinReset()
+    );
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+
+  const validatePinResetOtp: AuthFnTypes["validatePinResetOtp"] = async ({
+    otp,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.validatePinResetOtp(otp)
+    );
+    if (!requestData.success) {
+      setErrorCb(requestData.message);
+      return;
+    }
+    onSuccess();
+  };
+
+  const resetPinWithOtp: AuthFnTypes["resetPinWithOtp"] = async ({
+    otp,
+    newPin,
+    confirmNewPin,
+    setErrorCb,
+    onSuccess,
+  }) => {
+    setErrorCb("");
+    const requestData = await authTryCatch<AuthResponse>(() =>
+      auth.resetInAppPin({ otp, newPin, confirmNewPin })
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -547,6 +565,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setInAppPin,
     updateInAppPin,
     verifyInAppPin,
+    requestPinReset,
+    validatePinResetOtp,
+    resetPinWithOtp,
     changePassword,
   };
   return (

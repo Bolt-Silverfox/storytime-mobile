@@ -23,12 +23,7 @@ const auth = {
     return await response.json();
   },
 
-  signup: async ({
-    email,
-    password,
-    title,
-    fullName,
-  }: {
+  signup: async (data: {
     email: string;
     password: string;
     title: string;
@@ -39,7 +34,7 @@ const auth = {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email, password, title, fullName }),
+      body: JSON.stringify(data),
     });
     return response.json();
   },
@@ -129,6 +124,39 @@ const auth = {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(data),
+    });
+    return await response.json();
+  },
+  requestPinReset: async () => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin/request-reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await response.json();
+  },
+  resetInAppPin: async (data: {
+    otp: string;
+    newPin: string;
+    confirmNewPin: string;
+  }) => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin/reset-with-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return await response.json();
+  },
+  validatePinResetOtp: async (otp: string) => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin/validate-otp`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ otp }),
     });
     return await response.json();
   },
