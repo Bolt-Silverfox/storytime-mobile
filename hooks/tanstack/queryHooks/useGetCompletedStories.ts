@@ -38,7 +38,7 @@ const useGetCompletedStories = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["stories", user?.id],
+    queryKey: ["completedStories", user?.id],
     queryFn: async () => {
       try {
         if (!user) return null;
