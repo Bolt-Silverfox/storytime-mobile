@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import {
+  Alert,
   Image,
   ImageBackground,
   Pressable,
@@ -14,6 +15,8 @@ import {
 } from "../../../Navigation/PersonalizeKidNavigator";
 import Icon from "../../../components/Icon";
 import colours from "../../../colours";
+import useCreateStory from "../../../hooks/tanstack/mutationHooks/useCreateStory";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 type RoutePropTypes = RouteProp<
   PersonalizeKidNavigatorParamList,
@@ -23,6 +26,12 @@ type RoutePropTypes = RouteProp<
 const CustomizeKidsStoryPreviewScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
+  const { mutate, isPending } = useCreateStory({
+    kidId: params.childId,
+    onSuccess: () => {
+      Alert.alert("Story created successfully");
+    },
+  });
   return (
     <View className="flex flex-1 bg-bgLight pb-5">
       <ScrollView
@@ -81,16 +90,13 @@ const CustomizeKidsStoryPreviewScreen = () => {
           </View>
         </ImageBackground>
         <ChildButton
-          onPress={() =>
-            navigator.navigate("customizeStory", {
-              childId: params.childId,
-            })
-          }
+          onPress={mutate}
           disabled={false}
           icon="ArrowRight"
           text="See sample story"
         />
       </ScrollView>
+      <LoadingOverlay visible={isPending} />
     </View>
   );
 };
