@@ -4,6 +4,29 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 
+type GenerateStory = {
+  ageMax: number;
+  ageMin: number;
+  aiGenerated: boolean;
+  audioUrl: string;
+  coverImageUrl: string;
+  createdAt: string;
+  creatorKidId: string;
+  deletedAt: null | string;
+  description: string;
+  difficultyLevel: number;
+  id: string;
+  isDeleted: boolean;
+  isInteractive: boolean;
+  language: string;
+  questions: {};
+  recommended: boolean;
+  textContent: string;
+  themes: {};
+  title: string;
+  updatedAt: string;
+};
+
 const useCreateStory = ({
   kidId,
   onSuccess,
@@ -13,12 +36,14 @@ const useCreateStory = ({
 }) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (data: { theme: string; category?: string }) => {
       const url = `${BASE_URL}/stories/generate/kid/${kidId}`;
       const request = await apiFetch(url, {
         method: "POST",
+        body: JSON.stringify({ ...data, kidId }),
       });
-      const response: QueryResponse = await request.json();
+      console.log("request", request);
+      const response: QueryResponse<GenerateStory> = await request.json();
       console.log("generate story response", response);
       if (!response.success) throw new Error(response.message);
       return response;

@@ -17,6 +17,7 @@ import Icon from "../../../components/Icon";
 import colours from "../../../colours";
 import useCreateStory from "../../../hooks/tanstack/mutationHooks/useCreateStory";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 
 type RoutePropTypes = RouteProp<
   PersonalizeKidNavigatorParamList,
@@ -26,6 +27,7 @@ type RoutePropTypes = RouteProp<
 const CustomizeKidsStoryPreviewScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
+  const { storyTheme, themeImage, heroName } = useCustomizeStory();
   const { mutate, isPending } = useCreateStory({
     kidId: params.childId,
     onSuccess: () => {
@@ -55,7 +57,7 @@ const CustomizeKidsStoryPreviewScreen = () => {
                 </Text>
                 <View className="relative flex flex-row items-center">
                   <Text className="rounded-full flex-1 text-black  text-3xl font-[quilka]">
-                    Timmy
+                    {heroName}
                   </Text>
                 </View>
               </View>
@@ -64,16 +66,13 @@ const CustomizeKidsStoryPreviewScreen = () => {
                   Story Theme
                 </Text>
                 <View className="bg-purple/20 border-4 border-purple rounded-2xl flex flex-col justify-center items-center py-9">
-                  <Image
-                    source={require("../../../assets/images/castle.png")}
-                    className="size-[100px]"
-                  />
+                  <Image source={themeImage} className="size-[100px]" />
                 </View>
                 <View className="bg-[#ECC607] rounded-2xl p-4 flex flex-row gap-x-6 items-center">
                   <Icon name="OctagonAlert" />
                   <Text className="font-[abeezee] text-xs flex-1">
                     The hero name in every story will be automatically changed
-                    to {"Tim"}.
+                    to {heroName}.
                   </Text>
                 </View>
               </View>
@@ -90,7 +89,11 @@ const CustomizeKidsStoryPreviewScreen = () => {
           </View>
         </ImageBackground>
         <ChildButton
-          onPress={mutate}
+          onPress={() =>
+            mutate({
+              theme: storyTheme,
+            })
+          }
           disabled={false}
           icon="ArrowRight"
           text="See sample story"
