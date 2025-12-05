@@ -29,15 +29,12 @@ const useAddParentFavorite = (redirect?: () => void) => {
                 body: JSON.stringify({ storyId }),
                 headers: { "Content-Type": "application/json" },
             });
-            console.log("📥 Raw response:", response);
             const json: ParentFavoriteResponse = await response
                 .json()
                 .catch(() => ({ success: false, message: "Invalid response" }));
 
-            console.log("📥 Parsed JSON:", json);
-
             if (!response.ok || !json?.success) {
-                console.log("❌ Error response:", json);
+                console.log("Error response:", json);
                 throw new Error(json?.message || `Request failed: ${response.status}`);
             }
 
