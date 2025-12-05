@@ -59,7 +59,6 @@ const KidStories = ({ id }: { id: string }) => {
             <Text className="font-[abeezee] text-xl">{item.title}</Text>
             <Text className="font-[abeezee] text-base">{item.description}</Text>
           </View>
-          <Text>hi</Text>
         </Pressable>
       )}
     />
