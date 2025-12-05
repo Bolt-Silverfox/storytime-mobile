@@ -155,7 +155,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigator = useNavigation<RootNavigatorProp>();
 
   useEffect(() => {
-    console.log("web client id", WEB_CLIENT_ID);
     GoogleSignin.configure({
       iosClientId: IOS_CLIENT_ID,
       webClientId: WEB_CLIENT_ID,
