@@ -1,5 +1,4 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
 import {
   Image,
   ImageBackground,
@@ -17,6 +16,7 @@ import colours from "../../../colours";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ChildButton from "../../../components/UI/ChildButton";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 
 type RoutePropTypes = RouteProp<PersonalizeKidNavigatorParamList, "index">;
@@ -24,10 +24,14 @@ const PersonalizeStoriesIndex = () => {
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
   const { params } = useRoute<RoutePropTypes>();
   const { data, isLoading, error, refetch } = useGetKidById(params.childId);
-  const [heroName, setHeroName] = useState("");
-  const [selectedGender, setSelectedGender] = useState<
-    "me" | "boy" | "girl" | "animal"
-  >("me");
+  const {
+    setAvatarSource,
+    avatarSource,
+    heroName,
+    setHeroName,
+    setHeroGender,
+    heroGender,
+  } = useCustomizeStory();
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   if (error)
@@ -84,8 +88,11 @@ const PersonalizeStoriesIndex = () => {
           </Text>
           <View className="flex items-center justify-center flex-wrap flex-row gap-4 mb-9">
             <Pressable
-              onPress={() => setSelectedGender("me")}
-              className={`border-4 rounded-lg w-[47%]  ${selectedGender === "me" ? "border-purple bg-purple/20" : "border-black/10"}`}
+              onPress={() => {
+                setHeroGender("me");
+                setAvatarSource({ uri: data?.avatar?.url });
+              }}
+              className={`border-4 rounded-lg w-[47%]  ${heroGender === "me" ? "border-purple bg-purple/20" : "border-black/10"}`}
             >
               <Image
                 className="max-h-[172px] min-h-[150px] min-w-[150px] max-w-[150px]"
@@ -99,8 +106,11 @@ const PersonalizeStoriesIndex = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => setSelectedGender("boy")}
-              className={`border-4 rounded-lg w-[47%]  ${selectedGender === "boy" ? "border-purple bg-purple/20" : "border-black/10"}`}
+              onPress={() => {
+                setAvatarSource(require("../../../assets/images/boy.png"));
+                setHeroGender("boy");
+              }}
+              className={`border-4 rounded-lg w-[47%]  ${heroGender === "boy" ? "border-purple bg-purple/20" : "border-black/10"}`}
             >
               <Image
                 className="max-h-[172px] min-h-[150px] min-w-[150px] max-w-[150px]"
@@ -110,8 +120,11 @@ const PersonalizeStoriesIndex = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => setSelectedGender("girl")}
-              className={`border-4 rounded-lg w-[47%]  ${selectedGender === "girl" ? "border-purple bg-purple/20" : "border-black/10"}`}
+              onPress={() => {
+                setAvatarSource(require("../../../assets/images/girl.png"))
+                setHeroGender("girl");
+              }}
+              className={`border-4 rounded-lg w-[47%]  ${heroGender === "girl" ? "border-purple bg-purple/20" : "border-black/10"}`}
             >
               <Image
                 className="max-h-[172px] min-h-[150px] min-w-[150px] max-w-[150px]"
@@ -121,8 +134,11 @@ const PersonalizeStoriesIndex = () => {
             </Pressable>
 
             <Pressable
-              onPress={() => setSelectedGender("animal")}
-              className={`border-4 rounded-lg w-[47%]  ${selectedGender === "animal" ? "border-purple bg-purple/20" : "border-black/10"}`}
+              onPress={() => {
+                setAvatarSource(require("../../../assets/images/animal.png"))
+                setHeroGender("animal");
+              }}
+              className={`border-4 rounded-lg w-[47%]  ${heroGender === "animal" ? "border-purple bg-purple/20" : "border-black/10"}`}
             >
               <Image
                 className="max-h-[172px] min-h-[150px] min-w-[150px] max-w-[150px]"
@@ -138,7 +154,7 @@ const PersonalizeStoriesIndex = () => {
               childId: params.childId,
             })
           }
-          disabled={!heroName.length}
+          disabled={!heroName.length || !avatarSource}
           icon="ArrowRight"
           text="Proceed"
         />
