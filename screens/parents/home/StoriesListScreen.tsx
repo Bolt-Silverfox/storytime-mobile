@@ -15,9 +15,7 @@ import {
 } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
-import useGetStories, {
-  Story,
-} from "../../../hooks/tanstack/queryHooks/useGetStories";
+import { Story } from "../../../hooks/tanstack/queryHooks/useGetStories";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import {
@@ -25,16 +23,14 @@ import {
   ParntHomeNavigatorProp,
 } from "../../../Navigation/ParentHomeNavigator";
 import { ChevronLeft, Funnel, Heart, Search } from "lucide-react-native";
-import CustomButton from "../../../components/UI/CustomButton";
 import ParentFooter from "../../../components/parents/ParentFooter";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
-import useAddFavorites from "../../../hooks/tanstack/mutationHooks/useAddFavorites";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import useAddParentFavorite from "../../../hooks/tanstack/mutationHooks/useAddParentFavorites";
 import useGetParentFavorites from "../../../hooks/tanstack/queryHooks/useGetParentFavorites";
 import useDeleteParentFavorite from "../../../hooks/tanstack/mutationHooks/useDeleteParentFavorite";
+import useGetStoriesByCategory from "../../../hooks/tanstack/queryHooks/useGetStoriesByCategory";
 
 type StoriesRouteProp = RouteProp<ParentHomeNavigatorParamList, "storiesList">;
 
@@ -95,14 +91,20 @@ const StoriesListScreen: React.FC = () => {
     );
   }
 
-  const storiesResult = useGetStories(String(chosenKidId));
+  const storiesResult = useGetStoriesByCategory(String(categoryId));
   const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
   const FAVORITE_IMG = require("../../../assets/parents/favorite.png");
 
-  // normalize to an array and optional loading/error flags
-  const stories: Story[] = Array.isArray(storiesResult)
-    ? (storiesResult as Story[])
-    : ((storiesResult?.data as Story[]) ?? []);
+  const stories: Story[] = (() => {
+    const r: any = storiesResult;
+    if (Array.isArray(r)) return r;
+    if (Array.isArray(r?.data)) return r.data;
+    if (Array.isArray(r?.data?.data)) return r.data.data;
+    console.warn("useGetStories: unexpected shape ->", r);
+    return [];
+  })();
+
+  console.log("Normalized stories length:", stories.length);
 
   const isLoadingStories =
     !Array.isArray(storiesResult) &&
@@ -123,40 +125,8 @@ const StoriesListScreen: React.FC = () => {
       />
     );
 
-  //Fixed filter logic: return true when no category filter
-  const filtered = (stories ?? []).filter((s: any) => {
-    if (categoryId) {
-      if (Array.isArray(s.categories)) {
-        return s.categories.some(
-          (c: any) => String(c.id) === String(categoryId)
-        );
-      }
-      if (s.categoryId) return String(s.categoryId) === String(categoryId);
-      if (categoryName && s.category)
-        return String(s.category) === String(categoryName);
-      return false;
-    }
-
-    if (categoryName) {
-      if (Array.isArray(s.categories)) {
-        return s.categories.some(
-          (c: any) =>
-            String(c.name).toLowerCase() === String(categoryName).toLowerCase()
-        );
-      }
-      if (s.category)
-        return (
-          String(s.category).toLowerCase() ===
-          String(categoryName).toLowerCase()
-        );
-      return false;
-    }
-
-    return true;
-  });
-
   // finalStories is filtered by difficulty (if selected)
-  let finalStories = filtered;
+  let finalStories = stories;
   if (difficultyFilter) {
     finalStories = finalStories.filter(
       (s) => s.difficultyLevel === difficultyFilter
@@ -264,7 +234,7 @@ const StoriesListScreen: React.FC = () => {
           </Text>
 
           {/* Horizontal carousel */}
-          {filtered.length === 0 ? (
+          {stories.length === 0 ? (
             <View className="items-center justify-center px-4 py-8">
               <Text className="font-[abeezee] text-lg text-text">
                 No stories found for this category.
@@ -272,7 +242,7 @@ const StoriesListScreen: React.FC = () => {
             </View>
           ) : (
             <FlatList
-              data={filtered}
+              data={stories}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
@@ -283,24 +253,6 @@ const StoriesListScreen: React.FC = () => {
               renderItem={({ item }: { item: Story }) => {
                 const isFavorited = favoriteIds.has(String(item.id));
 
-                const handleToggleFavorite = () => {
-                  if (!item?.id) {
-                    console.warn("No story id available:", item);
-                    return;
-                  }
-
-                  addFavorite.mutate(item.id, {
-                    onError: (err) => {
-                      console.warn("Add favorite failed", err);
-                      Alert.alert("Could not add favorite");
-                    },
-                    onSuccess: () => {
-                      Alert.alert("Story was successfully added to favorites");
-                      // optionally refetch favorites to update UI
-                      refetchFavs?.();
-                    },
-                  });
-                };
 
                 return (
                   <TouchableOpacity
