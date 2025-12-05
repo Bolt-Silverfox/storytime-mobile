@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import {
   ActivityIndicator,
   Image,
+  ImageBackground,
   Pressable,
   ScrollView,
   Text,
@@ -76,33 +77,40 @@ const KidsLibraryScreen = () => {
 
   return (
     <ScrollView className="flex-1 bg-bg-light">
-      <View className="flex bg-[#866EFF]  items-center gap-x-3 pb-4 h-[60vh]">
-        <Text
-          style={[defaultStyles.heading, { fontSize: 24, color: "#fff" }]}
-          className="mt-3 mb-11"
-        >
-          Library
-        </Text>
-        <Image
-          source={{ uri: buddyData?.imageUrl }}
-          className=""
-          style={{ width: 180, height: 172 }}
-        />
-        <Text
-          style={[defaultStyles.heading, { fontSize: 24, color: "#fff" }]}
-          className="mb-[6px] mt-[16px]"
-        >
-          Hey! {data.name}
-        </Text>
-        <Text
-          style={[defaultStyles.defaultText, { color: "#fff" }]}
-          className="max-w-[286px] text-center"
-        >
-          I am here to help you out. Pick a story below and I will save it for
-          you.
-        </Text>
-      </View>
-      <View style={{ position: "relative", top: -150 }}>
+      <ImageBackground
+        source={require("../../../assets/images/story-generation-bg.png")}
+        className=" bg-contain  w-full "
+        resizeMode="cover"
+      >
+        <View className="flex   items-center gap-x-3 pb-4 h-[60vh]">
+          <Text
+            style={[defaultStyles.heading, { fontSize: 24, color: "#fff" }]}
+            className="mt-3 mb-11"
+          >
+            Library
+          </Text>
+          <Image
+            source={{ uri: buddyData?.imageUrl }}
+            className=""
+            style={{ width: 180, height: 172 }}
+          />
+          <Text
+            style={[defaultStyles.heading, { fontSize: 30, color: "#fff" }]}
+            className="mb-[6px] mt-[16px]"
+          >
+            Hey! {data.name}
+          </Text>
+          <Text
+            style={[defaultStyles.defaultText, { color: "#fff", fontSize: 16 }]}
+            className="max-w-[286px] text-center"
+          >
+            I am here to help you out. Pick a story below and I will save it for
+            you.
+          </Text>
+        </View>
+      </ImageBackground>
+
+      <View style={{ position: "relative", top: -150, marginBottom: -140 }}>
         <Suspense fallback={<ActivityIndicator size={"large"} />}>
           {/* <KidStories id={params.childId} /> */}
           <View className="flex-row flex-wrap gap-5 justify-center">

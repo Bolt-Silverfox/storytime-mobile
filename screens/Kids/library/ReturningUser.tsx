@@ -6,6 +6,7 @@ import {
   Pressable,
   Image,
   ScrollView,
+  ImageBackground,
 } from "react-native";
 import React, { useState } from "react";
 import defaultStyles from "../../../styles";
@@ -116,7 +117,7 @@ export default function ReturningUser() {
       <View className="mb-[32]">
         <View className="flex-row mb-[24] justify-between w-full">
           <Text
-            style={[defaultStyles.heading, { fontSize: 20, color: "#fff" }]}
+            style={[defaultStyles.heading, { fontSize: 20, color: "black" },title == 'Continue Reading' && {color:'white'}]}
           >
             {title}
           </Text>
@@ -144,7 +145,7 @@ export default function ReturningUser() {
           />
         ) : (
           <Text
-            style={[defaultStyles.defaultText, { color: "#fff", fontSize: 14 }]}
+            style={[defaultStyles.defaultText, { color: "black", fontSize: 14 }]}
           >
             No stories yet
           </Text>
@@ -176,7 +177,15 @@ export default function ReturningUser() {
   }
 
   return (
-    <View className="flex-1 bg-[#866EFF] items-center gap-x-3 pb-4 px-[16]">
+    <View className="flex-1  items-center gap-x-3 pb-4 ">
+      <ImageBackground
+        source={require("../../../assets/images/story-generation-bg.png")}
+        className=" bg-contain h-[572]  w-full "
+        style={{ position: "absolute" }}
+        resizeMode="cover"
+      >
+        <View className="flex bg-[#866EFF] h items-center gap-x-3 pb-4 h-[45vh]" />
+      </ImageBackground>
       <Text
         style={[defaultStyles.heading, { fontSize: 24, color: "#fff" }]}
         className="py-3"
@@ -184,7 +193,7 @@ export default function ReturningUser() {
         Library
       </Text>
 
-      <ScrollView showsVerticalScrollIndicator={false} className="w-full">
+      <ScrollView showsVerticalScrollIndicator={false} className="w-full px-4">
         {/* Search Bar */}
         <View className="border mt-[24] mb-[40] border-white w-full py-1 items-center flex-row rounded-full px-3 gap-2">
           <Search color={"white"} size={24} className="self-center" />
@@ -194,7 +203,7 @@ export default function ReturningUser() {
             placeholder="Search your library"
             placeholderTextColor="#ffffff80"
             style={{ color: "white" }}
-            className="h-10 flex-1"
+            className="h-10  placeholder:justify-center flex-1"
           />
         </View>
 
