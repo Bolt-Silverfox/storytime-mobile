@@ -10,12 +10,12 @@ import {
 import {
   PersonalizeKidNavigatorParamList,
   PersonalizeKidsNavigatorProps,
-  useCustomizeStory,
 } from "../../../Navigation/PersonalizeKidNavigator";
 import colours from "../../../colours";
 import Icon from "../../../components/Icon";
 import PageTitle from "../../../components/PageTitle";
 import ChildButton from "../../../components/UI/ChildButton";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 
 const themes = [
   {
@@ -53,8 +53,14 @@ type RoutePropTypes = RouteProp<
 const CustomizeKidStory = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
-  const { heroName, setHeroName, storyTheme, setStoryTheme } =
-    useCustomizeStory();
+  const {
+    heroName,
+    setHeroName,
+    storyTheme,
+    setStoryTheme,
+    avatarSource,
+    setThemeImage,
+  } = useCustomizeStory();
   return (
     <View className="flex-1 flex bg-bgLight pb-5">
       <PageTitle title="Customize Story" goBack={() => navigator.goBack()} />
@@ -63,7 +69,7 @@ const CustomizeKidStory = () => {
         className="flex flex-1 py-5 mx-4"
         contentContainerClassName="min-h-full  pb-48"
       >
-        <View className="bg-white  border border-black/10 px-4 rounded-2xl flex flex-col  py-4">
+        <View className="bg-white relative  border border-black/10 px-4 rounded-2xl flex flex-col  py-4">
           <Text className="text-text text-base font-[abeezee]">
             Hero's name
           </Text>
@@ -72,11 +78,12 @@ const CustomizeKidStory = () => {
               value={heroName}
               onChangeText={setHeroName}
               cursorColor={colours.primary}
-              className="rounded-full flex-1 text-black  text-3xl font-[quilka]  border-black/20 px-4"
+              className="rounded-full flex-1 text-black  text-3xl font-[quilka]  border-black/20 px-12"
             />
-            <Pressable className="absolute top-4 right-4">
+            <Pressable className="absolute top-2 right-4">
               <Icon name="Pen" />
             </Pressable>
+            <Image className="absolute size-10 top-1.5" source={avatarSource} />
           </Pressable>
         </View>
         <View className="mt-10">
@@ -88,7 +95,10 @@ const CustomizeKidStory = () => {
             {themes.map((theme) => (
               <Pressable
                 key={theme.name}
-                onPress={() => setStoryTheme(theme.name)}
+                onPress={() => {
+                  setStoryTheme(theme.name);
+                  setThemeImage(theme.imageUrl);
+                }}
                 className={`border-4 w-[47%] rounded-lg px-3 py-5 ${storyTheme === theme.name ? "border-purple bg-purple/20" : "border-black/10"}`}
               >
                 <Image
@@ -109,7 +119,7 @@ const CustomizeKidStory = () => {
             childId: params.childId,
           })
         }
-        disabled={!storyTheme}
+        disabled={!storyTheme || !heroName}
         text="Create theme"
         icon="ArrowRight"
       />

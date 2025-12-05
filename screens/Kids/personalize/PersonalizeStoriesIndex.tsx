@@ -1,5 +1,4 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect } from "react";
 import {
   Image,
   ImageBackground,
@@ -12,12 +11,12 @@ import {
 import {
   PersonalizeKidNavigatorParamList,
   PersonalizeKidsNavigatorProps,
-  useCustomizeStory,
 } from "../../../Navigation/PersonalizeKidNavigator";
 import colours from "../../../colours";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ChildButton from "../../../components/UI/ChildButton";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 
 type RoutePropTypes = RouteProp<PersonalizeKidNavigatorParamList, "index">;
@@ -122,7 +121,7 @@ const PersonalizeStoriesIndex = () => {
 
             <Pressable
               onPress={() => {
-                require("../../../assets/images/girl.png");
+                setAvatarSource(require("../../../assets/images/girl.png"))
                 setHeroGender("girl");
               }}
               className={`border-4 rounded-lg w-[47%]  ${heroGender === "girl" ? "border-purple bg-purple/20" : "border-black/10"}`}
@@ -136,7 +135,7 @@ const PersonalizeStoriesIndex = () => {
 
             <Pressable
               onPress={() => {
-                require("../../../assets/images/animal.png");
+                setAvatarSource(require("../../../assets/images/animal.png"))
                 setHeroGender("animal");
               }}
               className={`border-4 rounded-lg w-[47%]  ${heroGender === "animal" ? "border-purple bg-purple/20" : "border-black/10"}`}

@@ -42,7 +42,6 @@ const useGetStories = (id: string) => {
     queryKey: ["getStories", id],
     queryFn: async () => {
       const url = `${BASE_URL}/stories?kidId=${id}`;
-      console.log("kid id", id);
 
       const request = await apiFetch(url, {
         method: "GET",
