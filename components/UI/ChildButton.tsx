@@ -5,7 +5,7 @@ import Icon from "../Icon";
 type IconName = keyof typeof icons;
 
 type Props = {
-  disabled: boolean;
+  disabled?: boolean;
   onPress: () => void;
   text?: string;
   icon?: IconName;

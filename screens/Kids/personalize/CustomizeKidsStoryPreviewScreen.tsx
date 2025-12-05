@@ -30,10 +30,17 @@ const CustomizeKidsStoryPreviewScreen = () => {
   const { storyTheme, themeImage, heroName } = useCustomizeStory();
   const { mutate, isPending } = useCreateStory({
     kidId: params.childId,
-    onSuccess: () => {
-      Alert.alert("Story created successfully");
-    },
+    // onSuccess: () => {
+    // Alert.alert("Story created successfully");
+
+    // },
   });
+
+  const onMutate = () => {
+    mutate({
+      theme: storyTheme,
+    });
+  };
   return (
     <View className="flex flex-1 bg-bgLight pb-5">
       <ScrollView
@@ -89,11 +96,7 @@ const CustomizeKidsStoryPreviewScreen = () => {
           </View>
         </ImageBackground>
         <ChildButton
-          onPress={() =>
-            mutate({
-              theme: storyTheme,
-            })
-          }
+          onPress={onMutate}
           disabled={false}
           icon="ArrowRight"
           text="See sample story"

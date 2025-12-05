@@ -3,6 +3,8 @@ import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
+import { useNavigation } from "@react-navigation/native";
+import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 
 type GenerateStory = {
   ageMax: number;
@@ -35,6 +37,8 @@ const useCreateStory = ({
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  console.log("kid id", kidId);
   return useMutation({
     mutationFn: async (data: { theme: string; category?: string }) => {
       const url = `${BASE_URL}/stories/generate/kid/${kidId}`;
@@ -42,16 +46,21 @@ const useCreateStory = ({
         method: "POST",
         body: JSON.stringify({ ...data, kidId }),
       });
-      console.log("request", request);
       const response: QueryResponse<GenerateStory> = await request.json();
-      console.log("generate story response", response);
+      console.log("response", response);
       if (!response.success) throw new Error(response.message);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
+      console.log("data onsuccess", data);
       queryClient.invalidateQueries({
         queryKey: ["generatedStories"],
       });
+      navigator.navigate("plainStories", {
+        storyId: data.data.id,
+        mode: "plain",
+      });
+
       onSuccess?.();
     },
     onError: (err) => {
