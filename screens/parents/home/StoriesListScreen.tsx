@@ -1,5 +1,5 @@
 // screens/parents/StoriesListScreen.tsx
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   View,
   Text,
@@ -10,12 +10,12 @@ import {
   StyleSheet,
   Pressable,
   Alert,
+  GestureResponderEvent,
+  ActivityIndicator,
 } from "react-native";
 import { useRoute, RouteProp, useNavigation } from "@react-navigation/native";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
-import useGetStories, {
-  Story,
-} from "../../../hooks/tanstack/queryHooks/useGetStories";
+import { Story } from "../../../hooks/tanstack/queryHooks/useGetStories";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import {
@@ -23,13 +23,14 @@ import {
   ParntHomeNavigatorProp,
 } from "../../../Navigation/ParentHomeNavigator";
 import { ChevronLeft, Funnel, Heart, Search } from "lucide-react-native";
-import CustomButton from "../../../components/UI/CustomButton";
 import ParentFooter from "../../../components/parents/ParentFooter";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
-import useAddFavorites from "../../../hooks/tanstack/mutationHooks/useAddFavorites";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import useAddParentFavorite from "../../../hooks/tanstack/mutationHooks/useAddParentFavorites";
+import useGetParentFavorites from "../../../hooks/tanstack/queryHooks/useGetParentFavorites";
+import useDeleteParentFavorite from "../../../hooks/tanstack/mutationHooks/useDeleteParentFavorite";
+import useGetStoriesByCategory from "../../../hooks/tanstack/queryHooks/useGetStoriesByCategory";
 
 type StoriesRouteProp = RouteProp<ParentHomeNavigatorParamList, "storiesList">;
 
@@ -37,19 +38,41 @@ const StoriesListScreen: React.FC = () => {
   const route = useRoute<StoriesRouteProp>();
   const { categoryId, categoryName, kidId: passedKidId } = route.params ?? {};
   const nav = useNavigation<ParntHomeNavigatorProp>();
-  const [imgFailed, setImgFailed] = useState(false);
   const [difficultyFilter, setDifficultyFilter] = useState<number | null>(1);
   const [showModeModal, setShowModeModal] = useState(false);
   const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
+  const [heartLoading, setHeartLoading] = useState(false);
 
   const {
     data: kids = [],
     isPending: kidsLoading,
     error: kidsError,
   } = useGetUserKids();
-  const addFavoriteMutation = useAddFavorites();
+  const addFavorite = useAddParentFavorite();
+  const deleteFavorite = useDeleteParentFavorite();
 
   const chosenKidId = passedKidId ?? kids[0]?.id ?? undefined;
+
+  // Get parent favorites so we can show which stories are favorited
+  const {
+    data: rawFavorites = [],
+    isLoading: favsLoading,
+    error: favsError,
+    refetch: refetchFavs,
+  } = useGetParentFavorites();
+
+  // Normalize favorites into an array then a set of story ids for O(1) checks
+  const favoritesArray =
+    (rawFavorites as any)?.data ?? (rawFavorites as any) ?? ([] as any[]);
+  const favoriteIds = useMemo(() => {
+    const set = new Set<string>();
+    for (const f of favoritesArray) {
+      const item = (f as any)?.data ?? f;
+      const sid = item?.storyId ?? item?.id ?? item?._id ?? null;
+      if (sid != null) set.add(String(sid));
+    }
+    return set;
+  }, [favoritesArray]);
 
   if (kidsLoading)
     return <LoadingOverlay visible label="Loading children..." />;
@@ -68,13 +91,20 @@ const StoriesListScreen: React.FC = () => {
     );
   }
 
-  const storiesResult = useGetStories(String(chosenKidId));
+  const storiesResult = useGetStoriesByCategory(String(categoryId));
   const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
+  const FAVORITE_IMG = require("../../../assets/parents/favorite.png");
 
-  // normalize to an array and optional loading/error flags
-  const stories: Story[] = Array.isArray(storiesResult)
-    ? (storiesResult as Story[])
-    : ((storiesResult?.data as Story[]) ?? []);
+  const stories: Story[] = (() => {
+    const r: any = storiesResult;
+    if (Array.isArray(r)) return r;
+    if (Array.isArray(r?.data)) return r.data;
+    if (Array.isArray(r?.data?.data)) return r.data.data;
+    console.warn("useGetStories: unexpected shape ->", r);
+    return [];
+  })();
+
+  console.log("Normalized stories length:", stories.length);
 
   const isLoadingStories =
     !Array.isArray(storiesResult) &&
@@ -95,40 +125,8 @@ const StoriesListScreen: React.FC = () => {
       />
     );
 
-  //Fixed filter logic: return true when no category filter
-  const filtered = (stories ?? []).filter((s: any) => {
-    if (categoryId) {
-      if (Array.isArray(s.categories)) {
-        return s.categories.some(
-          (c: any) => String(c.id) === String(categoryId)
-        );
-      }
-      if (s.categoryId) return String(s.categoryId) === String(categoryId);
-      if (categoryName && s.category)
-        return String(s.category) === String(categoryName);
-      return false;
-    }
-
-    if (categoryName) {
-      if (Array.isArray(s.categories)) {
-        return s.categories.some(
-          (c: any) =>
-            String(c.name).toLowerCase() === String(categoryName).toLowerCase()
-        );
-      }
-      if (s.category)
-        return (
-          String(s.category).toLowerCase() ===
-          String(categoryName).toLowerCase()
-        );
-      return false;
-    }
-
-    return true;
-  });
-
   // finalStories is filtered by difficulty (if selected)
-  let finalStories = filtered;
+  let finalStories = stories;
   if (difficultyFilter) {
     finalStories = finalStories.filter(
       (s) => s.difficultyLevel === difficultyFilter
@@ -140,6 +138,58 @@ const StoriesListScreen: React.FC = () => {
     if (level === 2) return "5–8";
     if (level === 3) return "9–12";
     return "";
+  };
+
+  const toggleFavorite = (storyId: string, e?: GestureResponderEvent) => {
+    if (!storyId) return;
+
+    e?.stopPropagation();
+
+    if (heartLoading) return;
+    setHeartLoading(true);
+
+    const loading =
+      addFavorite.status === "pending" || deleteFavorite.status === "pending";
+    if (loading) return;
+
+    const isFav = favoriteIds.has(String(storyId));
+
+    if (isFav) {
+      // delete
+      deleteFavorite.mutate(storyId, {
+        onSuccess: () => {
+          refetchFavs?.();
+        },
+        onError: (err) => {
+          console.warn("Delete favorite failed", err);
+          Alert.alert("Could not remove favorite");
+        },
+        onSettled: () => setHeartLoading(false),
+      });
+    } else {
+      // add
+      addFavorite.mutate(storyId, {
+        onSuccess: () => {
+          refetchFavs?.();
+        },
+        onError: (err) => {
+          console.warn("Add favorite failed", err);
+          Alert.alert("Could not add favorite");
+        },
+        onSettled: () => setHeartLoading(false),
+      });
+    }
+  };
+
+  const handleModalSelect = (
+    mode: "plain" | "interactive",
+    storyId: string
+  ) => {
+    setShowModeModal(false);
+    setSelectedStoryId(null);
+
+    const routeName = mode === "plain" ? "plainStories" : "interactiveStories";
+    nav.navigate(routeName, { storyId, mode } as any);
   };
 
   return (
@@ -184,7 +234,7 @@ const StoriesListScreen: React.FC = () => {
           </Text>
 
           {/* Horizontal carousel */}
-          {filtered.length === 0 ? (
+          {stories.length === 0 ? (
             <View className="items-center justify-center px-4 py-8">
               <Text className="font-[abeezee] text-lg text-text">
                 No stories found for this category.
@@ -192,7 +242,7 @@ const StoriesListScreen: React.FC = () => {
             </View>
           ) : (
             <FlatList
-              data={filtered}
+              data={stories}
               horizontal
               showsHorizontalScrollIndicator={false}
               contentContainerStyle={{
@@ -201,32 +251,8 @@ const StoriesListScreen: React.FC = () => {
               }}
               keyExtractor={(s: any) => String(s.id)}
               renderItem={({ item }: { item: Story }) => {
-                const handleToggleFavorite = () => {
-                  if (!passedKidId) {
-                    Alert.alert(
-                      "Select child",
-                      "Please select a child before adding favorites."
-                    );
-                    return;
-                  }
-                  if (!item?.id) {
-                    console.warn("No story id available:", item);
-                    return;
-                  }
-                  addFavoriteMutation.mutate(
-                    { kidId: passedKidId, storyId: item.id },
-                    {
-                      onError: (err) => {
-                        // optional per-call handling
-                        console.warn("Add favorite failed", err);
-                        Alert.alert("Could not add favorite");
-                      },
-                      onSuccess: () => {
-                        Alert.alert("Story was successfully added to faves");
-                      },
-                    }
-                  );
-                };
+                const isFavorited = favoriteIds.has(String(item.id));
+
 
                 return (
                   <TouchableOpacity
@@ -255,14 +281,20 @@ const StoriesListScreen: React.FC = () => {
                       {/* Fav Icon */}
                       <TouchableOpacity
                         className="absolute top-2 right-2 p-4 rounded-full"
-                        onPress={handleToggleFavorite}
+                        onPress={(e) => toggleFavorite(String(item.id), e)}
                         style={{
                           shadowColor: "#000",
                           shadowOpacity: 0.2,
                           shadowRadius: 3,
                         }}
                       >
-                        <Heart color="#fff" />
+                        {heartLoading ? (
+                          <ActivityIndicator size="small" />
+                        ) : isFavorited ? (
+                          <Image source={FAVORITE_IMG} />
+                        ) : (
+                          <Heart color="#fff" />
+                        )}
                       </TouchableOpacity>
                     </View>
 
@@ -335,34 +367,7 @@ const StoriesListScreen: React.FC = () => {
                   }}
                   contentContainerStyle={{ paddingBottom: 16, paddingTop: 8 }}
                   renderItem={({ item }) => {
-                    const handleToggleFavorite = () => {
-                      if (!passedKidId) {
-                        Alert.alert(
-                          "Select child",
-                          "Please select a child before adding favorites."
-                        );
-                        return;
-                      }
-                      if (!item?.id) {
-                        console.warn("No story id available:", item);
-                        return;
-                      }
-                      addFavoriteMutation.mutate(
-                        { kidId: passedKidId, storyId: item.id },
-                        {
-                          onError: (err) => {
-                            // optional per-call handling
-                            console.warn("Add favorite failed", err);
-                            Alert.alert("Could not add favorite");
-                          },
-                          onSuccess: () => {
-                            Alert.alert(
-                              "Story was successfully added to faves"
-                            );
-                          },
-                        }
-                      );
-                    };
+                    const isFavorited = favoriteIds.has(String(item.id));
 
                     return (
                       <TouchableOpacity
@@ -391,7 +396,7 @@ const StoriesListScreen: React.FC = () => {
                           {/* Fav Icon */}
                           <TouchableOpacity
                             className="absolute top-2 right-2 p-2 rounded-full"
-                            onPress={handleToggleFavorite}
+                            onPress={(e) => toggleFavorite(String(item.id), e)}
                             style={{
                               shadowColor: "#000",
                               shadowOpacity: 0.15,
@@ -399,7 +404,13 @@ const StoriesListScreen: React.FC = () => {
                               elevation: 3,
                             }}
                           >
-                            <Heart size={18} color="#fff" />
+                            {heartLoading ? (
+                              <ActivityIndicator size="small" />
+                            ) : isFavorited ? (
+                              <Image source={FAVORITE_IMG} />
+                            ) : (
+                              <Heart color="#fff" />
+                            )}
                           </TouchableOpacity>
                         </View>
 
@@ -434,6 +445,7 @@ const StoriesListScreen: React.FC = () => {
             visible={showModeModal}
             onClose={() => setShowModeModal(false)}
             storyId={selectedStoryId}
+            onSelect={handleModalSelect}
           />
         </>
       )}

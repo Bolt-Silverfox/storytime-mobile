@@ -9,6 +9,8 @@ import {
   KidsTabNavigatorParamList,
   KidsTabNavigatorProp,
 } from "../../Navigation/KidsTabNavigator";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import KidAvatar from "../../components/KidAvatar";
 const KidsHomeScreenStories = lazy(
   () => import("../../components/KidsHomeScreenStories")
 );
@@ -17,6 +19,8 @@ type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
 const KidHomeScreen = () => {
   const { params } = useRoute<RouteProps>();
+  const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
+
   const { isPending, error, data, refetch } = useGetKidById(params.childId);
   const {
     data: buddyData,
@@ -44,14 +48,14 @@ const KidHomeScreen = () => {
   return (
     <View style={{ padding: 20 }} className="flex-1">
       <View className="flex flex-row pb-4  items-center gap-x-3">
-        <Image
-          source={
-            data.avatar?.url
-              ? { uri: data.avatar?.url }
-              : require("../../assets/avatars/Avatars-3.png")
+        <KidAvatar
+          uri={data.avatar?.url}
+          size={50}
+          onPress={() =>
+            parentNav.reset({ index: 0, routes: [{ name: "selection" }] })
           }
-          className="size-[50px]"
         />
+       
         <Text className="text-xl font-[abeezee] flex-1">
           Hello, {data.name}
         </Text>

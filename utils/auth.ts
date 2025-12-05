@@ -98,6 +98,50 @@ const auth = {
     });
     return await response.json();
   },
+  setInAppPin: async (pin: string) => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pin }),
+    });
+    return await response.json();
+  },
+  verifyInAppPin: async (pin: string) => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin/verify`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ pin }),
+    });
+    return await response.json();
+  },
+  udpateInAppPin: async (data: {
+    oldPin: string;
+    newPin: string;
+    confirmNewPin: string;
+  }) => {
+    const response = await apiFetch(`${BASE_URL}/user/me/pin/reset`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    return await response.json();
+  },
+  changePassword: async (oldPassword: string, newPassword: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/change-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ oldPassword, newPassword }),
+    });
+    return await response.json();
+  },
 };
 
 export default auth;
