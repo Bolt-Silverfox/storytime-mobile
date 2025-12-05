@@ -41,9 +41,7 @@ const useGetStories = (id?: string) => {
   return useSuspenseQuery({
     queryKey: ["getStories", id],
     queryFn: async () => {
-      const url = `${BASE_URL}/stories/?kidId=${id}`;
-      console.log("kid id", id);
-
+      const url = `${BASE_URL}/stories?kidId=${id}`;
       const request = await apiFetch(url, {
         method: "GET",
       });

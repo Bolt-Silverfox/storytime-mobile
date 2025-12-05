@@ -82,11 +82,11 @@ const UpdateInAppPin = () => {
             focusColor="blue"
           />
         </View>
+        <CustomButton
+          onPress={onSubmit}
+          text={isLoading ? "Loading..." : "Save changes"}
+        />
       </View>
-      <CustomButton
-        onPress={onSubmit}
-        text={isLoading ? "Loading..." : "Save changes"}
-      />
     </View>
   );
 };
