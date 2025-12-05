@@ -1,4 +1,4 @@
-type QueryResponse<T> = {
+type QueryResponse<T = {}> = {
   success: boolean;
   message: string;
   statusCode: number;

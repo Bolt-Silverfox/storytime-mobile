@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import {
+  Alert,
   Image,
   ImageBackground,
   Pressable,
@@ -14,6 +15,9 @@ import {
 } from "../../../Navigation/PersonalizeKidNavigator";
 import Icon from "../../../components/Icon";
 import colours from "../../../colours";
+import useCreateStory from "../../../hooks/tanstack/mutationHooks/useCreateStory";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 
 type RoutePropTypes = RouteProp<
   PersonalizeKidNavigatorParamList,
@@ -23,6 +27,13 @@ type RoutePropTypes = RouteProp<
 const CustomizeKidsStoryPreviewScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
+  const { storyTheme, themeImage, heroName } = useCustomizeStory();
+  const { mutate, isPending } = useCreateStory({
+    kidId: params.childId,
+    onSuccess: () => {
+      Alert.alert("Story created successfully");
+    },
+  });
   return (
     <View className="flex flex-1 bg-bgLight pb-5">
       <ScrollView
@@ -46,7 +57,7 @@ const CustomizeKidsStoryPreviewScreen = () => {
                 </Text>
                 <View className="relative flex flex-row items-center">
                   <Text className="rounded-full flex-1 text-black  text-3xl font-[quilka]">
-                    Timmy
+                    {heroName}
                   </Text>
                 </View>
               </View>
@@ -55,16 +66,13 @@ const CustomizeKidsStoryPreviewScreen = () => {
                   Story Theme
                 </Text>
                 <View className="bg-purple/20 border-4 border-purple rounded-2xl flex flex-col justify-center items-center py-9">
-                  <Image
-                    source={require("../../../assets/images/castle.png")}
-                    className="size-[100px]"
-                  />
+                  <Image source={themeImage} className="size-[100px]" />
                 </View>
                 <View className="bg-[#ECC607] rounded-2xl p-4 flex flex-row gap-x-6 items-center">
                   <Icon name="OctagonAlert" />
                   <Text className="font-[abeezee] text-xs flex-1">
                     The hero name in every story will be automatically changed
-                    to {"Tim"}.
+                    to {heroName}.
                   </Text>
                 </View>
               </View>
@@ -82,8 +90,8 @@ const CustomizeKidsStoryPreviewScreen = () => {
         </ImageBackground>
         <ChildButton
           onPress={() =>
-            navigator.navigate("customizeStory", {
-              childId: params.childId,
+            mutate({
+              theme: storyTheme,
             })
           }
           disabled={false}
@@ -91,6 +99,7 @@ const CustomizeKidsStoryPreviewScreen = () => {
           text="See sample story"
         />
       </ScrollView>
+      <LoadingOverlay visible={isPending} />
     </View>
   );
 };
