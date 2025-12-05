@@ -17,6 +17,7 @@ import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
 import useGenerateStoryAudio from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAudio";
 import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import useRecommendStory from "../../../hooks/tanstack/queryHooks/useRecommendStory";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
 const COVER_HEIGHT = SCREEN_HEIGHT * 0.4; // 40%
@@ -28,6 +29,7 @@ export default function PlainStoryScreen({ route, navigation }: any) {
   const [on, setOn] = useState(false);
   const [imgFailed, setImgFailed] = useState(false);
   const [isRecommendOpen, setIsRecommendOpen] = useState(false);
+  const { mutate: recommendStory } = useRecommendStory();
 
   const coverUri =
     story?.coverImageUrl ??
@@ -301,14 +303,21 @@ useEffect(() => {
         </Text>
       </View>
 
-      <RecommendStoryModal
-        visible={isRecommendOpen}
-        onClose={() => setIsRecommendOpen(false)}
-        storyId={storyId}
-        handleRecommend={(sId, kidId) => {
-          console.log("Recommend story", sId, "for kid", kidId);
+    <RecommendStoryModal
+      visible={isRecommendOpen}
+      onClose={() => setIsRecommendOpen(false)}
+      storyId={storyId}
+      handleRecommend={(sId, kidId) => {
+        if (!sId || !kidId) return;
+        recommendStory(
+          { storyId: sId, kidId }, // ✅ payload
+          {
+            onSuccess: () => alert("Story recommended successfully!"),
+            onError: (err) => alert(err.message),
+            }
+          );
         }}
-      />
+    />
 
       <VoicePickerModal
         visible={voicePickerOpen}
