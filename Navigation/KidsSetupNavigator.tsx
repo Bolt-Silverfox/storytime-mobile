@@ -12,7 +12,7 @@ import StoryReaderScreen from "../screens/Kids/Toddlers/StoryReaderScreen";
 import ChallengeScreen from "../screens/Kids/Toddlers/DailyChallengeIntroScreen";
 
 export type KidsSetupNavigatorParamList = {
-  buddySelectionPage: { childId: string };
+  buddySelectionPage: { childId: string};
   welcomeScreen: { selected: string; childId: string };
   chooseHero: { selected: string; childId: string };
   storyModeSelector: { storyId?: string; story?: any };
