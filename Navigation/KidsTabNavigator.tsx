@@ -17,7 +17,7 @@ import PersonalizeKidNavigator from "./PersonalizeKidNavigator";
 type KidsTabNavigatorParamList = {
   home: { childId: string };
   library: { childId: string };
-  // progress: { childId: string };
+   progress: { childId: string };
   personalize: { childId: string };
   profile: { childId: string };
 };

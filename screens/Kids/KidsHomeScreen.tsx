@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { lazy, Suspense } from "react";
-import { ActivityIndicator, Image, Text, View } from "react-native";
+import { ActivityIndicator, Image, Text, View, Pressable } from "react-native";
 import ErrorComponent from "../../components/ErrorComponent";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
@@ -27,7 +27,7 @@ const KidHomeScreen = () => {
     error: buddyError,
     refetch: refetchBuddy,
   } = useGetStoryBuddyById(data?.storyBuddyId!);
-  const navigation = useNavigation<KidsTabNavigatorProp>();
+  const navigation = useNavigation<any>();
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -59,14 +59,18 @@ const KidHomeScreen = () => {
         <Text className="text-xl font-[abeezee] flex-1">
           Hello, {data.name}
         </Text>
-        <Image
-          source={
-            buddyData?.name === "lumina"
-              ? require("../../assets/avatars/lumina.png")
-              : require("../../assets/avatars/zylo.png")
-          }
-          className="size-[50px]"
-        />
+
+  <Image
+    source={
+      buddyData?.name === "lumina"
+        ? require("../../assets/avatars/lumina.png")
+        : require("../../assets/avatars/zylo.png")
+    }
+    className="size-[50px]"
+  />
+
+
+
       </View>
       <Suspense fallback={<ActivityIndicator size={"large"} />}>
         <KidsHomeScreenStories id={params.childId} />
