@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 const KidStories = ({ id }: { id: string }) => {
   const [currentKidId, setCurrentKidId] = useState<string | null>("");
   const { isPending, error, refetch, data } = useGetStories(id);
+  console.log(data.length);
 
   useEffect(() => {
     const loadKid = async () => {
@@ -32,9 +33,11 @@ const KidStories = ({ id }: { id: string }) => {
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error) return <ErrorComponent refetch={refetch} />;
   const navigator = useNavigation<KidsLibraryNavigatorProps>();
+
   return (
     <FlatList
       data={data}
+      keyExtractor={(item) => item.id.toString()}
       showsVerticalScrollIndicator={false}
       renderItem={({ item }) => (
         <Pressable

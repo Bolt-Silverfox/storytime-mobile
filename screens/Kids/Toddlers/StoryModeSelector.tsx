@@ -17,14 +17,16 @@ type Props = NativeStackScreenProps<
   KidsSetupNavigatorParamList,
   "storyModeSelector"
 >;
+type Mode = "readAlong" | "listen";
 
 const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
   const { storyId } = route.params;
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(true);
+  const [mode, setMode] = useState<Mode>("readAlong");
 
-  // If you later use the real hook, replace this lookup with the hook and loading/error handling.
+  // If you later use the real hook, replace this lookup  the hook and loading/error handling.
   const { data: story } = useGetStory(storyId);
 
   const coverSource = story?.coverImageUrl
@@ -33,6 +35,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
 
   const onReadAlong = () => {
     setVoiceModalVisible(true);
+    setMode("readAlong");
   };
 
   // Save voice and navigate to reader with chosen voice
@@ -41,16 +44,14 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
     setVoiceModalVisible(false);
     navigation.navigate("storyReader", {
       storyId: storyId,
-      mode: "readalong",
+      mode: mode,
       voice: voiceId,
     } as any);
   };
 
   const onListenPress = () => {
-    navigation.navigate("storyInteraction", {
-      storyId: storyId,
-      mode: "narration",
-    } as any);
+    setVoiceModalVisible(true);
+    setMode("listen");
   };
 
   return (
@@ -67,22 +68,21 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
         </View>
       )}
 
-      <Pressable
-        className="absolute top-8 left-4 z-20 rounded-full"
-        onPress={() => navigation.goBack()}
-      >
-        <Image
-          source={require("../../../assets/story/close.png")}
-          className="w-12 h-12"
-          resizeMode="contain"
-        />
-      </Pressable>
-
       <View className="absolute inset-0 bg-black/30" />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-6">
         <View className="flex-1 justify-center items-center">
           <View className="flex-col items-center gap-3 w-full">
+            <Pressable
+              className="self-start z-20 rounded-full"
+              onPress={() => navigation.goBack()}
+            >
+              <Image
+                source={require("../../../assets/story/close.png")}
+                className="w-12 h-12"
+                resizeMode="contain"
+              />
+            </Pressable>
             <Pressable
               onPress={onReadAlong}
               className="flex-row bg-[#866EFF] rounded-full p-3 w-[90%] gap-2 items-center justify-center"
@@ -117,6 +117,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
         initialVoiceId={selectedVoice}
         onClose={() => setVoiceModalVisible(false)}
         onSave={handleSaveVoice}
+        mode={mode}
       />
     </ImageBackground>
   );
