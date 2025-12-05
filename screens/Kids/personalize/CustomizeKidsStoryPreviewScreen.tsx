@@ -99,7 +99,7 @@ const CustomizeKidsStoryPreviewScreen = () => {
           text="See sample story"
         />
       </ScrollView>
-      <LoadingOverlay visible={isPending} />
+      <LoadingOverlay visible={isPending} label="Creating your story..." />
     </View>
   );
 };
