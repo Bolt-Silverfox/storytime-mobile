@@ -27,6 +27,7 @@ import CustomButton from "../../../components/UI/CustomButton";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import { Switch } from "react-native";
+import useRecommendStory from "../../../hooks/tanstack/queryHooks/useRecommendStory";
 
 export default function InteractiveStoryScreen({ route, navigation }: any) {
   const { storyId, mode } = route.params ?? {};
@@ -36,6 +37,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
   const [imgFailed, setImgFailed] = useState(false);
   const [on, setOn] = useState(false); // Cosmo toggle
   const [isRecommendOpen, setIsRecommendOpen] = useState(false);
+  const { mutate: recommendStory } = useRecommendStory();
 
   // questions from schema: story.questions is an array
   const questions: {
@@ -412,13 +414,20 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
       </View>
 
       <RecommendStoryModal
-        visible={isRecommendOpen}
-        onClose={() => setIsRecommendOpen(false)}
-        storyId={storyId}
-        handleRecommend={(sId, kidId) => {
-          console.log("Recommend story", sId, "for kid", kidId);
-        }}
-      />
+            visible={isRecommendOpen}
+            onClose={() => setIsRecommendOpen(false)}
+            storyId={storyId}
+            handleRecommend={(sId, kidId) => {
+              if (!sId || !kidId) return;
+              recommendStory(
+                { storyId: sId, kidId }, // ✅ payload
+                {
+                  onSuccess: () => alert("Story recommended successfully!"),
+                  onError: (err) => alert(err.message),
+                  }
+                );
+              }}
+          />
 
       <VoicePickerModal
         visible={voicePickerOpen}

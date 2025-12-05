@@ -18,12 +18,15 @@ import React from "react";
 import KidAvatar from "../../../components/KidAvatar";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
+import { KidsNavigatorProp } from "../../../Navigation/KidsNavigator";
 
 type ProfileParams = RouteProp<KidsProfileNavigatorParams, "indexPage">;
 const KidsIndexProfileScreen = () => {
   const { params } = useRoute<ProfileParams>();
   const navigator = useNavigation<kidsProfileNavigatorProp>();
   const tabsNavigator = useNavigation<KidsTabNavigatorProp>();
+  const parentNavigator = useNavigation<KidsNavigatorProp>();
+
   const { data, isLoading, isFetching } = useGetKidById(params.childId);
   const kidAvatar = data?.avatar?.url;
   const kidName = data?.name;
@@ -98,18 +101,27 @@ const KidsIndexProfileScreen = () => {
           </View>
 
           <View className="flex-row justify-between  max-w-[390] ">
-            {/* <Pressable
-              onPress={() => navigator.navigate("changeKidTheme")}
-              className="bg-[#EFCDFB]  border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]"
+            <Pressable
+              onPress={() =>
+                parentNavigator.navigate("setup", {
+                  screen: "buddySelectionPage",
+                  params: { childId: params.childId },
+                })
+              }
+              className="bg-[#EFCDFB] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]"
             >
-              <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#FAEBFF]" />
+              <View className="w-[73px] h-[79px] absolute -left-[35px] top-[50%] -translate-y-1/2 rounded-full bg-[#D786F5]" />
 
               <Image source={require("../../../assets/icons/theme.png")} />
+
+              
               <Text className="text-[16px] text-[#AF55CF] font-[abeezee]">
-                Change Theme
+                Change Buddy
               </Text>
-              <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#D786F5]" />
-            </Pressable> */}
+
+              
+              <View className="w-[63px] h-[49px] absolute -right-[35px] -bottom-[3px] rounded-full bg-[#FAEBFF]" />
+            </Pressable>
 
             <Pressable
               onPress={() =>
@@ -117,13 +129,16 @@ const KidsIndexProfileScreen = () => {
               }
               className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]"
             >
-              <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#CDFBF7]" />
+              <View className="w-[73px] h-[79px] absolute -left-[35px] top-[50%] -translate-y-1/2 rounded-full bg-[#6FE6DC]" />
 
               <Image source={require("../../../assets/icons/achieve.png")} />
+
               <Text className="text-[16px] text-[#487F7B] font-[abeezee]">
                 Achievement
               </Text>
-              <View className="w-[93] h-[79] absolute -left-[35px] -bottom-[35px] rounded-full bg-[#6FE6DC]" />
+
+              
+              <View className="w-[63px] h-[49px] absolute -right-[35px] -bottom-[3px] rounded-full bg-[#CDFBF7]" />
             </Pressable>
           </View>
           <MagicStar
