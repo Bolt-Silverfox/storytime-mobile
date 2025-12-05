@@ -12,6 +12,7 @@ import useGetStories, {
 import { Ellipsis } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
 
 export default function LibraryDownloads() {
   const { params } = useRoute<RotuteProps>();
@@ -24,6 +25,11 @@ export default function LibraryDownloads() {
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
+  const { data: kidDownloads } = useGetDownloadStories(params.childId);
+  const downloadedStoriesId = kidDownloads?.map((d) => d.storyId);
+  const downloadedStories = stories.filter((story) =>
+    downloadedStoriesId?.includes(story.id)
+  );
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   return (
     <View className="flex-1 bg-[#866EFF]  items-center gap-x-3 pb-2 h-[60vh]">
@@ -43,7 +49,7 @@ export default function LibraryDownloads() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {stories.map((story) => (
+        {downloadedStories.map((story) => (
           <BookReading key={story.id} story={story} setIsOpen={setIsOpen} />
         ))}
       </ScrollView>

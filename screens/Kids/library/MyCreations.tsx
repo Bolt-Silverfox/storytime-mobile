@@ -12,6 +12,8 @@ import useGetStories, {
 import { Ellipsis } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
+import { ContinueReading } from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 
 export default function MyCreations() {
   const { params } = useRoute<RotuteProps>();
@@ -24,6 +26,8 @@ export default function MyCreations() {
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
+  const { data: createdStories } = useGetCreatedStories(params.childId);
+
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   return (
     <View className="flex-1 bg-[#866EFF]  items-center gap-x-3 pb-2 h-[60vh]">
@@ -43,8 +47,8 @@ export default function MyCreations() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {stories.map((story) => (
-          <BookReading key={story.id} story={story} setIsOpen={setIsOpen} />
+        {createdStories?.map((story, i) => (
+          <BookReading key={i} story={story} setIsOpen={setIsOpen} />
         ))}
       </ScrollView>
       <ToddlerBookActionsModal
@@ -59,14 +63,11 @@ const BookReading = ({
   story,
   setIsOpen,
 }: {
-  story: Story;
+  story: ContinueReading;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   return (
-    <Pressable
-      key={story.id}
-      className="bg-white flex-row mt-5 rounded-xl p-4 gap-3"
-    >
+    <Pressable className="bg-white flex-row mt-5 rounded-xl p-4 gap-3">
       <Image
         source={{ uri: story.coverImageUrl }}
         // style={{ position: "absolute", right: 0 }}

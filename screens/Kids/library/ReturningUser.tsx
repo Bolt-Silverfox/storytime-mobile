@@ -21,6 +21,8 @@ import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetCont
 import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
 import useGetStoriesById from "../../../hooks/tanstack/queryHooks/useGetStoriesById";
 import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
+import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
 
 export default function ReturningUser() {
   const { params } = useRoute<RotuteProps>();
@@ -39,6 +41,8 @@ export default function ReturningUser() {
     refetch: refetchContinueReadingStories,
     data: continueReading,
   } = useGetContinueReading(params.childId);
+  const { data: completedStories } = useGetCompletedStories(params.childId);
+  const { data: createdStories } = useGetCreatedStories(params.childId);
   const { data: kidsFavorites } = useGetKidFavorites(params.childId);
   const { data: kidDownloads } = useGetDownloadStories(params.childId);
 
@@ -50,11 +54,16 @@ export default function ReturningUser() {
   const favouriteStories = stories.filter((story) =>
     favouriteStoryIds?.includes(story.id)
   );
+  const downloadedStoriesId = kidDownloads?.map((d) => d.storyId);
+  const downloadedStories = stories.filter((story) =>
+    downloadedStoriesId?.includes(story.id)
+  );
 
   console.log("kid favorites", favouriteStories);
   console.log("continue stories", continueReading);
-    console.log("downloads", kidDownloads);
-
+  console.log("downloads", downloadedStories);
+  console.log("created stories", createdStories);
+  console.log("completed stories", completedStories);
 
   const StoryCard = ({ item }: { item: any }) => (
     <Pressable className="bg-white w-[249] h-[347] rounded-[10px] mr-5 gap-5">
@@ -203,19 +212,19 @@ export default function ReturningUser() {
 
         <HorizontalListSection
           title="Downloaded"
-          data={stories || []}
+          data={downloadedStories || []}
           navigateTo="downloads"
         />
 
         <HorizontalListSection
           title="My creation"
-          data={stories || []}
+          data={createdStories || []}
           navigateTo="myCreations"
         />
 
         <HorizontalListSection
           title="Completed Stories"
-          data={stories || []}
+          data={completedStories || []}
           navigateTo="completed"
         />
       </ScrollView>

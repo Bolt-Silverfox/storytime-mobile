@@ -55,6 +55,7 @@ const KidsLibraryScreen = () => {
 
   const navigation = useNavigation<KidsTabNavigatorProp>();
   const libNav = useNavigation<KidsLibraryNavigatorProps>();
+
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (!data && !isPending)
@@ -138,8 +139,19 @@ const getCurrentKid = async () => {
 export { getCurrentKid };
 
 export const Book = ({ story }: { story: Story }) => {
+  const navigator = useNavigation<KidsLibraryNavigatorProps>();
+
   return (
-    <Pressable key={story.id} className="">
+    <Pressable
+      key={story.id}
+      className=""
+      onPress={() =>
+        navigator.navigate("setup" as any, {
+          screen: "storyInteraction",
+          params: { storyId: story.id },
+        })
+      }
+    >
       <View className="w-[167] h-[160] rounded-tl-[20] bg-[#5E3A54]"></View>
       <View className="w-[167] h-[24] rounded-bl-[20] bg-[#5E3A54] pt-[2]">
         <View className="rounded-l-[20] flex-row w-[157] self-end  h-[16] bg-[#D5D3E5]">

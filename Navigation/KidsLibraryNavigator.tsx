@@ -13,6 +13,7 @@ import LibraryDownloads from "../screens/Kids/library/LibraryDownloads";
 import MyCreations from "../screens/Kids/library/MyCreations";
 import LibraryCompleted from "../screens/Kids/library/LibraryCompleted";
 import ReturningUser from "../screens/Kids/library/ReturningUser";
+import ContinueReadingLibrary from "../screens/Kids/library/ContinueReading";
 
 type KidsLibraryNavigatorParamList = {
   indexPage: { childId: string };
@@ -43,7 +44,7 @@ const KidsLibraryNavigator = () => {
   const returningUser = true;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {returningUser ? (
+      {!returningUser ? (
         <Stack.Screen
           name="returningUser"
           component={ReturningUser}
@@ -62,7 +63,7 @@ const KidsLibraryNavigator = () => {
       <Stack.Screen name="readBook" component={KidsLibraryScreen} />
       <Stack.Screen
         name="continueReading"
-        component={ContinueReading}
+        component={ContinueReadingLibrary}
         initialParams={{ childId }}
       />
       <Stack.Screen name="favourite" component={LibraryFavourite} />
