@@ -147,13 +147,11 @@ type AuthContextType = {
   resendVerificationEmail: AuthFnTypes["resendVerificationEmail"];
   validatePasswordReset: AuthFnTypes["validatePasswordReset"];
   resetPassword: AuthFnTypes["resetPassword"];
-
   handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
   changePassword: AuthFnTypes["changePassword"];
   setInAppPin: AuthFnTypes["setInAppPin"];
   verifyInAppPin: AuthFnTypes["verifyInAppPin"];
   updateInAppPin: AuthFnTypes["updateInAppPin"];
-
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -187,14 +185,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
 
-  // useEffect(() => {
-  //   console.log("web client id", WEB_CLIENT_ID);
-  //   GoogleSignin.configure({
-  //     iosClientId: IOS_CLIENT_ID,
-  //     webClientId: WEB_CLIENT_ID,
-  //     profileImageSize: 200,
-  //   });
-  // }, []);
+  useEffect(() => {
+    console.log("web client id", WEB_CLIENT_ID);
+    GoogleSignin.configure({
+      iosClientId: IOS_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
+      profileImageSize: 200,
+    });
+  }, []);
 
   useEffect(() => {
     async function getUserSession() {
@@ -545,13 +543,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     resendVerificationEmail,
     validatePasswordReset,
     resetPassword,
-
     handleGoogleAuth,
     setInAppPin,
     updateInAppPin,
     verifyInAppPin,
     changePassword,
-
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>

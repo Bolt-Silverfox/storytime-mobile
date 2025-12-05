@@ -41,7 +41,7 @@ export default function useRecommendStory() {
   const queryClient = useQueryClient();
 
   return useMutation<RecommendResponse, Error, RecommendPayload>(
-    recommendStory,
+    // recommendStory,
     {
       onSuccess: () => {
         // Invalidate story queries so UI updates
