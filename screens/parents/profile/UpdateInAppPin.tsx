@@ -10,23 +10,26 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
 
-const SetPin = () => {
+const UpdateInAppPin = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [error, setError] = useState("");
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
-  const { isLoading, setInAppPin } = useAuth();
+  const [oldPin, setOldPin] = useState("");
+  const { isLoading, updateInAppPin } = useAuth();
 
   const onSubmit = () => {
     if (pin !== confirmPin) {
       setError("Both pins must match");
       return;
     }
-    setInAppPin({
-      pin,
+    updateInAppPin({
+      oldPin,
+      newPin: pin,
+      confirmNewPin: confirmPin,
       setErrorCb: setError,
       onSuccess: () => {
-        Alert.alert("Pin set successfully!");
+        Alert.alert("Pin Updated successfully");
         navigator.goBack();
       },
     });
@@ -34,15 +37,14 @@ const SetPin = () => {
 
   return (
     <View className="flex flex-1 pb-5">
-      <PageTitle title="Set Pin" goBack={() => navigator.goBack()} />
+      <PageTitle title="Update Pin" goBack={() => navigator.goBack()} />
       <View className="flex-1 mx-3 flex gap-y-7 py-6">
         <ErrorMessageDisplay errorMessage={error} />
         <View className="flex flex-col gap-y-2">
-          <Text className="font-[abeezee]">Enter your Pin</Text>
+          <Text className="font-[abeezee]">Enter your Old Pin</Text>
           <OtpInput
             numberOfDigits={6}
-            onTextChange={(text) => setPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
+            onTextChange={(text) => setOldPin(text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -53,11 +55,24 @@ const SetPin = () => {
           />
         </View>
         <View className="flex flex-col gap-y-2">
-          <Text className="font-[abeezee]">Confirm your Pin</Text>
+          <Text className="font-[abeezee]">Enter your new Pin</Text>
+          <OtpInput
+            numberOfDigits={6}
+            onTextChange={(text) => setPin(text)}
+            theme={{
+              containerStyle: { width: "auto" },
+              pinCodeContainerStyle: styles.box,
+              pinCodeTextStyle: styles.text,
+              focusedPinCodeContainerStyle: styles.boxFocused,
+            }}
+            focusColor="blue"
+          />
+        </View>
+        <View className="flex flex-col gap-y-2">
+          <Text className="font-[abeezee]">Confirm your new Pin</Text>
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setConfirmPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -76,7 +91,7 @@ const SetPin = () => {
   );
 };
 
-export default SetPin;
+export default UpdateInAppPin;
 
 const styles = StyleSheet.create({
   text: {

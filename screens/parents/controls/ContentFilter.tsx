@@ -58,12 +58,12 @@ const ContentFilter = () => {
 
   return (
     <View className="flex-1">
+      <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
       <ScrollView
+        showsVerticalScrollIndicator={false}
         className="flex-1"
         contentContainerClassName="min-h-full max-w-screen-md mx-auto w-full "
       >
-        <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
-
         <Text className="text-base font-[abeezee] my-5 text-center">
           Select the stories your child can read
         </Text>

@@ -17,6 +17,10 @@ import {
   KidsLibraryNavigatorParamList,
   KidsLibraryNavigatorProps,
 } from "../../../Navigation/KidsLibraryNavigator";
+import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
+import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
+import useGetStoriesById from "../../../hooks/tanstack/queryHooks/useGetStoriesById";
+import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
 
 export default function ReturningUser() {
   const { params } = useRoute<RotuteProps>();
@@ -29,8 +33,29 @@ export default function ReturningUser() {
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
+  const {
+    isPending: ContinueReadingIsPending,
+    error: ContinueReadingError,
+    refetch: refetchContinueReadingStories,
+    data: continueReading,
+  } = useGetContinueReading(params.childId);
+  const { data: kidsFavorites } = useGetKidFavorites(params.childId);
+  const { data: kidDownloads } = useGetDownloadStories(params.childId);
 
-  // Component for rendering each story card
+  // const { data: storiesById } = useGetStoriesById(
+  //   "00e031c6-daf5-4191-830f-81d6aab2dbc0"
+  // );
+  // console.log("stories by id", storiesById);
+  const favouriteStoryIds = kidsFavorites?.map((f) => f.storyId);
+  const favouriteStories = stories.filter((story) =>
+    favouriteStoryIds?.includes(story.id)
+  );
+
+  console.log("kid favorites", favouriteStories);
+  console.log("continue stories", continueReading);
+    console.log("downloads", kidDownloads);
+
+
   const StoryCard = ({ item }: { item: any }) => (
     <Pressable className="bg-white w-[249] h-[347] rounded-[10px] mr-5 gap-5">
       <Image
@@ -60,7 +85,6 @@ export default function ReturningUser() {
     </Pressable>
   );
 
-  // Component for rendering each horizontal list section
   const HorizontalListSection = <
     T extends keyof KidsLibraryNavigatorParamList,
   >({
@@ -167,13 +191,13 @@ export default function ReturningUser() {
 
         <HorizontalListSection
           title="Continue Reading"
-          data={stories || []}
+          data={continueReading || []}
           navigateTo="continueReading"
         />
 
         <HorizontalListSection
           title="Favorites"
-          data={stories || []}
+          data={favouriteStories || []}
           navigateTo="favourite"
         />
 

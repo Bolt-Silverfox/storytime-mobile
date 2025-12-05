@@ -1,47 +1,34 @@
-import { View, Text, Switch, Pressable } from "react-native";
-import React, { useEffect, useState } from "react";
-import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
+import { ArrowRight2 } from "iconsax-react-nativejs";
+import React from "react";
+import { Pressable, Text, View } from "react-native";
+import PageTitle from "../../../components/PageTitle";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import { ArrowLeft2, ArrowRight2 } from "iconsax-react-nativejs";
+import defaultStyles from "../../../styles";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import ErrorComponent from "../../../components/ErrorComponent";
 
 export default function ManagePassword() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const [isResetPassWord, setIsResetPassWord] = useState(false);
-  const toggleSwitch = () =>
-    setIsResetPassWord((previousState) => !previousState);
-  const [isSetpin, setIsSetPin] = useState(false);
-  const toggleSwitchPin = () => setIsSetPin((previousState) => !previousState);
+  const { data, isPending, error, refetch } = useGetUserProfile();
 
-  useEffect(() => {
-    if (isResetPassWord) {
-      setTimeout(() => {
-        navigator.navigate("resetParentPassword");
-      }, 1000);
-    }
-
-    if (isSetpin) {
-      setTimeout(() => {
-        navigator.navigate("setPin");
-      }, 1000);
-    }
-  }, [isSetpin, isResetPassWord]);
+  if (isPending) return <LoadingOverlay visible={isPending} />;
+  if (error)
+    return <ErrorComponent refetch={refetch} message={error.message} />;
+  console.log("user profiele data", data);
 
   return (
     <View className="bg-[#FFFCFBFB] flex-1">
-      <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
-        <Pressable className="absolute left-0 p-4">
-          <ArrowLeft2 onPress={() => navigator.goBack()} />
-        </Pressable>
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
-          className="self-center text-center  "
-        >
-          Manage Password/Pin
-        </Text>
-      </View>
+      <PageTitle
+        title="Manage Password/Pin"
+        goBack={() => navigator.goBack()}
+      />
       <View className="mt-[24px] mx-[16] gap-4">
-        <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white">
+        <Pressable
+          onPress={() => navigator.navigate("resetParentPassword")}
+          className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white"
+        >
           <Text
             style={[defaultStyles.defaultText, { color: "black" }]}
             className="self-center"
@@ -49,16 +36,34 @@ export default function ManagePassword() {
             Reset Password
           </Text>
           <ArrowRight2 />
-        </View>
-        <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white">
-          <Text
-            style={[defaultStyles.defaultText, { color: "black" }]}
-            className="self-center"
+        </Pressable>
+        {data?.pinSet ? (
+          <Pressable
+            className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white"
+            onPress={() => navigator.navigate("updatePin")}
           >
-            Set pin
-          </Text>
-          <ArrowRight2 />
-        </View>
+            <Text
+              style={[defaultStyles.defaultText, { color: "black" }]}
+              className="self-center"
+            >
+              Update pin
+            </Text>
+            <ArrowRight2 />
+          </Pressable>
+        ) : (
+          <Pressable
+            className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white"
+            onPress={() => navigator.navigate("setPin")}
+          >
+            <Text
+              style={[defaultStyles.defaultText, { color: "black" }]}
+              className="self-center"
+            >
+              Set pin
+            </Text>
+            <ArrowRight2 />
+          </Pressable>
+        )}
       </View>
       <View className="flex-1 justify-end  px-4 gap-6">
         <Pressable
