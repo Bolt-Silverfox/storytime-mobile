@@ -27,6 +27,7 @@ const useGetStoryCategories = () => {
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error, try again");
       }
+      console.log("story categories", response);
       return response;
     },
     refetchOnMount: false,

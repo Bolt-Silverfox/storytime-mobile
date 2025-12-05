@@ -1,6 +1,7 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { QueryResponse } from "../../../types";
 
 type StoryRequest = {
   statusCode: number;
@@ -37,12 +38,12 @@ type Story = {
   };
 };
 
-const useGetStories = (id: string) => {
+const useGetStoriesByCategory = (category: string) => {
   return useSuspenseQuery({
-    queryKey: ["getStories", id],
+    queryKey: ["getStories", category],
     queryFn: async () => {
-      const url = `${BASE_URL}/stories?kidId=${id}`;
-      console.log("kid id", id);
+      const url = `${BASE_URL}/stories?category=${category}`;
+      console.log("Story Category", category);
 
       const request = await apiFetch(url, {
         method: "GET",
@@ -51,7 +52,6 @@ const useGetStories = (id: string) => {
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error,try again later");
       }
-      console.log("Get Stories response:", response)
       return response;
     },
     refetchOnMount: false,
@@ -62,4 +62,4 @@ const useGetStories = (id: string) => {
 
 export type { Story, StoryRequest };
 
-export default useGetStories;
+export default useGetStoriesByCategory;
