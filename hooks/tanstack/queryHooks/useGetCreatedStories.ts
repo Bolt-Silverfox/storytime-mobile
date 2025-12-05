@@ -38,7 +38,7 @@ const useGetCreatedStories = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["stories", user?.id],
+    queryKey: ["createdStories", user?.id],
     queryFn: async () => {
       try {
         if (!user) return null;
