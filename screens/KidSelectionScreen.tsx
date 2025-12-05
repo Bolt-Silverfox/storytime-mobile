@@ -55,13 +55,27 @@ const KidSelectionScreen = () => {
               <Pressable
                 onPress={async () => {
                   await AsyncStorage.setItem("currentKid", kid.id);
-                  navigation.navigate("kid", {
-                    screen: "setup",
-                    params: {
-                      screen: "buddySelectionPage",
+
+                  const storedBuddy = await AsyncStorage.getItem(
+                    `buddy_${kid.id}`
+                  );
+
+                  if (storedBuddy) {
+                    
+                    navigation.navigate("kid", {
+                      screen: "index",
                       params: { childId: kid.id },
-                    },
-                  });
+                    });
+                  } else {
+                    
+                    navigation.navigate("kid", {
+                      screen: "setup",
+                      params: {
+                        screen: "buddySelectionPage",
+                        params: { childId: kid.id },
+                      },
+                    });
+                  }
                 }}
                 key={kid.id}
                 className="flex w-[100px] items-center flex-col gap-y-3"
