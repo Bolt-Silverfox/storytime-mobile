@@ -11,11 +11,13 @@ import KidsLibraryNavigator from "./KidsLibraryNavigator";
 import { KidsNavigatorParamList } from "./KidsNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
 import KidsProgressNavigator from "./KidsProgressNavigator";
+import PersonalizeKidNavigator from "./PersonalizeKidNavigator";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
   library: { childId: string };
-  progress: { childId: string };
+  // progress: { childId: string };
+  personalize: { childId: string };
   profile: { childId: string };
 };
 
@@ -34,7 +36,6 @@ const KidsTabNavigator = () => {
       screenOptions={{
         headerShown: false,
         tabBarShowLabel: true,
-        
       }}
     >
       <Tab.Screen
@@ -72,13 +73,13 @@ const KidsTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="progress"
+        name="personalize"
         initialParams={{ childId: childId }}
-        component={KidsProgressNavigator}
+        component={PersonalizeKidNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
-              name="Trophy"
+              name="NotebookPen"
               color={focused ? colours.primary : colours.black}
             />
           ),
