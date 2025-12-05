@@ -25,6 +25,7 @@ import DeleteAccountConfirmation from "../screens/parents/profile/DeleteAccountC
 import DeleteAccountSuccessful from "../screens/parents/profile/DeleteAccountSuccessful";
 import SubscriptionIndex from "../screens/parents/profile/subscription/SubscriptionIndex";
 import ChildAvatar from "../screens/parents/profile/ChildAvatar";
+import UpdateInAppPin from "../screens/parents/profile/UpdateInAppPin";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -46,6 +47,7 @@ type ParentProfileNavigatorParamList = {
   resetParentPassword: undefined;
   resetPasswordSuccessful: undefined;
   setPin: undefined;
+  updatePin: undefined;
   enableBiometrics: undefined;
 
   helpAndSupport: undefined;
@@ -97,14 +99,11 @@ const ParentProfileNavigator = () => {
         component={ResetPasswordSuccess}
       />
       <Stack.Screen name="setPin" component={SetPin} />
+      <Stack.Screen name="updatePin" component={UpdateInAppPin} />
       <Stack.Screen name="enableBiometrics" component={EnableBiometrics} />
 
       <Stack.Screen name="editChildProfile" component={EditChildProfile} />
-      <Stack.Screen
-        name="addChild"
-        component={AddChildScreen}
-       
-      />
+      <Stack.Screen name="addChild" component={AddChildScreen} />
       <Stack.Screen name="childAvatar" component={ChildAvatar} />
 
       <Stack.Screen name="deleteProfileSucessful" component={DeleteSuccess} />

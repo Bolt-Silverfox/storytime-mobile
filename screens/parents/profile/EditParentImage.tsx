@@ -16,7 +16,7 @@ export default function EditParentImage() {
   const [open, setOpen] = useState(false);
   const [image, setImage] = useState("");
   const { data } = useGetUserProfile();
-  const userId = data?.data?.id;
+  const userId = data?.id;
   const { mutateAsync: uploadImage, isPending } = useUploadImage(userId!, () =>
     navigator.goBack()
   );
@@ -248,18 +248,41 @@ export const ScreenModal = ({
         >
           <View className="h-[6px] w-[68px] bg-[#C5C5C5] mx-auto rounded-[32px] mt-[28px]" />
           <View className="flex-row mt-[34px] gap-[56px]">
-            <Pressable
-              onPress={onPressCamera}
-              className="bg-[#FFFCFBFB] border-[1.18px] border-[#FAF4F2] h-[60px] w-[60px] justify-center items-center  rounded-full"
-            >
-              <Camera size="30" color="#212121" />
-            </Pressable>
-            <Pressable
-              onPress={() => onPressFile("gallery")}
-              className="bg-[#FFFCFBFB] items-center border-[1.18px] border-[#FAF4F2] rounded-full h-[60px] justify-center w-[60px]"
-            >
-              <Folder2 size="30" color="#212121" />
-            </Pressable>
+            <View>
+              <Pressable
+                onPress={onPressCamera}
+                className="bg-[#FFFCFBFB] border-[1.18px] border-[#FAF4F2] h-[60px] w-[60px] justify-center items-center  rounded-full"
+              >
+                <Camera size="30" color="#212121" />
+              </Pressable>
+              <Text
+                style={[
+                  defaultStyles.defaultText,
+                  { fontSize: 14, color: "black" },
+                ]}
+                className="text-center mt-2"
+              >
+                Camera
+              </Text>
+            </View>
+
+            <View>
+              <Pressable
+                onPress={() => onPressFile("gallery")}
+                className="bg-[#FFFCFBFB] items-center border-[1.18px] border-[#FAF4F2] rounded-full h-[60px] justify-center w-[60px]"
+              >
+                <Folder2 size="30" color="#212121" />
+              </Pressable>
+              <Text
+                style={[
+                  defaultStyles.defaultText,
+                  { fontSize: 14, color: "black" },
+                ]}
+                className="text-center mt-2"
+              >
+                Gallery
+              </Text>
+            </View>
           </View>
         </View>
       </Pressable>

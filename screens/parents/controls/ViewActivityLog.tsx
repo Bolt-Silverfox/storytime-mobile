@@ -1,13 +1,13 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { ScrollView, Text, View } from "react-native";
+import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
+import useGetKidActivityLog from "../../../hooks/tanstack/queryHooks/useGetKidActivityLog";
 import {
   ParentControlNavigatorParamList,
   ParentControlNavigatorProp,
 } from "../../../Navigation/ParentControlsNavigator";
-import useGetKidActivityLog from "../../../hooks/tanstack/queryHooks/useGetKidActivityLog";
-import ErrorComponent from "../../../components/ErrorComponent";
-import LoadingOverlay from "../../../components/LoadingOverlay";
 
 type ViewActivityLogRouteProp = RouteProp<
   ParentControlNavigatorParamList,
@@ -27,34 +27,38 @@ const ViewActivityLog = () => {
     return (
       <LoadingOverlay visible={isPending} label="Loading activity logs..." />
     );
-  console.log("activity logs data", data);
 
   return (
-    <ScrollView
-      className="flex-1"
-      contentContainerClassName="min-h-full gap-y-10 max-w-screem-md mx-auto w-full"
-    >
-      <PageTitle goBack={() => navigator.goBack()} title="Activity Log" />
-      {data.length > 0 ? (
-        <View className="flex flex-col gap-y-4">
-          {activityDummyData.map((activity) => (
-            <View
-              className="p-4 rounded-2xl bg-slate-200 mx-5"
-              key={activity.date}
-            >
-              <Text className="text-xl font-[abeezee] mb-10">
-                {activity.date}
-              </Text>
-              <Text>Device : {activity.deviceName}</Text>
-              <Text>IP : {activity.IP}</Text>
-              <Text>Status : {activity.status}</Text>
-            </View>
-          ))}
-        </View>
-      ) : (
-        <EmptyState />
-      )}
-    </ScrollView>
+    <View className="flex-1">
+      <PageTitle goBack={() => navigator.goBack()} title="Activity Logs" />
+
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="flex-1"
+        contentContainerClassName="min-h-full py-5 gap-y-10 max-w-screem-md mx-auto w-full"
+      >
+        {data.length > 0 ? (
+          <View className="flex flex-col gap-y-4">
+            {data.map((activity) => (
+              <View
+                className="p-4 rounded-2xl bg-slate-200 mx-5"
+                key={activity.id}
+              >
+                <Text className="text-xl font-[abeezee] mb-10">
+                  {new Date(activity.createdAt).toLocaleString()}
+                </Text>
+                <Text>Device : {activity.deviceName}</Text>
+                <Text>IP : {activity.ipAddress}</Text>
+                <Text>Status : {activity.status}</Text>
+                <Text>Detail : {activity.details}</Text>
+              </View>
+            ))}
+          </View>
+        ) : (
+          <EmptyState />
+        )}
+      </ScrollView>
+    </View>
   );
 };
 
@@ -68,32 +72,4 @@ const EmptyState = () => {
       </Text>
     </View>
   );
-};
-
-const activityDummyData: ActivityLog[] = [
-  {
-    date: "2025-11-20 9:45 UTC",
-    deviceName: "Samsung A14, Android v12.1",
-    IP: "102.89.120.33",
-    status: "Successful",
-  },
-  {
-    date: "2025-11-20 9:46 UTC",
-    deviceName: "Samsung A14, Android v18.1",
-    IP: "102.89.120.33",
-    status: "Successful",
-  },
-  {
-    date: "2025-11-20 9:47 UTC",
-    deviceName: "Redmi A4 Plus, Android v12.1",
-    IP: "102.89.120.33",
-    status: "Successful",
-  },
-];
-
-type ActivityLog = {
-  date: string;
-  deviceName: string;
-  IP: string;
-  status: string;
 };
