@@ -17,6 +17,7 @@ import ContinueReadingLibrary from "../screens/Kids/library/ContinueReading";
 import useGetContinueReading from "../hooks/tanstack/queryHooks/useGetContinueReading";
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../components/LoadingOverlay";
+import useGetCompletedStories from "../hooks/tanstack/queryHooks/useGetCompletedStories";
 
 type KidsLibraryNavigatorParamList = {
   indexPage: { childId: string };
@@ -47,6 +48,8 @@ const KidsLibraryNavigator = () => {
   const { data: continueReading, isLoading } = useGetContinueReading(
     params.childId
   );
+  const { data: completedStories } = useGetCompletedStories(params.childId);
+
   // const [returningUser, setReturningUser] = useState(continueReading?.length);
 
   // useEffect(() => {
@@ -56,7 +59,9 @@ const KidsLibraryNavigator = () => {
     return <LoadingOverlay visible={isLoading} />;
   }
 
-  const returningUser = (continueReading?.length ?? 0) > 0;
+const returningUser =
+  (continueReading?.length ?? 0) > 0 || (completedStories?.length ?? 0) > 0;
+  
   console.log(returningUser, "user", isLoading);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
