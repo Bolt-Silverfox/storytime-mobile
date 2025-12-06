@@ -23,6 +23,7 @@ import useAddParentFavorite from "../../../hooks/tanstack/mutationHooks/useAddPa
 import { useNavigation } from "@react-navigation/native";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 
 type FavoriteItemRowProps = {
   favorite: ParentFavorite;
@@ -263,7 +264,7 @@ const FavoritesScreen: React.FC = () => {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center p-5">
-        <Text className="text-red-600">Failed to load favorites</Text>
+        <ErrorMessageDisplay errorMessage={error.message} />
         <TouchableOpacity onPress={() => refetch()}>
           <Text className="text-blue-500 mt-2">Retry</Text>
         </TouchableOpacity>
@@ -283,9 +284,9 @@ const FavoritesScreen: React.FC = () => {
   }
 
   return (
-    <View className="flex-1 bg-[#FFFCFB]">
+    <View className="flex-1">
       {/* HEADER */}
-      <View className="p-4 flex-row items-center justify-between gap-4">
+      <View className="p-4 flex-row items-center justify-between gap-4 bg-[#FFFCFB]">
         <Text className="text-xl font-[abeezee]">Favorites</Text>
         <View className="flex-row gap-6">
           <Pressable
@@ -319,12 +320,10 @@ const FavoritesScreen: React.FC = () => {
             String((f as any).id ?? (f as any)?._id ?? JSON.stringify(f))
           }
           renderItem={renderItem}
-          // className="flex-1 bg-[#FFC7CC]"
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingBottom: 24,
             paddingTop: 16,
-            backgroundColor: "#FFC7CC",
           }}
           ListHeaderComponent={
             <View>
