@@ -125,7 +125,7 @@ const RecordVoice = () => {
   }, []);
 
   return (
-    <View className="flex-1  w-full">
+    <View className="flex-1  w-full bg-bgLight">
       <PageTitle title="Record Voice" goBack={() => navigator.goBack()} />
       <View className="pt-20 mx-5">
         {recordingStatus === "idle" && (

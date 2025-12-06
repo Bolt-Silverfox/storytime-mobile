@@ -34,7 +34,7 @@ const ViewActivityLog = () => {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1"
+        className="flex-1 bg-bgLight"
         contentContainerClassName="min-h-full py-5 gap-y-10 max-w-screem-md mx-auto w-full"
       >
         {data.length > 0 ? (
