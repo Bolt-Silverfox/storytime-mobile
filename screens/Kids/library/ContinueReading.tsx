@@ -98,6 +98,7 @@ const BookReading = ({
             className="text-wrap mb-1 w-[190] "
           >
             {story.title}
+            
           </Text>
           <Pressable onPress={() => setIsOpen(true)}>
             <Ellipsis size={30} className="self-center" />
