@@ -7,6 +7,10 @@ import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNaviga
 import StoryCompletionModal from "../../../components/modals/StoryCompletionModal";
 import { LinearGradient } from "expo-linear-gradient";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import useSetStoryProgress from "../../../hooks/tanstack/mutationHooks/UseSetStoryProgress";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import useGenerateStoryAudio from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAudio";
 import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 
@@ -38,6 +42,19 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const [dropdownVisible, setDropdownVisible] = useState(false);
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const [completionVisible, setCompletionVisible] = useState(false);
+  const [currentKidId, setCurrentKidId] = useState<string | null>("");
+
+  let sessionStartTime = Date.now();
+  let currentPage = 0;
+
+  const { data: storyProgress } = useGetStoryProgress(currentKidId!, storyId);
+  const { mutateAsync: setProgress, data } = useSetStoryProgress({
+    kidId: currentKidId!,
+    storyId,
+  });
+  // console.log("setsuccess",data)
+
+  console.log("progress", storyProgress?.progress, currentKidId, storyId);
 
   const [audioUri, setAudioUri] = useState<string | null>(null);
 
@@ -49,6 +66,31 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   });
 
   useEffect(() => {
+    const loadKid = async () => {
+      const id = await AsyncStorage.getItem("currentKid");
+      console.log("id", id);
+      setCurrentKidId(id);
+    };
+
+    loadKid();
+  }, []);
+
+  useEffect(() => {
+    if (storyProgress === null) {
+      console.log("null");
+    }
+    if (!currentKidId) return; // wait for kid
+    if (!storyProgress) return; // wait for progress
+    if (total === 0) return; // wait for pages to parse
+    console.log('s',storyProgress.progress);
+    const page = Math.round((storyProgress.progress / 100) * total) - 1;
+
+    setPageIndex(Math.max(0, page));
+    // if (storyProgress) {
+    //   const page = (storyProgress?.progress / 100) * total - 1;
+    //   setPageIndex(page);
+    // }
+
     if (!isPlaying) return undefined;
     const interval = setInterval(() => {
       setPageIndex((p) => {
@@ -60,16 +102,55 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
       });
     }, 4000); // 4s per page — replace with TTS progress sync if available
     return () => clearInterval(interval);
-  }, [isPlaying, total]);
+  }, [isPlaying, total, currentKidId, storyProgress?.progress]);
+
+  // const goPrev = () => {
+  //   setPageIndex((p) => Math.max(0, p - 1));
+  //   setIsPlaying(false);
+  //   setProgress({
+  //     progress: pageIndex,
+  //     completed: completionVisible,
+  //     time: sessionStartTime,
+  //   });
+  // };
 
   const goPrev = () => {
-    setPageIndex((p) => Math.max(0, p - 1));
-    setIsPlaying(false);
+    setPageIndex((prev) => {
+      const newIndex = Math.max(0, prev - 1);
+
+      setIsPlaying(false);
+
+      setProgress({
+        progress: ((newIndex + 1) / total) * 100,
+        completed: completionVisible,
+        time: sessionStartTime,
+      });
+      console.log(((newIndex + 1) / total) * 100);
+
+      return newIndex;
+    });
   };
+
   const goNext = () => {
-    setPageIndex((p) => Math.min(total - 1, p + 1));
-    setIsPlaying(false);
+    setPageIndex((prev) => {
+      const newIndex = Math.min(total - 1, prev + 1);
+
+      setIsPlaying(false);
+
+      setProgress({
+        progress: ((newIndex + 1) / total) * 100,
+        completed: completionVisible,
+        time: sessionStartTime,
+      });
+      console.log(((newIndex + 1) / total) * 100);
+
+      return newIndex;
+    });
   };
+  // const goNext = () => {
+  //   setPageIndex((p) => Math.min(total - 1, p + 1));
+  //   setIsPlaying(false);
+  // };
 
   const handleSaveVoice = (voiceId: string) => {
     setVoiceModalVisible(false);
@@ -83,6 +164,11 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const handleFinish = () => {
     setCompletionVisible(true);
+    setProgress({
+      progress: ((pageIndex + 1) / total) * 100,
+      completed: true,
+      time: sessionStartTime,
+    });
   };
 
   const handleCompletionPrimary = () => {
@@ -97,6 +183,13 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const coverSource = story?.coverImageUrl
     ? { uri: story.coverImageUrl }
     : require("../../../assets/life-of-pi.png");
+
+  const isReady = currentKidId && storyProgress !== undefined && total > 0;
+
+  if (!isReady) {
+    console.log("ready");
+    return <LoadingOverlay visible={!isReady} />;
+  }
 
   return (
     <ImageBackground source={coverSource} className="flex-1" resizeMode="cover">
