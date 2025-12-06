@@ -61,13 +61,11 @@ const KidSelectionScreen = () => {
                   );
 
                   if (storedBuddy) {
-                    
                     navigation.navigate("kid", {
                       screen: "index",
                       params: { childId: kid.id },
                     });
                   } else {
-                    
                     navigation.navigate("kid", {
                       screen: "setup",
                       params: {
@@ -80,20 +78,8 @@ const KidSelectionScreen = () => {
                 key={kid.id}
                 className="flex w-[100px] items-center flex-col gap-y-3"
               >
-                <KidAvatar
-                  uri={kid.avatar?.url}
-                  size={87}
-                  onPress={async () => {
-                    await AsyncStorage.setItem("currentKid", kid.id);
-                    navigation.navigate("kid", {
-                      screen: "setup",
-                      params: {
-                        screen: "buddySelectionPage",
-                        params: { childId: kid.id },
-                      },
-                    });
-                  }}
-                />
+                <KidAvatar uri={kid.avatar?.url} size={87} />
+
                 <View className="flex flex-col gap-y-1.5">
                   <Text className="text-2xl font-[abeezee] text-center">
                     {kid.name.split(" ").at(0)}
