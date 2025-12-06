@@ -21,7 +21,7 @@ const useGetDownloadStories = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["downloadStories", kidId],
+    queryKey: ["downloadStories", user?.id],
     queryFn: async () => {
       try {
         if (!user) return null;

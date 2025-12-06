@@ -14,7 +14,6 @@ import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActio
 import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
 import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
 import { ContinueReading } from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
-import { BookReading } from "./ContinueReading";
 
 export default function LibraryCompleted() {
   const { params } = useRoute<RotuteProps>();
@@ -48,25 +47,55 @@ export default function LibraryCompleted() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {completedStories?.length === 0 || !completedStories ? (
-          <View className="">
-            <Text
-              style={[
-                defaultStyles.defaultText,
-                { color: "#fff", fontSize: 14 },
-              ]}
-            >
-              No completed stories yet
-            </Text>
-          </View>
-        ) : (
-          <>
-            {completedStories?.map((story, i) => (
-              <BookReading key={i} story={story} category="completed" />
-            ))}
-          </>
-        )}
+        {completedStories?.map((story,i) => (
+          <BookReading key={i} story={story} setIsOpen={setIsOpen} />
+        ))}
       </ScrollView>
+      <ToddlerBookActionsModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
     </View>
   );
 }
+
+const BookReading = ({
+  story,
+  setIsOpen,
+}: {
+  story: ContinueReading;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
+  return (
+    <Pressable
+      className="bg-white flex-row mt-5 rounded-xl p-4 gap-3"
+    >
+      <Image
+        source={{ uri: story.coverImageUrl }}
+        // style={{ position: "absolute", right: 0 }}
+        className="h-[117px] w-[98px] rounded-md"
+      />
+      <View>
+        <View className="flex-row gap-x-1">
+          <Text
+            style={[
+              defaultStyles.defaultText,
+              { fontSize: 18, color: "black" },
+            ]}
+            className="text-wrap mb-1 w-[190] "
+          >
+            {story.title}
+          </Text>
+          <Pressable onPress={() => setIsOpen(true)}>
+            <Ellipsis size={30} className="self-center" />
+          </Pressable>
+        </View>
+        <View className="text-text">
+          <Clock size={16} />
+          <Text></Text>
+        </View>
+        <Text className="text-text">% Complete</Text>
+      </View>
+    </Pressable>
+  );
+};

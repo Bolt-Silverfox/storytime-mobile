@@ -22,7 +22,7 @@ const useGetStoryProgress = (kidId: string, storyId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["storyProgress", kidId, storyId],
+    queryKey: ["storyProgress", user?.id],
     queryFn: async () => {
       try {
         if (!user) return null;
@@ -39,7 +39,7 @@ const useGetStoryProgress = (kidId: string, storyId: string) => {
         }
 
         const progress: Response = await response.json();
-        // console.log("stories:", progress);
+        console.log("stories:", progress);
         return progress; // replace `any` with your Story type if available
       } catch (err) {
         const message =
