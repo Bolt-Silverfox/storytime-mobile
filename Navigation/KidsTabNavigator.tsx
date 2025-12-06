@@ -18,7 +18,6 @@ type KidsTabNavigatorParamList = {
   library: { childId: string };
   personalize: { childId: string };
   profile: { childId: string };
-  progress: { childId: string };
 };
 
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
