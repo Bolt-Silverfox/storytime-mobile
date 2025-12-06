@@ -19,7 +19,7 @@ const useGetKidFavorites = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["kidFavorite", kidId],
+    queryKey: ["stories", user?.id],
     queryFn: async () => {
       try {
         if (!user) return null;
