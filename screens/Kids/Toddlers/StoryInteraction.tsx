@@ -15,6 +15,7 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import ErrorComponent from "../../../components/ErrorComponent";
+import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 
 type Props = NativeStackScreenProps<
   KidsSetupNavigatorParamList,
@@ -78,6 +79,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
     return `${min}-${max} mins`;
   }
   const durationLabel = getDurationRange(duration);
+  const FALLBACK = require("../../../assets/parents/unseen-world.jpg");
 
   return (
     <ScrollView className="relative bg-[#FAF4F2] flex-1">
@@ -92,8 +94,9 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
         />
       </Pressable>
       <View className="relative w-full">
-        <Image
-          source={{ uri: story.coverImageUrl }}
+        <ImageWithFallback
+          sourceUri={ story.coverImageUrl }
+          fallbackRequire={FALLBACK}
           className="w-full h-[450px]"
           resizeMode="cover"
         />

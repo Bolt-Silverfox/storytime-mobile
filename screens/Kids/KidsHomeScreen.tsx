@@ -1,10 +1,18 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { lazy, Suspense } from "react";
-import { ActivityIndicator, Image, Text, View, Pressable } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Text,
+  View,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import ErrorComponent from "../../components/ErrorComponent";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
 import useGetStoryBuddyById from "../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
+import useGetRecommendedStory from "../../hooks/tanstack/queryHooks/useGetRecommendedStory";
 import {
   KidsTabNavigatorParamList,
   KidsTabNavigatorProp,
@@ -27,10 +35,22 @@ const KidHomeScreen = () => {
     error: buddyError,
     refetch: refetchBuddy,
   } = useGetStoryBuddyById(data?.storyBuddyId!);
+  const {
+    data: recommendedData,
+    isLoading: recommendedLoading,
+    error: recommendedError,
+  } = useGetRecommendedStory(params.childId);
+
   const navigation = useNavigation<any>();
 
+
+  if (isPending) return <LoadingOverlay visible label="Loading kid..." />;
+
+  
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+
+  
   if (!data)
     return (
       <ErrorComponent
@@ -38,6 +58,8 @@ const KidHomeScreen = () => {
         refetch={() => navigation.goBack()}
       />
     );
+
+  
   if (buddyError)
     return (
       <ErrorComponent
@@ -55,25 +77,26 @@ const KidHomeScreen = () => {
             parentNav.reset({ index: 0, routes: [{ name: "selection" }] })
           }
         />
-       
+
         <Text className="text-xl font-[abeezee] flex-1">
           Hello, {data.name}
         </Text>
 
-  <Image
-    source={
-      buddyData?.name === "lumina"
-        ? require("../../assets/avatars/lumina.png")
-        : require("../../assets/avatars/zylo.png")
-    }
-    className="size-[50px]"
-  />
-
-
-
+        <Image
+          source={
+            buddyData?.name === "lumina"
+              ? require("../../assets/avatars/lumina.png")
+              : require("../../assets/avatars/zylo.png")
+          }
+          className="size-[50px]"
+        />
       </View>
+
       <Suspense fallback={<ActivityIndicator size={"large"} />}>
-        <KidsHomeScreenStories id={params.childId} />
+        <KidsHomeScreenStories
+          id={params.childId}
+          recommendedStories={recommendedData?.data ?? []}
+        />
       </Suspense>
 
       <LoadingOverlay visible={isPending} />

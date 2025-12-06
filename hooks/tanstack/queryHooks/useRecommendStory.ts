@@ -11,18 +11,19 @@ export type RecommendPayload = {
 export type RecommendResponse = {
   success: boolean;
   message?: string;
-  data?: any; // type this if you know the API response shape
+  data?: any;
 };
 
 const recommendStory = async ({ storyId, kidId }: RecommendPayload) => {
-  const url = `${BASE_URL}/stories`;
+  const url = `${BASE_URL}/stories/recommend`;
+
   const res = await apiFetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       storyId,
       kidId,
-      recommendBasedOnPreferences: true,
+      message: "A new story recommendation",
     }),
   });
 
@@ -40,13 +41,10 @@ const recommendStory = async ({ storyId, kidId }: RecommendPayload) => {
 export default function useRecommendStory() {
   const queryClient = useQueryClient();
 
-  return useMutation<RecommendResponse, Error, RecommendPayload>(
-    // recommendStory,
-    {
-      onSuccess: () => {
-        // Invalidate story queries so UI updates
-        queryClient.invalidateQueries({ queryKey: ["stories"] });
-      },
-    }
-  );
+  return useMutation<RecommendResponse, Error, RecommendPayload>({
+    mutationFn: recommendStory, // <-- REQUIRED!
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["stories"] });
+    },
+  });
 }
