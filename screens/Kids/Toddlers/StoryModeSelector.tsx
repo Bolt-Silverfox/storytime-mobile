@@ -25,8 +25,8 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(true);
   const [mode, setMode] = useState<Mode>("readAlong");
+  const [imageFailed, setImageFailed] = useState(false);
 
-  // If you later use the real hook, replace this lookup  the hook and loading/error handling.
   const { data: story } = useGetStory(storyId);
 
   const coverSource = story?.coverImageUrl
@@ -38,7 +38,6 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
     setMode("readAlong");
   };
 
-  // Save voice and navigate to reader with chosen voice
   const handleSaveVoice = (voiceId: string) => {
     setSelectedVoice(voiceId);
     setVoiceModalVisible(false);
@@ -54,21 +53,15 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
     setMode("listen");
   };
 
-  return (
-    <ImageBackground
-      source={coverSource}
-      className="flex-1"
-      resizeMode="cover"
-      onLoadStart={() => setImageLoading(true)}
-      onLoadEnd={() => setImageLoading(false)}
-    >
-      {imageLoading && (
+  const Content = (
+    <>
+      {imageLoading && !imageFailed && (
         <View className="absolute inset-0 bg-[#f0f0f0] items-center justify-center">
           <ActivityIndicator size="large" color="#866EFF" />
         </View>
       )}
 
-      <View className="absolute inset-0 bg-black/30" />
+      <View className="absolute inset-0 bg-black/70" />
 
       <ScrollView contentContainerStyle={{ flexGrow: 1 }} className="p-6">
         <View className="flex-1 justify-center items-center">
@@ -83,6 +76,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
                 resizeMode="contain"
               />
             </Pressable>
+
             <Pressable
               onPress={onReadAlong}
               className="flex-row bg-[#866EFF] rounded-full p-3 w-[90%] gap-2 items-center justify-center"
@@ -111,7 +105,37 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
           </View>
         </View>
       </ScrollView>
-      {/* Voice selection modal */}
+    </>
+  );
+
+  return (
+    <>
+      {!imageFailed ? (
+        <ImageBackground
+          source={coverSource}
+          className="flex-1"
+          resizeMode="cover"
+          onLoadStart={() => {
+            setImageLoading(true);
+            setImageFailed(false);
+          }}
+          onLoadEnd={() => setImageLoading(false)}
+          onError={(e) => {
+            console.warn("Cover image failed to load:", story?.coverImageUrl, e);
+            setImageFailed(true);
+            setImageLoading(false);
+          }}
+        >
+          {Content}
+        </ImageBackground>
+      ) : (
+        // full-screen blue fallback
+        <View className="flex-1 bg-purple">
+          {Content}
+        </View>
+      )}
+
+      {/* Voice selection modal stays outside background so it's always visible */}
       <VoiceSelectModal
         visible={voiceModalVisible}
         initialVoiceId={selectedVoice}
@@ -119,7 +143,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
         onSave={handleSaveVoice}
         mode={mode}
       />
-    </ImageBackground>
+    </>
   );
 };
 

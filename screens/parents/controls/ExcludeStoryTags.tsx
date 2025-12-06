@@ -61,7 +61,7 @@ const ExcludeStoryTags = () => {
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   return (
-    <View className="flex flex-1 flex-col gap-y-10 pb-10 max-w-screen-md mx-auto w-full ">
+    <View className="flex flex-1 flex-col bg-bgLight gap-y-10 pb-10 max-w-screen-md mx-auto w-full ">
       <PageTitle goBack={() => navigator.goBack()} title="Exclude Story Tags" />
       <View className="mx-5 relative">
         <TextInput

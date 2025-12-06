@@ -1,4 +1,3 @@
-// screens/parents/InteractiveStoryScreen.tsx
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -9,19 +8,15 @@ import {
   ImageBackground,
   Pressable,
   Alert,
-  ActivityIndicator,
 } from "react-native";
 import {
   Play,
   Pause,
-  SkipForward,
-  SkipBack,
   ChevronLeft,
   PencilLine,
 } from "lucide-react-native";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
-import Toggle from "../../../components/UI/Toggle";
 import RecommendStoryModal from "../../../components/modals/RecommendStoryModal";
 import CustomButton from "../../../components/UI/CustomButton";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
@@ -61,8 +56,8 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
   const [elapsed, setElapsed] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [voicePickerOpen, setVoicePickerOpen] = useState(false);
-  const [preferredVoiceId, setPreferredVoiceId] = useState("fanice");
-  const [preferredVoiceName, setPreferredVoiceName] = useState("Fanice");
+  const [preferredVoiceId, setPreferredVoiceId] = useState("River");
+  const [preferredVoiceName, setPreferredVoiceName] = useState("River");
   const [chunkIndex, setChunkIndex] = useState(0);
 
   const submitAnswer = async (questionId: string, optionIndex: number) => {
@@ -203,7 +198,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
                   coverUri.replace("/upload/", "/upload/f_auto,q_auto/")
                 ),
               }
-            : require("../../../assets/parents/story-cover-image.png")
+            : require("../../../assets/parents/unseen-world.jpg")
         }
         style={{ height: 300, width: "100%" }}
         className="w-full relative"
@@ -227,7 +222,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
       </ImageBackground>
 
       <View className="px-4 pt-4">
-        {/* Cosmo / Fanice row + story text */}
+        {/* Cosmo / voice changer row + story text */}
         <View className="rounded-2xl flex-col items-center gap-6">
           {on ? (
             <View className="w-full flex-row items-center justify-between gap-4">
@@ -347,7 +342,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
           </View>
 
           {/* read-along row with toggle */}
-          <View className="flex-row items-center py-4 px-6 w-full">
+          <View className="flex-row items-center py-3 px-4 w-[90%] border border-[#FAF4F2] rounded-2xl">
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
@@ -365,11 +360,10 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
 
       {/* player */}
       <View className="px-4 pt-3 pb-3 bg-white flex-row items-center justify-center gap-6">
-        <View className="w-5 h-5"></View>
         <View className="flex-row gap-4 justify-center items-center mt-4">
           <TouchableOpacity onPress={onSkipBack} activeOpacity={0.85}>
             <Image
-              source={require("../../../assets/icons/rewind.png")}
+              source={require("../../../assets/icons/replay.png")}
               className="w-8 h-8 rounded-full mr-3"
               resizeMode="contain"
             />
@@ -395,10 +389,6 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
             />
           </TouchableOpacity>
         </View>
-
-        <TouchableOpacity onPress={onSkipForward} className="mt-2">
-          <Text className="text-[abeezee]">5xp</Text>
-        </TouchableOpacity>
       </View>
 
       {/* elapsed / total time row */}
@@ -414,20 +404,20 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
       </View>
 
       <RecommendStoryModal
-            visible={isRecommendOpen}
-            onClose={() => setIsRecommendOpen(false)}
-            storyId={storyId}
-            handleRecommend={(sId, kidId) => {
-              if (!sId || !kidId) return;
-              recommendStory(
-                { storyId: sId, kidId }, // ✅ payload
-                {
-                  onSuccess: () => alert("Story recommended successfully!"),
-                  onError: (err) => alert(err.message),
-                  }
-                );
-              }}
-          />
+        visible={isRecommendOpen}
+        onClose={() => setIsRecommendOpen(false)}
+        storyId={storyId}
+        handleRecommend={(sId, kidId) => {
+          if (!sId || !kidId) return;
+          recommendStory(
+            { storyId: sId, kidId }, // ✅ payload
+            {
+              onSuccess: () => alert("Story recommended successfully!"),
+              onError: (err) => alert(err.message),
+            }
+          );
+        }}
+      />
 
       <VoicePickerModal
         visible={voicePickerOpen}
@@ -435,7 +425,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
         currentlyActiveVoiceId={preferredVoiceId}
         onConfirm={(selectedVoiceId, selectedVoiceName) => {
           setPreferredVoiceId(selectedVoiceId);
-          setPreferredVoiceName(selectedVoiceName ?? "Fanice");
+          setPreferredVoiceName(selectedVoiceName ?? "River");
           setVoicePickerOpen(false);
         }}
       />
