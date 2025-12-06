@@ -45,7 +45,7 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
         success: boolean;
         message: string;
         data: Kid[];
-      }>(["userKids"]);
+      }>(["userKids", user?.id]);
 
       const existingKids = cachedResponse?.data ?? [];
       const duplicate = normalizedNames.some((name) =>
@@ -67,7 +67,7 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     },
     onSuccess: async () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids"],
+        queryKey: ["userKids", user?.id],
       });
 
       if (!user) return;

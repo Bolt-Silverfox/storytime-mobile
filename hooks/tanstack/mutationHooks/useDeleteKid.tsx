@@ -4,10 +4,12 @@ import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import useAuth from "../../../contexts/AuthContext";
 
 const useDeleteKid = () => {
   const queryClient = useQueryClient();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const { user } = useAuth();
   return useMutation({
     mutationFn: async (kidsIds: Array<string>) => {
       const request = await apiFetch(`${BASE_URL}/auth/kids/${kidsIds[0]}`, {
@@ -22,7 +24,7 @@ const useDeleteKid = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids"],
+        queryKey: ["userKids", user?.id],
       });
       navigator.reset({
         index: 0,
