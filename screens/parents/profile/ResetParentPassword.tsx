@@ -102,7 +102,7 @@ export default function ResetParentPassword() {
           />
         </View>
       </View>
-      <View className="flex-1 justify-center px-4 gap-6">
+      <View className="flex-1 mt-10 px-4 gap-6">
         <Pressable onPress={onResetPassword}>
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}

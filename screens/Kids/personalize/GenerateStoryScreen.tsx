@@ -19,8 +19,11 @@ import ChildButton from "../../../components/UI/ChildButton";
 import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 
-type RoutePropTypes = RouteProp<PersonalizeKidNavigatorParamList, "index">;
-const PersonalizeStoriesIndex = () => {
+type RoutePropTypes = RouteProp<
+  PersonalizeKidNavigatorParamList,
+  "generateStory"
+>;
+const GenerateStoryScreen = () => {
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
   const { params } = useRoute<RoutePropTypes>();
   const { data, isLoading, error, refetch } = useGetKidById(params.childId);
@@ -121,7 +124,7 @@ const PersonalizeStoriesIndex = () => {
 
             <Pressable
               onPress={() => {
-                setAvatarSource(require("../../../assets/images/girl.png"))
+                setAvatarSource(require("../../../assets/images/girl.png"));
                 setHeroGender("girl");
               }}
               className={`border-4 rounded-lg w-[47%]  ${heroGender === "girl" ? "border-purple bg-purple/20" : "border-black/10"}`}
@@ -135,7 +138,7 @@ const PersonalizeStoriesIndex = () => {
 
             <Pressable
               onPress={() => {
-                setAvatarSource(require("../../../assets/images/animal.png"))
+                setAvatarSource(require("../../../assets/images/animal.png"));
                 setHeroGender("animal");
               }}
               className={`border-4 rounded-lg w-[47%]  ${heroGender === "animal" ? "border-purple bg-purple/20" : "border-black/10"}`}
@@ -163,4 +166,4 @@ const PersonalizeStoriesIndex = () => {
   );
 };
 
-export default PersonalizeStoriesIndex;
+export default GenerateStoryScreen;

@@ -1,48 +1,58 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import { Alert, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import colours from "../../../colours";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
+import {
+  ParentAuthNavigatorParamList,
+  ParentAuthNavigatorProps,
+} from "../../../Navigation/ParentAuthNavigator";
 
-const SetPin = () => {
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
+type RoutePropTypes = RouteProp<ParentAuthNavigatorParamList, "resetPin">;
+
+const ResetPinScreen = () => {
+  const { params } = useRoute<RoutePropTypes>();
+  const navigator = useNavigation<ParentAuthNavigatorProps>();
   const [error, setError] = useState("");
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
-  const { isLoading, setInAppPin } = useAuth();
+  const { isLoading, resetPinWithOtp } = useAuth();
 
   const onSubmit = () => {
     if (pin !== confirmPin) {
       setError("Both pins must match");
       return;
     }
-    setInAppPin({
-      pin,
+    resetPinWithOtp({
+      otp: params.otp,
+      newPin: pin,
+      confirmNewPin: confirmPin,
       setErrorCb: setError,
       onSuccess: () => {
-        Alert.alert("Pin set successfully!");
-        navigator.goBack();
+        Alert.alert("Pin reset successfully");
+        navigator.reset({
+          index: 0,
+          routes: [{ name: "verifyPin" }],
+        });
       },
     });
   };
 
   return (
     <View className="flex flex-1 pb-5">
-      <PageTitle title="Set Pin" goBack={() => navigator.goBack()} />
-      <View className="flex-1 mx-4 flex gap-y-7 py-6">
-        <ErrorMessageDisplay errorMessage={error} />
+      <PageTitle title="Reset Pin" goBack={() => navigator.goBack()} />
+      <View className="flex-1 mt-5 mx-4 flex gap-y-7 py-6">
+        {error && <ErrorMessageDisplay errorMessage={error} />}
         <View className="flex flex-col gap-y-2">
-          <Text className="font-[abeezee]">Enter your Pin</Text>
+          <Text className="font-[abeezee]">Enter your new Pin</Text>
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -53,11 +63,10 @@ const SetPin = () => {
           />
         </View>
         <View className="flex flex-col gap-y-2">
-          <Text className="font-[abeezee]">Confirm your Pin</Text>
+          <Text className="font-[abeezee]">Confirm your new Pin</Text>
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setConfirmPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -76,7 +85,7 @@ const SetPin = () => {
   );
 };
 
-export default SetPin;
+export default ResetPinScreen;
 
 const styles = StyleSheet.create({
   text: {
