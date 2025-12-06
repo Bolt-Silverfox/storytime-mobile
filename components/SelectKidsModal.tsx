@@ -1,5 +1,13 @@
 import React from "react";
-import { Alert, Image, Modal, Pressable, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import LoadingOverlay from "./LoadingOverlay";
 import CustomButton from "./UI/CustomButton";
@@ -33,7 +41,11 @@ const KidSelectorModal = ({
     >
       <Pressable onPress={onClose} className="flex-1 bg-black/40" />
 
-      <View className="bg-white rounded-t-3xl p-6 pb-12 absolute bottom-0 w-full">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className="bg-white flex-1 rounded-t-3xl p-6 pb-12 absolute bottom-0 w-full"
+        contentContainerClassName="min-h-full"
+      >
         <Text className="text-lg font-[quilka] mb-4 text-center">
           Select Child to Manage
         </Text>
@@ -101,7 +113,7 @@ const KidSelectorModal = ({
             </Text>
           </Pressable>
         </View>
-      </View>
+      </ScrollView>
     </Modal>
   );
 };

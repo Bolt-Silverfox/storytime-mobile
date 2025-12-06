@@ -3,18 +3,18 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import useAuth from "../../../contexts/AuthContext";
 
-const useDeleteKid = () => {
+const useRemoveFromDownloads = (kidId: string, storyId: string) => {
   const queryClient = useQueryClient();
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const { user } = useAuth();
   return useMutation({
-    mutationFn: async (kidsIds: Array<string>) => {
-      const request = await apiFetch(`${BASE_URL}/auth/kids/${kidsIds[0]}`, {
-        method: "DELETE",
-      });
+    mutationFn: async () => {
+      const request = await apiFetch(
+        `${BASE_URL}/stories/library/${kidId}/download/${storyId}`,
+        {
+          method: "DELETE",
+          body: JSON.stringify({ kidId, storyId }),
+        }
+      );
       const response = await request.json();
 
       if (!response.success) {
@@ -24,11 +24,7 @@ const useDeleteKid = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids", user?.id],
-      });
-      navigator.reset({
-        index: 0,
-        routes: [{ name: "deleteProfileSucessful" }],
+        queryKey: ["downloadStories", kidId],
       });
     },
     onError: (err) => {
@@ -37,4 +33,4 @@ const useDeleteKid = () => {
   });
 };
 
-export default useDeleteKid;
+export default useRemoveFromDownloads;

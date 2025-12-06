@@ -63,7 +63,7 @@ const useUpdateKids = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["userKids"],
+        queryKey: ["userKids", user?.id],
       });
       queryClient.invalidateQueries({
         queryKey: ["kidById", id],
