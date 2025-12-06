@@ -25,10 +25,12 @@ export type ContinueReading = {
     nextA: string;
     nextB: string;
   }[];
+
+  progress: number;
 };
 
 type Response = {
-  data: ContinueReading[] ;
+  data: ContinueReading[];
   message: string;
   statusCode: number;
   success: boolean;
@@ -38,7 +40,7 @@ const useGetContinueReading = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["ContinueReading", user?.id],
+    queryKey: ["ContinueReading", kidId],
     queryFn: async () => {
       try {
         if (!user) return null;
@@ -55,7 +57,7 @@ const useGetContinueReading = (kidId: string) => {
         }
 
         const stories: Response = await response.json();
-        console.log("stories:", stories);
+        // console.log("stories:", stories);
         return stories; // replace `any` with your Story type if available
       } catch (err) {
         const message =
