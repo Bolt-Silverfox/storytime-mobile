@@ -11,24 +11,21 @@ const useSetStoryProgress = ({
 }: {
   kidId: string;
   storyId: string;
+  id: string;
   onSuccess?: () => void;
-  id?: string;
 }) => {
   const queryClient = useQueryClient();
-
   return useMutation({
     mutationFn: async ({
       progress,
       completed,
       time,
     }: {
-      progress?: number;
-      completed?: boolean;
+      progress: number;
+      completed: boolean;
       time: number;
     }) => {
       const url = `${BASE_URL}/stories/progress`;
-      const sessionTime = Math.floor((Date.now() - time) / 1000);
-
       const request = await apiFetch(url, {
         method: "POST",
         body: JSON.stringify({
@@ -36,7 +33,7 @@ const useSetStoryProgress = ({
           storyId: storyId,
           progress: progress,
           completed: completed,
-          sessionTime: sessionTime,
+          sessionTime: time,
         }),
       });
       const response = await request.json();
@@ -47,12 +44,6 @@ const useSetStoryProgress = ({
       return response;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["storyProgress", kidId, storyId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["ContinueReading", kidId],
-      });
       onSuccess?.();
     },
   });

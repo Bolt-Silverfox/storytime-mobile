@@ -1,6 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -57,16 +57,6 @@ const KidsLibraryScreen = () => {
   const navigation = useNavigation<KidsTabNavigatorProp>();
   const libNav = useNavigation<KidsLibraryNavigatorProps>();
 
-  useEffect(() => {
-    const loadKid = async () => {
-      const id = await AsyncStorage.getItem("currentKid");
-      console.log("id", id);
-      // setCurrentKidId(id);
-    };
-
-    loadKid();
-  }, []);
-
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (!data && !isPending)
@@ -122,6 +112,7 @@ const KidsLibraryScreen = () => {
 
       <View style={{ position: "relative", top: -150, marginBottom: -140 }}>
         <Suspense fallback={<ActivityIndicator size={"large"} />}>
+          {/* <KidStories id={params.childId} /> */}
           <View className="flex-row flex-wrap gap-5 justify-center">
             {stories.slice(0, 4).map((story) => (
               <Book key={story.id} story={story} />
@@ -130,7 +121,7 @@ const KidsLibraryScreen = () => {
         </Suspense>
         <Pressable
           onPress={() =>
-            navigation.navigate("home", { childId: params.childId })
+            libNav.navigate("allStories", { childId: params.childId! })
           }
           className="bg-[#866EFF] mt-[60] py-[18] px-[10] rounded-[60] mx-[16]"
         >
