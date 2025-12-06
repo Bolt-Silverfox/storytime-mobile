@@ -14,9 +14,6 @@ import MyCreations from "../screens/Kids/library/MyCreations";
 import LibraryCompleted from "../screens/Kids/library/LibraryCompleted";
 import ReturningUser from "../screens/Kids/library/ReturningUser";
 import ContinueReadingLibrary from "../screens/Kids/library/ContinueReading";
-import useGetContinueReading from "../hooks/tanstack/queryHooks/useGetContinueReading";
-import { useEffect, useState } from "react";
-import LoadingOverlay from "../components/LoadingOverlay";
 
 type KidsLibraryNavigatorParamList = {
   indexPage: { childId: string };
@@ -44,23 +41,10 @@ type KidsTabNavigatorRouteProp = RouteProp<
 const KidsLibraryNavigator = () => {
   const { params } = useRoute<KidsTabNavigatorRouteProp>();
   const childId = params.childId;
-  const { data: continueReading, isLoading } = useGetContinueReading(
-    params.childId
-  );
-  // const [returningUser, setReturningUser] = useState(continueReading?.length);
-
-  // useEffect(() => {
-  //   setReturningUser(continueReading?.length);
-  // });
-  if (isLoading) {
-    return <LoadingOverlay visible={isLoading} />;
-  }
-
-  const returningUser = (continueReading?.length ?? 0) > 0;
-  console.log(returningUser, "user", isLoading);
+  const returningUser = true;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {returningUser ? (
+      {!returningUser ? (
         <Stack.Screen
           name="returningUser"
           component={ReturningUser}
