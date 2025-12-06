@@ -25,23 +25,16 @@ export default function VoicePickerModal({
   onConfirm,
 }: Props) {
   const [activeId, setActiveId] = useState<string>(
-    currentlyActiveVoiceId ?? "fanice"
+    currentlyActiveVoiceId ?? "River"
   );
   const [selectedVoiceName, setSelectedVoiceName] = useState<string | null>(
-    null
+    "River"
   );
-
-  useEffect(() => {
-    if (visible) {
-      setActiveId(currentlyActiveVoiceId ?? "fanice");
-      setSelectedVoiceName(null);
-    }
-  }, [visible, currentlyActiveVoiceId]);
 
   // receives (id, name) from child
   const handleVoiceSelect = (id: string | null, name?: string | null) => {
     if (id === null) {
-      setActiveId(currentlyActiveVoiceId ?? "fanice");
+      setActiveId(currentlyActiveVoiceId ?? "River");
       setSelectedVoiceName(null);
     } else {
       setActiveId(id);
@@ -88,7 +81,7 @@ export default function VoicePickerModal({
             <Text className="text-xl font-[abeezee]uppercase">
               Default AI voice
             </Text>
-            <Text className="font-[quilka] text-2xl">Bella</Text>
+            <Text className="font-[quilka] text-2xl">{selectedVoiceName}</Text>
           </View>
           <CircleCheck color="#07A92A" />
         </View>

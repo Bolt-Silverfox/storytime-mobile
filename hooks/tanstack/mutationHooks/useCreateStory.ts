@@ -40,11 +40,20 @@ const useCreateStory = ({
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   console.log("kid id", kidId);
   return useMutation({
-    mutationFn: async (data: { theme: string; category?: string }) => {
+    mutationFn: async (data: {
+      theme: string;
+      heroName: string;
+      category?: string;
+    }) => {
       const url = `${BASE_URL}/stories/generate/kid/${kidId}`;
       const request = await apiFetch(url, {
         method: "POST",
-        body: JSON.stringify({ ...data, kidId }),
+        body: JSON.stringify({
+          themes: [data.theme],
+          categories: [data.category],
+          kidId,
+          kidName: data.heroName,
+        }),
       });
       const response: QueryResponse<GenerateStory> = await request.json();
       console.log("response", response);

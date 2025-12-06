@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View, StyleSheet } from "react-native";
 import Icon from "../../../components/Icon";
 import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 import colours from "../../../colours";
@@ -42,10 +42,13 @@ const ControlsIndexScreen = () => {
       <Text className="font-[quilka] py-5 text-center text-2xl">Controls</Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1"
-        contentContainerClassName="px-5 flex flex-col bg-bgLight gap-y-10 pt-4 pb-10 bg-white min-h-full max-w-screen-md w-full mx-auto"
+        className="flex-1 bg-bgLight"
+        contentContainerClassName="px-5 flex flex-col gap-y-10 pt-4 pb-10  h-full max-w-screen-md w-full mx-auto"
       >
-        <View className="flex flex-col  rounded-3xl p-4 bg-white">
+        <View
+          style={styles.shadow}
+          className="flex flex-col bg-white rounded-3xl p-4  border border-black/10"
+        >
           <Text className="text-[18px] font-[abeezee] my-3">
             STORY CUSTOMISATION
           </Text>
@@ -94,7 +97,10 @@ const ControlsIndexScreen = () => {
           </Pressable>
         </View>
 
-        <View className="flex flex-col  rounded-3xl p-4 bg-white">
+        <View
+          style={styles.shadow}
+          className="flex flex-col bg-white  rounded-3xl p-4  border border-black/10"
+        >
           <Text className="text-[18px] font-[abeezee] my-3">
             READING & USAGE
           </Text>
@@ -146,3 +152,13 @@ const ControlsIndexScreen = () => {
 };
 
 export default ControlsIndexScreen;
+
+const styles = StyleSheet.create({
+  shadow: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 5, // Android shadow
+  },
+});

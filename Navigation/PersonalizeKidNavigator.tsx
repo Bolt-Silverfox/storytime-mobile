@@ -4,7 +4,6 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { CustomizeStoryProvider } from "../contexts/CustomizeStoryContext";
-import CustomizeKidsStoryPreviewScreen from "../screens/Kids/personalize/CustomizeKidsStoryPreviewScreen";
 import CustomizeKidStory from "../screens/Kids/personalize/CustomizeKidStory";
 import GenerateStoryScreen from "../screens/Kids/personalize/GenerateStoryScreen";
 import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
@@ -44,11 +43,6 @@ const PersonalizeKidNavigator = () => {
           initialParams={{ childId }}
           name="customizeStory"
           component={CustomizeKidStory}
-        />
-        <Stack.Screen
-          initialParams={{ childId }}
-          name="previewScreen"
-          component={CustomizeKidsStoryPreviewScreen}
         />
       </Stack.Navigator>
     </CustomizeStoryProvider>

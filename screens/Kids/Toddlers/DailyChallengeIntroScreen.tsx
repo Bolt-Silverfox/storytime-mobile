@@ -13,7 +13,8 @@ import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNaviga
 
 type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "challenge">;
 
-const ChallengeScreen: React.FC<Props> = ({ navigation }) => {
+const ChallengeScreen: React.FC<Props> = ({ navigation, route }) => {
+  const { storyId } = route.params;
   return (
     <View className="flex-1 bg-[#866EFF]">
       <SafeAreaView />
@@ -65,7 +66,7 @@ const ChallengeScreen: React.FC<Props> = ({ navigation }) => {
 
         {/* CTA button */}
         <Pressable
-          onPress={() => navigation.navigate("storyReader", { storyId: "1" })}
+          onPress={() => navigation.navigate("storyReader", { storyId })}
           className="bg-white py-3 rounded-full flex-row items-center justify-center mt-2"
           android_ripple={{ color: "rgba(0,0,0,0.05)" }}
           accessibilityRole="button"

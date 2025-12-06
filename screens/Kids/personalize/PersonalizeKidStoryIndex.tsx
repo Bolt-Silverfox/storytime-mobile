@@ -1,10 +1,10 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
 import {
   FlatList,
   Image,
   ImageBackground,
   Pressable,
-  Switch,
   Text,
   View,
 } from "react-native";
@@ -15,11 +15,8 @@ import {
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ChildButton from "../../../components/UI/ChildButton";
-import useGetGeneratedStories from "../../../hooks/tanstack/queryHooks/useGetGeneratedStories";
-import Icon from "../../../components/Icon";
-import { Dispatch, SetStateAction, useState } from "react";
-import CustomModal from "../../../components/modals/CustomModal";
 import ActiveStoryModal from "../../../components/modals/ActiveStoryModal";
+import useGetGeneratedStories from "../../../hooks/tanstack/queryHooks/useGetGeneratedStories";
 
 type RoutePropType = RouteProp<PersonalizeKidNavigatorParamList, "index">;
 const PersonalizeKidStoryIndex = () => {
@@ -39,6 +36,7 @@ const PersonalizeKidStoryIndex = () => {
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
+  console.log("gnerated stories", data);
   return (
     <View className="flex flex-1">
       {data.length ? (
@@ -102,16 +100,6 @@ const EmptyState = ({ childId }: { childId: string }) => {
 
   return (
     <View className="flex flex-1 pb-10 bg-bgLight">
-      {/* <ImageBackground
-        source={require("../../../assets/images/story-generation-bg.png")}
-        resizeMode="cover"
-        className=" min-h-[60%]"
-      >
-        <Text className="text-center py-3 text-white font-[quilka] text-2xl">
-          Personalize
-        </Text>
-        <Text className="">You haven't generated any stories</Text>
-        </ImageBackground> */}
       <View className="flex-1  flex justify-center ">
         <Text className="text-center py-3 text-black font-[quilka] text-2xl">
           You haven't generated any stories yet

@@ -61,7 +61,7 @@ const ContentFilter = () => {
       <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1"
+        className="flex-1 bg-bgLight"
         contentContainerClassName="min-h-full max-w-screen-md mx-auto w-full "
       >
         <Text className="text-base font-[abeezee] my-5 text-center">
