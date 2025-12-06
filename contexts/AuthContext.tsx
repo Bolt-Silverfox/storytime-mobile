@@ -154,13 +154,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      iosClientId: IOS_CLIENT_ID,
-      webClientId: WEB_CLIENT_ID,
-      profileImageSize: 200,
-    });
-  }, []);
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     iosClientId: IOS_CLIENT_ID,
+  //     webClientId: WEB_CLIENT_ID,
+  //     profileImageSize: 200,
+  //   });
+  // }, []);
 
   useEffect(() => {
     async function getUserSession() {
