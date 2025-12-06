@@ -48,12 +48,25 @@ export default function LibraryCompleted() {
         showsVerticalScrollIndicator={false}
         className=" gap-y-5 space-y-5"
       >
-        {completedStories?.map((story,i) => (
-          <BookReading key={i} story={story} />
-        ))}
+        {completedStories?.length === 0 || !completedStories ? (
+          <View className="">
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { color: "#fff", fontSize: 14 },
+              ]}
+            >
+              No completed stories yet
+            </Text>
+          </View>
+        ) : (
+          <>
+            {completedStories?.map((story, i) => (
+              <BookReading key={i} story={story} category="completed" />
+            ))}
+          </>
+        )}
       </ScrollView>
-     
     </View>
   );
 }
-
