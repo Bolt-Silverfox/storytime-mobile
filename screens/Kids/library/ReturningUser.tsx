@@ -8,7 +8,7 @@ import {
   ScrollView,
   ImageBackground,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import defaultStyles from "../../../styles";
 import { Search } from "lucide-react-native";
 import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
@@ -24,11 +24,13 @@ import useGetStoriesById from "../../../hooks/tanstack/queryHooks/useGetStoriesB
 import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
 import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
 import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
+import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function ReturningUser() {
   const { params } = useRoute<RotuteProps>();
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
-  const [text, setText] = useState("");
+  const [searchText, setSearchText] = useState("");
 
   const {
     isPending: storiesIsPending,
@@ -36,6 +38,7 @@ export default function ReturningUser() {
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
+
   const {
     isPending: ContinueReadingIsPending,
     error: ContinueReadingError,
@@ -46,54 +49,117 @@ export default function ReturningUser() {
   const { data: createdStories } = useGetCreatedStories(params.childId);
   const { data: kidsFavorites } = useGetKidFavorites(params.childId);
   const { data: kidDownloads } = useGetDownloadStories(params.childId);
-
-  // const { data: storiesById } = useGetStoriesById(
-  //   "00e031c6-daf5-4191-830f-81d6aab2dbc0"
-  // );
-  // console.log("stories by id", storiesById);
   const favouriteStoryIds = kidsFavorites?.map((f) => f.storyId);
   const favouriteStories = stories.filter((story) =>
     favouriteStoryIds?.includes(story.id)
   );
-  const downloadedStoriesId = kidDownloads?.map((d) => d.storyId);
-  const downloadedStories = stories.filter((story) =>
-    downloadedStoriesId?.includes(story.id)
+
+  const filterStoriesByTitle = (stories: any[], searchQuery: string) => {
+    if (!searchQuery.trim()) return stories;
+
+    const query = searchQuery.toLowerCase().trim();
+    return (
+      stories?.filter((story) => story.title?.toLowerCase().includes(query)) ||
+      []
+    );
+  };
+
+  // Memoized filtered data
+  const filteredContinueReading = useMemo(
+    () => filterStoriesByTitle(continueReading || [], searchText),
+    [continueReading, searchText]
   );
 
-  console.log("kid favorites", favouriteStories);
-  console.log("continue stories", continueReading);
-  console.log("downloads", downloadedStories);
-  console.log("created stories", createdStories);
-  console.log("completed stories", completedStories);
+  const filteredCompletedStories = useMemo(
+    () => filterStoriesByTitle(completedStories || [], searchText),
+    [completedStories, searchText]
+  );
 
-  const StoryCard = ({ item }: { item: any }) => (
-    <Pressable className="bg-white w-[249] h-[347] rounded-[10px] mr-5 gap-5">
-      <Image
-        source={{ uri: item.coverImageUrl }}
-        className="h-[217] w-full rounded-t-[10px]"
-      />
-      <View className="h-[100]">
-        <View className="px-4">
-          <Text
-            style={[
-              defaultStyles.defaultText,
-              { fontSize: 16, color: "black" },
-            ]}
-          >
-            {item.title}
-          </Text>
-          <Text
-            style={[
-              defaultStyles.defaultText,
-              { fontSize: 16, color: "black" },
-            ]}
-          >
-            % complete
-          </Text>
+  const filteredFavorites = useMemo(
+    () => filterStoriesByTitle(favouriteStories || [], searchText),
+    [favouriteStories, searchText]
+  );
+
+  const filteredDownloads = useMemo(
+    () => filterStoriesByTitle(kidDownloads || [], searchText),
+    [kidDownloads, searchText]
+  );
+
+  const filteredCreatedStories = useMemo(
+    () => filterStoriesByTitle(createdStories || [], searchText),
+    [createdStories, searchText]
+  );
+
+  // Check if search is active and has results
+  const isSearchActive = searchText.trim().length > 0;
+  const hasSearchResults =
+    isSearchActive &&
+    (filteredContinueReading.length > 0 ||
+      filteredCompletedStories.length > 0 ||
+      filteredFavorites.length > 0 ||
+      filteredDownloads.length > 0 ||
+      filteredCreatedStories.length > 0);
+  const StoryCard = ({ item }: { item: any }) => {
+    const { params } = useRoute<RotuteProps>();
+    const navigator = useNavigation<KidsLibraryNavigatorProps>();
+    const { data: storyProgress } = useGetStoryProgress(
+      params?.childId!,
+      item?.id
+    );
+    console.log(storyProgress, "dif");
+    console.log(item.id, "item");
+    const progress = (storyProgress?.progress! / 100) * 211;
+
+    return (
+      <Pressable
+        onPress={() =>
+          navigator.navigate("setup" as any, {
+            screen: "storyInteraction",
+            params: { storyId: item.id },
+          })
+        }
+        className="bg-white w-[249] h-[347] rounded-[10px] mr-5 gap-5"
+      >
+        <Image
+          source={{ uri: item.coverImageUrl }}
+          className="h-[217] w-full rounded-t-[10px]"
+        />
+        <View className="h-[100]">
+          <View className="px-4">
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { fontSize: 18, color: "black" },
+              ]}
+            >
+              {item.title}
+            </Text>
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { fontSize: 16, color: "#616161" },
+              ]}
+            >
+              {storyProgress?.progress}% complete
+            </Text>
+          </View>
+
+          <View className="rounded-full mx-auto my-2 justify-center items-start w-[230] h-[32] bg-[#DAE1F1] border-b-4 border-r-4 border-[#B0BAFF] ">
+            <View className="bg-[#B0BAFF] rounded-full w-[94%] mx-auto  h-[16]">
+              <View
+                style={{
+                  backgroundColor: "#866EFF",
+                  width: progress,
+                  height: 16,
+                  borderRadius: 100,
+                }}
+              />
+            </View>
+          </View>
         </View>
-      </View>
-    </Pressable>
-  );
+      </Pressable>
+    );
+  };
 
   const HorizontalListSection = <
     T extends keyof KidsLibraryNavigatorParamList,
@@ -117,7 +183,11 @@ export default function ReturningUser() {
       <View className="mb-[32]">
         <View className="flex-row mb-[24] justify-between w-full">
           <Text
-            style={[defaultStyles.heading, { fontSize: 20, color: "black" },title == 'Continue Reading' && {color:'white'}]}
+            style={[
+              defaultStyles.heading,
+              { fontSize: 20, color: "black" },
+              title == "Continue Reading" && { color: "white" },
+            ]}
           >
             {title}
           </Text>
@@ -145,7 +215,10 @@ export default function ReturningUser() {
           />
         ) : (
           <Text
-            style={[defaultStyles.defaultText, { color: "black", fontSize: 14 }]}
+            style={[
+              defaultStyles.defaultText,
+              { color: "black", fontSize: 14 },
+            ]}
           >
             No stories yet
           </Text>
@@ -195,16 +268,21 @@ export default function ReturningUser() {
 
       <ScrollView showsVerticalScrollIndicator={false} className="w-full px-4">
         {/* Search Bar */}
-        <View className="border mt-[24] mb-[40] border-white w-full py-1 items-center flex-row rounded-full px-3 gap-2">
+        <View className="border mt-[24] mb-[40] border-white w-full py-1 items-center justify-center flex-row rounded-full px-3 gap-2">
           <Search color={"white"} size={24} className="self-center" />
           <TextInput
-            value={text}
-            onChangeText={(newText) => setText(newText)}
+            value={searchText}
+            onChangeText={(newText) => setSearchText(newText)}
             placeholder="Search your library"
             placeholderTextColor="#ffffff80"
-            style={{ color: "white" }}
-            className="h-10  placeholder:justify-center flex-1"
+            style={{ color: "white", justifyContent: "center" }}
+            className="h-10 placeholder:self-center flex-1"
           />
+          {searchText.length > 0 && (
+            <Pressable onPress={() => setSearchText("")}>
+              <Text style={{ color: "white", fontSize: 16 }}>✕</Text>
+            </Pressable>
+          )}
         </View>
 
         <HorizontalListSection
@@ -221,7 +299,7 @@ export default function ReturningUser() {
 
         <HorizontalListSection
           title="Downloaded"
-          data={downloadedStories || []}
+          data={kidDownloads || []}
           navigateTo="downloads"
         />
 
