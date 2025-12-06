@@ -1,13 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BASE_URL } from "../../../constants";
-import apiFetch from "../../../apiFetch";
-import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { Alert } from "react-native";
-import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import apiFetch from "../../../apiFetch";
+import { BASE_URL } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
 
 export const useAssignKidAvatar = (kidId: string, redirect?: () => void) => {
-  const navigator = useNavigation<kidsProfileNavigatorProp>();
+  const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (avatarId: string) => {
@@ -28,7 +26,7 @@ export const useAssignKidAvatar = (kidId: string, redirect?: () => void) => {
         queryKey: ["kidById", kidId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["userKids"],
+        queryKey: ["userKids", user?.id],
       });
       redirect?.();
     },
