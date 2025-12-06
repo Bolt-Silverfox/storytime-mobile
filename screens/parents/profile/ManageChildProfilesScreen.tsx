@@ -98,7 +98,6 @@ const ChildItem = ({
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
 
   const toggleShowKid = (id: string) => {
-    console.log("kid id", id);
     if (selectedKid === id) {
       setSelectedKid(null);
       return;

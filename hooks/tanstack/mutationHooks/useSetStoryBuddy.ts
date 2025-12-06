@@ -15,8 +15,6 @@ const useSetStoryBuddy = ({
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      console.log("kid id", kidId);
-      console.log("selected", id);
       const url = `${BASE_URL}/story-buddies/kids/${kidId}/select`;
       const request = await apiFetch(url, {
         method: "POST",

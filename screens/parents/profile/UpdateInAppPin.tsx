@@ -38,7 +38,7 @@ const UpdateInAppPin = () => {
   return (
     <View className="flex flex-1 pb-5">
       <PageTitle title="Update Pin" goBack={() => navigator.goBack()} />
-      <View className="flex-1 mx-3 flex gap-y-7 py-6">
+      <View className="flex-1 mx-4 flex gap-y-7 py-6">
         <ErrorMessageDisplay errorMessage={error} />
         <View className="flex flex-col gap-y-2">
           <Text className="font-[abeezee]">Enter your Old Pin</Text>
@@ -82,11 +82,11 @@ const UpdateInAppPin = () => {
             focusColor="blue"
           />
         </View>
+        <CustomButton
+          onPress={onSubmit}
+          text={isLoading ? "Loading..." : "Save changes"}
+        />
       </View>
-      <CustomButton
-        onPress={onSubmit}
-        text={isLoading ? "Loading..." : "Save changes"}
-      />
     </View>
   );
 };

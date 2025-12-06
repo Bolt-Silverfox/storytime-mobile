@@ -11,11 +11,17 @@ import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryP
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import useSetStoryProgress from "../../../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import useGenerateStoryAudio from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAudio";
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 
 type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "storyReader">;
+type Mode = "readAlong" | "listen";
 
 const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { storyId } = route.params;
+  const { storyId, mode: incomingMode } = route.params as {
+    storyId: string;
+    mode?: Mode;
+  };
   const storyQuery = useGetStory(storyId);
   const story = storyQuery?.data ?? null;
 
@@ -30,6 +36,7 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   }, [paragraphs]);
 
   const total = pages.length;
+  const [mode] = useState<Mode>(incomingMode ?? "readAlong");
   const [pageIndex, setPageIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
@@ -48,6 +55,15 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   // console.log("setsuccess",data)
 
   console.log("progress", storyProgress?.progress, currentKidId, storyId);
+
+  const [audioUri, setAudioUri] = useState<string | null>(null);
+
+  const generateAudio = useGenerateStoryAudio({
+    onSuccess: (data) => {
+      // data.path = URL to the audio file
+      setAudioUri(data.path);
+    },
+  });
 
   useEffect(() => {
     const loadKid = async () => {
@@ -140,7 +156,10 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
     setVoiceModalVisible(false);
     setDropdownVisible(false);
     // persist voice if needed
-    // navigation passes voice to subsequent screens if required
+    generateAudio.mutate({
+      content: story?.textContent ?? "",
+      voiceType: voiceId.toUpperCase(),
+    });
   };
 
   const handleFinish = () => {
@@ -154,8 +173,11 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const handleCompletionPrimary = () => {
     setCompletionVisible(false);
-    const sid = (route.params as any)?.storyId;
-    navigation.navigate("challenge", { storyId: sid });
+    navigation.navigate("setup" as any, {
+      screen: "storyInteraction",
+      params: { storyId },
+    });
+    // navigation.navigate("index" as any, { screen: "home" });
   };
 
   const coverSource = story?.coverImageUrl
@@ -239,20 +261,29 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
           )}
         </View>
       </SafeAreaView>
+      <View className="flex-1 justify-end">
+        <Image
+          source={require("../../../assets/story/sound-waves.png")}
+          className="w-28 h-28 mx-auto"
+          resizeMode="contain"
+        />
+      </View>
 
       {/* main area that pushes content to the bottom */}
       <View className="flex-1 justify-end">
         {/* story box occupying bottom third */}
-        <View className=" bg-white py-4 px-6 rounded-2xl mx-4 mb-4 items-center justify-center">
-          <Text
-            accessible
-            accessibilityRole="text"
-            className="text-[#424242] text-lg leading-relaxed font-[abeezee]"
-            style={{ minHeight: 40 }}
-          >
-            {pages[pageIndex]}
-          </Text>
-        </View>
+        {mode !== "listen" && (
+          <View className=" bg-white py-4 px-6 rounded-2xl mx-4 mb-4 items-center justify-center">
+            <Text
+              accessible
+              accessibilityRole="text"
+              className="text-[#424242] text-lg leading-relaxed font-[abeezee]"
+              style={{ minHeight: 40 }}
+            >
+              {pages[pageIndex]}
+            </Text>
+          </View>
+        )}
 
         {/* controls sit just under the story box */}
         <View className="px-6 pb-8 mt-12">

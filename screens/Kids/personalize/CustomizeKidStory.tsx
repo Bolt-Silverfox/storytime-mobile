@@ -1,21 +1,21 @@
-import {
-  View,
-  Text,
-  ScrollView,
-  TextInput,
-  Pressable,
-  Image,
-} from "react-native";
-import PageTitle from "../../../components/PageTitle";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import {
   PersonalizeKidNavigatorParamList,
   PersonalizeKidsNavigatorProps,
 } from "../../../Navigation/PersonalizeKidNavigator";
-import Icon from "../../../components/Icon";
-import { useState } from "react";
-import ChildButton from "../../../components/UI/ChildButton";
 import colours from "../../../colours";
+import Icon from "../../../components/Icon";
+import PageTitle from "../../../components/PageTitle";
+import ChildButton from "../../../components/UI/ChildButton";
+import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 
 const themes = [
   {
@@ -44,7 +44,7 @@ const themes = [
   },
 ] as const;
 
-type ThemeTypes = (typeof themes)[number]["name"];
+export type ThemeTypes = (typeof themes)[number]["name"];
 
 type RoutePropTypes = RouteProp<
   PersonalizeKidNavigatorParamList,
@@ -53,7 +53,14 @@ type RoutePropTypes = RouteProp<
 const CustomizeKidStory = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
-  const [selectedTheme, setSelectedTheme] = useState<ThemeTypes>("castle");
+  const {
+    heroName,
+    setHeroName,
+    storyTheme,
+    setStoryTheme,
+    avatarSource,
+    setThemeImage,
+  } = useCustomizeStory();
   return (
     <View className="flex-1 flex bg-bgLight pb-5">
       <PageTitle title="Customize Story" goBack={() => navigator.goBack()} />
@@ -62,20 +69,22 @@ const CustomizeKidStory = () => {
         className="flex flex-1 py-5 mx-4"
         contentContainerClassName="min-h-full  pb-48"
       >
-        <View className="bg-white  border border-black/10 px-4 rounded-2xl flex flex-col  py-4">
+        <View className="bg-white relative  border border-black/10 px-4 rounded-2xl flex flex-col  py-4">
           <Text className="text-text text-base font-[abeezee]">
             Hero's name
           </Text>
-          <View className="relative flex flex-row items-center">
+          <Pressable className="relative flex flex-row items-center">
             <TextInput
-              value={"Timmy jon"}
+              value={heroName}
+              onChangeText={setHeroName}
               cursorColor={colours.primary}
-              className="rounded-full flex-1 text-black  text-3xl font-[quilka]  border-black/20 px-4"
+              className="rounded-full flex-1 text-black  text-3xl font-[quilka]  border-black/20 px-12"
             />
-            <Pressable className="absolute top-4 right-4">
+            <Pressable className="absolute top-2 right-4">
               <Icon name="Pen" />
             </Pressable>
-          </View>
+            <Image className="absolute size-10 top-1.5" source={avatarSource} />
+          </Pressable>
         </View>
         <View className="mt-10">
           <Text className="text-xl font-[quilka] text-black">Pick a Theme</Text>
@@ -86,8 +95,11 @@ const CustomizeKidStory = () => {
             {themes.map((theme) => (
               <Pressable
                 key={theme.name}
-                onPress={() => setSelectedTheme(theme.name)}
-                className={`border-4 rounded-lg px-3 py-5 ${selectedTheme === theme.name ? "border-purple bg-purple/20" : "border-black/10"}`}
+                onPress={() => {
+                  setStoryTheme(theme.name);
+                  setThemeImage(theme.imageUrl);
+                }}
+                className={`border-4 w-[47%] rounded-lg px-3 py-5 ${storyTheme === theme.name ? "border-purple bg-purple/20" : "border-black/10"}`}
               >
                 <Image
                   className="max-h-[172px] min-h-[150px] min-w-[150px] max-w-[180px]"
@@ -107,7 +119,7 @@ const CustomizeKidStory = () => {
             childId: params.childId,
           })
         }
-        disabled={!selectedTheme}
+        disabled={!storyTheme || !heroName}
         text="Create theme"
         icon="ArrowRight"
       />

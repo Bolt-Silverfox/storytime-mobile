@@ -3,13 +3,16 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import CustomizeKidStory from "../screens/Kids/personalize/CustomizeKidStory";
-import PersonalizeStoriesIndex from "../screens/Kids/personalize/PersonalizeStoriesIndex";
-import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
+import { CustomizeStoryProvider } from "../contexts/CustomizeStoryContext";
 import CustomizeKidsStoryPreviewScreen from "../screens/Kids/personalize/CustomizeKidsStoryPreviewScreen";
+import CustomizeKidStory from "../screens/Kids/personalize/CustomizeKidStory";
+import GenerateStoryScreen from "../screens/Kids/personalize/GenerateStoryScreen";
+import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
+import PersonalizeKidStoryIndex from "../screens/Kids/personalize/PersonalizeKidStoryIndex";
 
 type PersonalizeKidNavigatorParamList = {
   index: { childId: string };
+  generateStory: { childId: string };
   customizeStory: { childId: string };
   previewScreen: { childId: string };
 };
@@ -25,23 +28,30 @@ const PersonalizeKidNavigator = () => {
   const childId = params.childId;
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen
-        initialParams={{ childId }}
-        name="index"
-        component={PersonalizeStoriesIndex}
-      />
-      <Stack.Screen
-        initialParams={{ childId }}
-        name="customizeStory"
-        component={CustomizeKidStory}
-      />
-      <Stack.Screen
-        initialParams={{ childId }}
-        name="previewScreen"
-        component={CustomizeKidsStoryPreviewScreen}
-      />
-    </Stack.Navigator>
+    <CustomizeStoryProvider childId={childId}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          initialParams={{ childId }}
+          name="index"
+          component={PersonalizeKidStoryIndex}
+        />
+        <Stack.Screen
+          initialParams={{ childId }}
+          name="generateStory"
+          component={GenerateStoryScreen}
+        />
+        <Stack.Screen
+          initialParams={{ childId }}
+          name="customizeStory"
+          component={CustomizeKidStory}
+        />
+        <Stack.Screen
+          initialParams={{ childId }}
+          name="previewScreen"
+          component={CustomizeKidsStoryPreviewScreen}
+        />
+      </Stack.Navigator>
+    </CustomizeStoryProvider>
   );
 };
 
