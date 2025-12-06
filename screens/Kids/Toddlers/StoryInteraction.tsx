@@ -3,14 +3,12 @@ import {
   View,
   Text,
   Image,
-  ScrollView,
-  Pressable,
-  StyleSheet,
   ImageBackground,
+  Pressable,
+  ActivityIndicator,
 } from "react-native";
 import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import type { ProtectedRoutesParamList } from "../../../Navigation/ProtectedNavigator";
-import { ArrowRight } from "lucide-react-native";
+import { ArrowRight, Heart } from "lucide-react-native";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
@@ -21,11 +19,13 @@ type Props = NativeStackScreenProps<
   "storyInteraction"
 >;
 
-
 const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
   const { storyId } = route.params;
   const storyQuery = useGetStory(storyId);
   const story = storyQuery?.data ?? null;
+
+  const [imageLoading, setImageLoading] = useState(true);
+  const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
     if (!storyId) navigation.goBack();
@@ -33,6 +33,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
   if (storyQuery.isLoading)
     return <LoadingOverlay visible label="Loading story..." />;
+
   if (storyQuery.isError)
     return (
       <View className="flex-1 bg-white">
@@ -59,7 +60,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const paragraphs =
     story?.textContent
-      ?.split(/\n\s*\n/) // split on blank lines
+      ?.split(/\n\s*\n/)
       .map((p) => p.trim())
       .filter(Boolean) ?? [];
   const totalChunks = paragraphs.length;
@@ -79,25 +80,13 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
   }
   const durationLabel = getDurationRange(duration);
 
-  return (
-    <ScrollView className="relative bg-[#FAF4F2] flex-1">
-      <Pressable
-        className="absolute top-8 left-2 w-12 h-12 z-20"
-        onPress={() => navigation.goBack()}
-      >
-        <Image
-          source={require("../../../assets/story-home.png")}
-          className="w-12 h-12"
-          resizeMode="contain"
-        />
-      </Pressable>
-      <View className="relative w-full">
-        <Image
-          source={{ uri: story.coverImageUrl }}
-          className="w-full h-[450px]"
-          resizeMode="cover"
-        />
-      </View>
+  const coverSource = story?.coverImageUrl ? { uri: story.coverImageUrl } : null;
+
+  const BottomSheet = (
+    <View
+      className="bg-white rounded-2xl p-4 absolute bottom-0 w-full shadow-lg"
+      style={{ borderTopRightRadius: 32, borderTopLeftRadius: 32 }}
+    >
       <View className="px-4">
         <Text className="text-2xl text-[#212121] font-[quilka] text-center mt-4">
           {story.title}
@@ -107,18 +96,40 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
         </Text>
       </View>
 
-      <View className="flex-row mt-5 w-full gap-3 px-4 items-center justify-center">
-        <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
+      <View className="flex-row mt-5 w-full items-center justify-center px-4">
+        <View className="flex-1 bg-white p-4 rounded-xl gap-2 items-center justify-center">
           <Text className="text-base font-[quilka] text-center">Age range</Text>
-          <Text className="text-[#212121] font-[abeezee]">
+          <Text className="text-[#212121] font-[abeezee] text-center">
             {story.ageMin} - {story.ageMax} years
           </Text>
         </View>
-        <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
+
+        <View
+          style={{
+            width: 1,
+            backgroundColor: "#E0E0E0",
+            height: 56,
+            marginHorizontal: 8,
+          }}
+        />
+
+        <View className="flex-1 bg-white p-4 rounded-xl gap-2 items-center justify-center">
           <Text className="text-base font-[quilka] text-center">Duration</Text>
-          <Text className="text-[#212121] font-[abeezee]">{durationLabel}</Text>
+          <Text className="text-[#212121] font-[abeezee]">
+            {durationLabel}
+          </Text>
         </View>
-        <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
+
+        <View
+          style={{
+            width: 1,
+            backgroundColor: "#E0E0E0",
+            height: 56,
+            marginHorizontal: 8,
+          }}
+        />
+
+        <View className="flex-1 bg-white p-4 rounded-xl gap-2 items-center justify-center">
           <Text className="text-base font-[quilka] text-center">Pages</Text>
           <Text className="text-[#212121] font-[abeezee]">{pages}</Text>
         </View>
@@ -126,13 +137,72 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
       <View style={{ height: 40 }} />
       <Pressable
-        className="bg-[#866EFF] p-4 py-3 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mb-4 rounded-full"
+        className="bg-[#866EFF] p-4 pt-0 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mb-4 rounded-full"
         onPress={() => navigation.navigate("storyModeSelector", { storyId })}
       >
         <Text className="font-[quilka] text-3xl text-white">Start reading</Text>
         <ArrowRight size={36} color="#fff" />
       </Pressable>
-    </ScrollView>
+    </View>
+  );
+
+  return (
+    <View className="flex-1">
+      {/* Back & Heart buttons always on top */}
+      <Pressable
+        className="absolute top-8 left-2 w-12 h-12 z-30"
+        onPress={() => navigation.goBack()}
+      >
+        <Image
+          source={require("../../../assets/story-home.png")}
+          className="w-12 h-12"
+          resizeMode="contain"
+        />
+      </Pressable>
+      <Pressable
+        className="absolute top-8 right-2 w-12 h-12 z-30"
+        onPress={() => navigation.goBack()}
+      >
+        <Heart color="#fff" size={24} />
+      </Pressable>
+
+      {/* ImageBackground or purple fallback */}
+      {!imageFailed && coverSource ? (
+        <ImageBackground
+          source={coverSource}
+          className="flex-1"
+          resizeMode="cover"
+          onLoadStart={() => {
+            setImageLoading(true);
+            setImageFailed(false);
+          }}
+          onLoadEnd={() => setImageLoading(false)}
+          onError={(e) => {
+            console.warn("Cover image failed:", story.coverImageUrl, e);
+            setImageFailed(true);
+            setImageLoading(false);
+          }}
+        >
+          {/* loading placeholder while image loads */}
+          {imageLoading && (
+            <View className="absolute inset-0 bg-[#f0f0f0] items-center justify-center">
+              <ActivityIndicator size="large" color="#866EFF" />
+            </View>
+          )}
+
+          {/* dim overlay */}
+          <View className="absolute inset-0 bg-black/70" />
+
+          {BottomSheet}
+        </ImageBackground>
+      ) : (
+        // Purple fallback background
+        <View className="flex-1 bg-purple">
+          <View className="absolute inset-0 bg-black/70" />
+          {BottomSheet}
+        </View>
+      )}
+    </View>
   );
 };
 
