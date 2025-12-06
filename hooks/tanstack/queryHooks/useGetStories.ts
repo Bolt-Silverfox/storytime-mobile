@@ -5,7 +5,7 @@ import { BASE_URL } from "../../../constants";
 type StoryRequest = {
   statusCode: number;
   success: boolean;
-  data: {data:Story[]};
+  data: { data: Story[] };
   message: string;
 };
 
@@ -35,6 +35,7 @@ type Story = {
     options: string[];
     correctOption: number;
   };
+  progress:number;
 };
 
 const useGetStories = (id?: string) => {
@@ -51,7 +52,7 @@ const useGetStories = (id?: string) => {
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error,try again later");
       }
-      console.log("Get Stories response:", response)
+      // console.log("Get Stories response:", response);
       return response;
     },
     refetchOnMount: false,
