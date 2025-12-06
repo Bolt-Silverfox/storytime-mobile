@@ -4,13 +4,14 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { CustomizeStoryProvider } from "../contexts/CustomizeStoryContext";
-import CustomizeKidsStoryPreviewScreen from "../screens/Kids/personalize/CustomizeKidsStoryPreviewScreen";
 import CustomizeKidStory from "../screens/Kids/personalize/CustomizeKidStory";
-import PersonalizeStoriesIndex from "../screens/Kids/personalize/PersonalizeStoriesIndex";
+import GenerateStoryScreen from "../screens/Kids/personalize/GenerateStoryScreen";
 import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
+import PersonalizeKidStoryIndex from "../screens/Kids/personalize/PersonalizeKidStoryIndex";
 
 type PersonalizeKidNavigatorParamList = {
   index: { childId: string };
+  generateStory: { childId: string };
   customizeStory: { childId: string };
   previewScreen: { childId: string };
 };
@@ -31,17 +32,17 @@ const PersonalizeKidNavigator = () => {
         <Stack.Screen
           initialParams={{ childId }}
           name="index"
-          component={PersonalizeStoriesIndex}
+          component={PersonalizeKidStoryIndex}
+        />
+        <Stack.Screen
+          initialParams={{ childId }}
+          name="generateStory"
+          component={GenerateStoryScreen}
         />
         <Stack.Screen
           initialParams={{ childId }}
           name="customizeStory"
           component={CustomizeKidStory}
-        />
-        <Stack.Screen
-          initialParams={{ childId }}
-          name="previewScreen"
-          component={CustomizeKidsStoryPreviewScreen}
         />
       </Stack.Navigator>
     </CustomizeStoryProvider>
