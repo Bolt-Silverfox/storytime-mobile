@@ -54,7 +54,6 @@ export default function RecommendStoryModal({
       console.warn("handleRecommend error:", err);
     }
 
-    onClose();
     setSuccessOpen(true);
   };
 
@@ -64,7 +63,6 @@ export default function RecommendStoryModal({
   };
 
   return (
-    <>
     <Modal
       visible={visible}
       transparent
@@ -133,28 +131,20 @@ export default function RecommendStoryModal({
           </View>
         )}
 
-        <View className="mt-2">
-  <CustomButton
-    text="Select"
-    onPress={onSelectPress}
-    className="mb-4 " 
-  />
+        <View>
+          <CustomButton text="Select" onPress={onSelectPress} />
 
-  <Pressable
-    onPress={onClose}
-    className="bg-transparent border border-black/20 w-full py-4 rounded-full "
-  >
-    <Text className="text-center text-black font-[abeezee]">
-      Cancel
-    </Text>
-  </Pressable>
-</View>
-
+          <Pressable
+            onPress={onClose}
+            className="bg-transparent border border-black/20 w-full py-4 rounded-full mt-4"
+          >
+            <Text className="text-center text-black font-[abeezee]">
+              Cancel
+            </Text>
+          </Pressable>
+        </View>
       </View>
-      
+      <SuccessModal visible={successOpen} onClose={handleSuccessClose} />
     </Modal>
-    
-    <SuccessModal visible={successOpen} onClose={handleSuccessClose} />
-    </>
   );
 }
