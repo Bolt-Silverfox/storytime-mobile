@@ -38,7 +38,7 @@ const useGetCompletedStories = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["completedStories", user?.id],
+    queryKey: ["completedStories", kidId],
     queryFn: async () => {
       try {
         if (!user) return null;
@@ -55,7 +55,7 @@ const useGetCompletedStories = (kidId: string) => {
         }
 
         const stories: Response = await response.json();
-        console.log("stories:", stories);
+        // console.log("stories:", stories);
         return stories; // replace `any` with your Story type if available
       } catch (err) {
         const message =

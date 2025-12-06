@@ -1,8 +1,10 @@
+import { ContinueReading } from "../hooks/tanstack/queryHooks/useGetContinueReading";
+
 export interface UserData {
   name: string;
   avatar: string;
 }
-
+type stories = Story & ContinueReading;
 export interface Story {
   id: number;
   title: string;
@@ -11,17 +13,16 @@ export interface Story {
   coverColor: string;
   image: string;
   childName: string;
-  progBackgroundColor: string,
-  color: string,
-  backgroundColor: string,
-
+  progBackgroundColor: string;
+  color: string;
+  backgroundColor: string;
 }
 
 export interface Category {
   id: number;
   name: string;
   colour: string;
-  bg: string,
+  bg: string;
 }
 
 export type StoryId = number;
