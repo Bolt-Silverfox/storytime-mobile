@@ -215,13 +215,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = useCallback(() => {
-    (async () => {
-      await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
-      setUser(null);
-      setErrorMessage(undefined);
-    })();
-  }, []);
+  const logout = async () => {
+    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+    setUser(null);
+    setErrorMessage(undefined);
+  };
 
   const login: AuthFnTypes["login"] = async ({
     email,
@@ -455,7 +453,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.verifyInAppPin(pin)
     );
-    console.log("verify in app pin", requestData);
     if (!requestData.success) {
       setErrorCb(requestData.message);
       return;

@@ -5,8 +5,8 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
 const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
-  const queryClient = useQueryClient();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: {
       name?: string;

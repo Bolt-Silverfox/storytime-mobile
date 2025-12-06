@@ -27,8 +27,6 @@ const VerifyPinScreen = () => {
       pin: otp,
       setErrorCb: setError,
       onSuccess: () => {
-        console.log();
-        Alert.alert("Authentication successful");
         parentNav.navigate("parents");
       },
     });
