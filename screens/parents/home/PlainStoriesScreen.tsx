@@ -41,7 +41,7 @@ export default function PlainStoryScreen({ route, navigation }: any) {
 
   const [voicePickerOpen, setVoicePickerOpen] = useState(false);
   const [preferredVoiceId, setPreferredVoiceId] = useState("Milo");
-  const [preferredVoiceName, setPreferredVoiceName] = useState("Fanice");
+  const [preferredVoiceName, setPreferredVoiceName] = useState("River");
   const [chunkIndex, setChunkIndex] = useState(0);
   const [audioUri, setAudioUri] = useState<string | null>(null);
 
@@ -84,12 +84,12 @@ useEffect(() => {
 
 
 // when chunk/uri changes, stop old player
-useEffect(() => {
-  return () => {
-    player?.pause?.();
-  };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-}, [audioUri]);
+// useEffect(() => {
+//   return () => {
+//     player?.pause?.();
+//   };
+//   // eslint-disable-next-line react-hooks/exhaustive-deps
+// }, [audioUri]);
 
   if (storyQuery.isLoading)
     return <LoadingOverlay visible label="Loading story..." />;
@@ -163,7 +163,7 @@ useEffect(() => {
                   coverUri.replace("/upload/", "/upload/f_auto,q_auto/")
                 ),
               }
-            : require("../../../assets/parents/story-cover-image.png")
+            : require("../../../assets/parents/unseen-world.jpg")
         }
         style={{ height: COVER_HEIGHT, width: "100%" }}
         className="w-full relative"
@@ -199,7 +199,7 @@ useEffect(() => {
                 resizeMode="contain"
               />
 
-              {/* Fanice button (compact) */}
+              {/* Voice choice button (compact) */}
               <TouchableOpacity
                 onPress={() => setVoicePickerOpen(true)}
                 className="flex-row items-center bg-[#FEE3D6] px-4 py-2 rounded-full shadow-sm border border-primary"
@@ -241,7 +241,7 @@ useEffect(() => {
           )}
 
           {/* Read-along row with toggle (unchanged) */}
-          <View className="flex-row items-center py-4 px-6 w-full mt-8">
+          <View className="flex-row items-center py-3 px-4 w-[90%] mt-8 border border-[#FAF4F2] rounded-2xl">
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
@@ -257,11 +257,10 @@ useEffect(() => {
       <View className="flex-1" />
       {/* player */}
       <View className="px-4 pt-3 pb-3 bg-white flex-row items-center justify-center gap-6">
-        <View className="w-6 h-3"></View>
-        <View className="flex-row gap-4 justify-center items-center mt-4">
+        <View className="flex-row gap-8 justify-center items-center mt-4">
           <TouchableOpacity onPress={onSkipBack} activeOpacity={0.85}>
             <Image
-              source={require("../../../assets/icons/rewind.png")}
+              source={require("../../../assets/icons/replay.png")}
               className="w-8 h-8 rounded-full mr-3"
               resizeMode="contain"
             />
@@ -287,9 +286,6 @@ useEffect(() => {
             />
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={onSkipForward} className="mt-2">
-          <Text className="text-[abeezee]">5xp</Text>
-        </TouchableOpacity>
       </View>
       {/* elapsed / total time row */}
       <View className="flex-row justify-center items-center pb-8">
@@ -325,7 +321,7 @@ useEffect(() => {
         currentlyActiveVoiceId={preferredVoiceId}
         onConfirm={(selectedVoiceId, selectedVoiceName) => {
           setPreferredVoiceId(selectedVoiceId);
-          setPreferredVoiceName(selectedVoiceName ?? "Fanice");
+          setPreferredVoiceName(selectedVoiceName ?? "River");
           setVoicePickerOpen(false);
         }}
       />
