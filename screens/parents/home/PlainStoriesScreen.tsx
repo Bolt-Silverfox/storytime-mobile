@@ -1,4 +1,3 @@
-// PlainStoryScreen.tsx
 import React, { useEffect, useState } from "react";
 import {
   View,
@@ -6,7 +5,6 @@ import {
   Image,
   TouchableOpacity,
   Dimensions,
-  StyleSheet,
   ScrollView,
   ImageBackground,
   Switch,
@@ -17,6 +15,8 @@ import ErrorComponent from "../../../components/ErrorComponent";
 import RecommendStoryModal from "../../../components/modals/RecommendStoryModal";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
+import useGenerateStoryAudio from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAudio";
+import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
 import useRecommendStory from "../../../hooks/tanstack/queryHooks/useRecommendStory";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -40,9 +40,21 @@ export default function PlainStoryScreen({ route, navigation }: any) {
   const [elapsed, setElapsed] = useState(0);
 
   const [voicePickerOpen, setVoicePickerOpen] = useState(false);
-  const [preferredVoiceId, setPreferredVoiceId] = useState("fanice");
+  const [preferredVoiceId, setPreferredVoiceId] = useState("Milo");
   const [preferredVoiceName, setPreferredVoiceName] = useState("Fanice");
   const [chunkIndex, setChunkIndex] = useState(0);
+  const [audioUri, setAudioUri] = useState<string | null>(null);
+
+  const generateAudio = useGenerateStoryAudio({
+  onSuccess: (data) => {
+    // data.path = URL to the audio file
+    setAudioUri(data.path);
+  },
+});
+
+const player = useAudioPlayer(audioUri ? { uri: audioUri } : null);
+const status = useAudioPlayerStatus(player);
+
 
   // auto-play when opened in plain mode
   useEffect(() => {
@@ -54,6 +66,30 @@ export default function PlainStoryScreen({ route, navigation }: any) {
       return () => clearTimeout(t);
     }
   }, [storyQuery.isSuccess, mode, storyId]);
+
+  useEffect(() => {
+  if (!story || !story.textContent) return;
+
+  // You choose what “content” you want to send — full story or chunk
+  generateAudio.mutate({
+    content: story.textContent,
+    voiceType: preferredVoiceId.toUpperCase(),
+  });
+}, [storyId, storyQuery.isSuccess]);
+
+useEffect(() => {
+  setIsPlaying(Boolean(status?.playing));
+  setElapsed(Math.floor((status?.currentTime ?? 0)));
+}, [status?.playing, status?.currentTime, status]);
+
+
+// when chunk/uri changes, stop old player
+useEffect(() => {
+  return () => {
+    player?.pause?.();
+  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [audioUri]);
 
   if (storyQuery.isLoading)
     return <LoadingOverlay visible label="Loading story..." />;
@@ -150,7 +186,6 @@ export default function PlainStoryScreen({ route, navigation }: any) {
           <Text className="font-[abeezee]">Recommend this story</Text>
         </TouchableOpacity>
       </ImageBackground>
-      {/* meta */}
 
       <View className="px-4 pt-4 flex-1">
         <View className="rounded-2xl flex-col items-center gap-6">

@@ -109,17 +109,17 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
       <View className="flex-row mt-5 w-full gap-3 px-4 items-center justify-center">
         <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
-          <Text className="text-lg font-[quilka] text-center">Age range</Text>
+          <Text className="text-base font-[quilka] text-center">Age range</Text>
           <Text className="text-[#212121] font-[abeezee]">
             {story.ageMin} - {story.ageMax} years
           </Text>
         </View>
         <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
-          <Text className="text-lg font-[quilka] text-center">Duration</Text>
+          <Text className="text-base font-[quilka] text-center">Duration</Text>
           <Text className="text-[#212121] font-[abeezee]">{durationLabel}</Text>
         </View>
         <View className="flex-1 bg-white p-4 rounded-xl items-center justify-center">
-          <Text className="text-lg font-[quilka] text-center">Pages</Text>
+          <Text className="text-base font-[quilka] text-center">Pages</Text>
           <Text className="text-[#212121] font-[abeezee]">{pages}</Text>
         </View>
       </View>

@@ -10,7 +10,8 @@ import ProfileNavigator, {
 } from "./ProfileNavigator";
 import KidsSetupNavigator, {
   KidsSetupNavigatorParamList,
-}from "./KidsSetupNavigator";
+} from "./KidsSetupNavigator";
+import ParentAuthNavigator from "./ParentAuthNavigator";
 
 type ProtectedRoutesParamList = {
   selection: undefined;
@@ -19,6 +20,7 @@ type ProtectedRoutesParamList = {
   addChild: undefined;
   userProfile: NavigatorScreenParams<ProfileNavigatorParamList>;
   kidsSetup: NavigatorScreenParams<KidsSetupNavigatorParamList>;
+  parentAuth: undefined;
 };
 
 type ProtectedRoutesNavigationProp =
@@ -35,6 +37,7 @@ const ProtectedRoutesNavigator = () => {
       <Stack.Screen name="kid" component={KidsNavigator} />
       <Stack.Screen name="userProfile" component={ProfileNavigator} />
       <Stack.Screen name="kidsSetup" component={KidsSetupNavigator} />
+      <Stack.Screen name="parentAuth" component={ParentAuthNavigator} />
     </Stack.Navigator>
   );
 };

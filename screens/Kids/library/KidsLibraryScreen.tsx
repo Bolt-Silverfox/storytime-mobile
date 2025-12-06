@@ -130,7 +130,7 @@ const KidsLibraryScreen = () => {
         </Suspense>
         <Pressable
           onPress={() =>
-            libNav.navigate("allStories", { childId: params.childId! })
+            navigation.navigate("home", { childId: params.childId })
           }
           className="bg-[#866EFF] mt-[60] py-[18] px-[10] rounded-[60] mx-[16]"
         >

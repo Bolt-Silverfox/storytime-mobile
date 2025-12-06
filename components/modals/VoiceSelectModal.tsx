@@ -11,6 +11,7 @@ import {
   ImageSourcePropType,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import useGetVoices from "../../hooks/tanstack/queryHooks/useGetVoices";
 
 type Voice = {
   id: string;
@@ -20,33 +21,26 @@ type Voice = {
 
 type Props = {
   visible: boolean;
-  voices?: Voice[];
+  voices?: Voice[]; // external override (rare)
   initialVoiceId?: string | null;
   onClose: () => void;
-  onSave: (voiceId: string) => void;
+  onSave: (voiceId: string, mode?: "readAlong" | "listen") => void;
+  mode?: "readAlong" | "listen";
 };
 
+// local images
+const localImages = [
+  require("../../assets/story/milo.png"),
+  require("../../assets/story/peony.png"),
+  require("../../assets/story/luna.png"),
+  require("../../assets/story/tiger.png"),
+];
+
 const defaultVoices: Voice[] = [
-  {
-    id: "milo",
-    label: "Milo",
-    image: require("../../assets/story/milo.png"),
-  },
-  {
-    id: "peony",
-    label: "Peony",
-    image: require("../../assets/story/peony.png"),
-  },
-  {
-    id: "luna",
-    label: "Luna",
-    image: require("../../assets/story/luna.png"),
-  },
-  {
-    id: "tiger",
-    label: "Tiger",
-    image: require("../../assets/story/tiger.png"),
-  },
+  { id: "milo", label: "Milo", image: localImages[0] },
+  { id: "peony", label: "Peony", image: localImages[1] },
+  { id: "luna", label: "Luna", image: localImages[2] },
+  { id: "tiger", label: "Tiger", image: localImages[3] },
 ];
 
 const VoiceSelectModal: React.FC<Props> = ({
@@ -55,12 +49,52 @@ const VoiceSelectModal: React.FC<Props> = ({
   initialVoiceId = null,
   onClose,
   onSave,
+  mode
 }) => {
   const [selected, setSelected] = React.useState<string | null>(initialVoiceId);
 
+  // your hook — expected shape: data is an array or undefined
+  const { error, data, refetch } = useGetVoices();
+
+  const normalizeBackend = React.useCallback(
+    (item: any, idx: number): Voice | null => {
+      if (!item) return null;
+      const id = String(
+        item.voice_id ?? item.id ?? item.name ?? `voice-${idx}`
+      );
+      const label = String(item.name ?? item.label ?? id);
+      const image = localImages[idx % localImages.length];
+      return { id, label, image };
+    },
+    []
+  );
+
+  const voicesToShow = React.useMemo<Voice[]>(() => {
+    const backend = Array.isArray(data) ? data : [];
+    const normalized = backend
+      .map((it: any, i: number) => normalizeBackend(it, i))
+      .filter(Boolean) as Voice[];
+
+    if (normalized.length > 0) {
+      // append local defaults that are not present
+      const missing = defaultVoices.filter(
+        (d) =>
+          !normalized.some(
+            (n) => String(n.id).toLowerCase() === String(d.id).toLowerCase()
+          )
+      );
+      return [...normalized, ...missing];
+    }
+
+    return Array.isArray(voices) && voices.length ? voices : defaultVoices;
+  }, [data, voices, normalizeBackend]);
+
   React.useEffect(() => {
-    setSelected(initialVoiceId ?? voices[0]?.id ?? null);
-  }, [visible, initialVoiceId, voices]);
+    setSelected(initialVoiceId ?? voicesToShow[0]?.id ?? null);
+  }, [visible, initialVoiceId, voicesToShow]);
+  React.useEffect(() => {
+    setSelected(initialVoiceId ?? voicesToShow[0]?.id ?? null);
+  }, [visible, initialVoiceId, voicesToShow]);
 
   const renderItem: ListRenderItem<Voice> = ({ item }) => {
     const isSelected = item.id === selected;
@@ -76,8 +110,9 @@ const VoiceSelectModal: React.FC<Props> = ({
         <View>
           <Image
             source={item.image}
-            className={`w-24 h-24 rounded-full object-top
-                 ${isSelected ? "border-4 border-purple-600" : ""}`}
+            className={`w-24 h-24 rounded-full object-top ${
+              isSelected ? "border-4 border-purple-600" : ""
+            }`}
             style={
               isSelected
                 ? { borderWidth: 4, borderColor: "#866EFF" }
@@ -99,14 +134,13 @@ const VoiceSelectModal: React.FC<Props> = ({
       onRequestClose={onClose}
     >
       <SafeAreaView className="flex-1 justify-end">
-        {/* backdrop */}
         <Pressable className="absolute inset-0 bg-black/50" onPress={onClose} />
 
-        {/* sheet */}
         <View className="bg-white rounded-3xl px-4 py-6 max-h-[500px] w-full max-w-[90%] mx-auto mb-6">
           <Text className="text-3xl text-center font-[quilka] mb-6">
             Select AI voice
           </Text>
+
           <Pressable
             className="absolute -top-8 right-1 z-20 rounded-full p-2"
             onPress={onClose}
@@ -118,8 +152,19 @@ const VoiceSelectModal: React.FC<Props> = ({
             />
           </Pressable>
 
+          {error ? (
+            <View className="px-4 mb-3 flex-row items-center justify-between">
+              <Text className="text-sm text-red-600">
+                Couldn't load remote voices — using fallback.
+              </Text>
+              <Pressable onPress={() => refetch?.()}>
+                <Text className="text-sm underline">Retry</Text>
+              </Pressable>
+            </View>
+          ) : null}
+
           <FlatList
-            data={voices}
+            data={voicesToShow}
             keyExtractor={(i) => i.id}
             className="max-h-[440px] flex-wrap gap-4"
             renderItem={renderItem}
@@ -136,7 +181,7 @@ const VoiceSelectModal: React.FC<Props> = ({
 
           <Pressable
             onPress={() => {
-              if (selected) onSave(selected);
+              if (selected) onSave(selected, mode);;
             }}
             className="bg-[#866EFF] p-4 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mt-4 rounded-full"
           >
