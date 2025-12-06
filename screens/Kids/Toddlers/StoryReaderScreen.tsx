@@ -124,10 +124,11 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
         time: sessionStartTime,
       });
       console.log(((newIndex + 1) / total) * 100);
-
       return newIndex;
     });
   };
+
+  
   const goNext = () => {
     setPageIndex((prev) => {
       const newIndex = Math.min(total - 1, prev + 1);
@@ -140,7 +141,6 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
         time: sessionStartTime,
       });
       console.log(((newIndex + 1) / total) * 100);
-
       return newIndex;
     });
   };
@@ -176,7 +176,7 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const coverSource = story?.coverImageUrl
     ? { uri: story.coverImageUrl }
     : require("../../../assets/life-of-pi.png");
-    
+
   const isReady = currentKidId && storyProgress !== undefined && total > 0;
 
   if (!isReady) {
