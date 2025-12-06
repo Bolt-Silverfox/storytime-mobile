@@ -73,6 +73,7 @@ const SetDailyLimit = () => {
     setLimit(data?.dailyScreenTimeLimitMins ?? null);
   }, [data]);
 
+  const currentlySelectedLimitText = screenLimit.find((v) => v.value === limit);
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   return (
@@ -89,7 +90,9 @@ const SetDailyLimit = () => {
         <View className="p-5 mx-5  flex flex-col gap-y-2 rounded-2xl bg-white">
           <Text className="text-xl font-[abeezee] text-center mb-2">
             DEFAULT SCREEN LIMIT :{" "}
-            <Text className="font-[quilka]">{"No Limit"}</Text>
+            <Text className="font-[quilka]">
+              {currentlySelectedLimitText?.text ?? "No Limit"}
+            </Text>
           </Text>
           <Text className="text-text text-base font-[abeezee] text-center">
             Set up default screen time for your child.
