@@ -16,7 +16,6 @@ export default function ManagePassword() {
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
-  console.log("user profiele data", data);
 
   return (
     <View className="bg-[#FFFCFBFB] flex-1">
