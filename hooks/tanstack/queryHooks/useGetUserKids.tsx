@@ -7,7 +7,7 @@ import { KidType } from "../../../types";
 const useGetUserKids = () => {
   const { user } = useAuth();
   return useQuery({
-    queryKey: ["userKids"],
+    queryKey: ["userKids", user?.id],
     queryFn: async () => {
       const response = await apiFetch(`${BASE_URL}/auth/kids`, {
         method: "GET",
