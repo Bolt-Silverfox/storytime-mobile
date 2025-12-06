@@ -1,5 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import { FlatList, Image, Pressable, Text,View } from "react-native";
+
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 
 import useGetStories, {
   Story,
@@ -73,6 +74,7 @@ const KidsHomeScreenStories = ({
             resizeMode="cover"
             />
 
+
           <View className="w-[167] h-[160] rounded-tl-[20] bg-[#5E3A54]"></View>
           <View className="w-[167] h-[24] rounded-bl-[20] bg-[#5E3A54] pt-[2]">
             <View className="rounded-l-[20] flex-row w-[157] self-end  h-[16] bg-[#D5D3E5]">
@@ -83,8 +85,10 @@ const KidsHomeScreenStories = ({
             </View>
           </View>
 
+
       
           
+
         </Pressable>
       )}
     />

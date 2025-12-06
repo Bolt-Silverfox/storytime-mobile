@@ -45,7 +45,7 @@ export default function LibraryFavourite() {
   //       navigation.replace("indexPage", { childId: params.childId });
   //     }
   //   }, [favouriteStories]);
- 
+
   return (
     <View className="flex-1   items-center gap-x-3 pb-2 h-[60vh]">
       <ImageBackground

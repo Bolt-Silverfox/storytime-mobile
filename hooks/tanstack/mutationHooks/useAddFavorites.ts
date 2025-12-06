@@ -70,7 +70,9 @@ const useAddFavorites = () => {
         queryKey: ["userFavorites", vars.kidId],
       });
       queryClient.invalidateQueries({ queryKey: ["kidFavorite", vars.kidId] });
-      Alert.alert("Added to Favorites")
+
+      Alert.alert("Added to Favorites");
+
     },
   });
 };

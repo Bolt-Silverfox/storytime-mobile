@@ -66,9 +66,7 @@ export default function MyCreations() {
             ))}
           </>
         )}
-       
       </ScrollView>
     </View>
   );
 }
-

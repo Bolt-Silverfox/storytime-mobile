@@ -9,7 +9,7 @@ type KidFavorites = {
 };
 
 type Response = {
-  data:  KidFavorites[] ;
+  data: KidFavorites[];
   message: string;
   statusCode: number;
   success: boolean;
@@ -19,7 +19,7 @@ const useGetKidFavorites = (kidId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["kidFavorite", kidId],
+    queryKey: ["stories", kidId],
     queryFn: async () => {
       try {
         if (!user) return null;

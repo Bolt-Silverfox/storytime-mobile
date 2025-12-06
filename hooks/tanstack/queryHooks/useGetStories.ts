@@ -35,7 +35,7 @@ type Story = {
     options: string[];
     correctOption: number;
   };
-  progress:number;
+  progress: number;
 };
 
 const useGetStories = (id?: string) => {
