@@ -64,7 +64,6 @@ export default function ReturningUser() {
     );
   };
 
-  // Memoized filtered data
   const filteredContinueReading = useMemo(
     () => filterStoriesByTitle(continueReading || [], searchText),
     [continueReading, searchText]
@@ -284,36 +283,58 @@ export default function ReturningUser() {
             </Pressable>
           )}
         </View>
+        {isSearchActive && !hasSearchResults && (
+          <View className="items-center py-10">
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { color: "#fff", fontSize: 16 },
+              ]}
+            >
+              No stories found for "{searchText}"
+            </Text>
+          </View>
+        )}
+        {/* Only show sections with results when searching, or all sections when not searching */}
+        {(!isSearchActive || filteredContinueReading.length > 0) && (
+          <HorizontalListSection
+            title="Continue Reading"
+            data={filteredContinueReading}
+            navigateTo="continueReading"
+          />
+        )}
 
-        <HorizontalListSection
-          title="Continue Reading"
-          data={continueReading || []}
-          navigateTo="continueReading"
-        />
+        {(!isSearchActive || filteredFavorites.length > 0) && (
+          <HorizontalListSection
+            title="Favorites"
+            data={filteredFavorites}
+            navigateTo="favourite"
+          />
+        )}
 
-        <HorizontalListSection
-          title="Favorites"
-          data={favouriteStories || []}
-          navigateTo="favourite"
-        />
+        {(!isSearchActive || filteredDownloads.length > 0) && (
+          <HorizontalListSection
+            title="Downloaded"
+            data={filteredDownloads}
+            navigateTo="downloads"
+          />
+        )}
 
-        <HorizontalListSection
-          title="Downloaded"
-          data={kidDownloads || []}
-          navigateTo="downloads"
-        />
+        {(!isSearchActive || filteredCreatedStories.length > 0) && (
+          <HorizontalListSection
+            title="My creation"
+            data={filteredCreatedStories}
+            navigateTo="myCreations"
+          />
+        )}
 
-        <HorizontalListSection
-          title="My creation"
-          data={createdStories || []}
-          navigateTo="myCreations"
-        />
-
-        <HorizontalListSection
-          title="Completed Stories"
-          data={completedStories || []}
-          navigateTo="completed"
-        />
+        {(!isSearchActive || filteredCompletedStories.length > 0) && (
+          <HorizontalListSection
+            title="Completed Stories"
+            data={filteredCompletedStories}
+            navigateTo="completed"
+          />
+        )}
       </ScrollView>
     </View>
   );
