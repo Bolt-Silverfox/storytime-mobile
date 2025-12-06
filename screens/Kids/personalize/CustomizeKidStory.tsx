@@ -16,6 +16,8 @@ import Icon from "../../../components/Icon";
 import PageTitle from "../../../components/PageTitle";
 import ChildButton from "../../../components/UI/ChildButton";
 import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
+import useCreateStory from "../../../hooks/tanstack/mutationHooks/useCreateStory";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const themes = [
   {
@@ -61,6 +63,13 @@ const CustomizeKidStory = () => {
     avatarSource,
     setThemeImage,
   } = useCustomizeStory();
+  const { mutate, isPending } = useCreateStory({
+    kidId: params.childId,
+    // onSuccess: () => {
+    // Alert.alert("Story created successfully");
+
+    // },
+  });
   return (
     <View className="flex-1 flex bg-bgLight pb-5">
       <PageTitle title="Customize Story" goBack={() => navigator.goBack()} />
@@ -115,14 +124,16 @@ const CustomizeKidStory = () => {
       </ScrollView>
       <ChildButton
         onPress={() =>
-          navigator.navigate("previewScreen", {
-            childId: params.childId,
+          mutate({
+            theme: storyTheme,
+            heroName,
           })
         }
         disabled={!storyTheme || !heroName}
-        text="Create theme"
+        text="Generate story"
         icon="ArrowRight"
       />
+      <LoadingOverlay visible={isPending} label="Creating your story" />
     </View>
   );
 };
