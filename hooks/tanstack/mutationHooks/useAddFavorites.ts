@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
@@ -35,7 +34,9 @@ const useAddFavorites = () => {
     onMutate: async (body: AddFavBody) => {
       // cancel queries using filter object form
       await queryClient.cancelQueries({ queryKey: ["stories", body.storyId] });
-      await queryClient.cancelQueries({ queryKey: ["userFavorites", body.kidId] });
+      await queryClient.cancelQueries({
+        queryKey: ["userFavorites", body.kidId],
+      });
 
       const prevStory = queryClient.getQueryData(["stories", body.storyId]);
       const prevFavs = queryClient.getQueryData(["userFavorites", body.kidId]);
@@ -45,10 +46,16 @@ const useAddFavorites = () => {
 
     onError: (err: unknown, _vars, context: any) => {
       if (context?.prevStory) {
-        queryClient.setQueryData(["stories", (_vars as AddFavBody).storyId], context.prevStory);
+        queryClient.setQueryData(
+          ["stories", (_vars as AddFavBody).storyId],
+          context.prevStory
+        );
       }
       if (context?.prevFavs) {
-        queryClient.setQueryData(["userFavorites", (_vars as AddFavBody).kidId], context.prevFavs);
+        queryClient.setQueryData(
+          ["userFavorites", (_vars as AddFavBody).kidId],
+          context.prevFavs
+        );
       }
 
       const message = err instanceof Error ? err.message : String(err);
@@ -59,7 +66,11 @@ const useAddFavorites = () => {
       // invalidate using filter object form
       queryClient.invalidateQueries({ queryKey: ["stories", vars.storyId] });
       queryClient.invalidateQueries({ queryKey: ["stories"] });
-      queryClient.invalidateQueries({ queryKey: ["userFavorites", vars.kidId] });
+      queryClient.invalidateQueries({
+        queryKey: ["userFavorites", vars.kidId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["kidFavorite", vars.kidId] });
+      Alert.alert("Added to Favorites")
     },
   });
 };
