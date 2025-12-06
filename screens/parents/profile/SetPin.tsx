@@ -9,13 +9,15 @@ import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
+import { useQueryClient } from "@tanstack/react-query";
 
 const SetPin = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [error, setError] = useState("");
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
-  const { isLoading, setInAppPin } = useAuth();
+  const { isLoading, setInAppPin, user } = useAuth();
+  const queryClient = useQueryClient();
 
   const onSubmit = () => {
     if (pin !== confirmPin) {
@@ -28,6 +30,9 @@ const SetPin = () => {
       onSuccess: () => {
         Alert.alert("Pin set successfully!");
         navigator.goBack();
+        queryClient.invalidateQueries({
+          queryKey: ["userProfile", user?.id],
+        });
       },
     });
   };
