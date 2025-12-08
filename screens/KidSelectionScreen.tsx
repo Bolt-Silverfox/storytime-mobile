@@ -88,14 +88,31 @@ const KidSelectionScreen = () => {
                   size={87}
                   onPress={async () => {
                     await AsyncStorage.setItem("currentKid", kid.id);
-                    navigation.navigate("kid", {
-                      screen: "index",
-                      params: {
-                        childId: kid.id,
-                      },
-                    });
+
+                    const storedBuddy = await AsyncStorage.getItem(
+                      `buddy_${kid.id}`
+                    );
+
+                    if (storedBuddy) {
+                      navigation.navigate("kid", {
+                        screen: "index",
+                        params: {
+                          childId: kid.id,
+                          selected: storedBuddy,
+                        },
+                      });
+                    } else {
+                      navigation.navigate("kid", {
+                        screen: "setup",
+                        params: {
+                          screen: "buddySelectionPage",
+                          params: { childId: kid.id },
+                        },
+                      });
+                    }
                   }}
                 />
+
                 <View className="flex flex-col gap-y-1.5">
                   <Text className="text-2xl font-[abeezee] text-center">
                     {kid.name.split(" ").at(0)}
