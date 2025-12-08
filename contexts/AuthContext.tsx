@@ -1,3 +1,4 @@
+
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -5,14 +6,20 @@ import {
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useContext,
   useEffect,
   useState,
 } from "react";
-import { emailRegex } from "../constants";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import { User } from "../types";
 import auth from "../utils/auth";
+import {
+  BASE_URL,
+  emailRegex,
+  IOS_CLIENT_ID,
+  WEB_CLIENT_ID,
+} from "../constants";
 // import {
 //   GoogleSignin,
 //   isSuccessResponse,
@@ -147,6 +154,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     string | string[] | undefined
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
+
   // useEffect(() => {
   //   GoogleSignin.configure({
   //     iosClientId: IOS_CLIENT_ID,

@@ -22,7 +22,11 @@ type Props = {
   storyId?: string | null;
 };
 
-export default function RecommendStoryModal({ visible, onClose, storyId }: Props) {
+export default function RecommendStoryModal({
+  visible,
+  onClose,
+  storyId,
+}: Props) {
   const { data: kids = [], isPending, error } = useGetUserKids();
   const [selectedKidId, setSelectedKidId] = useState<string>("");
   const [successOpen, setSuccessOpen] = useState(false);
@@ -59,13 +63,24 @@ export default function RecommendStoryModal({ visible, onClose, storyId }: Props
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      {mutation.isPending && <LoadingOverlay visible label="Recommending story..." />}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      onRequestClose={onClose}
+    >
+      {mutation.isPending && (
+        <LoadingOverlay visible label="Recommending story..." />
+      )}
 
       <Pressable onPress={onClose} className="flex-1 bg-black/60" />
       <View className="bg-white rounded-t-3xl p-4 pb-8 absolute bottom-0 w-full">
         <View className="flex-col items-end justify-between mb-4">
-          <TouchableOpacity onPress={onClose} accessibilityLabel="Close" className="bg-white p-0 border rounded-md">
+          <TouchableOpacity
+            onPress={onClose}
+            accessibilityLabel="Close"
+            className="bg-white p-0 border rounded-md"
+          >
             <X size={20} />
           </TouchableOpacity>
         </View>
@@ -76,7 +91,9 @@ export default function RecommendStoryModal({ visible, onClose, storyId }: Props
 
         {kids.length === 0 ? (
           <View className="flex-col items-center py-6">
-            <Text className="font-[quilka] text-primary text-2xl mb-4 text-center">No child added yet</Text>
+            <Text className="font-[quilka] text-primary text-2xl mb-4 text-center">
+              No child added yet
+            </Text>
             <CustomButton text="Close" onPress={onClose} />
           </View>
         ) : (
@@ -89,7 +106,10 @@ export default function RecommendStoryModal({ visible, onClose, storyId }: Props
                   key={kid.id}
                   onPress={() => setSelectedKidId(kid.id)}
                   className="flex-row items-center justify-between py-4 px-4 rounded-2xl"
-                  style={{ borderBottomWidth: 2, borderColor: "rgba(250, 244, 242, 1)" }}
+                  style={{
+                    borderBottomWidth: 2,
+                    borderColor: "rgba(250, 244, 242, 1)",
+                  }}
                 >
                   <View className="flex-row items-center gap-x-3">
                     <Image
@@ -107,7 +127,9 @@ export default function RecommendStoryModal({ visible, onClose, storyId }: Props
                       isSelected ? "border-blue-600" : "border-gray-300"
                     }`}
                   >
-                    {isSelected && <View className="w-3 h-3 rounded-full bg-blue-600" />}
+                    {isSelected && (
+                      <View className="w-3 h-3 rounded-full bg-blue-600" />
+                    )}
                   </View>
                 </Pressable>
               );
@@ -122,12 +144,14 @@ export default function RecommendStoryModal({ visible, onClose, storyId }: Props
             disabled={mutation.isPending}
           />
 
-          <Pressable
+          <CustomButton
+            text="Cancel"
             onPress={onClose}
-            className="bg-transparent border border-black/20 w-full py-4 rounded-full mt-4"
-          >
-            <Text className="text-center text-black font-[abeezee]">Cancel</Text>
-          </Pressable>
+            bgColor="transparent"
+            textColor="black"
+            borderColor="black"
+            borderWidth={1}
+          />
         </View>
       </View>
 
