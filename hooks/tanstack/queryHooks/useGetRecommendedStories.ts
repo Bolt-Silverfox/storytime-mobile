@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BASE_URL } from "../../../constants";
 import apiFetch from "../../../apiFetch";
-import { Alert } from "react-native";
 
-const useGetRecommendStory = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+const useGetRecommendStory = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -16,6 +15,7 @@ const useGetRecommendStory = ({ onSuccess }: { onSuccess?: () => void } = {}) =>
       storyId: string;
       message?: string;
     }) => {
+
       const url = `${BASE_URL}/stories/recommend`;
 
       const request = await apiFetch(url, {
@@ -29,28 +29,26 @@ const useGetRecommendStory = ({ onSuccess }: { onSuccess?: () => void } = {}) =>
 
       const response = await request.json();
 
-      if (!response?.success) {
-        Alert.alert(response?.message ?? "Unexpected error, try again");
-        return;
-      }
-
+      // ❗ DO NOT ALERT HERE
+      // ❗ RETURN raw response so UI can handle "already recommended"
       return response;
     },
 
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({
-        queryKey: ["kidById", variables.kidId],
-      });
+    onSuccess: (res, variables) => {
+      // Invalidate queries only when success = true
+      if (res?.success) {
+        queryClient.invalidateQueries({
+          queryKey: ["kidById", variables.kidId],
+        });
 
-      queryClient.invalidateQueries({
-        queryKey: ["storyById", variables.storyId],
-      });
+        queryClient.invalidateQueries({
+          queryKey: ["storyById", variables.storyId],
+        });
 
-      queryClient.invalidateQueries({
-        queryKey: ["stories"],
-      });
-
-      onSuccess?.();
+        queryClient.invalidateQueries({
+          queryKey: ["stories"],
+        });
+      }
     },
   });
 };
