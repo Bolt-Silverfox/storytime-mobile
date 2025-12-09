@@ -22,6 +22,7 @@ export default function ImageWithFallback({
         console.warn("Image failed to load, using fallback:", sourceUri);
         setError(true);
       }}
+      style={style}
     />
   );
 }

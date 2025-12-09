@@ -117,7 +117,7 @@ export default function ReturningUser() {
             params: { storyId: item.id },
           })
         }
-        className="bg-white w-[249] h-[347] rounded-[10px] mr-5 gap-5"
+        className="bg-white mb-8 w-[249] h-[347] rounded-[10px] mr-5 gap-5"
       >
         <Image
           source={{ uri: item.coverImageUrl }}
@@ -179,48 +179,39 @@ export default function ReturningUser() {
     };
 
     return (
-      <View className="mb-[32]">
-        <View className="flex-row mb-[24] justify-between w-full">
-          <Text
-            style={[
-              defaultStyles.heading,
-              { fontSize: 20, color: "black" },
-              title == "Continue Reading" && { color: "white" },
-            ]}
-          >
-            {title}
-          </Text>
-          {data?.length > 0 && (
-            <Pressable onPress={handleNavigation}>
+      <View className="">
+        {data?.length > 0 && (
+          <>
+            <View className="flex-row  mb-[24] justify-between w-full">
               <Text
                 style={[
-                  defaultStyles.defaultText,
-                  { fontSize: 16, color: "#fff" },
+                  defaultStyles.heading,
+                  { fontSize: 20, color: "black" },
+                  title == "Continue Reading" && { color: "white" },
                 ]}
               >
-                View all
+                {title}
               </Text>
-            </Pressable>
-          )}
-        </View>
-
-        {data?.length > 0 ? (
-          <FlatList
-            data={data}
-            keyExtractor={(item) => `${title}-${item.id}`}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            renderItem={({ item }) => <StoryCard item={item} />}
-          />
-        ) : (
-          <Text
-            style={[
-              defaultStyles.defaultText,
-              { color: "black", fontSize: 14 },
-            ]}
-          >
-            No stories yet
-          </Text>
+              <Pressable onPress={handleNavigation}>
+                <Text
+                  style={[
+                    defaultStyles.defaultText,
+                    { fontSize: 16, color: "#fff" },
+                  ]}
+                >
+                  View all
+                </Text>
+              </Pressable>
+            </View>
+            
+            <FlatList
+              data={data}
+              keyExtractor={(item) => `${title}-${item.id}`}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              renderItem={({ item }) => <StoryCard item={item} />}
+            />
+          </>
         )}
       </View>
     );
