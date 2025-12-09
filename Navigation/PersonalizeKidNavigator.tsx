@@ -29,11 +29,11 @@ const PersonalizeKidNavigator = () => {
   return (
     <CustomizeStoryProvider childId={childId}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen
+        {/* <Stack.Screen
           initialParams={{ childId }}
           name="index"
           component={PersonalizeKidStoryIndex}
-        />
+        /> */}
         <Stack.Screen
           initialParams={{ childId }}
           name="generateStory"

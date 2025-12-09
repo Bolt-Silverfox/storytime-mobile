@@ -60,6 +60,7 @@ type KidProfile = {
   bedtimeDimScreen: boolean;
   bedtimeReminder: boolean;
   bedtimeStoriesOnly: boolean;
+  storyBuddyId: string | null;
   avatar: Avatar | null;
   parent: {
     id: string;
