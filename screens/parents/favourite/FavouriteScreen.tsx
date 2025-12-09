@@ -277,7 +277,7 @@ const FavoritesScreen: React.FC = () => {
       <View className="flex-1 items-center justify-center p-5">
         <Text className="text-lg font-semibold mb-2">No favorites yet</Text>
         <Text className="text-sm text-gray-500 text-center">
-          Tap the star on a story to add it to favorites.
+          Tap the heart on a story to add it to favorites.
         </Text>
       </View>
     );
@@ -352,7 +352,7 @@ const FavoritesScreen: React.FC = () => {
               {/* SEARCH BAR INSIDE FLATLIST */}
               {showSearch && (
                 <View className="py-4">
-                  <View className="flex-row items-center gap-2 rounded-full border p-3">
+                  <View className="flex-row items-center gap-2 rounded-full border px-3 py-2">
                     {/* Left search icon */}
                     <Search size={24} color="#555" />
 
@@ -361,7 +361,7 @@ const FavoritesScreen: React.FC = () => {
                       value={searchQuery}
                       onChangeText={setSearchQuery}
                       placeholder="Search..."
-                      className="flex-1 items-center ml-2 text-xl pb-1 leading-[24px]"
+                      className="flex-1 ml-2 text-lg py-1"
                       placeholderTextColor="#555"
                       returnKeyType="search"
                     />
