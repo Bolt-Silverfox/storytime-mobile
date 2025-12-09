@@ -1,4 +1,3 @@
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import {
@@ -481,7 +480,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
     onSuccess();
   };
-  
+
   const requestPinReset: AuthFnTypes["requestPinReset"] = async ({
     setErrorCb,
     onSuccess,

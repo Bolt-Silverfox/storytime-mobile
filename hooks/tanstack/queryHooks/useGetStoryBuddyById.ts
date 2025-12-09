@@ -34,7 +34,6 @@ const useGetStoryBuddyById = (id: string) => {
       if (!response.success) {
         throw new Error(response.message);
       }
-      console.log("bddy by d", response);
       return response;
     },
     queryKey: ["selectedBuddy", id],
