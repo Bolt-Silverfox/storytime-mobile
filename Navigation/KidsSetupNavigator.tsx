@@ -15,10 +15,11 @@ export type KidsSetupNavigatorParamList = {
   buddySelectionPage: { childId: string};
   welcomeScreen: { selected: string; childId: string };
   chooseHero: { selected: string; childId: string };
-  storyModeSelector: { storyId?: string; story?: any };
-  storyInteraction: { storyId: string; mode?: string; voice?: string };
-  storyReader: { storyId: string; mode?: string; voice?: string };
-  challenge: { storyId?: string };
+  storyModeSelector: { storyId?: string; story?: any; childId?: string; };
+  storyInteraction: { storyId: string; mode?: string; voice?: string; childId?: string; };
+  storyReader: { storyId: string; mode?: string; voice?: string, childId?: string };
+  challenge: { storyId?: string; childId?: string };
+
 };
 
 const SetupStack = createNativeStackNavigator<KidsSetupNavigatorParamList>();
