@@ -38,7 +38,7 @@ const SetPin = () => {
   };
 
   return (
-    <View className="flex flex-1 pb-5">
+    <View className="flex flex-1 pb-5 bg-bgLight">
       <PageTitle title="Set Pin" goBack={() => navigator.goBack()} />
       <View className="flex-1 mx-4 flex gap-y-7 py-6">
         <ErrorMessageDisplay errorMessage={error} />

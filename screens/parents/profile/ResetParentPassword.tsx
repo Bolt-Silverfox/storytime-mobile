@@ -71,7 +71,7 @@ export default function ResetParentPassword() {
   };
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 bg-bgLight">
       <PageTitle
         title="Reset your password"
         goBack={() => navigator.goBack()}
