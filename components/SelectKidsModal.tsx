@@ -66,7 +66,7 @@ const KidSelectorModal = ({
                       source={
                         kid.avatar?.url
                           ? { uri: kid?.avatar?.url }
-                          : require("../assets/placeholder-pfp.png")
+                          : require("../assets/avatars/Avatars-3.png")
                       }
                       className="size-12"
                     />

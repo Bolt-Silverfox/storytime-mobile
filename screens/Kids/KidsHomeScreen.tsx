@@ -1,24 +1,14 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { lazy, Suspense } from "react";
-import {
-  ActivityIndicator,
-  Image,
-  Text,
-  View,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { ActivityIndicator, Image, Text, View } from "react-native";
 import ErrorComponent from "../../components/ErrorComponent";
+import KidAvatar from "../../components/KidAvatar";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStoryBuddyById from "../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
 import useGetRecommendedStory from "../../hooks/tanstack/queryHooks/useGetRecommendedStory";
-import {
-  KidsTabNavigatorParamList,
-  KidsTabNavigatorProp,
-} from "../../Navigation/KidsTabNavigator";
+import useGetStoryBuddyById from "../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
+import { KidsTabNavigatorParamList } from "../../Navigation/KidsTabNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import KidAvatar from "../../components/KidAvatar";
 const KidsHomeScreenStories = lazy(
   () => import("../../components/KidsHomeScreenStories")
 );
@@ -112,6 +102,5 @@ const KidHomeScreen = () => {
     </View>
   );
 };
-
 
 export default KidHomeScreen;
