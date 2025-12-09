@@ -241,7 +241,7 @@ useEffect(() => {
           )}
 
           {/* Read-along row with toggle (unchanged) */}
-          <View className="flex-row items-center py-3 px-4 w-[90%] mt-8 border border-[#FAF4F2] rounded-2xl">
+          <View className="flex-row items-center py-1 px-4 w-[90%] mt-8 border border-[#FAF4F2] rounded-2xl">
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
@@ -257,11 +257,11 @@ useEffect(() => {
       <View className="flex-1" />
       {/* player */}
       <View className="px-4 pt-3 pb-3 bg-white flex-row items-center justify-center gap-6">
-        <View className="flex-row gap-8 justify-center items-center mt-4">
+        <View className="flex-row gap-12 justify-center items-center mt-4">
           <TouchableOpacity onPress={onSkipBack} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/replay.png")}
-              className="w-8 h-8 rounded-full mr-3"
+              className="w-8 h-8 rounded-full"
               resizeMode="contain"
             />
           </TouchableOpacity>
@@ -281,7 +281,7 @@ useEffect(() => {
           <TouchableOpacity onPress={onSkipForward} activeOpacity={0.85}>
             <Image
               source={require("../../../assets/icons/forward.png")}
-              className="w-8 h-8 rounded-full ml-2"
+              className="w-8 h-8 rounded-full"
               resizeMode="contain"
             />
           </TouchableOpacity>
