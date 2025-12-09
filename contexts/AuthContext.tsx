@@ -19,10 +19,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
- import {
-   GoogleSignin,
-   isSuccessResponse,
- } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from "@react-native-google-signin/google-signin";
 import { Alert } from "react-native";
 
 type AuthFnTypes = {
@@ -154,12 +154,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
 
+  useEffect(() => {
     GoogleSignin.configure({
       iosClientId: IOS_CLIENT_ID,
       webClientId: WEB_CLIENT_ID,
       profileImageSize: 200,
     });
-   }, []);
+  }, []);
 
   useEffect(() => {
     async function getUserSession() {
@@ -554,7 +555,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     resendVerificationEmail,
     validatePasswordReset,
     resetPassword,
-    // handleGoogleAuth,
+    handleGoogleAuth,
     setInAppPin,
     updateInAppPin,
     verifyInAppPin,
