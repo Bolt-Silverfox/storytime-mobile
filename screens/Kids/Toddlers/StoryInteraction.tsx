@@ -96,7 +96,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
         </Text>
       </View>
 
-      <View className="flex-row mt-5 w-full items-center justify-center px-4">
+      <View className="flex-row mt-5 w-full items-center justify-center">
         <View className="flex-1 bg-white p-4 rounded-xl gap-2 items-center justify-center">
           <Text className="text-base font-[quilka] text-center">Age range</Text>
           <Text className="text-[#212121] font-[abeezee] text-center">
@@ -137,7 +137,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
       <View style={{ height: 40 }} />
       <Pressable
-        className="bg-[#866EFF] p-4 pt-0 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mb-4 rounded-full"
+        className="bg-[#866EFF] p-4 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mb-4 rounded-full"
         onPress={() => navigation.navigate("storyModeSelector", { storyId })}
       >
         <Text className="font-[quilka] text-3xl text-white">Start reading</Text>

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BASE_URL } from "../../../constants";
 import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
+import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
 const useSetStoryBuddy = ({
   kidId,
@@ -13,6 +14,7 @@ const useSetStoryBuddy = ({
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
+  const { data, isPending } = useGetUserProfile();
   return useMutation({
     mutationFn: async () => {
       const url = `${BASE_URL}/story-buddies/kids/${kidId}/select`;
@@ -36,6 +38,9 @@ const useSetStoryBuddy = ({
       });
       queryClient.invalidateQueries({
         queryKey: ["selectedBuddy", id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userKids", data?.id],
       });
       onSuccess?.();
     },
