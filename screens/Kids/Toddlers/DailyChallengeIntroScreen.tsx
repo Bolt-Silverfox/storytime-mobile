@@ -1,12 +1,5 @@
 import React from "react";
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  ScrollView,
-  SafeAreaView,
-} from "react-native";
+import { View, Text, Image, Pressable, ScrollView } from "react-native";
 import { ArrowRight, ChevronLeft } from "lucide-react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
@@ -14,10 +7,9 @@ import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNaviga
 type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "challenge">;
 
 const ChallengeScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { storyId } = route.params;
+  const { storyId, childId } = route.params;
   return (
     <View className="flex-1 bg-[#866EFF]">
-      <SafeAreaView />
       <ScrollView contentContainerStyle={{ padding: 24, paddingBottom: 48 }}>
         {/* Header: left icon, centered title, right spacer */}
         <View className="relative mb-4">
@@ -55,7 +47,7 @@ const ChallengeScreen: React.FC<Props> = ({ navigation, route }) => {
         {/* Greeting card */}
         <View className="bg-white/30 border border-white p-5 rounded-3xl mb-6">
           <Text className="text-3xl font-[quilka] text-center text-white mb-2">
-            Well done, Tim!
+            Well done!
           </Text>
 
           <Text className="text-base text-center text-white font-[abeezee] leading-relaxed">
@@ -66,7 +58,12 @@ const ChallengeScreen: React.FC<Props> = ({ navigation, route }) => {
 
         {/* CTA button */}
         <Pressable
-          onPress={() => navigation.navigate("storyReader", { storyId })}
+          onPress={() => {
+            navigation.navigate("index" as any, {
+              screen: "home",
+              params: { childId },
+            });
+          }}
           className="bg-white py-3 rounded-full flex-row items-center justify-center mt-2"
           android_ripple={{ color: "rgba(0,0,0,0.05)" }}
           accessibilityRole="button"

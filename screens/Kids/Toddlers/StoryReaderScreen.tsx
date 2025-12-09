@@ -25,18 +25,20 @@ type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "storyReader">;
 type Mode = "readAlong" | "listen";
 
 const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { storyId, mode: incomingMode } = route.params as {
+  const { storyId, mode: incomingMode, childId } = route.params as {
     storyId: string;
     mode?: Mode;
+    childId: string;
   };
   const storyQuery = useGetStory(storyId);
   const story = storyQuery?.data ?? null;
 
-  const paragraphs =
-    story?.textContent
-      ?.split(/\n\s*\n/) // split on blank lines
-      .map((p) => p.trim())
-      .filter(Boolean) ?? [];
+const paragraphs: string[] =
+  story?.textContent
+    ?.split(/(?<=[.!?])\s+/)   // split at sentence boundaries
+    .map((s) => s.trim())
+    .filter(Boolean) ?? [];
+
 
   const pages = useMemo(() => paragraphs, [paragraphs]);
   const total = pages.length;
@@ -158,7 +160,7 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
 
   const handleCompletionPrimary = () => {
     setCompletionVisible(false);
-    navigation.navigate("challenge", { storyId });
+    navigation.navigate("challenge", { storyId, childId });
   };
 
   const coverSource = story?.coverImageUrl
@@ -304,13 +306,7 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   return (
     <View className="flex-1">
       {/* Back button always on top */}
-      <Pressable className="absolute top-8 left-4 z-30" onPress={() => navigation.goBack()}>
-        <Image
-          source={require("../../../assets/story/close.png")}
-          className="w-12 h-12"
-          resizeMode="contain"
-        />
-      </Pressable>
+      
 
       {/* ImageBackground branch */}
       {!imageFailed && coverSource ? (
