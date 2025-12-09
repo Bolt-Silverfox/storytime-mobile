@@ -29,7 +29,7 @@ const ViewActivityLog = () => {
     );
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 ">
       <PageTitle goBack={() => navigator.goBack()} title="Activity Logs" />
 
       <ScrollView

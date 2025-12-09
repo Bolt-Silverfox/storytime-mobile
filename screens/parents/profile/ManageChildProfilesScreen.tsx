@@ -35,10 +35,14 @@ const ManageChildProfilesScreen = () => {
   };
 
   return (
-    <View className="flex-1 bg-[bgLight] pb-5">
+    <View className="flex-1 bg-bgLight pb-5">
       <PageTitle
         title="Manage Child Profiles"
-        goBack={() => parentNavigator.goBack()}
+        goBack={() =>
+          parentNavigator.navigate("profile", {
+            screen: "indexPage",
+          })
+        }
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -68,9 +72,11 @@ const ManageChildProfilesScreen = () => {
           </View>
         )}
       </ScrollView>
-      <View className="justify-center">
-        <CustomButton text="Add Child" onPress={addChild} />
-      </View>
+      {data.length && (
+        <View className="justify-center">
+          <CustomButton text="Add Child" onPress={addChild} />
+        </View>
+      )}
       <MaximumChildAlert
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
