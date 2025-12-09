@@ -20,7 +20,7 @@ type Props = NativeStackScreenProps<
 type Mode = "readAlong" | "listen";
 
 const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
-  const { storyId } = route.params;
+  const { storyId, childId } = route.params;
   const [voiceModalVisible, setVoiceModalVisible] = useState(false);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [imageLoading, setImageLoading] = useState(true);
@@ -43,6 +43,7 @@ const StoryModeSelector: React.FC<Props> = ({ route, navigation }) => {
     setVoiceModalVisible(false);
     navigation.navigate("storyReader", {
       storyId: storyId,
+      childId: childId,
       mode: mode,
       voice: voiceId,
     } as any);
