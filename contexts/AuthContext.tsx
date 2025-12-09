@@ -286,7 +286,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
       auth.verifyEmail(token)
     );
-    console.log("verify eail data", verifyEmailData);
     if (!verifyEmailData.success) {
       setErrorCb(verifyEmailData.message);
       return;
@@ -411,8 +410,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
       });
       const response = await request.json();
-      console.log("response sign in", response);
-      console.log("google token", idToken);
       if (!response.success) {
         throw new Error(response.message);
       }
@@ -421,7 +418,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user);
     } catch (error) {
-      console.error("google error", error);
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
       Alert.alert(message);
@@ -455,7 +451,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.verifyInAppPin(pin)
     );
-    console.log("verify in app pin", requestData);
     if (!requestData.success) {
       setErrorCb(requestData.message);
       return;
@@ -540,7 +535,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.changePassword(oldPassword, newPassword)
     );
-    console.log("change password data", requestData);
     if (!requestData.success) {
       setErrorCb(requestData.message);
       return;
