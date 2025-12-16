@@ -8,27 +8,30 @@ import {
   ScrollView,
   ImageBackground,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import defaultStyles from "../../../styles";
 import { Search } from "lucide-react-native";
 import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
-import { RotuteProps } from "./KidsLibraryScreen";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import {
   KidsLibraryNavigatorParamList,
   KidsLibraryNavigatorProps,
 } from "../../../Navigation/KidsLibraryNavigator";
 import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
-import useGetStoriesById from "../../../hooks/tanstack/queryHooks/useGetStoriesById";
 import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
 import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
 import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { filterStoriesByTitle } from "../../../utils/utils";
+
+type KidsLibraryNavigatorRouteProp = RouteProp<
+  KidsLibraryNavigatorParamList,
+  "continueReading"
+>;
 
 export default function ReturningUser() {
-  const { params } = useRoute<RotuteProps>();
+  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   const [searchText, setSearchText] = useState("");
 
@@ -53,16 +56,6 @@ export default function ReturningUser() {
   const favouriteStories = stories.filter((story) =>
     favouriteStoryIds?.includes(story.id)
   );
-
-  const filterStoriesByTitle = (stories: any[], searchQuery: string) => {
-    if (!searchQuery.trim()) return stories;
-
-    const query = searchQuery.toLowerCase().trim();
-    return (
-      stories?.filter((story) => story.title?.toLowerCase().includes(query)) ||
-      []
-    );
-  };
 
   const filteredContinueReading = useMemo(
     () => filterStoriesByTitle(continueReading || [], searchText),
@@ -89,7 +82,6 @@ export default function ReturningUser() {
     [createdStories, searchText]
   );
 
-  // Check if search is active and has results
   const isSearchActive = searchText.trim().length > 0;
   const hasSearchResults =
     isSearchActive &&
@@ -98,15 +90,15 @@ export default function ReturningUser() {
       filteredFavorites.length > 0 ||
       filteredDownloads.length > 0 ||
       filteredCreatedStories.length > 0);
+
   const StoryCard = ({ item }: { item: any }) => {
-    const { params } = useRoute<RotuteProps>();
+    const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
     const navigator = useNavigation<KidsLibraryNavigatorProps>();
     const { data: storyProgress } = useGetStoryProgress(
-      params?.childId!,
+      params.childId!,
       item?.id
     );
-    console.log(storyProgress, "dif");
-    console.log(item.id, "item");
+
     const progress = (storyProgress?.progress! / 100) * 211;
 
     return (
@@ -203,7 +195,7 @@ export default function ReturningUser() {
                 </Text>
               </Pressable>
             </View>
-            
+
             <FlatList
               data={data}
               keyExtractor={(item) => `${title}-${item.id}`}
@@ -258,7 +250,7 @@ export default function ReturningUser() {
 
       <ScrollView showsVerticalScrollIndicator={false} className="w-full px-4">
         {/* Search Bar */}
-        <View className="border mt-[24] mb-[40] border-white w-full py-1 items-center justify-center flex-row rounded-full px-3 gap-2">
+        <View className="border mt-[24] mb-[40] border-white w-full py-1 items-center  justify-center flex-row rounded-full px-3 gap-2">
           <Search color={"white"} size={24} className="self-center" />
           <TextInput
             value={searchText}

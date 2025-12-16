@@ -36,7 +36,6 @@ export default function ChildAvatar() {
       alert("Please select an avatar");
       return;
     }
-    console.log("nav");
     navigator.navigate("addChild", { avatarId: selectedAvatarId });
   };
 

@@ -25,7 +25,6 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
         ageRange: string;
       }[]
     ) => {
-      console.log("kids data", kids);
       const invalid = kids.some(
         (kid) => !kid.name.trim().length || !kid.ageRange.trim().length
       );

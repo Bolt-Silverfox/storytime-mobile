@@ -9,7 +9,6 @@ export const useAssignKidAvatar = (kidId: string, redirect?: () => void) => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (avatarId: string) => {
-      console.log(avatarId, kidId);
       const response = await apiFetch(`${BASE_URL}/avatars/assign/kid`, {
         method: "POST",
         body: JSON.stringify({ kidId, avatarId }),

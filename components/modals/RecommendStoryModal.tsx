@@ -34,7 +34,6 @@ export default function RecommendStoryModal({
   // >>> Correct mutation hook
   const mutation = useGetRecommendStories();
 
-
   useEffect(() => {
     if (!visible) return;
     if (kids && kids.length) setSelectedKidId((prev) => prev || kids[0].id);
@@ -50,40 +49,37 @@ export default function RecommendStoryModal({
     }
 
     mutation.mutate(
-  {
-    kidId: selectedKidId,
-    storyId,
-    message: "Hope your kid enjoys this story!",
-  },
-  {
-    onSuccess: (res) => {
-      console.log("RESPONSE:", res);
+      {
+        kidId: selectedKidId,
+        storyId,
+        message: "Hope your kid enjoys this story!",
+      },
+      {
+        onSuccess: (res) => {
+          // Already recommended
+          if (res?.already || res?.message?.toLowerCase().includes("already")) {
+            Alert.alert(
+              "Already Recommended",
+              "You have already recommended this story."
+            );
+            return;
+          }
 
-      // Already recommended
-      if (res?.already || res?.message?.toLowerCase().includes("already")) {
-        Alert.alert(
-          "Already Recommended",
-          "You have already recommended this story."
-        );
-        return;
+          // Error
+          if (!res?.success) {
+            Alert.alert("Error", res?.message || "Something went wrong");
+            return;
+          }
+
+          // Success
+          setSuccessOpen(true);
+        },
+
+        onError: (err) => {
+          Alert.alert("Error", err.message || "Something went wrong");
+        },
       }
-
-      // Error
-      if (!res?.success) {
-        Alert.alert("Error", res?.message || "Something went wrong");
-        return;
-      }
-
-      // Success
-      setSuccessOpen(true);
-    },
-
-    onError: (err) => {
-      Alert.alert("Error", err.message || "Something went wrong");
-    },
-  }
-);
-
+    );
   };
 
   const handleSuccessClose = () => {
