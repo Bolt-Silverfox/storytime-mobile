@@ -2,43 +2,41 @@ import {
   View,
   Text,
   Pressable,
-  Image,
   ScrollView,
   ImageBackground,
+  TextInput,
 } from "react-native";
-import React, { useState } from "react";
-import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
+import React, { useMemo, useState } from "react";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
 import defaultStyles from "../../../styles";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import { RotuteProps } from "./KidsLibraryScreen";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStories, {
-  Story,
-} from "../../../hooks/tanstack/queryHooks/useGetStories";
-import { Ellipsis } from "lucide-react-native";
-import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
-import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Search } from "lucide-react-native";
+import {
+  KidsLibraryNavigatorParamList,
+  KidsLibraryNavigatorProps,
+} from "../../../Navigation/KidsLibraryNavigator";
 import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
 import { BookReading } from "./ContinueReading";
+import { filterStoriesByTitle } from "../../../utils/utils";
+
+
+export type KidsLibraryNavigatorRouteProp = RouteProp<
+  KidsLibraryNavigatorParamList,
+  "continueReading"
+>;
+
 
 export default function LibraryDownloads() {
-  const { params } = useRoute<RotuteProps>();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { isPending, error, data, refetch } = useGetKidById(params.childId);
-  const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
+  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
   const { data: kidDownloads } = useGetDownloadStories(params.childId);
-  // const downloadedStoriesId = kidDownloads?.map((d) => d.storyId);
-  // const downloadedStories = stories.filter((story) =>
-  //   downloadedStoriesId?.includes(story.id)
-  // );
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
+  const [searchText, setSearchText] = useState("");
+
+  const filteredDownloads = useMemo(
+    () => filterStoriesByTitle(kidDownloads || [], searchText),
+    [kidDownloads, searchText]
+  );
+
   return (
     <View className="flex-1   items-center gap-x-3 pb-2 h-[60vh]">
       <ImageBackground
@@ -63,24 +61,53 @@ export default function LibraryDownloads() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className=" gap-y-5 space-y-5"
+        className="gap-y-5 space-y-5 mx-4"
       >
-        {kidDownloads?.length === 0 || !kidDownloads ? (
-          <View className="">
-            <Text
-              style={[
-                defaultStyles.defaultText,
-                { color: "#fff", fontSize: 14 },
-              ]}
-            >
-              No downloads
-            </Text>
+        {kidDownloads?.length! > 0 && (
+          <View className="border my-[10] border-white w-full py-1 items-center justify-center flex-row rounded-full px-3 gap-2">
+            <Search color={"white"} size={24} className="self-center" />
+            <TextInput
+              value={searchText}
+              onChangeText={(newText) => setSearchText(newText)}
+              placeholder="Search your library"
+              placeholderTextColor="#ffffff80"
+              style={{ color: "white", justifyContent: "center" }}
+              className="h-10 placeholder:self-center flex-1"
+            />
+            {searchText.length > 0 && (
+              <Pressable onPress={() => setSearchText("")}>
+                <Text style={{ color: "white", fontSize: 16 }}>✕</Text>
+              </Pressable>
+            )}
           </View>
+        )}
+
+        {kidDownloads?.length === 0 || !kidDownloads ? (
+          <Text
+            className="mt-4 mx-auto"
+            style={[defaultStyles.defaultText, { color: "#fff", fontSize: 14 }]}
+          >
+            You have no stories in your continue reading list yet
+          </Text>
         ) : (
           <>
-            {kidDownloads?.map((story, i) => (
-              <BookReading key={i} story={story} category="download" />
-            ))}
+            {filteredDownloads?.length === 0 ? (
+              <Text
+                style={[
+                  defaultStyles.defaultText,
+                  { color: "#fff", fontSize: 14 },
+                ]}
+                className="mt-4 mx-auto"
+              >
+                no results found for "{searchText}"
+              </Text>
+            ) : (
+              <>
+                {filteredDownloads?.map((story, i) => (
+                  <BookReading key={i} story={story} />
+                ))}
+              </>
+            )}
           </>
         )}
       </ScrollView>

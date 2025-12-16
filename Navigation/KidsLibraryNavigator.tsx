@@ -18,6 +18,7 @@ import useGetContinueReading from "../hooks/tanstack/queryHooks/useGetContinueRe
 import { useEffect, useState } from "react";
 import LoadingOverlay from "../components/LoadingOverlay";
 import useGetCompletedStories from "../hooks/tanstack/queryHooks/useGetCompletedStories";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type KidsLibraryNavigatorParamList = {
   indexPage: { childId: string };
@@ -42,40 +43,45 @@ type KidsTabNavigatorRouteProp = RouteProp<
   "library"
 >;
 
+type KidsLibraryNavigatorRouteProp =
+  RouteProp<KidsLibraryNavigatorParamList, 'continueReading'>;
+
 const KidsLibraryNavigator = () => {
   const { params } = useRoute<KidsTabNavigatorRouteProp>();
-  const childId = params.childId;
-  const { data: continueReading, isLoading } = useGetContinueReading(
-    params.childId
-  );
-  const { data: completedStories } = useGetCompletedStories(params.childId);
+  const [childId, setChildId] = useState<string | null>(null);
+  console.log(childId, "childId");
+  useEffect(() => {
+    const loadKid = async () => {
+      const id = await AsyncStorage.getItem("currentKid");
+      setChildId(id);
+    };
 
-  // const [returningUser, setReturningUser] = useState(continueReading?.length);
+    loadKid();
+  }, []);
 
-  // useEffect(() => {
-  //   setReturningUser(continueReading?.length);
-  // });
-  if (isLoading) {
-    return <LoadingOverlay visible={isLoading} />;
+  // const childId = params.childId;
+  const { data: continueReading, isLoading } = useGetContinueReading(childId!);
+  const { data: completedStories, isLoading: completedStoriesLoading } =
+    useGetCompletedStories(childId!);
+  const returningUser =
+    (continueReading?.length ?? 0) > 0 || (completedStories?.length ?? 0) > 0;
+
+  if (!childId || isLoading || completedStoriesLoading) {
+    return <LoadingOverlay visible={isLoading || completedStoriesLoading} />;
   }
-
-const returningUser =
-  (continueReading?.length ?? 0) > 0 || (completedStories?.length ?? 0) > 0;
-  
-  console.log(returningUser, "user", isLoading);
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {returningUser ? (
         <Stack.Screen
           name="returningUser"
           component={ReturningUser}
-          initialParams={{ childId }}
+          initialParams={{ childId: childId! }}
         />
       ) : (
         <Stack.Screen
           name="indexPage"
           component={KidsLibraryScreen}
-          initialParams={{ childId }}
+          initialParams={{ childId: childId! }}
         />
       )}
 
@@ -85,7 +91,7 @@ const returningUser =
       <Stack.Screen
         name="continueReading"
         component={ContinueReadingLibrary}
-        initialParams={{ childId }}
+        initialParams={{ childId: childId! }}
       />
       <Stack.Screen name="favourite" component={LibraryFavourite} />
       <Stack.Screen name="downloads" component={LibraryDownloads} />

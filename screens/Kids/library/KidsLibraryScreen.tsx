@@ -28,31 +28,29 @@ import {
   KidsLibraryNavigatorParamList,
   KidsLibraryNavigatorProps,
 } from "../../../Navigation/KidsLibraryNavigator";
+export type KidsLibraryNavigatorRouteProp = RouteProp<
+  KidsLibraryNavigatorParamList,
+  "indexPage"
+>;
 
 const KidStories = lazy(() => import("../../../components/KidStories"));
-export type RotuteProps = RouteProp<KidsTabNavigatorParamList, "library">;
+// export type RotuteProps = RouteProp<KidsTabNavigatorParamList, "library">;
 
 const KidsLibraryScreen = () => {
-  const { params } = useRoute<RotuteProps>();
+  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
   const { isPending, error, data, refetch } = useGetKidById(params.childId);
   const {
     data: buddyData,
     error: buddyError,
     refetch: refetchBuddy,
   } = useGetStoryBuddyById(data?.storyBuddyId!);
-  // const {
-  //   data: stories,
-  //   error: storiesError,
-  //   refetch: refetchStories,
-  // } = useGetStory(data?.storyBuddyId!);
+
   const {
     isPending: storiesIsPending,
     error: storiesError,
     refetch: refetchStories,
     data: stories,
   } = useGetStories(params.childId);
-
-  // console.log("buddy data", buddyData);
 
   const navigation = useNavigation<KidsTabNavigatorProp>();
   const libNav = useNavigation<KidsLibraryNavigatorProps>();

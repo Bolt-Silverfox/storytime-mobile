@@ -18,7 +18,6 @@ type ActivityLog = {
 };
 
 const useGetKidActivityLog = (id: string) => {
-  console.log("kidid", id);
   return useQuery({
     queryKey: ["activityLog", id],
     queryFn: async () => {

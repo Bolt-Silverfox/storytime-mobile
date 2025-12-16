@@ -17,12 +17,10 @@ import { useEffect, useState } from "react";
 const KidStories = ({ id }: { id: string }) => {
   const [currentKidId, setCurrentKidId] = useState<string | null>("");
   const { isPending, error, refetch, data } = useGetStories(id);
-  console.log(data.length);
 
   useEffect(() => {
     const loadKid = async () => {
       const id = await AsyncStorage.getItem("currentKid");
-      console.log("id", id);
       setCurrentKidId(id);
     };
 

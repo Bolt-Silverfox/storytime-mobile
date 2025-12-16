@@ -25,7 +25,11 @@ type Props = NativeStackScreenProps<KidsSetupNavigatorParamList, "storyReader">;
 type Mode = "readAlong" | "listen";
 
 const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { storyId, mode: incomingMode, childId } = route.params as {
+  const {
+    storyId,
+    mode: incomingMode,
+    childId,
+  } = route.params as {
     storyId: string;
     mode?: Mode;
     childId: string;
@@ -33,12 +37,11 @@ const StoryReaderScreen: React.FC<Props> = ({ route, navigation }) => {
   const storyQuery = useGetStory(storyId);
   const story = storyQuery?.data ?? null;
 
-const paragraphs: string[] =
-  story?.textContent
-    ?.split(/(?<=[.!?])\s+/)   // split at sentence boundaries
-    .map((s) => s.trim())
-    .filter(Boolean) ?? [];
-
+  const paragraphs: string[] =
+    story?.textContent
+      ?.split(/(?<=[.!?])\s+/) // split at sentence boundaries
+      .map((s) => s.trim())
+      .filter(Boolean) ?? [];
 
   const pages = useMemo(() => paragraphs, [paragraphs]);
   const total = pages.length;
@@ -60,8 +63,6 @@ const paragraphs: string[] =
     storyId,
   });
 
-  console.log("progress", storyProgress?.progress, currentKidId, storyId);
-
   const [audioUri, setAudioUri] = useState<string | null>(null);
   const generateAudio = useGenerateStoryAudio({
     onSuccess: (data) => {
@@ -75,7 +76,6 @@ const paragraphs: string[] =
   useEffect(() => {
     const loadKid = async () => {
       const id = await AsyncStorage.getItem("currentKid");
-      console.log("id", id);
       setCurrentKidId(id);
     };
 
@@ -83,13 +83,9 @@ const paragraphs: string[] =
   }, []);
 
   useEffect(() => {
-    if (storyProgress === null) {
-      console.log("null");
-    }
     if (!currentKidId) return; // wait for kid
     if (!storyProgress) return; // wait for progress
     if (total === 0) return; // wait for pages to parse
-    console.log("s", storyProgress.progress);
     const page = Math.round((storyProgress.progress / 100) * total) - 1;
 
     setPageIndex(Math.max(0, page));
@@ -123,7 +119,6 @@ const paragraphs: string[] =
     });
   };
 
-  
   const goNext = () => {
     setPageIndex((prev) => {
       const newIndex = Math.min(total - 1, prev + 1);
@@ -306,7 +301,6 @@ const paragraphs: string[] =
   return (
     <View className="flex-1">
       {/* Back button always on top */}
-      
 
       {/* ImageBackground branch */}
       {!imageFailed && coverSource ? (
