@@ -139,7 +139,7 @@ export default function ReturningUser() {
                 { fontSize: 16, color: "#616161" },
               ]}
             >
-              {storyProgress?.progress}% complete
+              {Math.round(storyProgress?.progress!)}% complete
             </Text>
           </View>
 

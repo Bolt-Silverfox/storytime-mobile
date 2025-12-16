@@ -145,7 +145,9 @@ export const BookReading = ({
           <Clock size={16} />
           <Text></Text>
         </View>
-        <Text className="text-text">{storyProgress?.progress}% Complete</Text>
+        <Text className="text-text">
+          {Math.round(storyProgress?.progress!)}% Complete
+        </Text>
         <View className="rounded-full mx-auto my-2 justify-center items-start w-[230] h-[32] bg-[#DAE1F1] border-b-4 border-r-4 border-[#B0BAFF] ">
           <View className="bg-[#B0BAFF] rounded-full w-[94%] mx-auto  h-[16]">
             <View
