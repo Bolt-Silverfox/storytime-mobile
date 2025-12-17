@@ -24,14 +24,12 @@ const useDeleteParentFavorite = (redirect?: () => void) => {
       }
 
       const url = `${BASE_URL}/parent-favorites/${storyId}`;
-      console.log("🗑️ Deleting favorite at:", url);
 
       const response = await apiFetch(url, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
       });
 
-      console.log("📥 Raw response:", response);
       const json: ParentFavoriteResponse = await response
         .json()
         .catch(() => ({ success: false, message: "Invalid response" }));

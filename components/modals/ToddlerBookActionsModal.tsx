@@ -34,19 +34,11 @@ const ToddlerBookActionsModal = ({
     storyId
   );
 
-  console.log(selected, "selcted");
   const handleSubmit = () => {
-    // if (selected === "addFavorite") {
-    //   addFavorites({ kidId, storyId: storyId });
-    // }
-    // if (selected === "library") {
-    //   mutateAsync();
-    // }
-
     switch (selected) {
       case "addFavorite":
         addFavorites({ kidId, storyId: storyId });
-        break; // stops execution here
+        break;
       case "removeFromLibrary":
         mutateAsync();
         break;
@@ -60,10 +52,8 @@ const ToddlerBookActionsModal = ({
         downloadStory();
         break;
       default:
-      // console.log("Value is something else");
     }
   };
-  console.log(category);
   if (category && category === "completed") {
     return (
       <Modal

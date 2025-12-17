@@ -38,7 +38,6 @@ const useCreateStory = ({
 }) => {
   const queryClient = useQueryClient();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  console.log("kid id", kidId);
   return useMutation({
     mutationFn: async (data: {
       theme: string;
@@ -56,12 +55,10 @@ const useCreateStory = ({
         }),
       });
       const response: QueryResponse<GenerateStory> = await request.json();
-      console.log("response", response);
       if (!response.success) throw new Error(response.message);
       return response;
     },
     onSuccess: (data) => {
-      console.log("data onsuccess", data);
       queryClient.invalidateQueries({
         queryKey: ["generatedStories"],
       });

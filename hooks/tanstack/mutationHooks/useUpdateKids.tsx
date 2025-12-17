@@ -32,8 +32,6 @@ const useUpdateKids = ({
       bedtimeReminder?: boolean;
       bedtimeStoriesOnly?: boolean;
     }) => {
-      console.log("update kids data", kids);
-      console.log("kid data", id);
       const request = await apiFetch(`${BASE_URL}/auth/kids/${id}`, {
         method: "PUT",
         body: JSON.stringify({

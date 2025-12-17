@@ -57,7 +57,6 @@ const useGetContinueReading = (kidId: string) => {
         }
 
         const stories: Response = await response.json();
-        // console.log("stories:", stories);
         return stories; // replace `any` with your Story type if available
       } catch (err) {
         const message =

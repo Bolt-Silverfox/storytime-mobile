@@ -19,11 +19,14 @@ import KidAvatar from "../../../components/KidAvatar";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
 import { KidsNavigatorProp } from "../../../Navigation/KidsNavigator";
+import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
 
 type ProfileParams = RouteProp<KidsProfileNavigatorParams, "indexPage">;
 const KidsIndexProfileScreen = () => {
   const { params } = useRoute<ProfileParams>();
   const navigator = useNavigation<kidsProfileNavigatorProp>();
+  const libraryNav = useNavigation<KidsLibraryNavigatorProps>();
+
   const tabsNavigator = useNavigation<KidsTabNavigatorProp>();
   const parentNavigator = useNavigation<KidsNavigatorProp>();
 
@@ -31,7 +34,6 @@ const KidsIndexProfileScreen = () => {
   const kidAvatar = data?.avatar?.url;
   const kidName = data?.name;
   const kidAge = data?.ageRange;
-  console.log(data);
   return (
     <ScrollView className=" flex-1">
       <View>
@@ -85,7 +87,8 @@ const KidsIndexProfileScreen = () => {
             <Pressable
               onPress={() =>
                 tabsNavigator.navigate("library", {
-                  childId: params.childId,
+                  screen: "continueReading",
+                  params: { childId: params.childId },
                 })
               }
               className="bg-[#FEBADC] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#EC0794]"
@@ -114,18 +117,18 @@ const KidsIndexProfileScreen = () => {
 
               <Image source={require("../../../assets/icons/theme.png")} />
 
-              
               <Text className="text-[16px] text-[#AF55CF] font-[abeezee]">
                 Change Buddy
               </Text>
 
-              
               <View className="w-[63px] h-[49px] absolute -right-[35px] -bottom-[3px] rounded-full bg-[#FAEBFF]" />
             </Pressable>
 
             <Pressable
               onPress={() =>
-                tabsNavigator.navigate("progress", { childId: params.childId })
+                navigator.navigate("kidAchievement", {
+                  childId: params.childId,
+                })
               }
               className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]"
             >
@@ -137,7 +140,6 @@ const KidsIndexProfileScreen = () => {
                 Achievement
               </Text>
 
-              
               <View className="w-[63px] h-[49px] absolute -right-[35px] -bottom-[3px] rounded-full bg-[#CDFBF7]" />
             </Pressable>
           </View>

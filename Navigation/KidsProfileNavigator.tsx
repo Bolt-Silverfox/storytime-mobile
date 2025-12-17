@@ -9,6 +9,7 @@ import KidAchievement from "../screens/Kids/profile/KidAchievement";
 import ReadKidHistory from "../screens/Kids/profile/ReadKidHistory";
 import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
 import { RouteProp, useRoute } from "@react-navigation/native";
+import KidsProgressNavigator from "./KidsProgressNavigator";
 
 export type KidsProfileNavigatorParams = {
   indexPage: { childId: string };
@@ -26,7 +27,6 @@ type KidsTabNavigatorRouteProp = RouteProp<
   KidsTabNavigatorParamList,
   "profile"
 >;
-
 export default function KidsProfileNavigator() {
   const { params } = useRoute<KidsTabNavigatorRouteProp>();
   const childId = params.childId;
@@ -54,7 +54,7 @@ export default function KidsProfileNavigator() {
       />
       <Stack.Screen
         name="kidAchievement"
-        component={KidAchievement}
+        component={KidsProgressNavigator}
         initialParams={{ childId }}
       />
     </Stack.Navigator>

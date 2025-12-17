@@ -5,31 +5,32 @@ import {
   Image,
   ScrollView,
   ImageBackground,
+  TextInput,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
 import defaultStyles from "../../../styles";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import { RotuteProps } from "./KidsLibraryScreen";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStories, {
-  Story,
-} from "../../../hooks/tanstack/queryHooks/useGetStories";
-import { Ellipsis } from "lucide-react-native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Ellipsis, Search } from "lucide-react-native";
 import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
-import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
-import useGetContinueReading, {
-  ContinueReading,
-} from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
+import {
+  KidsLibraryNavigatorParamList,
+  KidsLibraryNavigatorProps,
+} from "../../../Navigation/KidsLibraryNavigator";
+import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { filterStoriesByTitle } from "../../../utils/utils";
+import { fi } from "zod/v4/locales";
+
+type KidsLibraryNavigatorRouteProp = RouteProp<
+  KidsLibraryNavigatorParamList,
+  "continueReading"
+>;
 
 export default function ContinueReadingLibrary() {
-  const { params } = useRoute<RotuteProps>();
-  const [isOpen, setIsOpen] = useState(false);
-
-  const { isPending, error, data, refetch } = useGetKidById(params.childId);
+  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
+  const [searchText, setSearchText] = useState("");
   const {
     isPending: ContinueReadingIsPending,
     error: ContinueReadingError,
@@ -37,15 +38,15 @@ export default function ContinueReadingLibrary() {
     data: continueReading,
   } = useGetContinueReading(params.childId);
 
+  const filteredContinueReading = useMemo(
+    () => filterStoriesByTitle(continueReading || [], searchText),
+    [continueReading, searchText]
+  );
+
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
 
-  useEffect(() => {
-    if (continueReading?.length === 0) {
-      navigation.replace("indexPage", { childId: params.childId });
-    }
-  }, [continueReading]);
   return (
-    <View className="flex-1   items-center gap-x-3 pb-2 h-[60vh]">
+    <View className="flex-1 gap-x-3 pb-2 h-[60vh]">
       <ImageBackground
         source={require("../../../assets/images/story-generation-bg.png")}
         className=" bg-contain h-[572]  w-full "
@@ -68,19 +69,53 @@ export default function ContinueReadingLibrary() {
 
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className=" gap-y-5 space-y-5"
+        className="gap-y-5 space-y-5 mx-4"
       >
+        {continueReading?.length! > 0 && (
+          <View className="border my-[10] border-white w-full py-1 items-center justify-center flex-row rounded-full px-3 gap-2">
+            <Search color={"white"} size={24} className="self-center" />
+            <TextInput
+              value={searchText}
+              onChangeText={(newText) => setSearchText(newText)}
+              placeholder="Search your library"
+              placeholderTextColor="#ffffff80"
+              style={{ color: "white", justifyContent: "center" }}
+              className="h-10 placeholder:self-center flex-1"
+            />
+            {searchText.length > 0 && (
+              <Pressable onPress={() => setSearchText("")}>
+                <Text style={{ color: "white", fontSize: 16 }}>✕</Text>
+              </Pressable>
+            )}
+          </View>
+        )}
+
         {continueReading?.length === 0 || !continueReading ? (
           <Text
+            className="mt-4 mx-auto"
             style={[defaultStyles.defaultText, { color: "#fff", fontSize: 14 }]}
           >
-            No stories yet
+            You haven't read any stories yet
           </Text>
         ) : (
           <>
-            {continueReading?.map((story, i) => (
-              <BookReading key={i} story={story} />
-            ))}
+            {filteredContinueReading?.length === 0 ? (
+              <Text
+                style={[
+                  defaultStyles.defaultText,
+                  { color: "#fff", fontSize: 14 },
+                ]}
+                className="mt-4 mx-auto"
+              >
+                No results found for "{searchText}"
+              </Text>
+            ) : (
+              <>
+                {filteredContinueReading?.map((story, i) => (
+                  <BookReading key={i} story={story} />
+                ))}
+              </>
+            )}
           </>
         )}
       </ScrollView>
@@ -104,7 +139,6 @@ export const BookReading = ({
   useEffect(() => {
     const loadKid = async () => {
       const id = await AsyncStorage.getItem("currentKid");
-      console.log("id", id);
       setCurrentKidId(id);
     };
 
@@ -145,7 +179,9 @@ export const BookReading = ({
           <Clock size={16} />
           <Text></Text>
         </View>
-        <Text className="text-text">{storyProgress?.progress}% Complete</Text>
+        <Text className="text-text">
+          {Math.round(storyProgress?.progress!)}% Complete
+        </Text>
         <View className="rounded-full mx-auto my-2 justify-center items-start w-[230] h-[32] bg-[#DAE1F1] border-b-4 border-r-4 border-[#B0BAFF] ">
           <View className="bg-[#B0BAFF] rounded-full w-[94%] mx-auto  h-[16]">
             <View
