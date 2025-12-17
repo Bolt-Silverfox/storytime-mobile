@@ -12,7 +12,10 @@ interface KidsHomeScreenStoriesProps {
   recommendedStories?: any[]; // optional
 }
 
-const KidsHomeScreenStories = ({ id, recommendedStories = [] }: KidsHomeScreenStoriesProps) => {
+const KidsHomeScreenStories = ({
+  id,
+  recommendedStories = [],
+}: KidsHomeScreenStoriesProps) => {
   const navigation = useNavigation<KidsTabNavigatorProp>();
   const { isPending, error, refetch, data } = useGetStories(id);
   const FALLBACK = require("../assets/parents/unseen-world.jpg");
@@ -25,16 +28,13 @@ const KidsHomeScreenStories = ({ id, recommendedStories = [] }: KidsHomeScreenSt
     console.warn("useGetStories: unexpected shape ->", r);
     return [];
   })();
-  
-const mergedStories = [
-  ...recommendedStories.map((rec) => rec.story),
-  ...stories.filter(
-    (s) => !recommendedStories.some((rec) => rec.story.id === s.id)
-  ), 
-];
 
-
-  console.log("Normalized stories length:", stories.length);
+  const mergedStories = [
+    ...recommendedStories.map((rec) => rec.story),
+    ...stories.filter(
+      (s) => !recommendedStories.some((rec) => rec.story.id === s.id)
+    ),
+  ];
 
   if (error)
     return (

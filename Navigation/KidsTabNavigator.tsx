@@ -2,20 +2,27 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import React from "react";
+import {
+  NavigatorScreenParams,
+  RouteProp,
+  useRoute,
+} from "@react-navigation/native";
+import React, { useEffect } from "react";
 import colours from "../colours";
 import Icon from "../components/Icon";
 import KidsHomeScreen from "../screens/Kids/KidsHomeScreen";
-import KidsLibraryNavigator from "./KidsLibraryNavigator";
+import KidsLibraryNavigator, {
+  KidsLibraryNavigatorParamList,
+} from "./KidsLibraryNavigator";
 import { KidsNavigatorParamList } from "./KidsNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
 import { Book } from "iconsax-react-nativejs";
 import PersonalizeKidNavigator from "./PersonalizeKidNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
-  library: { childId: string };
+  library: NavigatorScreenParams<KidsLibraryNavigatorParamList>;
   personalize: { childId: string };
   profile: { childId: string };
 };
@@ -29,6 +36,15 @@ type KidsTabNavigatorRouteProp = RouteProp<KidsNavigatorParamList, "index">;
 const KidsTabNavigator = () => {
   const route = useRoute<KidsTabNavigatorRouteProp>();
   const childId = route.params?.childId;
+
+  useEffect(() => {
+    if (childId) {
+      const onKidSelect = async () => {
+        await AsyncStorage.setItem("currentKid", childId);
+      };
+      onKidSelect();
+    }
+  }, [childId]);
 
   return (
     <Tab.Navigator
@@ -56,7 +72,6 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="library"
-        initialParams={{ childId }}
         component={KidsLibraryNavigator}
         options={{
           tabBarIcon: ({ focused }) => (

@@ -4,7 +4,7 @@ import {
 } from "@react-navigation/native-stack";
 import KidsProgressScreen from "../screens/Kids/Progress/KidsProgressScreen";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
+import { KidsProfileNavigatorParams } from "./KidsProfileNavigator";
 
 export type KidsProgressNavigatorParams = {
   indexPage: { childId: string };
@@ -14,13 +14,13 @@ export type kidsProgressNavigatorProp =
   NativeStackNavigationProp<KidsProgressNavigatorParams>;
 const Stack = createNativeStackNavigator<KidsProgressNavigatorParams>();
 
-type KidsTabNavigatorRouteProp = RouteProp<
-  KidsTabNavigatorParamList,
-  "progress"
+type KidsProfileNavigatorRouteProp = RouteProp<
+  KidsProfileNavigatorParams,
+  "kidAchievement"
 >;
 
 export default function KidsProgressNavigator() {
-  const { params } = useRoute<KidsTabNavigatorRouteProp>();
+  const { params } = useRoute<KidsProfileNavigatorRouteProp>();
   const childId = params.childId;
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
