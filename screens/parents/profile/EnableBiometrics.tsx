@@ -5,6 +5,9 @@ import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
 import * as LocalAuthentication from "expo-local-authentication";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import * as SecureStore from "expo-secure-store";
+
+const BIOMETRICS_KEY = "biometrics_enabled";
 
 export default function EnableBiometrics() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -29,23 +32,36 @@ export default function EnableBiometrics() {
   };
 
   const toggleSwitchFaceID = async () => {
-  if (!isEnableFaceID) {
-    const success = await authenticate();
-    if (!success) return;
-  }
-  setIsEnableFaceID(!isEnableFaceID);
-};
-
+    if (!isEnableFaceID) {
+      const success = await authenticate();
+      if (!success) return;
+    }
+    setIsEnableFaceID(!isEnableFaceID);
+  };
 
   const [isEnableFingerPrint, setIsEnableFingerPrint] = useState(false);
   const toggleSwitchFingerPrint = async () => {
-  if (!isEnableFingerPrint) {
+    if (!isEnableFingerPrint) {
+      const success = await authenticate();
+      if (!success) return;
+    }
+    setIsEnableFingerPrint(!isEnableFingerPrint);
+  };
+
+  const saveBiometricsSetting = async () => {
     const success = await authenticate();
     if (!success) return;
-  }
-  setIsEnableFingerPrint(!isEnableFingerPrint);
-};
 
+    await SecureStore.setItemAsync(
+      BIOMETRICS_KEY,
+      JSON.stringify({
+        faceId: isEnableFaceID,
+        fingerprint: isEnableFingerPrint,
+      })
+    );
+
+    navigator.navigate("indexPage");
+  };
 
   if (isEnableFaceID) {
     // navigator.navigate("resetParentPassword");
@@ -107,7 +123,7 @@ export default function EnableBiometrics() {
       <View className="flex-1 justify-end  px-4 gap-6">
         <Pressable
           className="pb-10"
-          onPress={() => navigator.navigate("indexPage")}
+          onPress={saveBiometricsSetting}
         >
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
