@@ -23,7 +23,9 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
       "package": "com.moluno.storytimemobile"
     },
     "web": {
@@ -55,7 +57,8 @@
           "faceIDPermission": "Allow StoryTime4Kids to use Face ID."
         }
       ],
-      "expo-asset"
+      "expo-asset",
+      "expo-secure-store"
     ]
   }
 }
