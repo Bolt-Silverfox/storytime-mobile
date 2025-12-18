@@ -1,5 +1,5 @@
 import { View, Text, Switch, Pressable } from "react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
@@ -12,6 +12,7 @@ const BIOMETRICS_KEY = "biometrics_enabled";
 export default function EnableBiometrics() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [isEnableFaceID, setIsEnableFaceID] = useState(false);
+  const [isEnableFingerPrint, setIsEnableFingerPrint] = useState(false);
 
   const authenticate = async () => {
     const hasHardware = await LocalAuthentication.hasHardwareAsync();
@@ -31,35 +32,36 @@ export default function EnableBiometrics() {
     return result.success;
   };
 
-  const toggleSwitchFaceID = async () => {
-    if (!isEnableFaceID) {
-      const success = await authenticate();
-      if (!success) return;
-    }
-    setIsEnableFaceID(!isEnableFaceID);
-  };
-
-  const [isEnableFingerPrint, setIsEnableFingerPrint] = useState(false);
-  const toggleSwitchFingerPrint = async () => {
-    if (!isEnableFingerPrint) {
-      const success = await authenticate();
-      if (!success) return;
-    }
-    setIsEnableFingerPrint(!isEnableFingerPrint);
-  };
-
-  const saveBiometricsSetting = async () => {
-    const success = await authenticate();
-    if (!success) return;
-
+  const persistBiometrics = async (faceId: boolean, fingerprint: boolean) => {
     await SecureStore.setItemAsync(
       BIOMETRICS_KEY,
-      JSON.stringify({
-        faceId: isEnableFaceID,
-        fingerprint: isEnableFingerPrint,
-      })
+      JSON.stringify({ faceId, fingerprint })
     );
+  };
 
+  const toggleSwitchFaceID = async () => {
+    const nextValue = !isEnableFaceID;
+
+    if (nextValue) {
+      const success = await authenticate();
+      if (!success) return;
+    }
+
+    setIsEnableFaceID(nextValue);
+    await persistBiometrics(nextValue, isEnableFingerPrint);
+    navigator.navigate("indexPage");
+  };
+
+  const toggleSwitchFingerPrint = async () => {
+    const nextValue = !isEnableFingerPrint;
+
+    if (nextValue) {
+      const success = await authenticate();
+      if (!success) return;
+    }
+
+    setIsEnableFingerPrint(nextValue);
+    await persistBiometrics(isEnableFaceID, nextValue);
     navigator.navigate("indexPage");
   };
 
@@ -69,6 +71,19 @@ export default function EnableBiometrics() {
   if (isEnableFingerPrint) {
     // navigator.navigate("EnableFingerPrint");
   }
+
+  useEffect(() => {
+  const loadSettings = async () => {
+    const stored = await SecureStore.getItemAsync(BIOMETRICS_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setIsEnableFaceID(!!parsed.faceId);
+      setIsEnableFingerPrint(!!parsed.fingerprint);
+    }
+  };
+  loadSettings();
+}, []);
+
 
   return (
     <View className="bg-[#FFFCFBFB] flex-1">
@@ -84,30 +99,48 @@ export default function EnableBiometrics() {
         </Text>
       </View>
       <View className="mt-[24px] mx-[16] gap-4">
-        <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white">
-          <Text
-            style={[defaultStyles.defaultText, { color: "black" }]}
-            className="self-center"
-          >
-            ENABLE FACE ID
-          </Text>
-          <View>
-            <Switch
-              trackColor={{ false: "#E0E0E0", true: "#4807EC" }}
-              thumbColor={isEnableFaceID ? "#ffffff" : "#ffffff"}
-              ios_backgroundColor="#E0E0E0"
-              onValueChange={toggleSwitchFaceID}
-              value={isEnableFaceID}
-            />
+        <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8] justify-between rounded-[20px] px-[16] bg-white items-center">
+          {/* Left text column */}
+          <View className="flex-1 gap-2">
+            <Text style={[defaultStyles.defaultText, { color: "black" }]}>
+              ENABLE FACE ID
+            </Text>
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { color: "#6B6B6B", fontSize: 13 },
+              ]}
+              className="text-sm"
+            >
+              Use your Face ID for secure actions.
+            </Text>
           </View>
+
+          {/* Right switch */}
+          <Switch
+            trackColor={{ false: "#E0E0E0", true: "#4807EC" }}
+            thumbColor="#ffffff"
+            ios_backgroundColor="#E0E0E0"
+            onValueChange={toggleSwitchFaceID}
+            value={isEnableFaceID}
+          />
         </View>
+
         <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white">
-          <Text
-            style={[defaultStyles.defaultText, { color: "black" }]}
-            className="self-center"
-          >
-            ENABLE FINGERPRINT
-          </Text>
+          <View className="flex-1 gap-2">
+            <Text style={[defaultStyles.defaultText, { color: "black" }]}>
+              ENABLE FINGERPRINT
+            </Text>
+            <Text
+              style={[
+                defaultStyles.defaultText,
+                { color: "#6B6B6B", fontSize: 13 },
+              ]}
+              className="text-sm"
+            >
+              Use your fingerprint for secure actions.
+            </Text>
+          </View>
           <View>
             <Switch
               trackColor={{ false: "#E0E0E0", true: "#4807EC" }}
@@ -118,20 +151,6 @@ export default function EnableBiometrics() {
             />
           </View>
         </View>
-      </View>
-
-      <View className="flex-1 justify-end  px-4 gap-6">
-        <Pressable
-          className="pb-10"
-          onPress={saveBiometricsSetting}
-        >
-          <Text
-            style={[defaultStyles.defaultText, { color: "white" }]}
-            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full bg-[#EC4007]`}
-          >
-            Save
-          </Text>
-        </Pressable>
       </View>
     </View>
   );
