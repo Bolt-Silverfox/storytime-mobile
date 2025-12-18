@@ -1,18 +1,51 @@
 import { View, Text, Switch, Pressable } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
+import * as LocalAuthentication from "expo-local-authentication";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
 export default function EnableBiometrics() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [isEnableFaceID, setIsEnableFaceID] = useState(false);
-  const toggleSwitchFaceID = () =>
-    setIsEnableFaceID((previousState) => !previousState);
+
+  const authenticate = async () => {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+    if (!hasHardware || !isEnrolled) {
+      alert("Biometrics not set up on this device");
+      return false;
+    }
+
+    const result = await LocalAuthentication.authenticateAsync({
+      promptMessage: "Setup your biometrics",
+      fallbackLabel: "Use passcode",
+      cancelLabel: "Cancel",
+    });
+
+    return result.success;
+  };
+
+  const toggleSwitchFaceID = async () => {
+  if (!isEnableFaceID) {
+    const success = await authenticate();
+    if (!success) return;
+  }
+  setIsEnableFaceID(!isEnableFaceID);
+};
+
+
   const [isEnableFingerPrint, setIsEnableFingerPrint] = useState(false);
-  const toggleSwitchFingerPrint = () =>
-    setIsEnableFingerPrint((previousState) => !previousState);
+  const toggleSwitchFingerPrint = async () => {
+  if (!isEnableFingerPrint) {
+    const success = await authenticate();
+    if (!success) return;
+  }
+  setIsEnableFingerPrint(!isEnableFingerPrint);
+};
+
 
   if (isEnableFaceID) {
     // navigator.navigate("resetParentPassword");
@@ -72,7 +105,10 @@ export default function EnableBiometrics() {
       </View>
 
       <View className="flex-1 justify-end  px-4 gap-6">
-        <Pressable className="pb-10" onPress={() => navigator.navigate("indexPage")}>
+        <Pressable
+          className="pb-10"
+          onPress={() => navigator.navigate("indexPage")}
+        >
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
             className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full bg-[#EC4007]`}
