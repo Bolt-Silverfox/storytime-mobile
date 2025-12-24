@@ -42,6 +42,7 @@ const AddChildScreen = () => {
   const handleCloseModals = () => {
     setCurrentlyOpenModal(null);
   };
+
   return (
     <ScrollView contentContainerClassName="flex flex-col gap-y-12 px-2">
       <View className="flex flex-row bg-white py-5">

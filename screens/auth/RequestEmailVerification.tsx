@@ -14,6 +14,7 @@ import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import PageTitle from "../../components/PageTitle";
 
 const RequestEmailVerification = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -37,16 +38,8 @@ const RequestEmailVerification = () => {
   };
 
   return (
-    <View style={styles.screen}>
-      <Pressable
-        onPress={() => navigator.goBack()}
-        style={{ paddingHorizontal: 16 }}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/icons/arrow-left.png")}
-        />
-      </Pressable>
+    <View className="flex flex-1">
+      <PageTitle goBack={() => navigator.goBack()} title="" />
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
           <Text style={defaultStyles.heading}>Request email verification</Text>
@@ -87,13 +80,6 @@ const styles = StyleSheet.create({
   image: {
     height: 20,
     width: 20,
-  },
-  screen: {
-    ...defaultStyles.screen,
-    backgroundColor: "white",
-    gap: 16,
-    paddingHorizontal: 0,
-    paddingBottom: 0,
   },
   text: {
     ...defaultStyles.defaultText,

@@ -6,7 +6,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   selectAge?: Dispatch<SetStateAction<string>>;
-  handleSelectAge: (age: string) => void;
+  handleSelectAge?: (age: string) => void;
 };
 
 const AgeSelectionModal = ({

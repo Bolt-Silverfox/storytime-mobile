@@ -21,10 +21,6 @@ import AvatarScreen from "../screens/auth/SelectAvatarScreen";
 import SignupScreen from "../screens/auth/SignupScreen";
 import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
-import ParentProfileSetupNavigator, {
-  ParentProfileSetupParamList,
-} from "./ParentProfileSetupNavigator";
-import { NavigatorScreenParams } from "@react-navigation/native";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -47,7 +43,6 @@ type AuthNavigatorParamList = {
   emailVerificationSuccessful: undefined;
   resetPasswordSuccessful: undefined;
   requestEmailVerification: undefined;
-  parentProfileSetup: NavigatorScreenParams<ParentProfileSetupParamList>;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -96,10 +91,6 @@ const AuthNavigator = () => {
         component={ResetPasswordSuccessful}
       />
       <Stack.Screen name="inputNewPassword" component={InputNewPassword} />
-      <Stack.Screen
-        name="parentProfileSetup"
-        component={ParentProfileSetupNavigator}
-      />
     </Stack.Navigator>
   );
 };

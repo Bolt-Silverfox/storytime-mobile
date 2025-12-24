@@ -1,15 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { ParentAuthNavigatorProps } from "../../../Navigation/ParentAuthNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import colours from "../../../colours";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
-import LoadingOverlay from "../../../components/LoadingOverlay";
 
 const VerifyPinScreen = () => {
   const navigator = useNavigation<ParentAuthNavigatorProps>();
@@ -27,7 +27,10 @@ const VerifyPinScreen = () => {
       pin: otp,
       setErrorCb: setError,
       onSuccess: () => {
-        parentNav.navigate("parents");
+        parentNav.reset({
+          index: 0,
+          routes: [{ name: "parents" }],
+        });
       },
     });
   };
