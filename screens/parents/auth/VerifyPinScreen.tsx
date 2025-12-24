@@ -49,7 +49,7 @@ const VerifyPinScreen = () => {
               <ErrorMessageDisplay errorMessage={error} />
             </View>
           )}
-          <View style={styles.container}>
+          <View className="mx-auto w-full sm:max-w-sm">
             <OtpInput
               numberOfDigits={6}
               onTextChange={(text) => setOtp(text)}
@@ -119,10 +119,6 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-
-  container: {
-    paddingHorizontal: 20,
   },
   box: {
     borderWidth: 1,
