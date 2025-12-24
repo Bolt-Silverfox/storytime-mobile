@@ -4,14 +4,14 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import AddChildScreen from "../screens/AddChild";
 import KidSelectionScreen from "../screens/KidSelectionScreen";
 import KidsNavigator, { KidsNavigatorParamList } from "./KidsNavigator";
-import ParentsTabNavigator from "./ParentsNavigator";
-import ProfileNavigator, {
-  ProfileNavigatorParamList,
-} from "./ProfileNavigator";
 import KidsSetupNavigator, {
   KidsSetupNavigatorParamList,
 } from "./KidsSetupNavigator";
 import ParentAuthNavigator from "./ParentAuthNavigator";
+import ParentsTabNavigator from "./ParentsNavigator";
+import ProfileNavigator, {
+  ProfileNavigatorParamList,
+} from "./ProfileNavigator";
 
 type ProtectedRoutesParamList = {
   selection: undefined;

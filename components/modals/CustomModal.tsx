@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Modal, Pressable, View } from "react-native";
+import { Dimensions, Modal, Pressable, View } from "react-native";
 
 type Props = {
   isOpen: boolean;
@@ -17,7 +17,10 @@ const CustomModal = ({ isOpen, onClose, children }: Props) => {
     >
       <Pressable onPress={onClose} className="flex-1 bg-black/40" />
 
-      <View className="bg-white rounded-t-3xl p-6 pb-12 absolute px-3 bottom-0 w-full">
+      <View
+        style={{ maxHeight: Dimensions.get("window").height * 0.7 }}
+        className="bg-white rounded-t-3xl p-6 pb-12 absolute px-3 bottom-0 w-full"
+      >
         {children}
       </View>
     </Modal>
