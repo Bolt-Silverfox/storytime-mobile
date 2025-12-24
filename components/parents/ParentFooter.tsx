@@ -1,8 +1,14 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import CustomButton from "../UI/CustomButton";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 function ParentFooter() {
+  const { isPending, data } = useGetUserProfile();
+  const isUserSubscribed = false;
+
+  if (isPending) return <ActivityIndicator size={"large"} />;
+  if (isUserSubscribed) return null;
   return (
     <View
       aria-labelledby="Footer information"

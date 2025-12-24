@@ -111,7 +111,7 @@ const CompleteProfileNewScreen = () => {
           <Text className="font-[abeezee] mt-10 mb-6 text-base">
             What do you want your kids to learn?
           </Text>
-          <View className="mx-5 flex-wrap   gap-y-7 flex flex-row gap-x-5">
+          <View className="flex-wrap  gap-y-7 flex flex-row gap-x-5">
             {parentProfileSetupTags.map((tag) => (
               <Pressable
                 onPress={() => handleSelect(tag)}
@@ -138,7 +138,7 @@ const CompleteProfileNewScreen = () => {
       <View className="flex mb-10 mx-4 sm:mx-auto max-w-screen-sm flex-row justify-center gap-x-10">
         <Pressable
           onPress={onProceed}
-          className=" py-3 px-16  flex-1 rounded-full border-black border mt-4  bg-white"
+          className=" py-3   flex-1 rounded-full border-black border mt-4  bg-white"
         >
           <Text className="text-center text-black font-[abeezee]">Skip</Text>
         </Pressable>
@@ -149,7 +149,7 @@ const CompleteProfileNewScreen = () => {
           disabled={isProceedButtonDisabled}
           className={`${
             isProceedButtonDisabled ? "bg-primary/60" : "bg-primary"
-          } py-3 px-16  flex-1 rounded-full mt-4 `}
+          } py-3   flex-1 rounded-full mt-4 `}
         >
           <Text className="text-center text-white font-[abeezee]">Proceed</Text>
         </Pressable>

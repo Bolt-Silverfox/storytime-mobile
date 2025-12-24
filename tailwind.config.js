@@ -20,6 +20,7 @@ module.exports = {
         light: "#FAF42",
         disabled: "#FF8771",
         purple: "#4807EC",
+        "border-light": "#E0E0E0",
       },
     },
   },

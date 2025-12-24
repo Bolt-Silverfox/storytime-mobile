@@ -10,6 +10,7 @@ import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import CategoriesListScreen from "../screens/parents/home/CategoriesList";
+import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string; mode?: string };
@@ -25,6 +26,7 @@ type ParentHomeNavigatorParamList = {
   challengeTracker: undefined;
   homePage: undefined;
   categoriesList: undefined;
+  parentsTopPicks: undefined;
 };
 
 type ParntHomeNavigatorProp =
@@ -34,7 +36,7 @@ const Stack = createNativeStackNavigator<ParentHomeNavigatorParamList>();
 const ParentHomeNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="homePage" component={ParentHomeScreen} />
+      <Stack.Screen name="homePage" component={ParentHomeScreen} options={{}} />
       <Stack.Screen name="storiesList" component={StoriesListScreen} />
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
       <Stack.Screen
@@ -45,6 +47,7 @@ const ParentHomeNavigator = () => {
       <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
       <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
       <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
+      <Stack.Screen name="parentsTopPicks" component={ParentsTopPicksScreen} />
     </Stack.Navigator>
   );
 };
