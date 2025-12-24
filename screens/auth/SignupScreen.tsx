@@ -34,7 +34,7 @@ const SignupScreen = () => {
             </Text>
           </View>
           <SignupForm />
-          <View className="flex flex-row gap-x-4 items-center mt-10 mb-14">
+          <View className="flex max-w-screen-sm sm:mx-auto flex-row gap-x-4 items-center mt-10 mb-14">
             <View className="border-b border-black flex-1" />
             <Text className="text-center">Or sign up with</Text>
             <View className="border-b border-black flex-1" />

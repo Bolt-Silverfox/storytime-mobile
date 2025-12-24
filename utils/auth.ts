@@ -26,7 +26,7 @@ const auth = {
   signup: async (data: {
     email: string;
     password: string;
-    title: string;
+    nationality: string;
     fullName: string;
   }) => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
