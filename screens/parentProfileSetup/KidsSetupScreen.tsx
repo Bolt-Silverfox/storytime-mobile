@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -8,13 +8,14 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import colours from "../../colours";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
 import AgeSelectionModal from "../../components/modals/AgeSelectionModal";
 import { ageRange } from "../../data";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type KidProfileType = {
   name: string;
@@ -23,11 +24,9 @@ type KidProfileType = {
 };
 
 const KidsSetupScreen = () => {
-  const isProceedButtonDisabled = false;
-  const navigator = useNavigation<AuthNavigatorProp>();
   const [kidsData, setKidsData] = useState<KidProfileType[]>([
     {
-      ageRange: "",
+      ageRange: "1 - 4",
       name: "",
       id: Date.now().toString(),
     },
@@ -35,6 +34,23 @@ const KidsSetupScreen = () => {
   const [currentlyActiveKid, setCurrentlyActiveKid] = useState<null | string>(
     null
   );
+  const isProceedButtonDisabled = false;
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+
+  const { data } = useGetUserProfile();
+
+  useEffect(() => {
+    if (data?.enableBiometrics) {
+      navigator.navigate("parentProfileSetup", { screen: "kidSetup" });
+    }
+  }, [data]);
+
+  const onProceed = () => {
+    navigator.navigate("parentProfileSetup", {
+      screen: "kidSetup",
+    });
+  };
+
   const isLoading = false;
 
   const deleteKid = (id: string) => {
@@ -45,7 +61,7 @@ const KidsSetupScreen = () => {
   const addKid = () => {
     setKidsData((k) => [
       ...k,
-      { ageRange: "", name: "", id: Date.now().toString() },
+      { ageRange: "1 - 4", name: "", id: Date.now().toString() },
     ]);
   };
 
@@ -70,7 +86,7 @@ const KidsSetupScreen = () => {
       >
         <View className="sm:mx-auto w-full max-w-screen-sm ">
           <View className="flex  flex-col items-center gap-y-2">
-            <Text className="font-[quilka] text-2xl">
+            <Text className="font-[quilka] text-2x  l">
               Enter Your Kids Details
             </Text>
             <Text className="font-[abeezee] text-text text-base">
@@ -190,7 +206,9 @@ const ChildForm = ({
         <AgeSelectionModal
           isOpen={currentlyActiveKid === kid.id}
           onClose={() => setCurrentlyActiveKid(null)}
-          handleSelectAge={(age) => updateKid(kid.id, { ageRange: age })}
+          handleSelectAge={(age) =>
+            updateKid(kid.id, { ageRange: age as KidProfileType["ageRange"] })
+          }
         />
       </View>
     </View>

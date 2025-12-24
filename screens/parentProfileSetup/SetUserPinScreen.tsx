@@ -1,35 +1,38 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  Alert,
-  Image,
-  Button,
-} from "react-native";
-import LoadingOverlay from "../../components/LoadingOverlay";
-import PageTitle from "../../components/PageTitle";
 import { useNavigation } from "@react-navigation/native";
-import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
-import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import useAuth from "../../contexts/AuthContext";
-import CustomButton from "../../components/UI/CustomButton";
+import { useEffect, useLayoutEffect, useState } from "react";
+import { Alert, Button, Image, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
-import defaultStyles from "../../styles";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import PageTitle from "../../components/PageTitle";
+import CustomButton from "../../components/UI/CustomButton";
+import useAuth from "../../contexts/AuthContext";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import defaultStyles from "../../styles";
 
 // USE SUCCESS MODAL TO SHOW SUCCESS SCREEN, INSTEAD OF ADDING A NEW SCREEN TO A NAVIGATOR; CREATE A REUSABLE COMPONENT THAT ACCEPTS MESSAGE PROP AND ONCONTINUE CTA BUTTON ACTION.
 
 const SetUserPinScreen = () => {
-  const navigator = useNavigation<AuthNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [error, setError] = useState("");
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const { isLoading, setInAppPin, user } = useAuth();
   const [success, setSuccess] = useState("");
   const queryClient = useQueryClient();
+  const { data } = useGetUserProfile();
+
+  useEffect(() => {
+    if (data?.pinSet) {
+      console.log("pin is set");
+      navigator.navigate("parentProfileSetup", {
+        screen: "enableBiometrics",
+      });
+    }
+  }, [data]);
 
   const onSubmit = () => {
     if (pin !== confirmPin) {
@@ -49,20 +52,17 @@ const SetUserPinScreen = () => {
     });
   };
 
+  const onProceed = () => {
+    navigator.navigate("parentProfileSetup", { screen: "enableBiometrics" });
+  };
+
   const isButtonDisabled =
     pin !== confirmPin || !pin || !confirmPin || error.length > 0;
 
   return (
     <View className="flex flex-1 pb-5 bg-bgLight">
       <PageTitle title="Setup your PIN" goBack={() => navigator.goBack()} />
-      <Button
-        title="Navigate"
-        onPress={() =>
-          navigator.navigate("parentProfileSetup", {
-            screen: "kidSetup",
-          })
-        }
-      />
+      <Button title="Navigate" onPress={onProceed} />
       <View className="flex flex-row mx-4 items-center gap-x-5  mt-6 px-3 py-2 rounded-md">
         <Image
           className="size-[50px] rounded-full"

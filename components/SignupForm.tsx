@@ -1,24 +1,15 @@
 import { useState } from "react";
-import {
-  Button,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
 import defaultStyles from "../styles";
+import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import Icon from "./Icon";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
 import CountriesSelectionModal from "./modals/CountriesSelectionModal";
-import { registerSchema } from "../zodSchemas";
-import { useNavigation } from "@react-navigation/native";
-import { AuthNavigatorProp } from "../Navigation/AuthNavigator";
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
@@ -34,7 +25,6 @@ const SignupForm = () => {
   const [nationality, setNationality] = useState("");
   const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const { isLoading, signUp } = useAuth();
-  const navigator = useNavigation<AuthNavigatorProp>();
 
   const onRegister = async () => {
     setErrors({});
@@ -68,14 +58,6 @@ const SignupForm = () => {
 
   return (
     <View>
-      <Button
-        onPress={() =>
-          navigator.navigate("parentProfileSetup", {
-            screen: "index",
-          })
-        }
-        title="Navigate"
-      />
       <View style={styles.form}>
         <ErrorMessageDisplay errorMessage={apiError} />
 

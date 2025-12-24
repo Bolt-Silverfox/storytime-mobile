@@ -21,7 +21,7 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     mutationFn: async (
       kids: {
         name: string;
-        avatarId: string;
+        avatarId?: string;
         ageRange: string;
       }[]
     ) => {

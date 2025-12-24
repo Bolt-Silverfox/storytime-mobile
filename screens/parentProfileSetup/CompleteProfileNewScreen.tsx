@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -14,7 +14,8 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import LanguageSelectionModal from "../../components/modals/LanguageSelectionModal";
 import PageTitle from "../../components/PageTitle";
 import { parentProfileSetupTags } from "../../data";
-import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 
 const CompleteProfileNewScreen = () => {
   const [imageUrl, setImageUrl] = useState(
@@ -24,9 +25,17 @@ const CompleteProfileNewScreen = () => {
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
   const [language, setLanguage] = useState("");
   const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
+  const { data } = useGetUserProfile();
   const isLoading = false;
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
 
-  const navigator = useNavigation<AuthNavigatorProp>();
+  useEffect(() => {
+    if (data?.profile.language) {
+      navigator.replace("parentProfileSetup", {
+        screen: "setPin",
+      });
+    }
+  }, [data]);
 
   const handleSelect = (tag: string) => {
     setSelectedFilters((prev) =>
@@ -37,6 +46,13 @@ const CompleteProfileNewScreen = () => {
   const isProceedButtonDisabled =
     !language.length || error.length > 0 || !selectedFilters.length;
 
+  const onProceed = () => {
+    if (data?.pinSet) {
+      navigator.navigate("parentProfileSetup", { screen: "enableBiometrics" });
+      return;
+    }
+    navigator.navigate("parentProfileSetup", { screen: "setPin" });
+  };
   return (
     <View className="flex flex-1 bg-bgLight">
       <PageTitle title="" goBack={() => navigator.goBack()} />
@@ -121,9 +137,7 @@ const CompleteProfileNewScreen = () => {
       </ScrollView>
       <View className="flex mb-10 mx-4 sm:mx-auto max-w-screen-sm flex-row justify-center gap-x-10">
         <Pressable
-          onPress={() =>
-            navigator.navigate("parentProfileSetup", { screen: "setPin" })
-          }
+          onPress={onProceed}
           className=" py-3 px-16  flex-1 rounded-full border-black border mt-4  bg-white"
         >
           <Text className="text-center text-black font-[abeezee]">Skip</Text>
