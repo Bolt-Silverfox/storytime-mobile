@@ -41,7 +41,7 @@ export default function HelpAndSupport() {
       <ScrollView contentContainerStyle={[{ paddingBottom: 100 }]}>
         <View
           style={styles.menuList}
-          className="px-[16] pt-7  border rounded-[20px] border-[#FAF4F2]"
+          className="px-[16] pt-7  border rounded-[20px] border-border-lighter"
         >
           <MenuItem
             icon={

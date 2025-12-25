@@ -1,16 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
-import Icon from "../../../components/Icon";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import PageTitle from "../../../components/PageTitle";
 import NotificationDetailsModal from "../../../components/modals/NotificationDetailsModal";
+import { getNotificationIcon } from "../../../utils/utils";
 
 const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
 
 const NotificationsScreen = () => {
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
   const [activeNotification, setActiveNotification] = useState<string | null>(
     null
@@ -19,21 +19,21 @@ const NotificationsScreen = () => {
   return (
     <View className="flex flex-1 bg-bgLight">
       <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
+      <View className="flex flex-row items-center gap-x-2 my-5 gap-y-4 justify-center">
+        {notificationsLabel.map((notification) => (
+          <Text
+            onPress={() => setActiveLabel(notification)}
+            key={notification}
+            className={`font-[abeezee] capitalize text-center rounded-full py-2 w-32 text-base ${notification === activeLabel ? "text-white bg-blue" : "text-text border border-border"}`}
+          >
+            {notification}
+          </Text>
+        ))}
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerClassName=" flex flex-col mt-8 gap-y-8 px-4"
+        contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
       >
-        <View className="flex flex-row items-center gap-x-2 gap-y-4 justify-center">
-          {notificationsLabel.map((notification) => (
-            <Text
-              onPress={() => setActiveLabel(notification)}
-              key={notification}
-              className={`font-[abeezee] capitalize text-center rounded-full py-2 w-32 text-base ${notification === activeLabel ? "text-white bg-blue" : "text-text border border-border"}`}
-            >
-              {notification}
-            </Text>
-          ))}
-        </View>
         <View className="flex flex-col gap-y-6">
           {notificationsDummyData.map((notification) => (
             <View className="flex flex-col gap-y-2.5" key={notification.id}>
@@ -42,11 +42,11 @@ const NotificationsScreen = () => {
               </Text>
               <Pressable
                 onPress={() => setActiveNotification(notification.id)}
-                className="bg-white border border-[#FAF4F2] flex flex-col gap-y-6 p-5 rounded-xl"
+                className="bg-white border border-border-lighter flex flex-col gap-y-6 p-5 rounded-xl"
               >
                 {notification.notifications.map((noti) => (
                   <View className="flex-row gap-x-4" key={noti.text}>
-                    {getIcon(noti.type)}
+                    {getNotificationIcon(noti.type)}
                     <View className="flex flex-1 flex-col gap-y-1.5">
                       <Text className="font-[abeezee] w-full text-wrap text-black text-base leading-6">
                         {noti.text}
@@ -77,16 +77,6 @@ const NotificationsScreen = () => {
 };
 
 export default NotificationsScreen;
-
-const getIcon = (category: "security" | "achievement" | "limit") => {
-  if (category === "security") {
-    return <Icon name="ShieldAlert" color="#866EFF" />;
-  } else if (category === "achievement") {
-    return <Icon name="Star" color="#ECC607" />;
-  } else if (category === "limit") {
-    return <Icon name="Clock" color="#07CAEC" />;
-  } else return <Icon name="Info" color="#EC4007" />;
-};
 
 type NotificationDataType = {
   id: string;
@@ -143,6 +133,30 @@ const notificationsDummyData: NotificationDataType[] = [
       {
         type: "limit",
         time: "1 day",
+        text: 'Ella has reached her screen time limit for today." ',
+        status: "unread",
+      },
+    ],
+  },
+  {
+    id: "3",
+    date: "2 days ago",
+    notifications: [
+      {
+        type: "security",
+        time: "2 days",
+        text: "Your account was accessed from a new device on 19 Dec 2025. Review it now.",
+        status: "read",
+      },
+      {
+        type: "security",
+        time: "2 days",
+        text: "Your was accessed from a new device on 19 Dec 2025. Review it now.",
+        status: "read",
+      },
+      {
+        type: "limit",
+        time: "2 days",
         text: 'Ella has reached her screen time limit for today." ',
         status: "unread",
       },

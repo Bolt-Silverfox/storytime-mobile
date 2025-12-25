@@ -27,7 +27,6 @@ const SetUserPinScreen = () => {
 
   useEffect(() => {
     if (data?.pinSet) {
-      console.log("pin is set");
       navigator.navigate("parentProfileSetup", {
         screen: "enableBiometrics",
       });

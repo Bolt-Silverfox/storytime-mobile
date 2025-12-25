@@ -7,19 +7,7 @@ import {
 } from "react-native";
 import { ageRange } from "../../data";
 import Icon from "../Icon";
-
-const getColor = (category: string) => {
-  const lowerCaseCat = category.toLowerCase();
-  if (lowerCaseCat === "adventure") {
-    return "#0731EC";
-  } else if (lowerCaseCat === "mystery") {
-    return "#07A92A";
-  } else if (lowerCaseCat === "honesty" || lowerCaseCat === "fantasy") {
-    return "#EC0794";
-  } else if (lowerCaseCat === "folk tales" || lowerCaseCat === "bedtime") {
-    return "#EC4007";
-  } else return "black";
-};
+import { getCategoryColour } from "../../utils/utils";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -42,6 +30,7 @@ const StoryItem = ({
   isPremium = false,
 }: Proptypes) => {
   const isLocked = isPremium && index > 0;
+
   return (
     <Pressable
       onPress={onNavigate}
@@ -57,11 +46,11 @@ const StoryItem = ({
         />
         <View className="flex px-0.5 flex-row justify-between items-center">
           <View className="flex flex-row items-center">
-            <Icon name="Dot" color={getColor(story.category)} />
+            <Icon name="Dot" color={getCategoryColour(story.category)} />
             <Text
               className="font-[abeezee] capitalize text-xs"
               style={{
-                color: getColor(story.category),
+                color: getCategoryColour(story.category),
               }}
             >
               {story.category}
