@@ -65,7 +65,6 @@ const GetPremiumScreen = () => {
                   key={benefit}
                   className="flex flex-row gap-x-1.5 items-center"
                 >
-                  {/* <Icon name="Check" color="#4807EC" size={14} /> */}
                   <Image
                     source={require("../../../assets/icons/tick.png")}
                     className="h-[14px] w-[17px]"
