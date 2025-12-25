@@ -59,7 +59,10 @@ const ParentsHomeScreenHeader = () => {
             </LinearGradient>
           </Pressable>
         )}
-        <Pressable className="rounded-full flex justify-center items-center size-11 bg-white border border-[#FAF4F2] ">
+        <Pressable
+          onPress={() => parentsNav.navigate("notifications")}
+          className="rounded-full flex justify-center items-center size-11 bg-white border border-[#FAF4F2] "
+        >
           <Icon name="Bell" />
         </Pressable>
       </View>
