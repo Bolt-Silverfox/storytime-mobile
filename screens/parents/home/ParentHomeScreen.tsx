@@ -1,4 +1,3 @@
-import React from "react";
 import { ScrollView, View } from "react-native";
 import ChildrenActivitiesComponent from "../../../components/parents/ChildrenActivitiesComponent";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";

@@ -251,7 +251,7 @@ export const ScreenModal = ({
             <View>
               <Pressable
                 onPress={onPressCamera}
-                className="bg-[#FFFCFBFB] border-[1.18px] border-[#FAF4F2] h-[60px] w-[60px] justify-center items-center  rounded-full"
+                className="bg-[#FFFCFBFB] border-[1.18px] border-border-lighter h-[60px] w-[60px] justify-center items-center  rounded-full"
               >
                 <Camera size="30" color="#212121" />
               </Pressable>
@@ -269,7 +269,7 @@ export const ScreenModal = ({
             <View>
               <Pressable
                 onPress={() => onPressFile("gallery")}
-                className="bg-[#FFFCFBFB] items-center border-[1.18px] border-[#FAF4F2] rounded-full h-[60px] justify-center w-[60px]"
+                className="bg-[#FFFCFBFB] items-center border-[1.18px] border-border-lighter rounded-full h-[60px] justify-center w-[60px]"
               >
                 <Folder2 size="30" color="#212121" />
               </Pressable>

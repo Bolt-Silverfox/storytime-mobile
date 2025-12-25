@@ -116,7 +116,7 @@ const CompleteProfileNewScreen = () => {
               <Pressable
                 onPress={() => handleSelect(tag)}
                 key={tag}
-                className={`${selectedFilters.includes(tag) ? "bg-blue-600 text-white" : ""} px-6 rounded-full py-3 text-black border border-black/15`}
+                className={`${selectedFilters.includes(tag) ? "bg-blue" : ""} px-6 rounded-full py-3 text-black border border-black/15`}
               >
                 <Text
                   className={`capitalize text-text font-[abeezee] ${selectedFilters.includes(tag) ? "text-white" : ""}`}

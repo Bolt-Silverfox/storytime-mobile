@@ -1,25 +1,21 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import { ParentsNavigatorProp } from "../../Navigation/ParentsNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
-import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-
-const getGreeting = () => {
-  const hour = new Date().getHours();
-  if (hour < 12) return "Good Morning";
-  if (hour < 18) return "Good Afternoon";
-  return "Good Evening";
-};
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const parentsNav = useNavigation<ParntHomeNavigatorProp>();
+  const parentsNav = useNavigation<ParentsNavigatorProp>();
   const isUserSubscribed = false;
+
   const { data, isPending } = useGetUserProfile();
   if (isPending) return <ActivityIndicator size={"large"} />;
+
   return (
     <View
       aria-labelledby="user avatar container"
@@ -60,8 +56,10 @@ const ParentsHomeScreenHeader = () => {
           </Pressable>
         )}
         <Pressable
-          onPress={() => parentsNav.navigate("notifications")}
-          className="rounded-full flex justify-center items-center size-11 bg-white border border-[#FAF4F2] "
+          onPress={() =>
+            parentsNav.navigate("notifications", { screen: "index" })
+          }
+          className="rounded-full flex justify-center items-center size-11 bg-white border border-border-lighter "
         >
           <Icon name="Bell" />
         </Pressable>
