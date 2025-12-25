@@ -10,6 +10,7 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
+import CustomButton from "../../../components/UI/CustomButton";
 
 const VerifyPinScreen = () => {
   const navigator = useNavigation<ParentAuthNavigatorProps>();
@@ -76,18 +77,11 @@ const VerifyPinScreen = () => {
               </Text>
             </Pressable>
           </View>
-
-          <Pressable
+          <CustomButton
             onPress={onSubmit}
-            className="mt-20"
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={{ ...styles.text, color: "white" }}>
-              {isLoading ? "Loading..." : "Verify"}
-            </Text>
-          </Pressable>
+            text={"Verify"}
+            disabled={error.length > 0 || otp.length < 6}
+          />
         </View>
       </View>
       <LoadingOverlay visible={isLoading} />

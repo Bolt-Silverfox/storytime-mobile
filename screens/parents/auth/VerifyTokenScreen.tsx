@@ -47,7 +47,7 @@ const VerifyTokenScreen = () => {
               <ErrorMessageDisplay errorMessage={error} />
             </View>
           )}
-          <View style={styles.container}>
+          <View className="mx-auto w-full sm:max-w-sm">
             <OtpInput
               numberOfDigits={6}
               onTextChange={(text) => setOtp(text)}
@@ -62,11 +62,8 @@ const VerifyTokenScreen = () => {
           </View>
 
           <Pressable
-            className="mt-10"
+            className="mt-10 mx-auto max-w-sm bg-primary px-4 py-3 rounded-full w-full self-center"
             onPress={onSubmit}
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
           >
             <Text style={{ ...styles.text, color: "white" }}>
               {isLoading ? "Verifying..." : "Verify"}

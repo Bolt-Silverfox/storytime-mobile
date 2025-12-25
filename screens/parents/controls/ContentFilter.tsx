@@ -129,7 +129,7 @@ const ContentFilter = () => {
 
         <LoadingOverlay visible={isPending} />
       </ScrollView>
-      <View className="mb-5">
+      <View className="pb-5 bg-white">
         <CustomButton
           disabled={isUpdating || !filterByAge}
           text={isUpdating ? "Saving..." : "Save Changes"}

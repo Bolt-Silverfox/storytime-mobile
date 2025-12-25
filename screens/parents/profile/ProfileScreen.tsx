@@ -102,7 +102,10 @@ const ProfileScreen: FC = () => {
           </CustomText>
         </View>
 
-        <View style={styles.menuList}>
+        <View
+          className="max-w-screen-md w-full mx-auto"
+          style={styles.menuList}
+        >
           <MenuItem
             icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Manage Child Profiles"

@@ -27,7 +27,7 @@ const CustomButton = ({
         borderWidth ? { borderWidth } : null,
         disabled && { opacity: 0.5 },
       ]}
-      className="self-center mx-5 max-sm:max-w-sm w-full py-4 rounded-full mt-4 md:max-w-screen-sm sm:mx-auto bg-primary"
+      className="self-center mx-5 max-w-sm w-full py-4 rounded-full mt-4  sm:mx-auto bg-primary"
     >
       <Text
         className="text-center font-[abeezee]"

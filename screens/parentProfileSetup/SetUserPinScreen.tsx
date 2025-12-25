@@ -62,19 +62,19 @@ const SetUserPinScreen = () => {
     <View className="flex flex-1 pb-5 bg-bgLight">
       <PageTitle title="Setup your PIN" goBack={() => navigator.goBack()} />
       <Button title="Navigate" onPress={onProceed} />
-      <View className="flex flex-row mx-4 items-center gap-x-5  mt-6 px-3 py-2 rounded-md">
+      <View className="flex flex-row mx-4 sm:mx-auto max-w-screen-md w-full items-center gap-x-5  mt-6 px-3 py-2 rounded-md">
         <Image
           className="size-[50px] rounded-full"
           source={require("../../assets/life-of-pi.png")}
         />
         <Text className="font-[abeezee] text-xl">Samson Benson</Text>
       </View>
-      <Text className="font-[abeezee] mx-4 text-base mt-6">
+      <Text className="font-[abeezee] sm:mx-auto max-w-screen-md w-full mx-4 text-base mt-6">
         Please setup your PIN to access your StoryTime parent account.
       </Text>
       <View className="flex-1 mx-4 flex gap-y-7 ">
         <ErrorMessageDisplay errorMessage={error} />
-        <View className="flex flex-col gap-y-2">
+        <View className="flex flex-col gap-y-2 mx-auto max-w-screen-md w-full">
           <Text className="font-[abeezee]">Enter your Pin</Text>
           <OtpInput
             numberOfDigits={6}
@@ -89,7 +89,7 @@ const SetUserPinScreen = () => {
             focusColor="blue"
           />
         </View>
-        <View className="flex flex-col gap-y-2">
+        <View className="flex flex-col gap-y-2 mx-auto max-w-screen-md w-full">
           <Text className="font-[abeezee]">Confirm your Pin</Text>
           <OtpInput
             numberOfDigits={6}

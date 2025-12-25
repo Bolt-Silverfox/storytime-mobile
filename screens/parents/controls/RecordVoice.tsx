@@ -161,7 +161,7 @@ const RecordVoice = () => {
             </Text>
           </View>
         )}
-        <View className="flex flex-row justify-between mt-[74px]">
+        <View className="flex flex-row max-w-screen-md mx-auto w-full justify-between mt-[74px]">
           <Icon size={40} name="CircleStop" onPress={stopRecording} />
           <Icon size={40} name={"CirclePause"} onPress={stopRecording} />
           <Icon size={40} name="Repeat" onPress={startRecording} />
@@ -200,7 +200,7 @@ const RecordVoice = () => {
         <Pressable
           onPress={previewRecording}
           disabled={recorderState.isRecording || !recordingUri}
-          className="bg-inherit self-center  border border-black mx-5 max-sm:max-w-sm w-full py-4 rounded-full mt-4 md:max-w-screen-sm sm:mx-auto"
+          className="bg-inherit self-center  border border-black mx-5 max-w-sm w-full py-4 rounded-full mt-4 sm:mx-auto"
         >
           <Text className="text-center text-black font-[abeezee]">
             {recordingStatus === "playing" ? "Playing..." : "Preview"}

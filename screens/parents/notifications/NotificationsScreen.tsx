@@ -30,48 +30,50 @@ const NotificationsScreen = () => {
           </Text>
         ))}
       </View>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
-      >
-        <View className="flex flex-col gap-y-6">
-          {notificationsDummyData.map((notification) => (
-            <View className="flex flex-col gap-y-2.5" key={notification.id}>
-              <Text className="font-[abeezee] text-[18px] text-black">
-                {notification.date}
-              </Text>
-              <Pressable
-                onPress={() => setActiveNotification(notification.id)}
-                className="bg-white border border-border-lighter flex flex-col gap-y-6 p-5 rounded-xl"
-              >
-                {notification.notifications.map((noti) => (
-                  <View className="flex-row gap-x-4" key={noti.text}>
-                    {getNotificationIcon(noti.type)}
-                    <View className="flex flex-1 flex-col gap-y-1.5">
-                      <Text className="font-[abeezee] w-full text-wrap text-black text-base leading-6">
-                        {noti.text}
-                      </Text>
-                      <Text className="font-[abeezee] text-text text-xs leading-6">
-                        {noti.time} ago
-                      </Text>
+      <View className="flex-1 max-w-screen-md mx-auto w-full">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
+        >
+          <View className="flex flex-col gap-y-6">
+            {notificationsDummyData.map((notification) => (
+              <View className="flex flex-col gap-y-2.5" key={notification.id}>
+                <Text className="font-[abeezee] text-[18px] text-black">
+                  {notification.date}
+                </Text>
+                <Pressable
+                  onPress={() => setActiveNotification(notification.id)}
+                  className="bg-white border border-border-lighter flex flex-col gap-y-6 p-5 rounded-xl"
+                >
+                  {notification.notifications.map((noti) => (
+                    <View className="flex-row gap-x-4" key={noti.text}>
+                      {getNotificationIcon(noti.type)}
+                      <View className="flex flex-1 flex-col gap-y-1.5">
+                        <Text className="font-[abeezee] w-full text-wrap text-black text-base leading-6">
+                          {noti.text}
+                        </Text>
+                        <Text className="font-[abeezee] text-text text-xs leading-6">
+                          {noti.time} ago
+                        </Text>
+                      </View>
+                      {noti.status === "unread" && (
+                        <Image
+                          className="size-8"
+                          source={require("../../../assets/icons/middot.png")}
+                        />
+                      )}
                     </View>
-                    {noti.status === "unread" && (
-                      <Image
-                        className="size-8"
-                        source={require("../../../assets/icons/middot.png")}
-                      />
-                    )}
-                  </View>
-                ))}
-              </Pressable>
-              <NotificationDetailsModal
-                isOpen={activeNotification === notification.id}
-                closeModal={() => setActiveNotification(null)}
-              />
-            </View>
-          ))}
-        </View>
-      </ScrollView>
+                  ))}
+                </Pressable>
+                <NotificationDetailsModal
+                  isOpen={activeNotification === notification.id}
+                  closeModal={() => setActiveNotification(null)}
+                />
+              </View>
+            ))}
+          </View>
+        </ScrollView>
+      </View>
     </View>
   );
 };

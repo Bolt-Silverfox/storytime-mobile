@@ -31,9 +31,14 @@ const StoryItem = ({
 }: Proptypes) => {
   const isLocked = isPremium && index > 0;
 
+  const navigate = () => {
+    if (isLocked) return;
+    onNavigate();
+  };
+
   return (
     <Pressable
-      onPress={onNavigate}
+      onPress={navigate}
       key={story.id}
       className={`flex flex-col w-52 gap-y-1.5 border-border-light  p-1 rounded-2xl border bg-white`}
     >

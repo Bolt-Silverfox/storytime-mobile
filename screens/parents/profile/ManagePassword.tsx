@@ -8,6 +8,7 @@ import defaultStyles from "../../../styles";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
+import CustomButton from "../../../components/UI/CustomButton";
 
 export default function ManagePassword() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -23,7 +24,7 @@ export default function ManagePassword() {
         title="Manage Password/Pin"
         goBack={() => navigator.goBack()}
       />
-      <View className="mt-[24px] mx-[16] gap-4">
+      <View className="mt-[24px] mx-[16] w-full md:mx-auto max-w-screen-md gap-4">
         <Pressable
           onPress={() => navigator.navigate("resetParentPassword")}
           className="flex-row py-[34] border-[0.5px] border-[#EAE8E8]  justify-between rounded-[20px] px-[16] bg-white"
@@ -64,18 +65,11 @@ export default function ManagePassword() {
           </Pressable>
         )}
       </View>
-      <View className="flex-1 justify-end  px-4 gap-6">
-        <Pressable
-          className="pb-10"
+      <View className="flex-1 justify-end  px-4 gap-6 mb-5">
+        <CustomButton
           onPress={() => navigator.navigate("indexPage")}
-        >
-          <Text
-            style={[defaultStyles.defaultText, { color: "white" }]}
-            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full bg-[#EC4007]`}
-          >
-            Save
-          </Text>
-        </Pressable>
+          text="Save"
+        />
       </View>
     </View>
   );

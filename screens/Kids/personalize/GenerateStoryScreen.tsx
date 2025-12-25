@@ -73,7 +73,7 @@ const GenerateStoryScreen = () => {
               </Text>
             </View>
           </View>
-          <View className="bg-white rounded-2xl px-6 py-9 mt-8 mb-4 flex-col mx-4 gap-y-3">
+          <View className="bg-white md:mx-auto max-w-screen-md md:w-full rounded-2xl px-6 py-9 mt-8 mb-4 flex-col mx-4 gap-y-3">
             <Text className="font-[abeezee] text-sm">
               What will your Hero's name be?
             </Text>
@@ -85,7 +85,7 @@ const GenerateStoryScreen = () => {
             />
           </View>
         </ImageBackground>
-        <View className=" bg-white border -translate-y-14 mt-2 flex flex-col gap-y-4 border-black/10  mx-4  rounded-2xl px-6 py-9">
+        <View className=" bg-white border md:mx-auto max-w-screen-md md:w-full -translate-y-14 mt-2 flex flex-col gap-y-4 border-black/10  mx-4  rounded-2xl px-6 py-9">
           <Text className="font-[abeezee] text-sm">
             Select your hero's Gender
           </Text>

@@ -20,10 +20,10 @@ const ChildrenActivitiesComponent = () => {
   ];
   return (
     <View className="flex flex-col gap-y-4 border-b-border-light border-b pb-8">
-      <Text className="font-[abeezee] text-base text-black">
+      <Text className="font-[abeezee] max-w-screen-md mx-auto w-full text-base text-black">
         Children activities
       </Text>
-      <View className="flex flex-row gap-x-3">
+      <View className="flex flex-row gap-x-3 max-w-screen-md mx-auto w-full">
         {dummyData.map((item) => (
           <ImageBackground
             key={item.id}

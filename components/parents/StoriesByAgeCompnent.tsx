@@ -12,7 +12,7 @@ const StoriesByAgeComponent = () => {
   const [activeRange, setActiveRange] = useState<AgeRangeType>("1 - 4");
 
   return (
-    <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
+    <View className="flex mx-auto max-w-screen-md w-full flex-col gap-y-4 border-b border-b-border-light pb-8">
       <View className="flex flex-row justify-between items-center">
         <Text className="font-[abeezee]  text-base text-black leading-5">
           Stories by age
@@ -95,5 +95,37 @@ const dummyStories: {
     duration: 16,
     imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
     id: "4",
+  },
+  {
+    name: "Bannies egg, curated by Samil",
+    ageRange: "9 - 12",
+    category: "adventure",
+    duration: 10,
+    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
+    id: "5",
+  },
+  {
+    name: "The night time stories from granny",
+    ageRange: "9 - 12",
+    category: "mystery",
+    duration: 16,
+    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
+    id: "6",
+  },
+  {
+    name: "Bannies egg, curated by Samil",
+    ageRange: "9 - 12",
+    category: "adventure",
+    duration: 10,
+    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
+    id: "7",
+  },
+  {
+    name: "The night time stories from granny",
+    ageRange: "9 - 12",
+    category: "mystery",
+    duration: 16,
+    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
+    id: "8",
   },
 ];

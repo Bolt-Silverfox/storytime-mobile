@@ -92,7 +92,7 @@ const KidSelectorModal = ({
         ) : (
           <EmptyState onClose={onClose} />
         )}
-        <View>
+        <View className="flex flex-col">
           <CustomButton
             text="Continue"
             onPress={() => {
@@ -106,7 +106,7 @@ const KidSelectorModal = ({
           />
           <Pressable
             onPress={onClose}
-            className="bg-transparent border border-black/20 w-full py-4 rounded-full mt-4 max-w-screen-sm mx-auto"
+            className="bg-transparent border self-center max-w-sm mx-auto border-black/20 w-full py-4 rounded-full mt-4 w-full"
           >
             <Text className="text-center text-black font-[abeezee]">
               Cancel
