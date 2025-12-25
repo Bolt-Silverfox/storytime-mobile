@@ -6,14 +6,14 @@ const ChildrenActivitiesComponent = () => {
     {
       text: "Know the challenge your kids have completed",
       buttonText: "Track challenges",
-      image: require("../../assets/images/onboarding/onBoarding1.jpg"),
+      image: require("../../assets/images/rainbow.jpg"),
       bgColor: "#4807EC",
       id: "1",
     },
     {
       text: "Keep track of the stories your kids are listening to",
       buttonText: "Track stories",
-      image: require("../../assets/images/onboarding/onBoarding3.jpg"),
+      image: require("../../assets/images/sunrise.jpg"),
       bgColor: "#EC4007",
       id: "2",
     },
@@ -21,7 +21,7 @@ const ChildrenActivitiesComponent = () => {
   return (
     <View className="flex flex-col gap-y-4 border-b-border-light border-b pb-8">
       <Text className="font-[abeezee] text-base text-black">
-        Children activities is not active
+        Children activities
       </Text>
       <View className="flex flex-row gap-x-3">
         {dummyData.map((item) => (

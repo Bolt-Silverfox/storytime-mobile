@@ -23,7 +23,6 @@ import {
   ParntHomeNavigatorProp,
 } from "../../../Navigation/ParentHomeNavigator";
 import { ChevronLeft, Funnel, Heart, Search } from "lucide-react-native";
-import ParentFooter from "../../../components/parents/ParentFooter";
 import StoryModeModal from "../../../components/modals/StoryModeModal";
 import ImageWithFallback from "../../../components/parents/ImageWithFallback";
 import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
@@ -253,7 +252,6 @@ const StoriesListScreen: React.FC = () => {
               renderItem={({ item }: { item: Story }) => {
                 const isFavorited = favoriteIds.has(String(item.id));
 
-
                 return (
                   <TouchableOpacity
                     className="mb-4 rounded-2xl bg-white shadow p-2 w-[300px] h-full mr-6"
@@ -439,7 +437,6 @@ const StoriesListScreen: React.FC = () => {
           ) : null}
 
           {/* Footer */}
-          <ParentFooter />
 
           <StoryModeModal
             visible={showModeModal}

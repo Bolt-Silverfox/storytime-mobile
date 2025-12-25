@@ -19,7 +19,7 @@ const ParentsTopPicksComponent = () => {
       ageRange: "1 - 4",
       category: "adventure",
       duration: 10,
-      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.png"),
+      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.jpg"),
       id: "1",
     },
     {
@@ -27,7 +27,7 @@ const ParentsTopPicksComponent = () => {
       ageRange: "5 - 8",
       category: "mystery",
       duration: 32,
-      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.png"),
+      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.jpg"),
       id: "2",
     },
     {
@@ -35,7 +35,7 @@ const ParentsTopPicksComponent = () => {
       ageRange: "1 - 4",
       category: "adventure",
       duration: 10,
-      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.png"),
+      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.jpg"),
       id: "3",
     },
     {
@@ -43,7 +43,7 @@ const ParentsTopPicksComponent = () => {
       ageRange: "5 - 8",
       category: "mystery",
       duration: 32,
-      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.png"),
+      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.jpg"),
       id: "4",
     },
   ];
@@ -66,8 +66,9 @@ const ParentsTopPicksComponent = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
       >
-        {dummyStories.map((story) => (
+        {dummyStories.map((story, index) => (
           <StoryItem
+            index={index}
             key={story.id}
             onNavigate={() => navigator.navigate("parentsTopPicks")}
             story={story}

@@ -5,6 +5,7 @@ import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigat
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
+import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 
 const getGreeting = () => {
   const hour = new Date().getHours();
@@ -15,6 +16,7 @@ const getGreeting = () => {
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const parentsNav = useNavigation<ParntHomeNavigatorProp>();
   const isUserSubscribed = false;
   const { data, isPending } = useGetUserProfile();
   if (isPending) return <ActivityIndicator size={"large"} />;
@@ -42,7 +44,10 @@ const ParentsHomeScreenHeader = () => {
       </View>
       <View className="flex flex-row gap-x-3 items-center">
         {!isUserSubscribed && (
-          <Pressable className="rounded-full overflow-hidden">
+          <Pressable
+            className="rounded-full overflow-hidden"
+            onPress={() => parentsNav.navigate("getPremium")}
+          >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
               start={{ x: 0, y: 0 }}
