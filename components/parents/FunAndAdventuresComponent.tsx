@@ -19,7 +19,7 @@ const FunAndAdventuresComponent = () => {
       ageRange: "9 - 12",
       category: "folk tales",
       duration: 10,
-      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.png"),
+      imageUrl: require("../../assets/images/recommended_stories/aily_and_her_purpose.jpg"),
       id: "1",
     },
     {
@@ -27,7 +27,7 @@ const FunAndAdventuresComponent = () => {
       ageRange: "9 - 12",
       category: "bedtime",
       duration: 32,
-      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.png"),
+      imageUrl: require("../../assets/images/recommended_stories/the_secrets_of_the_world_beyond.jpg"),
       id: "2",
     },
     {
@@ -35,7 +35,7 @@ const FunAndAdventuresComponent = () => {
       ageRange: "9 - 12",
       category: "folk tales",
       duration: 10,
-      imageUrl: require("../../assets/images/recommended_stories/boy_whose_writing_comes_to_life.png"),
+      imageUrl: require("../../assets/images/recommended_stories/aily_and_her_purpose.jpg"),
       id: "3",
     },
     {
@@ -43,7 +43,7 @@ const FunAndAdventuresComponent = () => {
       ageRange: "9 - 12",
       category: "bedtime",
       duration: 32,
-      imageUrl: require("../../assets/images/recommended_stories/the_bear_and_his_friends.png"),
+      imageUrl: require("../../assets/images/recommended_stories/the_secrets_of_the_world_beyond.jpg"),
       id: "4",
     },
   ];
@@ -66,8 +66,10 @@ const FunAndAdventuresComponent = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
       >
-        {dummyStories.map((story) => (
+        {dummyStories.map((story, index) => (
           <StoryItem
+            index={index}
+            isPremium={true}
             key={story.id}
             onNavigate={() => navigator.navigate("parentsTopPicks")}
             story={story}

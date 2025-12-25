@@ -3,11 +3,11 @@ import { ScrollView, View } from "react-native";
 import ChildrenActivitiesComponent from "../../../components/parents/ChildrenActivitiesComponent";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import IncompleteProfileBanner from "../../../components/parents/IncompleteProfileBanner";
-import ParentFooter from "../../../components/parents/ParentFooter";
 import ParentsTopPicksComponent from "../../../components/parents/ParentTopPicsComponent";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import SeasonalStoriesComponent from "../../../components/parents/SeasonalStoriesComponent";
 import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
+import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeCompnent";
 
 const ParentHomeScreen = () => {
   return (
@@ -22,8 +22,8 @@ const ParentHomeScreen = () => {
         <ChildrenActivitiesComponent />
         <SeasonalStoriesComponent />
         <FunAndAdventuresComponent />
+        <StoriesByAgeComponent />
         <StoryCategoriesList />
-        <ParentFooter />
       </ScrollView>
     </View>
   );

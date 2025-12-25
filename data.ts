@@ -1,56 +1,5 @@
 import { ImageSourcePropType } from "react-native";
 
-const categories = [
-  {
-    id: 1,
-    name: "Adventure",
-    colour: "#039222",
-    bg: "#99CDA5",
-  },
-  {
-    id: 2,
-    name: "Coming of Age",
-    colour: "#925403",
-    bg: "#FBE5CD",
-  },
-  {
-    id: 3,
-    name: "Courage/Bravery",
-    colour: "#926903",
-    bg: "#FBF9CD",
-  },
-  {
-    id: 4,
-    name: "Mystery",
-    colour: "#008D81",
-    bg: "#CDFBF7",
-  },
-  {
-    id: 5,
-    name: "Fantasy",
-    colour: "#5B007C",
-    bg: "#EFCDFB",
-  },
-  {
-    id: 6,
-    name: "Love & Family",
-    colour: "#039222",
-    bg: "#99CDA5",
-  },
-  {
-    id: 7,
-    name: "Transformation",
-    colour: "#925403",
-    bg: "#FBE5CD",
-  },
-  {
-    id: 8,
-    name: "Honesty",
-    colour: "#926903",
-    bg: "#FBF9CD",
-  },
-];
-
 const popularSuggestions = [
   {
     source: require("./assets/lost-secrets.png"),
@@ -293,8 +242,45 @@ const fakeUser = {
 };
 
 const ageRange = ["1 - 4", "5 - 8", "9 - 12"] as const;
+
+const storyCategories = [
+  "Adventure",
+  "Fantasy",
+  "Honesty",
+  "Good vs Evil",
+  "Courage / Bravery",
+  "Transformation",
+  "Coming of Age",
+  "Fables",
+  "Folk Tales",
+  "Fairy Tales",
+  "Original Content",
+  "Real Stories",
+  "Bedtime",
+  "Learning",
+  "Funny Stories",
+  "Science & Nature",
+  "Educational Stories",
+  "Seasonal & Holidays",
+  "Animal Stories",
+  "Fantasy & Magical",
+  "Morals & Values",
+  "Friendship & Emotional",
+  "Mystery & Problem Solving",
+];
+const storyCategoriesColours = [
+  "#008D81",
+  "#0A2DBA",
+  "#5B007C",
+  "#926903",
+  "#925403",
+  "#6F9A0C",
+  "#039222",
+  "#0C85B8",
+  "#EF12A7",
+  "#C9240B",
+];
 export {
-  categories,
   popularSuggestions,
   childDetailsData,
   privacyPolicyData,
@@ -304,4 +290,6 @@ export {
   parentProfileSetupTags,
   ageRange,
   fakeUser,
+  storyCategories,
+  storyCategoriesColours,
 };

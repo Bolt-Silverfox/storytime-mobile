@@ -21,6 +21,8 @@ module.exports = {
         disabled: "#FF8771",
         purple: "#4807EC",
         "border-light": "#E0E0E0",
+        blue: "#4807EC",
+        yellow: "#ECC607",
       },
     },
   },

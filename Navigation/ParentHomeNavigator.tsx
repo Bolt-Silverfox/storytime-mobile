@@ -11,6 +11,7 @@ import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import CategoriesListScreen from "../screens/parents/home/CategoriesList";
 import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
+import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string; mode?: string };
@@ -27,6 +28,7 @@ type ParentHomeNavigatorParamList = {
   homePage: undefined;
   categoriesList: undefined;
   parentsTopPicks: undefined;
+  getPremium: undefined;
 };
 
 type ParntHomeNavigatorProp =
@@ -48,6 +50,7 @@ const ParentHomeNavigator = () => {
       <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
       <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
       <Stack.Screen name="parentsTopPicks" component={ParentsTopPicksScreen} />
+      <Stack.Screen name="getPremium" component={GetPremiumScreen} />
     </Stack.Navigator>
   );
 };
