@@ -17,7 +17,7 @@ const CompleteProfileBanner = () => {
           onPress={() =>
             navigator.navigate("parentProfileSetup", { screen: "index" })
           }
-          className="bg-white mt-2 justify-center w-[180px] mx-auto flex  items-center rounded-full"
+          className="bg-white mt-2 justify-center w-[180px]  flex  items-center rounded-full"
         >
           <Text className="font-[abeezee] text-sm py-3 text-black">
             Complete profile

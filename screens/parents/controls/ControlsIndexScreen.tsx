@@ -1,11 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
-import { Pressable, ScrollView, Text, View, StyleSheet } from "react-native";
-import Icon from "../../../components/Icon";
-import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
-import colours from "../../../colours";
-import KidSelectorModal from "../../../components/SelectKidsModal";
 import { useState } from "react";
-import { Alert } from "react-native";
+import { Alert, Pressable, ScrollView, Text, View } from "react-native";
+import colours from "../../../colours";
+import Icon from "../../../components/Icon";
+import KidSelectorModal from "../../../components/SelectKidsModal";
+import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
 
 type ValidRoutes =
   | "contentFilter"
@@ -45,10 +44,7 @@ const ControlsIndexScreen = () => {
         className="flex-1 bg-bgLight"
         contentContainerClassName="px-5 flex flex-col gap-y-10 pt-4 pb-10  h-full max-w-screen-md w-full mx-auto"
       >
-        <View
-          style={styles.shadow}
-          className="flex flex-col bg-white rounded-3xl p-4  border border-black/10"
-        >
+        <View className="flex border flex-col bg-white rounded-3xl p-4 border-border-lighter">
           <Text className="text-[18px] font-[abeezee] my-3">
             STORY CUSTOMISATION
           </Text>
@@ -86,7 +82,7 @@ const ControlsIndexScreen = () => {
           </Pressable>
 
           <Pressable
-            className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
+            className="flex py-4  flex-row items-center gap-x-10"
             onPress={() => openModal("customizeReadingVoices")}
           >
             <Icon name="Volume2" color={colours.primary} />
@@ -97,10 +93,7 @@ const ControlsIndexScreen = () => {
           </Pressable>
         </View>
 
-        <View
-          style={styles.shadow}
-          className="flex flex-col bg-white  rounded-3xl p-4  border border-black/10"
-        >
+        <View className="flex border flex-col bg-white  rounded-3xl p-4 border-border-lighter">
           <Text className="text-[18px] font-[abeezee] my-3">
             READING & USAGE
           </Text>
@@ -127,7 +120,7 @@ const ControlsIndexScreen = () => {
           </Pressable>
 
           <Pressable
-            className="flex py-4 border-b border-b-black/10 flex-row items-center gap-x-10"
+            className="flex py-4  flex-row items-center gap-x-10"
             onPress={() => openModal("viewActivityLog")}
           >
             <Icon name="Clock" color={colours.primary} />
@@ -152,13 +145,3 @@ const ControlsIndexScreen = () => {
 };
 
 export default ControlsIndexScreen;
-
-const styles = StyleSheet.create({
-  shadow: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 5, // Android shadow
-  },
-});

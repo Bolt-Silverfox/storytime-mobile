@@ -31,7 +31,7 @@ const NotificationDetailsModal = ({ closeModal, isOpen }: PropTypes) => {
 
         <Text
           onPress={closeModal}
-          className="text-base mt-5 font-[abeezee] text-center text-text mx-5 py-2 border border-border rounded-full"
+          className="text-base mt-5 max-w-screen-md sm:mx-auto sm:w-full font-[abeezee] text-center text-text mx-5 py-2 border border-border rounded-full"
         >
           Close
         </Text>

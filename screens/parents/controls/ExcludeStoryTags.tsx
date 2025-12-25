@@ -61,42 +61,44 @@ const ExcludeStoryTags = () => {
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   return (
-    <View className="flex flex-1 flex-col bg-bgLight gap-y-10 pb-10 max-w-screen-md mx-auto w-full ">
+    <View className="flex flex-1 flex-col bg-bgLight gap-y-10 pb-10">
       <PageTitle goBack={() => navigator.goBack()} title="Exclude Story Tags" />
-      <View className="mx-5 relative">
-        <TextInput
-          className="text-base pl-12 rounded-full font-[abeezee] border border-black/50"
-          value={searchText}
-          onChangeText={setSearchText}
-        />
-        <Pressable className="absolute left-4 top-2">
-          <Icon name="Search" />
-        </Pressable>
-      </View>
-      <View className="mx-5 flex-wrap flex-1 gap-y-7 flex flex-row gap-x-5">
-        {updatedFilters.map((tag) => (
-          <Pressable
-            onPress={() => handleSelect(tag)}
-            key={tag}
-            className={`${selectedFilters.includes(tag) ? "bg-blue text-white" : ""} px-9 rounded-full py-3 text-black border border-black/15`}
-          >
-            <Text
-              className={`capitalize text-text font-[abeezee] ${selectedFilters.includes(tag) ? "text-white" : ""}`}
-            >
-              {tag}
-            </Text>
+      <View className="flex-1 flex flex-col gap-y-10 max-w-screen-md mx-auto w-full">
+        <View className="mx-5 relative">
+          <TextInput
+            className="text-base pl-12 h-12 rounded-full font-[abeezee] border border-black/50"
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+          <Pressable className="absolute left-4 top-2">
+            <Icon name="Search" />
           </Pressable>
-        ))}
+        </View>
+        <View className="mx-5 flex-wrap flex-1 gap-y-7 flex flex-row gap-x-5">
+          {updatedFilters.map((tag) => (
+            <Pressable
+              onPress={() => handleSelect(tag)}
+              key={tag}
+              className={`${selectedFilters.includes(tag) ? "bg-blue text-white" : ""} px-9 rounded-full py-3 text-black border border-black/15`}
+            >
+              <Text
+                className={`capitalize text-text font-[abeezee] ${selectedFilters.includes(tag) ? "text-white" : ""}`}
+              >
+                {tag}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <CustomButton
+          disabled={isUpdating ?? !selectedFilters.length}
+          onPress={() =>
+            mutate({
+              excludedTags: selectedFilters,
+            })
+          }
+          text={isUpdating ? "Saving" : "Save"}
+        />
       </View>
-      <CustomButton
-        disabled={isUpdating ?? !selectedFilters.length}
-        onPress={() =>
-          mutate({
-            excludedTags: selectedFilters,
-          })
-        }
-        text={isUpdating ? "Saving" : "Save"}
-      />
       <LoadingOverlay visible={isPending} />
     </View>
   );
