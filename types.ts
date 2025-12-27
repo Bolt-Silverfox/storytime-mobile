@@ -125,6 +125,15 @@ type WeeklyReport = {
   totalScreenTimeMins: number;
 };
 
+type ValidParentControlsRoutes =
+  | "contentFilter"
+  | "excludeStoryTags"
+  | "recordVoice"
+  | "customizeReadingVoices"
+  | "setBedtime"
+  | "setDailyLimit"
+  | "viewActivityLog";
+
 export type {
   User,
   Profile,
@@ -135,4 +144,5 @@ export type {
   KidProfile,
   WeeklyReport,
   KidReport,
+  ValidParentControlsRoutes,
 };

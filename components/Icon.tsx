@@ -1,6 +1,6 @@
 import { icons } from "lucide-react-native";
 
-type IconName = keyof typeof icons;
+export type IconName = keyof typeof icons;
 
 const Icon = ({
   name,

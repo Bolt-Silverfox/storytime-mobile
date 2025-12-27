@@ -1,4 +1,6 @@
 import { ImageSourcePropType } from "react-native";
+import { ValidParentControlsRoutes } from "./types";
+import { IconName } from "./components/Icon";
 
 const popularSuggestions = [
   {
@@ -280,6 +282,61 @@ const storyCategoriesColours = [
   "#EF12A7",
   "#C9240B",
 ];
+
+const parentControlsRouteGroups: {
+  groupName: string;
+  routes: {
+    route: ValidParentControlsRoutes;
+    name: string;
+    iconName: IconName;
+  }[];
+}[] = [
+  {
+    groupName: "story customisation",
+    routes: [
+      {
+        route: "contentFilter",
+        name: "Content Filter",
+        iconName: "Funnel",
+      },
+      {
+        route: "excludeStoryTags",
+        name: "Exclude Story Tags",
+        iconName: "FunnelX",
+      },
+      {
+        route: "recordVoice",
+        name: "Record Voice",
+        iconName: "Mic",
+      },
+      {
+        route: "customizeReadingVoices",
+        name: "Customize Reading Voices",
+        iconName: "Volume2",
+      },
+    ],
+  },
+  {
+    groupName: "reading & usage",
+    routes: [
+      {
+        route: "setBedtime",
+        name: "Set Bedtime Mode",
+        iconName: "Moon",
+      },
+      {
+        route: "setDailyLimit",
+        name: "Daily Usage Limit",
+        iconName: "Hourglass",
+      },
+      {
+        route: "viewActivityLog",
+        name: "View Activity Log",
+        iconName: "Clock",
+      },
+    ],
+  },
+];
 export {
   popularSuggestions,
   childDetailsData,
@@ -292,4 +349,5 @@ export {
   fakeUser,
   storyCategories,
   storyCategoriesColours,
+  parentControlsRouteGroups,
 };
