@@ -43,20 +43,35 @@ const GetPremiumScreen = () => {
 
         <View className="rounded-t-[32px] flex flex-1 flex-col gap-y-10 bg-white py-5 px-4">
           <View className="flex flex-row gap-x-2 max-w-screen-md mx-auto w-full">
-            {subscriptionOptions.map((subscription) => (
-              <Pressable
-                key={subscription.name}
-                onPress={() => setSelectedPlan(subscription.name)}
-                className="border border-border-light  flex-1 rounded-[20px] py-10 justify-center items-center flex flex-col"
-              >
-                <Text className="font-[quilka] text-2xl text-black mt-4 mb-1">
-                  $ {subscription.price}
-                </Text>
-                <Text className="font-[abeezee] text-[18px] leading-6 text-black">
-                  {subscription.name} Plan
-                </Text>
-              </Pressable>
-            ))}
+            {subscriptionOptions.map((subscription) => {
+              const isSelected = selectedPlan === subscription.name;
+
+              return (
+                <Pressable
+                  key={subscription.name}
+                  onPress={() => setSelectedPlan(subscription.name)}
+                  className={`  flex-1 rounded-[20px] py-10 justify-center items-center flex flex-col ${isSelected ? "border-purple border-2" : "border-border-light border"}`}
+                >
+                  <View
+                    className={`
+                    w-6 h-6 rounded-full border-2 
+                    flex items-center justify-center
+                    ${isSelected ? "border-blue" : "border-gray-300"}
+                  `}
+                  >
+                    {isSelected && (
+                      <View className="w-3 h-3 rounded-full bg-blue" />
+                    )}
+                  </View>
+                  <Text className="font-[quilka] text-2xl text-black mt-4 mb-1">
+                    $ {subscription.price}
+                  </Text>
+                  <Text className="font-[abeezee] text-[18px] leading-6 text-black">
+                    {subscription.name} Plan
+                  </Text>
+                </Pressable>
+              );
+            })}
           </View>
 
           <View className="flex flex-col gap-y-4 max-w-screen-md mx-auto w-full">

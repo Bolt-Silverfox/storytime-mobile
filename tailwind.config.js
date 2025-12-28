@@ -24,6 +24,7 @@ module.exports = {
         "border-lighter": "#FAF4F2",
         blue: "#4807EC",
         yellow: "#ECC607",
+        "purple-light": "#D1C8FF",
       },
     },
   },

@@ -1,5 +1,7 @@
 import { Pressable, Text, View } from "react-native";
 import { storyCategories, storyCategoriesColours } from "../../data";
+import { useNavigation } from "@react-navigation/native";
+import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 
 const StoryCategoriesList = () => {
   return (
@@ -32,10 +34,11 @@ const getRandomNumber = (): number => {
 const Item = ({ category }: { category: string }) => {
   const randomNum = getRandomNumber();
   const colour = storyCategoriesColours[randomNum];
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
 
   return (
     <Pressable
-      onPress={() => {}}
+      onPress={() => navigator.navigate("storiesByCategory", { category })}
       className="py-5  px-5 flex justify-center items-center rounded-md"
       style={{
         backgroundColor: `${colour}66`,

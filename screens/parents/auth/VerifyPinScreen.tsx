@@ -80,7 +80,7 @@ const VerifyPinScreen = () => {
           <CustomButton
             onPress={onSubmit}
             text={"Verify"}
-            disabled={error.length > 0 || otp.length < 6}
+            disabled={otp.length < 6}
           />
         </View>
       </View>
