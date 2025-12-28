@@ -1,3 +1,4 @@
+import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 
 const filterStoriesByTitle = (stories: any[], searchQuery: string) => {
@@ -41,9 +42,32 @@ const getNotificationIcon = (
   } else return <Icon name="Info" color="#EC4007" />;
 };
 
+const shareContent = async ({
+  message,
+  url,
+  title,
+}: {
+  message?: string;
+  url?: string;
+  title?: string;
+}) => {
+  try {
+    return await Share.share({
+      message: `${message ?? "Check out this story on Storytime4Kids"}  : ${url}`,
+      url,
+      title,
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Unexpected error";
+    console.error("error occured while trying to share content", message);
+    Alert.alert("Failed to share", message);
+  }
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
   getCategoryColour,
   getNotificationIcon,
+  shareContent,
 };

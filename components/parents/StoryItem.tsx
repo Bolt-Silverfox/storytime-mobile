@@ -40,7 +40,7 @@ const StoryItem = ({
     <Pressable
       onPress={navigate}
       key={story.id}
-      className={`flex flex-col w-52 gap-y-1.5 border-border-light  p-1 rounded-2xl border bg-white`}
+      className={`flex flex-col w-48 max-w-52 gap-y-1.5 border-border-light  p-1 rounded-2xl border bg-white`}
     >
       <View
         className={`flex-1 w-full h-full rounded-2xl relative ${isLocked ? "bg-[#4807EC66]" : null}`}
@@ -49,6 +49,9 @@ const StoryItem = ({
           source={story.imageUrl}
           className="w-full h-[150px] -z-10 rounded-xl bg-cover"
         />
+        <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
+          <Icon name="Heart" color="white" />
+        </Pressable>
         <View className="flex px-0.5 flex-row justify-between items-center">
           <View className="flex flex-row items-center">
             <Icon name="Dot" color={getCategoryColour(story.category)} />

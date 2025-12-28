@@ -1,0 +1,301 @@
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
+import {
+  Alert,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import EmptyKidsState from "../../../components/emptyState/EmptyKidsState";
+import Icon from "../../../components/Icon";
+import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
+import CustomModal, {
+  CustomModalProps,
+} from "../../../components/modals/CustomModal";
+import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import CustomButton from "../../../components/UI/CustomButton";
+import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
+import {
+  ParentHomeNavigatorParamList,
+  ParntHomeNavigatorProp,
+} from "../../../Navigation/ParentHomeNavigator";
+
+type RouteProps = RouteProp<ParentHomeNavigatorParamList, "childStoryDetails">;
+
+const ChildStoryDetails = () => {
+  const { params } = useRoute<RouteProps>();
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const [storyMode, setStoryMode] = useState<
+    "plain" | "interactive" | undefined
+  >(undefined);
+  const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
+  const [showRecommendationModal, setShowRecommendationModal] = useState(false);
+  const onNavigate = () => {
+    if (storyMode === "plain") {
+      navigator.navigate("newPlainStoryMode", { storyId: params.storyId });
+      return;
+    }
+    navigator.navigate("newInteractiveStoryMode", { storyId: params.storyId });
+  };
+  return (
+    <View className="flex flex-1 pb-5 bg-bgLight">
+      <ScrollView contentContainerClassName="flex min-h-full pb-10 bg-bgLight flex-col">
+        <ImageBackground
+          source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
+          resizeMode="cover"
+          className="px-4 h-[50vh] flex flex-col justify-end pb-8 max-h-[500px]"
+        >
+          <View className="bg-purple flex flex-row p-5 rounded-2xl gap-3 justify-around">
+            <View className="flex flex-col gap-y-2">
+              <Text className="font-[quilka] text-sm text-white text-center">
+                Age range
+              </Text>
+              <Text className="font-[abeezee] text-xs text-purple-light text-center">
+                5 - 8 Years
+              </Text>
+            </View>
+            <View className="flex flex-col gap-y-2">
+              <Text className="font-[quilka] text-sm text-white text-center">
+                Duration
+              </Text>
+              <Text className="font-[abeezee] text-xs text-purple-light text-center">
+                32 mins
+              </Text>
+            </View>
+            <View className="flex flex-col gap-y-2">
+              <Text className="font-[quilka] text-sm text-white text-center">
+                Category
+              </Text>
+              <Text className="font-[abeezee] capitalize text-xs text-purple-light text-center">
+                Mystery
+              </Text>
+            </View>
+          </View>
+        </ImageBackground>
+        <View className="flex flex-col -mt-4 py-6 px-4 bg-white rounded-t-3xl">
+          <View className="flex flex-col gap-y-3 border-b pb-6 border-b-border-light">
+            <Text
+              aria-labelledby="story title"
+              className="font-[quilka] text-3xl text-black"
+            >
+              The bear and his friends in the forest
+            </Text>
+            <Text
+              aria-labelledby="story description"
+              className="text-text font-[abeezee] text-base"
+            >
+              The bear and his friends in the forest is a sweet story for ages
+              3-6 about friendship and helping others, as Bobo the Bear and his
+              animal friends work together and enjoy life in the forest.
+            </Text>
+          </View>
+          <View className="flex flex-col gap-y-6 py-6 border-b border-border-light">
+            <View className="flex flex-row justify-between items-center">
+              <Text className="font-[abeezee] text-black text-sm">
+                Select preferred story mode
+              </Text>
+              <Icon
+                onPress={() => setShowAboutModal(true)}
+                name="CircleQuestionMark"
+                size={18}
+              />
+            </View>
+            <View className="flex flex-row gap-x-2">
+              <Pressable
+                onPress={() => setStoryMode("plain")}
+                className={`border flex-1 p-3 rounded-lg ${storyMode === "plain" ? "bg-primary border-primary/20" : "bg-white border-border-light"}`}
+              >
+                <Text
+                  className={`font-[quilka] text-sm ${storyMode === "plain" ? "text-white" : "text-black"}`}
+                >
+                  Plain story mode
+                </Text>
+                <Text
+                  className={`font-[abeezee] text-wrap text-sm ${
+                    storyMode === "plain" ? "text-[#FED0C1]" : "text-text"
+                  }`}
+                >
+                  Enjoy storytelling without stress.
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={() => setStoryMode("interactive")}
+                className={`border flex-1 p-3 rounded-lg ${storyMode === "interactive" ? "bg-primary border-primary/20" : "bg-white border-border-light"}`}
+              >
+                <Text
+                  className={`font-[quilka] text-sm ${storyMode === "interactive" ? "text-white" : "text-black"}`}
+                >
+                  Interactive story mode
+                </Text>
+                <Text
+                  className={`font-[abeezee] text-wrap text-sm ${
+                    storyMode === "interactive" ? "text-[#FED0C1]" : "text-text"
+                  }`}
+                >
+                  Listen, enjoy and answer questions to the stories.
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+        <View className="flex px-4 flex-row gap-x-3">
+          <Pressable
+            onPress={() => setShowShareModal(true)}
+            className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
+          >
+            <Icon name="Share2" />
+            <Text className="font-[abeezee] text-base text-black">Share</Text>
+          </Pressable>
+          <Pressable className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11">
+            <Icon name="Heart" />
+            <Text className="font-[abeezee] text-base text-black">
+              Favourite
+            </Text>
+          </Pressable>
+          <Pressable
+            onPress={() => setShowRecommendationModal(true)}
+            className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
+          >
+            <Icon name="HandHeart" />
+            <Text className="font-[abeezee] text-base text-black">
+              Recommend
+            </Text>
+          </Pressable>
+        </View>
+      </ScrollView>
+      <View className="border-t px-4 bg-bgLight border-t-border-light">
+        <CustomButton
+          onPress={onNavigate}
+          text="Start Reading"
+          disabled={!storyMode}
+        />
+      </View>
+      <AboutStoryModesModal
+        isOpen={showAboutModal}
+        onClose={() => setShowAboutModal(false)}
+      />
+      <ShareStoryModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+      />
+      <RecommendStoryModal
+        isOpen={showRecommendationModal}
+        onClose={() => setShowRecommendationModal(false)}
+        storyId={params.storyId}
+      />
+    </View>
+  );
+};
+
+export default ChildStoryDetails;
+
+interface Proptypes extends Omit<CustomModalProps, "children"> {
+  storyId: string;
+}
+
+const RecommendStoryModal = ({ isOpen, onClose, storyId }: Proptypes) => {
+  const { data, isPending, error, refetch } = useGetUserKids();
+  const [kidsIds, setKidsIds] = useState<string[]>([]);
+
+  const toggleSelectKid = (id: string) => {
+    kidsIds.includes(id)
+      ? setKidsIds((ids) => ids.filter((_id) => _id !== id))
+      : setKidsIds((ids) => [...ids, id]);
+  };
+
+  return (
+    <CustomModal
+      isOpen={isOpen}
+      onClose={onClose}
+      isPending={isPending}
+      error={{
+        message: error?.message!,
+        retry: refetch,
+      }}
+    >
+      <View className="flex flex-1 flex-col gap-y-6">
+        <View className="flex flex-row justify-between items-center">
+          <Text className="font-[abeezee] text-black text-base">
+            Who are you recommending this story for?
+          </Text>
+          <Icon name="SquareX" onPress={onClose} />
+        </View>
+        <ScrollView
+          contentContainerClassName="flex flex-col min-h-full gap-y-5 bg-blue-600"
+          showsVerticalScrollIndicator={false}
+        >
+          <Text className="font-[abeezee] text-black text-sm">
+            Recommend this story for your kids
+          </Text>
+          {data && data.length > 0 ? (
+            <View className="flex flex-col gap-y-6">
+              <View className="flex flex-col gap-y-3">
+                {data.map((kid) => {
+                  const isSelected = kidsIds.includes(kid.id);
+                  return (
+                    <Pressable
+                      key={kid.id}
+                      onPress={() => toggleSelectKid(kid.id)}
+                      className="flex-row border-b border-border-light border items-center justify-between py-4 px-4 rounded-2xl"
+                    >
+                      <View className="flex-row items-center gap-x-3">
+                        <Image
+                          source={
+                            kid.avatar?.url
+                              ? { uri: kid?.avatar?.url }
+                              : require("../../../assets/avatars/Avatars-3.png")
+                          }
+                          className="size-12"
+                        />
+                        <Text className="text-base capitalize font-[abeezee]">
+                          {kid.name.split(" ")[0]}
+                        </Text>
+                      </View>
+                      <View
+                        className={`
+                    w-6 h-6 rounded-full border-2 
+                    flex items-center justify-center
+                    ${isSelected ? "border-blue" : "border-gray-300"}
+                  `}
+                      >
+                        {isSelected && (
+                          <View className="w-3 h-3 rounded-full bg-blue" />
+                        )}
+                      </View>
+                    </Pressable>
+                  );
+                })}
+              </View>
+              <View className="flex flex-col">
+                <CustomButton
+                  text="Select"
+                  onPress={() => {
+                    if (!kidsIds.length) {
+                      Alert.alert("No kid selected");
+                      return;
+                    }
+                    onClose();
+                  }}
+                />
+                <Pressable
+                  onPress={onClose}
+                  className="bg-transparent border self-center max-w-sm mx-auto border-black/20 py-4 rounded-full mt-4 w-full"
+                >
+                  <Text className="text-center text-black font-[abeezee]">
+                    Cancel
+                  </Text>
+                </Pressable>
+              </View>
+            </View>
+          ) : (
+            <EmptyKidsState onClose={onClose} />
+          )}
+        </ScrollView>
+      </View>
+    </CustomModal>
+  );
+};

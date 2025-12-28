@@ -1,22 +1,20 @@
+import { useNavigation } from "@react-navigation/native";
+import { ChevronLeft } from "lucide-react-native";
 import React from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
   FlatList,
   Pressable,
-  ActivityIndicator,
-  Image,
+  Text,
+  View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
-import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsStoryCategories";
-import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import type { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
-import { ChevronLeft } from "lucide-react-native";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import CategoryCard from "../../../components/parents/CategoryCard";
-import { Category } from "../../../types/parents.types";
 import { PALETTE } from "../../../data";
-
+import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsStoryCategories";
+import type { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
+import { Category } from "../../../types/parents.types";
 
 export default function CategoriesListScreen() {
   const nav = useNavigation<ParntHomeNavigatorProp>();
@@ -60,27 +58,27 @@ export default function CategoriesListScreen() {
   });
 
   const renderCategory = ({ item }: { item: Category }) => {
-  return (
-    <CategoryCard
-      category={item}
-      onPress={() =>
-        nav.navigate("storiesList", {
-          categoryId: String(item.id),
-          categoryName: item.name,
-        })
-      }
-    />
-  );
-};
+    return (
+      <CategoryCard
+        category={item}
+        onPress={() =>
+          nav.navigate("storiesList", {
+            categoryId: String(item.id),
+            categoryName: item.name,
+          })
+        }
+      />
+    );
+  };
 
   return (
     <View className="flex-1 bg-white px-4 pt-4">
       <View className="flex-row items-center justify-between mb-4">
-         <Pressable onPress={() => nav.goBack()}>
+        <Pressable onPress={() => nav.goBack()}>
           <ChevronLeft size={36} />
         </Pressable>
         <Text className="text-2xl font-[abeezee]">Categories</Text>
-       <View className="w-8" />
+        <View className="w-8" />
       </View>
 
       <FlatList
@@ -92,8 +90,12 @@ export default function CategoriesListScreen() {
           marginBottom: 16,
         }}
         showsVerticalScrollIndicator={false}
-         renderItem={renderCategory}
-        contentContainerStyle={{ paddingBottom: 20, paddingVertical: 24, backgroundColor: "#FFFCFB" }}
+        renderItem={renderCategory}
+        contentContainerStyle={{
+          paddingBottom: 20,
+          paddingVertical: 24,
+          backgroundColor: "#FFFCFB",
+        }}
         ListEmptyComponent={() => (
           <View className="py-8 items-center">
             <ActivityIndicator />
