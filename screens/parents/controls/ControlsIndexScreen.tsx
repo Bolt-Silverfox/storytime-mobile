@@ -34,7 +34,7 @@ const ControlsIndexScreen = () => {
 
   return (
     <View className="flex flex-1 bg-bgLight">
-      <Text className="font-[quilka] py-5 text-center text-2xl">Controlss</Text>
+      <Text className="font-[quilka] py-5 text-center text-2xl">Controls</Text>
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="bg-bgLight"

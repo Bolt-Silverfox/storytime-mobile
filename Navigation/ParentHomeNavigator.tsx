@@ -2,24 +2,25 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
 import CategoriesListScreen from "../screens/parents/home/CategoriesList";
 import ChallengeTracker from "../screens/parents/home/ChallengeTracker";
+import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
 import DailyChallengeScreen from "../screens/parents/home/DailyChallengeScreen";
 import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStoriesScreen";
+import NewInteractiveStoryModeScreen from "../screens/parents/home/NewInteractiveStoryModeScreen";
+import NewPlainStoryMode from "../screens/parents/home/NewPlainStoryMode";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
-import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
-import NewInteractiveStoryModeScreen from "../screens/parents/home/NewInteractiveStoryModeScreen";
-import NewPlainStoryMode from "../screens/parents/home/NewPlainStoryMode";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
+import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
   newPlainStoryMode: { storyId: string };
   newInteractiveStoryMode: { storyId: string };
   storiesByCategory: { category: string };
+  testScreen: undefined;
 
   storiesList: {
     categoryId?: string;

@@ -1,18 +1,26 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  ScrollView,
-  ImageBackground,
-  Image,
-} from "react-native";
-import Icon from "../../../components/Icon";
-import { useState } from "react";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
+import { useState } from "react";
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
+import Icon from "../../../components/Icon";
 import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoiceModal";
+import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
+
+type RouteProps = RouteProp<ParentHomeNavigatorParamList, "newPlainStoryMode">;
 
 const NewPlainStoryMode = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
+  const { params } = useRoute<RouteProps>();
+
   return (
     <ScrollView contentContainerClassName="flex min-h-full bg-purple">
       <ImageBackground
@@ -20,6 +28,12 @@ const NewPlainStoryMode = () => {
         resizeMode="cover"
         className="p-4 flex-1 flex flex-col "
       >
+        <Pressable
+          onPress={() => setIsOptionsModalOpen(true)}
+          className="size-10 self-end rounded-full border border-[#5E4404] flex justify-center items-center"
+        >
+          <Icon color="#5E4404" name="EllipsisVertical" />
+        </Pressable>
         <Text className="font-[quilka] text-[#5E4404] text-2xl">
           The bear and his friends in the forest
         </Text>
@@ -52,6 +66,11 @@ const NewPlainStoryMode = () => {
           </BlurView>
         </View>
       </ImageBackground>
+      <InStoryOptionsModal
+        isOptionsModalOpen={isOptionsModalOpen}
+        setIsOptionsModalOpen={setIsOptionsModalOpen}
+        storyId={params.storyId}
+      />
       <SelectReadingVoiceModal
         isOpen={isVoiceModalOpen}
         onClose={() => setIsVoiceModalOpen(false)}
@@ -61,7 +80,3 @@ const NewPlainStoryMode = () => {
 };
 
 export default NewPlainStoryMode;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});
