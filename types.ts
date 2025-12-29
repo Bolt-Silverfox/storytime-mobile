@@ -134,6 +134,7 @@ type ValidParentControlsRoutes =
   | "setDailyLimit"
   | "viewActivityLog";
 
+type StoryModes = "interactive" | "plain";
 export type {
   User,
   Profile,
@@ -145,4 +146,5 @@ export type {
   WeeklyReport,
   KidReport,
   ValidParentControlsRoutes,
+  StoryModes,
 };
