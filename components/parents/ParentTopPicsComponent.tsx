@@ -3,9 +3,11 @@ import { ImageSourcePropType, ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { ageRange } from "../../data";
 import StoryItem from "./StoryItem";
+import useStoryMode from "../../contexts/StoryModeContext";
 
 const ParentsTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { setActiveStoryId } = useStoryMode();
 
   return (
     <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
@@ -31,9 +33,10 @@ const ParentsTopPicksComponent = () => {
             <StoryItem
               index={index}
               key={story.id}
-              onNavigate={() =>
-                navigator.navigate("childStoryDetails", { storyId: story.id })
-              }
+              onNavigate={() => {
+                navigator.navigate("childStoryDetails", { storyId: story.id });
+                setActiveStoryId(story.id);
+              }}
               story={story}
             />
           ))}

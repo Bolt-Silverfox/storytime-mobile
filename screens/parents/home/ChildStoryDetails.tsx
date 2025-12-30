@@ -1,4 +1,4 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ImageBackground,
@@ -12,29 +12,22 @@ import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModa
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
 import RecommendStoryModal from "../../../components/modals/storyModals/RecommendStoryModal";
 import CustomButton from "../../../components/UI/CustomButton";
-import {
-  ParentHomeNavigatorParamList,
-  ParntHomeNavigatorProp,
-} from "../../../Navigation/ParentHomeNavigator";
-
-type RouteProps = RouteProp<ParentHomeNavigatorParamList, "childStoryDetails">;
+import useStoryMode from "../../../contexts/StoryModeContext";
+import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 
 const ChildStoryDetails = () => {
-  const { params } = useRoute<RouteProps>();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const [storyMode, setStoryMode] = useState<
-    "plain" | "interactive" | undefined
-  >(undefined);
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showRecommendationModal, setShowRecommendationModal] = useState(false);
+  const { storyMode, setStoryMode, activeStoryId } = useStoryMode();
 
   const onNavigate = () => {
     if (storyMode === "plain") {
-      navigator.navigate("newPlainStoryMode", { storyId: params.storyId });
+      navigator.navigate("newPlainStoryMode", { storyId: activeStoryId! });
       return;
     }
-    navigator.navigate("newInteractiveStoryMode", { storyId: params.storyId });
+    navigator.navigate("newInteractiveStoryMode", { storyId: activeStoryId! });
   };
 
   return (
@@ -181,7 +174,7 @@ const ChildStoryDetails = () => {
       <RecommendStoryModal
         isOpen={showRecommendationModal}
         onClose={() => setShowRecommendationModal(false)}
-        storyId={params.storyId}
+        storyId={activeStoryId!}
       />
     </View>
   );

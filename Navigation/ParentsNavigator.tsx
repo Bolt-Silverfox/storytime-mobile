@@ -1,29 +1,30 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import colours from "../colours";
-import Icon from "../components/Icon";
-import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
-import ParentControlNavigator from "./ParentControlsNavigator";
-import ParentHomeNavigator from "./ParentHomeNavigator";
-import ParentProfileNavigator, {
-  ParentProfileNavigatorParamList,
-} from "./ParentProfileNavigator";
-import ParentReportNavigator from "./ParentsReportNavigator";
 import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { AlignBottom, Profile, SecurityUser } from "iconsax-react-nativejs";
 import { Heart } from "lucide-react-native";
+import colours from "../colours";
+import Icon from "../components/Icon";
+import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
 import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
-import NotificationsScreen from "../screens/parents/notifications/NotificationsScreen";
 import NotificationsNavigator, {
   NotificationsNavigatorParamList,
 } from "./NotificationsNavigator";
+import ParentControlNavigator from "./ParentControlsNavigator";
+import ParentHomeNavigator, {
+  ParentHomeNavigatorParamList,
+} from "./ParentHomeNavigator";
+import ParentProfileNavigator, {
+  ParentProfileNavigatorParamList,
+} from "./ParentProfileNavigator";
+import ParentReportNavigator from "./ParentsReportNavigator";
 
 type ParentsNavigatorParamList = {
-  home: undefined;
+  home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
   reports: undefined;
   controls: undefined;
   favourite: undefined;
