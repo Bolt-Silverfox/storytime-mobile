@@ -10,15 +10,22 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoiceModal";
+import EndOfQuizMessage from "../../../components/modals/storyModals/EndOfQuizMessage";
+import EndOfStoryMessage from "../../../components/modals/storyModals/EndOfStoryMessage";
 import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
+import QuestionTabs from "../../../components/modals/storyModals/QuestionsTabs";
+import CustomButton from "../../../components/UI/CustomButton";
 
-// SAME THING WITH THE PLAIN STORY MODE BUT WILL HAVE A SUCCESS MODAL AT THE END and questions after reading.
+// EXTRACT TO REDUCERS LATER
 const NewInteractiveStoryModeScreen = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
+  const [showQuestions, setShowQuestions] = useState(false);
+  const [showQuizMessage, setShowQuizMessage] = useState(false);
+  const [showEndOfStoryMessage, setShowEndOfStoryMessage] = useState(false);
 
   return (
-    <ScrollView contentContainerClassName="flex min-h-full bg-purple">
+    <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
         source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
         resizeMode="cover"
@@ -59,7 +66,29 @@ const NewInteractiveStoryModeScreen = () => {
               loved the forest. He loved the soft grass, the sweet berries and
               most of all--his friends
             </Text>
+            <CustomButton
+              text="Finish story"
+              onPress={() => setShowEndOfStoryMessage(true)}
+            />
           </BlurView>
+          <EndOfStoryMessage
+            isOpen={showEndOfStoryMessage}
+            onTestKnowledge={() => {
+              setShowEndOfStoryMessage(false);
+              setShowQuestions(true);
+            }}
+            storyTitle="The bear nad his friends in the forest"
+          />
+          <EndOfQuizMessage
+            isOpen={showQuizMessage}
+            onClose={() => setShowQuizMessage(false)}
+            storyTitle="The bear and his fiends in the forest"
+          />
+          <QuestionTabs
+            isOpen={showQuestions}
+            onClose={() => setShowQuestions(false)}
+            handleOpenSuccessMessage={() => setShowQuizMessage(true)}
+          />
         </View>
       </ImageBackground>
       <SelectReadingVoiceModal

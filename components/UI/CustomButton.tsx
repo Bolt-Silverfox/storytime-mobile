@@ -8,6 +8,7 @@ const CustomButton = ({
   textColor,
   borderColor,
   borderWidth,
+  transparent = false,
 }: {
   text: string;
   disabled?: boolean;
@@ -16,7 +17,18 @@ const CustomButton = ({
   textColor?: string;
   borderColor?: string;
   borderWidth?: number;
+  transparent?: boolean;
 }) => {
+  if (transparent) {
+    return (
+      <Pressable
+        onPress={onPress}
+        className="border max-w-sm flex w-full flex-row justify-center items-center h-10 rounded-full"
+      >
+        <Text className="font-[abeezee] text-black text-base">{text}</Text>
+      </Pressable>
+    );
+  }
   return (
     <Pressable
       onPress={onPress}
