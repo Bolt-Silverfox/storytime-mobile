@@ -1,7 +1,10 @@
 import { ImageBackground, Pressable, Text, View } from "react-native";
 import Icon from "../Icon";
+import { useNavigation } from "@react-navigation/native";
+import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 
 const ChildrenActivitiesComponent = () => {
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
   const dummyData = [
     {
       text: "Know the challenge your kids have completed",
@@ -9,6 +12,8 @@ const ChildrenActivitiesComponent = () => {
       image: require("../../assets/images/rainbow.jpg"),
       bgColor: "#4807EC",
       id: "1",
+      onNavigate: () =>
+        navigator.navigate("trackChallenge", { screen: "index" }),
     },
     {
       text: "Keep track of the stories your kids are listening to",
@@ -16,6 +21,7 @@ const ChildrenActivitiesComponent = () => {
       image: require("../../assets/images/sunrise.jpg"),
       bgColor: "#EC4007",
       id: "2",
+      onNavigate: () => navigator.navigate("trackStories"),
     },
   ];
   return (
@@ -38,7 +44,10 @@ const ChildrenActivitiesComponent = () => {
               <Text className="w-full text-wrap font-[abeezee] text-base leading-5 text-white">
                 {item.text}
               </Text>
-              <Pressable className="flex py-2 bg-white rounded-full px-4 flex-row justify-between items-center">
+              <Pressable
+                onPress={item.onNavigate}
+                className="flex py-2 bg-white rounded-full px-4 flex-row justify-between items-center"
+              >
                 <Text className="font-[abeezee] text-xs">
                   {item.buttonText}
                 </Text>
