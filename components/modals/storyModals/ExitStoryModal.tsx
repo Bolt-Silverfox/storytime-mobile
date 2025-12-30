@@ -1,12 +1,13 @@
 import { Image, Pressable, Text, View } from "react-native";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 import CustomButton from "../../UI/CustomButton";
+import useStoryMode from "../../../contexts/StoryModeContext";
 
-interface ExitModalProps extends Omit<CustomModalProps, "children"> {
-  onExit: () => void;
-}
+interface ExitModalProps extends Omit<CustomModalProps, "children"> {}
 
-const ExitStoryModal = ({ isOpen, onClose, onExit }: ExitModalProps) => {
+const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
+  const { onExitStory } = useStoryMode();
+
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="bg-white flex flex-col gap-y-6">
@@ -23,7 +24,7 @@ const ExitStoryModal = ({ isOpen, onClose, onExit }: ExitModalProps) => {
           </Text>
         </View>
         <View className="flex flex-col items-center gap-y-3 mt-4">
-          <CustomButton onPress={onExit} text="Yes, exit" />
+          <CustomButton onPress={onExitStory} text="Yes, exit" />
           <Pressable
             onPress={onClose}
             className="border max-w-sm flex w-full flex-row justify-center items-center h-10 rounded-full"

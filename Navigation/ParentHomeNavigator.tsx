@@ -14,6 +14,7 @@ import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
 import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
+import { StoryModeProvider } from "../contexts/StoryModeContext";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
@@ -43,30 +44,39 @@ const Stack = createNativeStackNavigator<ParentHomeNavigatorParamList>();
 
 const ParentHomeNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="homePage" component={ParentHomeScreen} options={{}} />
-      <Stack.Screen name="storiesList" component={StoriesListScreen} />
-      <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
-      <Stack.Screen
-        name="interactiveStories"
-        component={InteractiveStoriesScreen}
-      />
-      <Stack.Screen name="plainStories" component={PlainStoriesScreen} />
-      <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
-      <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
-      <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
-      <Stack.Screen name="parentsTopPicks" component={ParentsTopPicksScreen} />
+    <StoryModeProvider>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen
+          name="homePage"
+          component={ParentHomeScreen}
+          options={{}}
+        />
+        <Stack.Screen name="storiesList" component={StoriesListScreen} />
+        <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
+        <Stack.Screen
+          name="interactiveStories"
+          component={InteractiveStoriesScreen}
+        />
+        <Stack.Screen name="plainStories" component={PlainStoriesScreen} />
+        <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
+        <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
+        <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
+        <Stack.Screen
+          name="parentsTopPicks"
+          component={ParentsTopPicksScreen}
+        />
 
-      <Stack.Screen
-        name="newInteractiveStoryMode"
-        component={NewInteractiveStoryModeScreen}
-      />
-      <Stack.Screen name="newPlainStoryMode" component={NewPlainStoryMode} />
-      <Stack.Screen
-        name="storiesByCategory"
-        component={StoriesByCategoryScreen}
-      />
-    </Stack.Navigator>
+        <Stack.Screen
+          name="newInteractiveStoryMode"
+          component={NewInteractiveStoryModeScreen}
+        />
+        <Stack.Screen name="newPlainStoryMode" component={NewPlainStoryMode} />
+        <Stack.Screen
+          name="storiesByCategory"
+          component={StoriesByCategoryScreen}
+        />
+      </Stack.Navigator>
+    </StoryModeProvider>
   );
 };
 

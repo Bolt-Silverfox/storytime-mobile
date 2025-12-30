@@ -1,4 +1,3 @@
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { BlurView } from "expo-blur";
 import { useState } from "react";
 import {
@@ -9,17 +8,13 @@ import {
   Text,
   View,
 } from "react-native";
-import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
 import Icon from "../../../components/Icon";
 import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoiceModal";
 import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
 
-type RouteProps = RouteProp<ParentHomeNavigatorParamList, "newPlainStoryMode">;
-
 const NewPlainStoryMode = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const { params } = useRoute<RouteProps>();
 
   return (
     <ScrollView contentContainerClassName="flex min-h-full bg-purple">
@@ -69,7 +64,6 @@ const NewPlainStoryMode = () => {
       <InStoryOptionsModal
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
-        storyId={params.storyId}
       />
       <SelectReadingVoiceModal
         isOpen={isVoiceModalOpen}

@@ -1,35 +1,21 @@
 import { Dispatch, SetStateAction, useState } from "react";
-import { StoryModes } from "../../../types";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
-import { useNavigation } from "@react-navigation/native";
-import TopModal from "../TopModal";
 import { Pressable, Text, View } from "react-native";
-import ProgressBar from "../../UI/ProgressBar";
 import Icon from "../../Icon";
-import InStoryModeModal from "./InStoryModeModal";
+import ProgressBar from "../../UI/ProgressBar";
+import TopModal from "../TopModal";
 import ExitStoryModal from "./ExitStoryModal";
+import InStoryModeModal from "./InStoryModeModal";
 
 type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
   isOptionsModalOpen: boolean;
-  storyId: string;
 };
 const InStoryOptionsModal = ({
   isOptionsModalOpen,
   setIsOptionsModalOpen,
-  storyId,
 }: PropTypes) => {
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
-  const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
-  const navigator = useNavigation<ParentsNavigatorProp>();
-
-  const onExitStory = () => {
-    navigator.reset({
-      index: 0,
-      routes: [{ name: "home" }],
-    });
-  };
 
   return (
     <TopModal
@@ -80,14 +66,10 @@ const InStoryOptionsModal = ({
       <InStoryModeModal
         isOpen={isStoryModeModalOpen}
         onClose={() => setIsStoryModeModalOpen(false)}
-        setStoryMode={setStoryMode}
-        currentStoryMode={storyMode}
-        storyId={storyId}
       />
       <ExitStoryModal
         isOpen={isExitModalOpen}
         onClose={() => setIsExitModalOpen(false)}
-        onExit={onExitStory}
       />
     </TopModal>
   );

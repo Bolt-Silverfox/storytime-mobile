@@ -1,12 +1,22 @@
 import { BlurView } from "expo-blur";
 import { useState } from "react";
-import { Image, ImageBackground, ScrollView, Text, View } from "react-native";
+import {
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import Icon from "../../../components/Icon";
 import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoiceModal";
+import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
 
 // SAME THING WITH THE PLAIN STORY MODE BUT WILL HAVE A SUCCESS MODAL AT THE END and questions after reading.
 const NewInteractiveStoryModeScreen = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
+  const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
+
   return (
     <ScrollView contentContainerClassName="flex min-h-full bg-purple">
       <ImageBackground
@@ -14,6 +24,12 @@ const NewInteractiveStoryModeScreen = () => {
         resizeMode="cover"
         className="p-4 flex-1 flex flex-col "
       >
+        <Pressable
+          onPress={() => setIsOptionsModalOpen(true)}
+          className="size-10 self-end rounded-full border border-[#5E4404] flex justify-center items-center"
+        >
+          <Icon color="#5E4404" name="EllipsisVertical" />
+        </Pressable>
         <Text className="font-[quilka] text-[#5E4404] text-2xl">
           The bear and his friends in the forest
         </Text>
@@ -49,6 +65,10 @@ const NewInteractiveStoryModeScreen = () => {
       <SelectReadingVoiceModal
         isOpen={isVoiceModalOpen}
         onClose={() => setIsVoiceModalOpen(false)}
+      />
+      <InStoryOptionsModal
+        isOptionsModalOpen={isOptionsModalOpen}
+        setIsOptionsModalOpen={setIsOptionsModalOpen}
       />
     </ScrollView>
   );
