@@ -1,7 +1,9 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
+import { StoryModeProvider } from "../contexts/StoryModeContext";
 import CategoriesListScreen from "../screens/parents/home/CategoriesList";
 import ChallengeTracker from "../screens/parents/home/ChallengeTracker";
 import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
@@ -11,10 +13,14 @@ import NewInteractiveStoryModeScreen from "../screens/parents/home/NewInteractiv
 import NewPlainStoryMode from "../screens/parents/home/NewPlainStoryMode";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
+import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
 import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
-import { StoryModeProvider } from "../contexts/StoryModeContext";
+import ChallengeTrackerNavigator, {
+  ChallengeTrackerNavigatorParamList,
+} from "./ChallengeTrackerNavigator";
+import TrackStoriesScreen from "../screens/parents/home/TrackStoriesScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
@@ -22,6 +28,9 @@ type ParentHomeNavigatorParamList = {
   newInteractiveStoryMode: { storyId: string };
   storiesByCategory: { category: string };
   testScreen: undefined;
+  topRecommendations: undefined;
+  trackChallenge: NavigatorScreenParams<ChallengeTrackerNavigatorParamList>;
+  trackStories: undefined;
 
   storiesList: {
     categoryId?: string;
@@ -75,6 +84,21 @@ const ParentHomeNavigator = () => {
           name="storiesByCategory"
           component={StoriesByCategoryScreen}
         />
+        <Stack.Screen
+          name="topRecommendations"
+          component={ParentsTopRecommendationsScreen}
+          options={{
+            presentation: "formSheet",
+            headerTitle: "Test screen",
+            sheetCornerRadius: 30,
+            sheetGrabberVisible: true,
+          }}
+        />
+        <Stack.Screen
+          name="trackChallenge"
+          component={ChallengeTrackerNavigator}
+        />
+        <Stack.Screen name="trackStories" component={TrackStoriesScreen} />
       </Stack.Navigator>
     </StoryModeProvider>
   );

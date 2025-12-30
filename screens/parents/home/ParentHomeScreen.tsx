@@ -3,10 +3,11 @@ import ChildrenActivitiesComponent from "../../../components/parents/ChildrenAct
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import IncompleteProfileBanner from "../../../components/parents/IncompleteProfileBanner";
 import ParentsTopPicksComponent from "../../../components/parents/ParentTopPicsComponent";
+import ParentsTopRecommendations from "../../../components/parents/ParentTopRecommendations";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import SeasonalStoriesComponent from "../../../components/parents/SeasonalStoriesComponent";
-import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
 import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeCompnent";
+import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
 
 const ParentHomeScreen = () => {
   return (
@@ -17,6 +18,7 @@ const ParentHomeScreen = () => {
         contentContainerClassName=" flex min-h-full flex-col gap-y-8"
       >
         <IncompleteProfileBanner />
+        <ParentsTopRecommendations />
         <ParentsTopPicksComponent />
         <ChildrenActivitiesComponent />
         <SeasonalStoriesComponent />
