@@ -17,7 +17,7 @@ const NewPlainStoryMode = () => {
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
 
   return (
-    <ScrollView contentContainerClassName="flex min-h-full bg-purple">
+    <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
         source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
         resizeMode="cover"
