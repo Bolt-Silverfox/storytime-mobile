@@ -4,9 +4,12 @@ import Icon from "../../../../components/Icon";
 import PageTitle from "../../../../components/PageTitle";
 import { ChallengeTrackerNavigatorParamList } from "../../../../Navigation/ChallengeTrackerNavigator";
 import { ParntHomeNavigatorProp } from "../../../../Navigation/ParentHomeNavigator";
-import { dummyChildren } from "./TrackChallengeScreen";
 import CustomButton from "../../../../components/UI/CustomButton";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { queryGetKidById } from "../../../../hooks/tanstack/queryHooks/useGetKidById";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
+import ErrorComponent from "../../../../components/ErrorComponent";
 
 type RouteProps = RouteProp<
   ChallengeTrackerNavigatorParamList,
@@ -17,6 +20,13 @@ const ChildChallengeDetailsScreen = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { params } = useRoute<RouteProps>();
   const [notification, setNotification] = useState<string | null>(null);
+  const { data, isPending, error, refetch } = useQuery(
+    queryGetKidById(params.childId)
+  );
+
+  if (isPending) return <LoadingOverlay visible={isPending} />;
+  if (error)
+    return <ErrorComponent refetch={refetch} message={error.message} />;
 
   const showNotification = (message: string) => {
     setNotification(message);
@@ -25,7 +35,6 @@ const ChildChallengeDetailsScreen = () => {
     }, 2000);
   };
 
-  const child = dummyChildren.find((child) => child.id === params.childId);
   return (
     <View className="flex-1 relative bg-bgLight">
       <PageTitle
@@ -38,24 +47,28 @@ const ChildChallengeDetailsScreen = () => {
         showsVerticalScrollIndicator={false}
       >
         <View className="bg-white border border-border-lighter rounded-xl p-4 flex flex-row gap-x-4 items-center">
-          <Image
-            source={require("../../../../assets/avatars/Avatars-5.png")}
-            className="size-14"
-          />
+          {data.avatar?.url ? (
+            <Image source={{ uri: data.avatar.url }} className="size-14" />
+          ) : (
+            <Image
+              source={require("../../../../assets/avatars/Avatars-3.png")}
+              className="size-14"
+            />
+          )}
           <View className="flex flex-col gap-y-2">
             <Text className="text-black font-[abeezee] text-base">
-              {child?.name}
+              {data.name}
             </Text>
             <Text className="text-text font-[abeezee] text-xs">
-              9 - 12 years
+              {data.ageRange} years
             </Text>
           </View>
         </View>
-        <ChallengeCard name={child?.name!} />
+        <ChallengeCard name={data?.name!} />
 
         <CustomButton
           onPress={() =>
-            showNotification("You have successfully reminded " + child?.name)
+            showNotification("You have successfully reminded " + data.name)
           }
           text="Test remider"
         />

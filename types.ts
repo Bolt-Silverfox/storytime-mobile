@@ -193,6 +193,8 @@ type Story = {
   }[];
 };
 
+type ChildStoryStatus = "ongoing" | "completed";
+
 export type {
   User,
   Profile,
@@ -207,4 +209,5 @@ export type {
   StoryModes,
   LearningExpectation,
   Story,
+  ChildStoryStatus,
 };

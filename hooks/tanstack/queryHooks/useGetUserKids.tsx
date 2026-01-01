@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery } from "@tanstack/react-query";
 import useAuth from "../../../contexts/AuthContext";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
@@ -25,3 +25,25 @@ const useGetUserKids = () => {
 };
 
 export default useGetUserKids;
+
+const queryGetUserKids = () => {
+  const { user } = useAuth();
+  return queryOptions({
+    queryKey: ["userKids", user?.id],
+    queryFn: async () => {
+      const response = await apiFetch(`${BASE_URL}/auth/kids`, {
+        method: "GET",
+      });
+      const result: KidType = await response.json();
+      if (!result.success) {
+        throw new Error(result.message);
+      }
+      return result;
+    },
+    staleTime: Infinity,
+    enabled: !!user,
+    select: (res) => res.data,
+  });
+};
+
+export { queryGetUserKids };

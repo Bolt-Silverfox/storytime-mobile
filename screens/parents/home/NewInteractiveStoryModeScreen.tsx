@@ -27,7 +27,7 @@ const NewInteractiveStoryModeScreen = () => {
   return (
     <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
-        source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
+        // source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
         resizeMode="cover"
         className="p-4 flex-1 flex flex-col "
       >

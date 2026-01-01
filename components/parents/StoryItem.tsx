@@ -39,10 +39,10 @@ const StoryItem = ({
           <Icon name="Heart" color="white" />
         </Pressable>
         <View className="flex px-0.5 flex-row justify-between items-center">
-          <View className="flex flex-row items-center">
+          <View className="flex flex-1 flex-row items-center">
             <Icon name="Dot" color={"#EC0794"} />
             <Text
-              className="font-[abeezee] capitalize text-xs"
+              className="font-[abeezee] text-wrap flex-1 capitalize text-xs"
               style={{
                 color: "#EC0794",
               }}

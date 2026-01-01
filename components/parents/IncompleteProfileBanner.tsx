@@ -12,7 +12,7 @@ const IncompleteProfileBanner = () => {
   if (data?.numberOfKids && isUserProfileSetupComplete) return null;
 
   return (
-    <View className="flex flex-col gap-y-4 mt-4">
+    <View className="flex flex-col gap-y-5 mt-4">
       {!data?.numberOfKids && <AddChildBanner />}
       {!isUserProfileSetupComplete && <CompleteProfileBanner />}
     </View>
