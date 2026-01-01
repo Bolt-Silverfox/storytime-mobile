@@ -7,7 +7,6 @@ import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useG
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import CustomButton from "../../../components/UI/CustomButton";
-import PageTitle from "../../../components/PageTitle";
 import StoryItem from "../../../components/parents/StoryItem";
 
 const ParentsTopPicksScreen = () => {
@@ -34,29 +33,26 @@ const ParentsTopPicksScreen = () => {
 
   return (
     <View className="flex flex-1 bg-bgLight">
-      <PageTitle
-        title="Parents top recommendations"
-        goBack={() => navigator.goBack()}
-      />
+      <ImageBackground
+        source={require("../../../assets/images/parents-top-picks.jpg")}
+        resizeMode="cover"
+        className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
+      >
+        <View className="flex flex-col gap-y-1.5">
+          <Text className="font-[quilka] text-3xl capitalize text-white">
+            Top picks by other parents
+          </Text>
+          <Text className="font-[abeezee] text-base text-white">
+            These are the top recommendations from parents to their kids.
+          </Text>
+        </View>
+      </ImageBackground>
       <ScrollView
-        contentContainerClassName="flex min-h-full bg-bgLight flex-col"
+        className="bg-white pt-5 rounded-t-3xl -mt-4"
+        contentContainerClassName="flex flex-col"
         showsVerticalScrollIndicator={false}
       >
-        <ImageBackground
-          source={{ uri: data[0].coverImageUrl }}
-          resizeMode="cover"
-          className="px-4 h-[50vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
-        >
-          <View className="flex flex-col gap-y-1.5">
-            <Text className="font-[quilka] text-3xl capitalize text-white">
-              Top recommended stories by other parents
-            </Text>
-            <Text className="font-[abeezee] text-base text-white">
-              Read great and popular stories.
-            </Text>
-          </View>
-        </ImageBackground>
-        <View className="flex flex-row flex-wrap py-6 bg-white gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
+        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
           {data.map((story, index) => (
             <StoryItem
               index={index}

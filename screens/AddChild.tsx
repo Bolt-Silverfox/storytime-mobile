@@ -36,7 +36,7 @@ const AddChildScreen = () => {
       return;
     }
     setError("");
-    mutate([{ name, ageRange: age }]);
+    mutate([{ name: name.trim(), ageRange: age }]);
   };
 
   const handleCloseModals = () => {
