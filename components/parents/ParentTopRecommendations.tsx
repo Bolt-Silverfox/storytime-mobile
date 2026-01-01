@@ -4,11 +4,17 @@ import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { ageRange } from "../../data";
 import StoryItem from "./StoryItem";
 import useStoryMode from "../../contexts/StoryModeContext";
+import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import ErrorComponent from "../ErrorComponent";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { setActiveStoryId } = useStoryMode();
+  const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
+  if (error)
+    return <ErrorComponent refetch={refetch} message={error.message} />;
   return (
     <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
       <View className="flex max-w-screen-md mx-auto w-full flex-row justify-between items-center">
@@ -29,8 +35,9 @@ const ParentsTopRecommendations = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
         >
-          {dummyStories.map((story, index) => (
+          {data.slice(0, 6).map((story, index) => (
             <StoryItem
+              isPremium={true}
               index={index}
               key={story.id}
               onNavigate={() => {

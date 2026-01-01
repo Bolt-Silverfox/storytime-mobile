@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { lazy, useState } from "react";
 import {
   Image,
   Pressable,
@@ -13,38 +13,41 @@ import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import LanguageSelectionModal from "../../components/modals/LanguageSelectionModal";
 import PageTitle from "../../components/PageTitle";
-import { parentProfileSetupTags } from "../../data";
+import SuspenseWrapper from "../../components/supsense/SuspenseWrapper";
+import useCompleteProfile from "../../hooks/tanstack/mutationHooks/useCompleteProfile";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useImagePicker from "../../hooks/useImagePicker";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 
-const CompleteProfileNewScreen = () => {
-  const [imageUrl, setImageUrl] = useState(
-    require("../../assets/life-of-pi.png")
-  );
-  const [error, setError] = useState("");
-  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
-  const [language, setLanguage] = useState("");
-  const [selectedFilters, setSelectedFilters] = useState<string[]>([]);
-  const { data } = useGetUserProfile();
-  const isLoading = false;
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+const LearningExpectations = lazy(
+  () => import("../../components/LearningExpectations")
+);
 
-  useEffect(() => {
-    if (data?.profile.language) {
-      navigator.replace("parentProfileSetup", {
-        screen: "setPin",
-      });
-    }
-  }, [data]);
+const CompleteProfileNewScreen = () => {
+  const [imageUrl, setImageUrl] = useState<undefined | string>(undefined);
+  const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
+  const [language, setLanguage] = useState<
+    { name: string; code: string } | undefined
+  >(undefined);
+  const [learningExpectations, setLearningExpectations] = useState<string[]>(
+    []
+  );
+  const { data } = useGetUserProfile();
+  const { pickImage } = useImagePicker(setImageUrl);
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const { isPending, mutate, error } = useCompleteProfile({
+    onSuccess: () =>
+      navigator.navigate("parentProfileSetup", { screen: "setPin" }),
+  });
 
   const handleSelect = (tag: string) => {
-    setSelectedFilters((prev) =>
+    setLearningExpectations((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
   };
 
   const isProceedButtonDisabled =
-    !language.length || error.length > 0 || !selectedFilters.length;
+    !language?.name.length || !learningExpectations.length;
 
   const onProceed = () => {
     if (data?.pinSet) {
@@ -68,8 +71,18 @@ const CompleteProfileNewScreen = () => {
           </Text>
         </View>
 
-        <View className="flex flex-row items-center gap-x-5  px-3 py-2 rounded-md">
-          <Image className="size-[100px] rounded-full" source={imageUrl} />
+        <View className="flex flex-row relative items-center gap-x-5  px-3 py-2 rounded-md">
+          {imageUrl ? (
+            <Image
+              className="size-[100px] rounded-full"
+              source={{ uri: imageUrl }}
+            />
+          ) : (
+            <Image
+              className="size-[100px] rounded-full"
+              source={require("../../assets/placeholder-pfp.png")}
+            />
+          )}
           <View className="flex flex-col flex-1 gap-y-3">
             <Text className="font-[abeezee] text-base">
               Upload your profile image
@@ -78,6 +91,12 @@ const CompleteProfileNewScreen = () => {
               Accepted file types : jpeg, png, jpg, and no more than 2MB
             </Text>
           </View>
+          <Pressable
+            onPress={pickImage}
+            className="bg-black/60 absolute bottom-0 left-[80px] size-10 rounded-full justify-center flex items-center "
+          >
+            <Icon name="Camera" color="white" size={20} />
+          </Pressable>
         </View>
 
         <View className="flex relative flex-col  gap-x-5 mt-8   px-3 py-2 rounded-md">
@@ -91,9 +110,8 @@ const CompleteProfileNewScreen = () => {
             <TextInput
               editable={false}
               placeholder="Select your preferred language"
-              onChangeText={setLanguage}
-              value={language}
-              className={`border w-full rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${error ? "border-red-600" : "border-border"}`}
+              value={language?.name}
+              className={`border w-full rounded-full capitalize h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${error ? "border-red-600" : "border-border"}`}
               placeholderTextColor={error ? "red" : colours.text}
             />
             <Pressable
@@ -107,25 +125,18 @@ const CompleteProfileNewScreen = () => {
               )}
             </Pressable>
           </Pressable>
-          {error && <Text className="text-red-600 text-sm">{error}</Text>}
+          {error && (
+            <Text className="text-red-600 text-sm">{error.message}</Text>
+          )}
           <Text className="font-[abeezee] mt-10 mb-6 text-base">
             What do you want your kids to learn?
           </Text>
-          <View className="flex-wrap  gap-y-7 flex flex-row gap-x-5">
-            {parentProfileSetupTags.map((tag) => (
-              <Pressable
-                onPress={() => handleSelect(tag)}
-                key={tag}
-                className={`${selectedFilters.includes(tag) ? "bg-blue" : ""} px-6 rounded-full py-3 text-black border border-black/15`}
-              >
-                <Text
-                  className={`capitalize text-text font-[abeezee] ${selectedFilters.includes(tag) ? "text-white" : ""}`}
-                >
-                  {tag}
-                </Text>
-              </Pressable>
-            ))}
-          </View>
+          <SuspenseWrapper>
+            <LearningExpectations
+              handleSelect={handleSelect}
+              learningExpectations={learningExpectations}
+            />
+          </SuspenseWrapper>
         </View>
 
         <LanguageSelectionModal
@@ -133,7 +144,7 @@ const CompleteProfileNewScreen = () => {
           isOpen={isLanguageModalOpen}
           onClose={() => setIsLanguageModalOpen(false)}
         />
-        <LoadingOverlay visible={isLoading} />
+        <LoadingOverlay visible={isPending} />
       </ScrollView>
       <View className="flex mb-10 mx-4 sm:mx-auto max-w-screen-sm flex-row justify-center gap-x-10">
         <Pressable
@@ -144,7 +155,13 @@ const CompleteProfileNewScreen = () => {
         </Pressable>
         <Pressable
           onPress={() =>
-            navigator.navigate("parentProfileSetup", { screen: "setPin" })
+            mutate({
+              userId: data?.id!,
+              imageUri: imageUrl,
+              language: language?.name,
+              languageCode: language?.code,
+              learningExpectations,
+            })
           }
           disabled={isProceedButtonDisabled}
           className={`${

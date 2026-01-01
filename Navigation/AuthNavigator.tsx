@@ -2,14 +2,12 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
 import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import EmailResetSuccessfulScreen from "../screens/auth/EmailResetSuccessfulScreen";
 import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
 import InputNewPassword from "../screens/auth/InputNewPassword";
 import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
-import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
 import LoginScreen from "../screens/auth/LoginScreen";
 import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
 import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
@@ -32,9 +30,7 @@ type AuthNavigatorParamList = {
   imageUpload: undefined;
   kidsDetailsUpload: undefined;
   onBoarding: undefined;
-  completeProfile: undefined;
   home: undefined;
-  kidsInfoForm: { kidsCount: number };
   avatarScreen: undefined;
   confirmResetPasswordToken: { email: string };
   inputNewPassword: { email: string; token: string };
@@ -73,8 +69,6 @@ const AuthNavigator = () => {
         name="kidsDetailsUpload"
         component={KidsDetailsUploadScreen}
       />
-      <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
-      <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
       <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
       <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />

@@ -46,9 +46,7 @@ const KidsSetupScreen = () => {
   }, [data]);
 
   const onProceed = () => {
-    navigator.navigate("parentProfileSetup", {
-      screen: "kidSetup",
-    });
+    navigator.navigate("selection");
   };
 
   const isLoading = false;
@@ -121,7 +119,7 @@ const KidsSetupScreen = () => {
       </ScrollView>
       <View className="flex sm:mx-auto  max-w-screen-sm mx-4 mb-5 flex-row justify-center gap-x-10">
         <Pressable
-          onPress={() => {}}
+          onPress={onProceed}
           className=" py-3 flex-1 rounded-full border-black border mt-4  bg-white"
         >
           <Text className="text-center text-black font-[abeezee]">Skip</Text>

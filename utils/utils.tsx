@@ -64,10 +64,28 @@ const shareContent = async ({
   }
 };
 
+const getLanguageCode = (language: string): string => {
+  const lowerCaseInput = language.toLowerCase();
+  if (lowerCaseInput === "english") {
+    return "en";
+  } else if (lowerCaseInput === "spanish") {
+    return "es";
+  } else if (lowerCaseInput === "italian") {
+    return "it";
+  } else if (lowerCaseInput === "german") {
+    return "de";
+  } else if (lowerCaseInput === "french") {
+    return "fr";
+  } else {
+    return "en";
+  }
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
   getCategoryColour,
   getNotificationIcon,
   shareContent,
+  getLanguageCode,
 };

@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 
 type Country = {
   name: {
@@ -7,8 +7,9 @@ type Country = {
     nativeName: Record<string, Record<string, string>>;
   };
 };
-const useGetCountries = () => {
-  return useQuery({
+
+const getCountriesQuery = () => {
+  return queryOptions({
     queryKey: ["countries"],
     queryFn: async () => {
       const request = await fetch(
@@ -23,4 +24,4 @@ const useGetCountries = () => {
   });
 };
 
-export default useGetCountries;
+export default getCountriesQuery;

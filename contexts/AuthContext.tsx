@@ -265,11 +265,18 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         jwt: string;
         refreshToken: string;
       }>
-    >(() => auth.signup({ email, password, fullName, nationality }));
+    >(() =>
+      auth.signup({ email, password, fullName, nationality, role: "parent" })
+    );
+    console.log("signup resposne", signupData);
     if (!signupData.success) {
       setErrorCb(signupData.message);
       return;
     }
+    await AsyncStorage.setItem(
+      "unverifiedUser",
+      JSON.stringify(signupData.data.user)
+    );
     navigator.navigate("auth", {
       screen: "verifyEmail",
       params: {
@@ -288,6 +295,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
     if (!verifyEmailData.success) {
       setErrorCb(verifyEmailData.message);
+      return;
+    }
+    const storedUser = await AsyncStorage.getItem("unverifiedUser");
+    console.log("stored user", storedUser);
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
       return;
     }
     navigator.navigate("auth", {

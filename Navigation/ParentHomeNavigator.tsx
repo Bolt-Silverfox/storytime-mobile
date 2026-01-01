@@ -26,7 +26,7 @@ type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
   newPlainStoryMode: { storyId: string };
   newInteractiveStoryMode: { storyId: string };
-  storiesByCategory: { category: string };
+  storiesByCategory: { category: string; id: string };
   testScreen: undefined;
   topRecommendations: undefined;
   trackChallenge: NavigatorScreenParams<ChallengeTrackerNavigatorParamList>;
@@ -87,12 +87,6 @@ const ParentHomeNavigator = () => {
         <Stack.Screen
           name="topRecommendations"
           component={ParentsTopRecommendationsScreen}
-          options={{
-            presentation: "formSheet",
-            headerTitle: "Test screen",
-            sheetCornerRadius: 30,
-            sheetGrabberVisible: true,
-          }}
         />
         <Stack.Screen
           name="trackChallenge"

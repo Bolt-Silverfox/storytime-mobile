@@ -5,11 +5,18 @@ type PropTypes = {
   message: string;
   onProceed: () => void;
   secondaryMessage?: string;
+  visible: boolean;
 };
 
-const SuccessScreen = ({ message, onProceed, secondaryMessage }: PropTypes) => {
+const SuccessScreen = ({
+  message,
+  onProceed,
+  secondaryMessage,
+  visible,
+}: PropTypes) => {
+  if (!visible) return null;
   return (
-    <View className="flex-1 w-full gap-y-6 flex flex-col justify-center items-center bg-bgLight">
+    <View className="gap-y-6 inset-0 absolute flex flex-col justify-center items-center bg-bgLight">
       <Image
         source={require("../../assets/icons/successful-reset-illustration.png")}
       />

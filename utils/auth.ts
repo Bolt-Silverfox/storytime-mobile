@@ -28,6 +28,7 @@ const auth = {
     password: string;
     nationality: string;
     fullName: string;
+    role: string;
   }) => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",

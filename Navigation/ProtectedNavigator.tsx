@@ -13,9 +13,6 @@ import ParentProfileSetupNavigator, {
   ParentProfileSetupParamList,
 } from "./ParentProfileSetupNavigator";
 import ParentsTabNavigator from "./ParentsNavigator";
-import ProfileNavigator, {
-  ProfileNavigatorParamList,
-} from "./ProfileNavigator";
 import LoadingOverlay from "../components/LoadingOverlay";
 import useAuth from "../contexts/AuthContext";
 
@@ -24,7 +21,6 @@ type ProtectedRoutesParamList = {
   parents: undefined;
   kid: NavigatorScreenParams<KidsNavigatorParamList>;
   addChild: undefined;
-  userProfile: NavigatorScreenParams<ProfileNavigatorParamList>;
   kidsSetup: NavigatorScreenParams<KidsSetupNavigatorParamList>;
   parentAuth: undefined;
   parentProfileSetup: NavigatorScreenParams<ParentProfileSetupParamList>;
@@ -50,10 +46,6 @@ const ProtectedRoutesNavigator = () => {
     logout();
   }
   const isUserProfileSetupComplete = data?.profile.language && data?.pinSet;
-  // i removed the number of kids criteria cos it's not necessary
-  // && data?.numberOfKids > 0;
-
-  // RESET THE NAVIGATION WHEN YOU SKIP THE PAERENT PROFILE SETUP
 
   return (
     <Stack.Navigator
@@ -66,7 +58,6 @@ const ProtectedRoutesNavigator = () => {
       <Stack.Screen name="parents" component={ParentsTabNavigator} />
       <Stack.Screen name="addChild" component={AddChildScreen} />
       <Stack.Screen name="kid" component={KidsNavigator} />
-      <Stack.Screen name="userProfile" component={ProfileNavigator} />
       <Stack.Screen name="kidsSetup" component={KidsSetupNavigator} />
       <Stack.Screen name="parentAuth" component={ParentAuthNavigator} />
       <Stack.Screen
