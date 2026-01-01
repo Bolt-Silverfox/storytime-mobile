@@ -21,6 +21,9 @@ import ChallengeTrackerNavigator, {
   ChallengeTrackerNavigatorParamList,
 } from "./ChallengeTrackerNavigator";
 import TrackStoriesScreen from "../screens/parents/home/TrackStoriesScreen";
+import SeasonalStoriesScreen from "../screens/parents/home/SeasonalStoriesScreen";
+import StoriesByAgeScreen from "../screens/parents/home/StoriesByAgeScreen";
+import FunAndADventureStoriesScreen from "../screens/parents/home/FunAndAdventureStoriesScreen";
 
 type ParentHomeNavigatorParamList = {
   childStoryDetails: { storyId: string };
@@ -31,6 +34,9 @@ type ParentHomeNavigatorParamList = {
   topRecommendations: undefined;
   trackChallenge: NavigatorScreenParams<ChallengeTrackerNavigatorParamList>;
   trackStories: undefined;
+  seasonalStories: undefined;
+  storiesByAge: undefined;
+  funAndAdventureStories: undefined;
 
   storiesList: {
     categoryId?: string;
@@ -70,6 +76,7 @@ const ParentHomeNavigator = () => {
         <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
         <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
         <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
+
         <Stack.Screen
           name="parentsTopPicks"
           component={ParentsTopPicksScreen}
@@ -93,6 +100,15 @@ const ParentHomeNavigator = () => {
           component={ChallengeTrackerNavigator}
         />
         <Stack.Screen name="trackStories" component={TrackStoriesScreen} />
+        <Stack.Screen
+          name="seasonalStories"
+          component={SeasonalStoriesScreen}
+        />
+        <Stack.Screen name="storiesByAge" component={StoriesByAgeScreen} />
+        <Stack.Screen
+          name="funAndAdventureStories"
+          component={FunAndADventureStoriesScreen}
+        />
       </Stack.Navigator>
     </StoryModeProvider>
   );

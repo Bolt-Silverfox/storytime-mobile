@@ -1,11 +1,7 @@
 import { ScrollView, View } from "react-native";
 import ChildrenActivitiesComponent from "../../../components/parents/ChildrenActivitiesComponent";
-import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import IncompleteProfileBanner from "../../../components/parents/IncompleteProfileBanner";
-import ParentsTopPicksComponent from "../../../components/parents/ParentTopPicsComponent";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
-import SeasonalStoriesComponent from "../../../components/parents/SeasonalStoriesComponent";
-import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeCompnent";
 import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
 import { lazy } from "react";
 
@@ -14,6 +10,18 @@ const StoryCategoriesList = lazy(
 );
 const ParentsTopRecommendations = lazy(
   () => import("../../../components/parents/ParentTopRecommendations")
+);
+const ParentsTopPicksComponent = lazy(
+  () => import("../../../components/parents/ParentTopPicsComponent")
+);
+const SeasonalStoriesComponent = lazy(
+  () => import("../../../components/parents/SeasonalStoriesComponent")
+);
+const FunAndAdventuresComponent = lazy(
+  () => import("../../../components/parents/FunAndAdventuresComponent")
+);
+const StoriesByAgeComponent = lazy(
+  () => import("../../../components/parents/StoriesByAgeCompnent")
 );
 
 const ParentHomeScreen = () => {
@@ -28,11 +36,19 @@ const ParentHomeScreen = () => {
         <SuspenseWrapper>
           <ParentsTopRecommendations />
         </SuspenseWrapper>
-        {/* <ParentsTopPicksComponent /> */}
+        <SuspenseWrapper>
+          <ParentsTopPicksComponent />
+        </SuspenseWrapper>
         <ChildrenActivitiesComponent />
-        {/* <SeasonalStoriesComponent /> */}
-        {/* <FunAndAdventuresComponent /> */}
-        {/* <StoriesByAgeComponent /> */}
+        <SuspenseWrapper>
+          <SeasonalStoriesComponent />
+        </SuspenseWrapper>
+        <SuspenseWrapper>
+          <FunAndAdventuresComponent />
+        </SuspenseWrapper>
+        <SuspenseWrapper>
+          <StoriesByAgeComponent />
+        </SuspenseWrapper>
         <SuspenseWrapper>
           <StoryCategoriesList />
         </SuspenseWrapper>
