@@ -1,24 +1,10 @@
-import {
-  Image,
-  ImageSourcePropType,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
-import { ageRange } from "../../data";
+import { Image, Pressable, Text, View } from "react-native";
+import { Story } from "../../types";
 import Icon from "../Icon";
-import { getCategoryColour } from "../../utils/utils";
 
 type Proptypes = {
   onNavigate: () => void;
-  story: {
-    id: string;
-    category: string;
-    imageUrl: ImageSourcePropType;
-    duration: number;
-    name: string;
-    ageRange: (typeof ageRange)[number];
-  };
+  story: Story;
   isPremium?: boolean;
   index: number;
 };
@@ -46,7 +32,7 @@ const StoryItem = ({
         className={`flex-1 w-full h-full rounded-2xl relative ${isLocked ? "bg-[#4807EC66]" : null}`}
       >
         <Image
-          source={story.imageUrl}
+          source={{ uri: story.coverImageUrl }}
           className="w-full h-[150px] -z-10 rounded-xl bg-cover"
         />
         <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
@@ -54,28 +40,28 @@ const StoryItem = ({
         </Pressable>
         <View className="flex px-0.5 flex-row justify-between items-center">
           <View className="flex flex-row items-center">
-            <Icon name="Dot" color={getCategoryColour(story.category)} />
+            <Icon name="Dot" color={"#EC0794"} />
             <Text
               className="font-[abeezee] capitalize text-xs"
               style={{
-                color: getCategoryColour(story.category),
+                color: "#EC0794",
               }}
             >
-              {story.category}
+              {story.categories[0].name}
             </Text>
           </View>
           <View className="flex flex-row gap-x-2 items-center">
             <Icon size={12} name="Clock" color="#616161" />
             <Text className="font-[abeezee] text-text capitalize text-xs">
-              {story.duration} mins
+              {32} mins
             </Text>
           </View>
         </View>
         <Text className="font-[abeezee] px-0.5 w-full text-wrap text-base text-black leading-5">
-          {story.name}
+          {story.title}
         </Text>
         <Text className="font-[abeezee] px-1 text-text text-xs">
-          {story.ageRange} years
+          {story.ageMin} - {story.ageMax} years
         </Text>
       </View>
       {isLocked && (

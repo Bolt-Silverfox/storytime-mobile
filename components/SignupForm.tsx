@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import colours from "../colours";
@@ -9,7 +9,11 @@ import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import Icon from "./Icon";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
-import CountriesSelectionModal from "./modals/CountriesSelectionModal";
+import SuspenseWrapper from "./supsense/SuspenseWrapper";
+
+const CountriesSelectionModal = lazy(
+  () => import("./modals/CountriesSelectionModal")
+);
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
@@ -138,11 +142,13 @@ const SignupForm = () => {
       >
         <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
       </Pressable>
-      <CountriesSelectionModal
-        isOpen={isCountriesModalOpen}
-        onClose={() => setIsCountriesModalOpen(false)}
-        setCountry={setNationality}
-      />
+      <SuspenseWrapper>
+        <CountriesSelectionModal
+          isOpen={isCountriesModalOpen}
+          onClose={() => setIsCountriesModalOpen(false)}
+          setCountry={setNationality}
+        />
+      </SuspenseWrapper>
 
       <LoadingOverlay visible={isLoading} />
     </View>

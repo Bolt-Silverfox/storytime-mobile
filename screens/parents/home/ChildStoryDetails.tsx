@@ -14,6 +14,10 @@ import RecommendStoryModal from "../../../components/modals/storyModals/Recommen
 import CustomButton from "../../../components/UI/CustomButton";
 import useStoryMode from "../../../contexts/StoryModeContext";
 import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
+import { useQuery } from "@tanstack/react-query";
+import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import ErrorComponent from "../../../components/ErrorComponent";
 
 const ChildStoryDetails = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -21,7 +25,9 @@ const ChildStoryDetails = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [showRecommendationModal, setShowRecommendationModal] = useState(false);
   const { storyMode, setStoryMode, activeStoryId } = useStoryMode();
-
+  const { isPending, data, error, refetch } = useQuery(
+    queryGetStory(activeStoryId!)
+  );
   const onNavigate = () => {
     if (storyMode === "plain") {
       navigator.navigate("newPlainStoryMode", { storyId: activeStoryId! });
@@ -30,11 +36,14 @@ const ChildStoryDetails = () => {
     navigator.navigate("newInteractiveStoryMode", { storyId: activeStoryId! });
   };
 
+  if (isPending) return <LoadingOverlay visible={isPending} />;
+  if (error)
+    return <ErrorComponent message={error.message} refetch={refetch} />;
   return (
     <View className="flex flex-1 pb-5 bg-bgLight">
       <ScrollView contentContainerClassName="flex min-h-full pb-10 bg-bgLight flex-col">
         <ImageBackground
-          source={require("../../../assets/images/recommended_stories/the_bear_and_his_friends.jpg")}
+          source={{ uri: data.coverImageUrl }}
           resizeMode="cover"
           className="px-4 h-[50vh] flex flex-col justify-end pb-8 max-h-[500px]"
         >
@@ -44,7 +53,7 @@ const ChildStoryDetails = () => {
                 Age range
               </Text>
               <Text className="font-[abeezee] text-xs text-purple-light text-center">
-                5 - 8 Years
+                {data.ageMin} - {data.ageMax} Years
               </Text>
             </View>
             <View className="flex flex-col gap-y-2">
@@ -60,7 +69,7 @@ const ChildStoryDetails = () => {
                 Category
               </Text>
               <Text className="font-[abeezee] capitalize text-xs text-purple-light text-center">
-                Mystery
+                {data.categories[0].name}
               </Text>
             </View>
           </View>
@@ -71,15 +80,13 @@ const ChildStoryDetails = () => {
               aria-labelledby="story title"
               className="font-[quilka] text-3xl text-black"
             >
-              The bear and his friends in the forest
+              {data.title}{" "}
             </Text>
             <Text
               aria-labelledby="story description"
               className="text-text font-[abeezee] text-base"
             >
-              The bear and his friends in the forest is a sweet story for ages
-              3-6 about friendship and helping others, as Bobo the Bear and his
-              animal friends work together and enjoy life in the forest.
+              {data.description}
             </Text>
           </View>
           <View className="flex flex-col gap-y-6 py-6 border-b border-border-light">

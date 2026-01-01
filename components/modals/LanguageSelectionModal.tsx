@@ -5,16 +5,32 @@ import CustomModal from "./CustomModal";
 type PropTypes = {
   isOpen: boolean;
   onClose: () => void;
-  setLanguage: Dispatch<SetStateAction<string>>;
+  setLanguage: Dispatch<
+    SetStateAction<{ name: string; code: string } | undefined>
+  >;
 };
 
 const availableLanguages = [
-  "english",
-  "spanish",
-  "italian",
-  "igbo",
-  "hausa",
-  "yoruba",
+  {
+    name: "english",
+    code: "en",
+  },
+  {
+    name: "spanish",
+    code: "es",
+  },
+  {
+    name: "italian",
+    code: "it",
+  },
+  {
+    name: "german",
+    code: "de",
+  },
+  {
+    name: "french",
+    code: "fr",
+  },
 ];
 
 const LanguageSelectionModal = ({
@@ -22,9 +38,9 @@ const LanguageSelectionModal = ({
   onClose,
   setLanguage,
 }: PropTypes) => {
-  const selectCountry = (country: string) => {
+  const selectLanguage = (language: { name: string; code: string }) => {
     onClose();
-    setLanguage(country);
+    setLanguage(language);
   };
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
@@ -32,11 +48,11 @@ const LanguageSelectionModal = ({
         data={availableLanguages}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => selectCountry(item)}
-            key={item}
+            onPress={() => selectLanguage(item)}
+            key={item.code}
             className="py-4 px-3"
           >
-            <Text className="font-[abeezee] capitalize">{item}</Text>
+            <Text className="font-[abeezee] capitalize">{item.name}</Text>
           </Pressable>
         )}
       />

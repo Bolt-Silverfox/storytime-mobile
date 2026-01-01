@@ -15,10 +15,11 @@ import { PALETTE } from "../../../data";
 import useGetStoryCategories from "../../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import type { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import { Category } from "../../../types/parents.types";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export default function CategoriesListScreen() {
   const nav = useNavigation<ParntHomeNavigatorProp>();
-  const categoriesQuery = useGetStoryCategories();
+  const categoriesQuery = useSuspenseQuery(useGetStoryCategories());
   const isLoading = Boolean(categoriesQuery?.isLoading);
   const isError = Boolean(categoriesQuery?.isError);
   const categories = (categoriesQuery as any)?.data ?? [];

@@ -8,11 +8,7 @@ const AddChildBanner = () => {
   return (
     <View className=" bg-[#6121AF] max-w-screen-md w-full mx-auto rounded-2xl flex justify-between items-center flex-row gap-x-2 pl-2.5">
       <Pressable
-        onPress={() =>
-          navigator.navigate("userProfile", {
-            screen: "completeProfile",
-          })
-        }
+        onPress={() => navigator.navigate("addChild")}
         className="bg-white size-16 flex justify-center self-center  items-center rounded-full"
       >
         <Icon name="Plus" color="black" />

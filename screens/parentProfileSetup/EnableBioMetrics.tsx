@@ -15,22 +15,13 @@ const EnableBioMetrics = () => {
 
   useEffect(() => {
     if (data?.enableBiometrics) {
-      navigator.navigate("selection");
+      navigator.navigate("parentProfileSetup", { screen: "kidSetup" });
     }
   }, [data]);
 
   const onProceed = () => {
-    navigator.navigate("selection");
+    navigator.navigate("parentProfileSetup", { screen: "kidSetup" });
   };
-
-  if (success)
-    return (
-      <SuccessScreen
-        message="Biometric setup successful"
-        onProceed={() => navigator.navigate("selection")}
-        secondaryMessage="You have successfully set up your biometric"
-      />
-    );
 
   return (
     <View className="flex flex-1 bg-bgLight">
@@ -60,6 +51,12 @@ const EnableBioMetrics = () => {
           </View>
         </View>
       </ScrollView>
+      <SuccessScreen
+        visible={success}
+        message="Biometric setup successful"
+        onProceed={onProceed}
+        secondaryMessage="You have successfully set up your biometric"
+      />
     </View>
   );
 };
