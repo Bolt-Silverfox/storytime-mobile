@@ -1,14 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ImageSourcePropType, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
+import useStoryMode from "../../contexts/StoryModeContext";
 import { ageRange } from "../../data";
+import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import ErrorComponent from "../ErrorComponent";
 import StoryItem from "./StoryItem";
 
 type AgeRangeType = (typeof ageRange)[number];
 
 const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { setActiveStoryId } = useStoryMode();
+  const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
+
+  if (error)
+    return <ErrorComponent refetch={refetch} message={error.message} />;
   const [activeRange, setActiveRange] = useState<AgeRangeType>("1 - 4");
 
   return (
@@ -18,7 +27,7 @@ const StoriesByAgeComponent = () => {
           Stories by age
         </Text>
         <Text
-          onPress={() => navigator.navigate("parentsTopPicks")}
+          onPress={() => navigator.navigate("storiesByAge")}
           className="font-[abeezee]  text-base text-[#0731EC] leading-5"
         >
           View all
@@ -40,12 +49,15 @@ const StoriesByAgeComponent = () => {
         showsHorizontalScrollIndicator={false}
         contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
       >
-        {dummyStories.map((story, index) => (
+        {data.map((story, index) => (
           <StoryItem
             index={index}
             isPremium={true}
             key={story.id}
-            onNavigate={() => navigator.navigate("parentsTopPicks")}
+            onNavigate={() => {
+              setActiveStoryId(story.id);
+              navigator.navigate("childStoryDetails", { storyId: story.id });
+            }}
             story={story}
           />
         ))}
@@ -55,77 +67,3 @@ const StoriesByAgeComponent = () => {
 };
 
 export default StoriesByAgeComponent;
-
-const dummyStories: {
-  name: string;
-  ageRange: AgeRangeType;
-  category: string;
-  duration: number;
-  imageUrl: ImageSourcePropType;
-  id: string;
-}[] = [
-  {
-    name: "Bannies egg, curated by Samil",
-    ageRange: "9 - 12",
-    category: "adventure",
-    duration: 10,
-    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
-    id: "1",
-  },
-  {
-    name: "The night time stories from granny",
-    ageRange: "9 - 12",
-    category: "mystery",
-    duration: 16,
-    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
-    id: "2",
-  },
-  {
-    name: "Bannies egg, curated by Samil",
-    ageRange: "9 - 12",
-    category: "adventure",
-    duration: 10,
-    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
-    id: "3",
-  },
-  {
-    name: "The night time stories from granny",
-    ageRange: "9 - 12",
-    category: "mystery",
-    duration: 16,
-    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
-    id: "4",
-  },
-  {
-    name: "Bannies egg, curated by Samil",
-    ageRange: "9 - 12",
-    category: "adventure",
-    duration: 10,
-    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
-    id: "5",
-  },
-  {
-    name: "The night time stories from granny",
-    ageRange: "9 - 12",
-    category: "mystery",
-    duration: 16,
-    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
-    id: "6",
-  },
-  {
-    name: "Bannies egg, curated by Samil",
-    ageRange: "9 - 12",
-    category: "adventure",
-    duration: 10,
-    imageUrl: require("../../assets/images/recommended_stories/bunnies_by_samil.jpg"),
-    id: "7",
-  },
-  {
-    name: "The night time stories from granny",
-    ageRange: "9 - 12",
-    category: "mystery",
-    duration: 16,
-    imageUrl: require("../../assets/images/recommended_stories/granny_night_time_stories.jpg"),
-    id: "8",
-  },
-];

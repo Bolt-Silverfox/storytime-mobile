@@ -35,7 +35,7 @@ const ParentsTopRecommendationsScreen = () => {
   return (
     <View className="flex flex-1 bg-bgLight">
       <PageTitle
-        title="Parents top recommendations"
+        title="Recommended stories"
         goBack={() => navigator.goBack()}
       />
       <ScrollView
@@ -49,7 +49,7 @@ const ParentsTopRecommendationsScreen = () => {
         >
           <View className="flex flex-col gap-y-1.5">
             <Text className="font-[quilka] text-3xl capitalize text-white">
-              Top recommended stories by other parents
+              Stories recommended based on your preferred categories
             </Text>
             <Text className="font-[abeezee] text-base text-white">
               Read great and popular stories.

@@ -205,71 +205,8 @@ const PALETTE = [
   { id: 8, name: "Honesty", colour: "#926903", bg: "#FBF9CD" },
 ];
 
-const parentProfileSetupTags = [
-  "speaking skills",
-  "listening skills",
-  "conversation skills",
-  "vocabulary building",
-  "storytelling skills",
-  "problem solving",
-  "critical thinking",
-  "memory & recall",
-  "curiosity & exploration",
-  "decision making",
-  "empathy & kindness",
-  "confidence building",
-  "responsibility",
-  "independence",
-  "imagination",
-  "creative thinking",
-];
-const fakeUser = {
-  avatar: null,
-  createdAt: "2025-12-06T16:42:04.496Z",
-  email: "molunoprogress@gmail.com",
-  enableBiometrics: false,
-  id: "9f75dc83-9189-4954-8a81-95a7bdf6f615",
-  name: "Moluno Progress",
-  numberOfKids: 7,
-  pinSet: true,
-  profile: {
-    country: null,
-    explicitContent: true,
-    language: null,
-    maxScreenTimeMins: null,
-  },
-  role: "parent",
-  title: "Mr",
-  updatedAt: "2025-12-08T22:23:49.690Z",
-};
+const ageRange = ["1 - 4", "5 -  8", "9 - 12"] as const;
 
-const ageRange = ["1 - 4", "5 - 8", "9 - 12"] as const;
-
-const storyCategories = [
-  "Adventure",
-  "Fantasy",
-  "Honesty",
-  "Good vs Evil",
-  "Courage / Bravery",
-  "Transformation",
-  "Coming of Age",
-  "Fables",
-  "Folk Tales",
-  "Fairy Tales",
-  "Original Content",
-  "Real Stories",
-  "Bedtime",
-  "Learning",
-  "Funny Stories",
-  "Science & Nature",
-  "Educational Stories",
-  "Seasonal & Holidays",
-  "Animal Stories",
-  "Fantasy & Magical",
-  "Morals & Values",
-  "Friendship & Emotional",
-  "Mystery & Problem Solving",
-];
 const storyCategoriesColours = [
   "#008D81",
   "#0A2DBA",
@@ -344,10 +281,7 @@ export {
   termsAndConditionsData,
   storyTrackerData,
   PALETTE,
-  parentProfileSetupTags,
   ageRange,
-  fakeUser,
-  storyCategories,
   storyCategoriesColours,
   parentControlsRouteGroups,
 };
