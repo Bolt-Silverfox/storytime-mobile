@@ -10,6 +10,7 @@ import {
   CreditCard,
   HelpCircle,
   KeyRound,
+  Ban,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -118,6 +119,12 @@ const ProfileScreen: FC = () => {
             onPress={() =>
               parentNavigator.navigate("notifications", { screen: "settings" })
             }
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<Ban size={isTablet ? 20 : 18} color="#EC4007" />}
+            label="Blocked Stories"
+            onPress={() => navigator.navigate("blockedStories")}
             isTablet={isTablet}
           />
           <MenuItem
