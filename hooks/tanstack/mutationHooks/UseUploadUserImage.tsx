@@ -26,7 +26,6 @@ export const useUploadImage = (userId: string, redirect?: () => void) => {
         method: "POST",
         body: formData,
       });
-
       if (!response.ok) {
         if (response.status === 413) {
           throw new Error(

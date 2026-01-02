@@ -5,8 +5,14 @@ type Props = {
   storyTitle: string;
   onTestKnowledge: () => void;
   isOpen: boolean;
+  readAgain: () => void;
 };
-const EndOfStoryMessage = ({ storyTitle, onTestKnowledge, isOpen }: Props) => {
+const EndOfStoryMessage = ({
+  storyTitle,
+  onTestKnowledge,
+  isOpen,
+  readAgain,
+}: Props) => {
   if (!isOpen) return null;
   return (
     <View className="flex flex-col p-4 gap-y-5 rounded-3xl bg-white">
@@ -24,7 +30,7 @@ const EndOfStoryMessage = ({ storyTitle, onTestKnowledge, isOpen }: Props) => {
       </Text>
       <View className="flex flex-col gap-y-3">
         <CustomButton text="Test knowledge" onPress={onTestKnowledge} />
-        <CustomButton text="Read story again" transparent />
+        <CustomButton text="Read story again" transparent onPress={readAgain} />
       </View>
     </View>
   );
