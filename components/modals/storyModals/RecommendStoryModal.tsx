@@ -1,23 +1,33 @@
 import { useState } from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import useStoryMode from "../../../contexts/StoryModeContext";
+import { useRecommendStory } from "../../../hooks/tanstack/mutationHooks/useRecommendStory";
 import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
-import CustomModal, { CustomModalProps } from "../CustomModal";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
-import CustomButton from "../../UI/CustomButton";
 import EmptyKidsState from "../../emptyState/EmptyKidsState";
 import Icon from "../../Icon";
+import CheckBox from "../../UI/CheckBox";
+import CustomButton from "../../UI/CustomButton";
+import CustomModal, { CustomModalProps } from "../CustomModal";
 
-interface Proptypes extends Omit<CustomModalProps, "children"> {
-  storyId: string;
-}
+interface Proptypes extends Omit<CustomModalProps, "children"> {}
 
-const RecommendStoryModal = ({ isOpen, onClose, storyId }: Proptypes) => {
+const RecommendStoryModal = ({ isOpen, onClose }: Proptypes) => {
   const { data, isPending, error, refetch } = useGetUserKids();
   const [kidsIds, setKidsIds] = useState<string[]>([]);
+  const { activeStoryId } = useStoryMode();
+  const { mutate, isPending: isRecommending } = useRecommendStory({
+    onSuccess: onClose,
+  });
 
   const toggleSelectKid = (id: string) => {
     kidsIds.includes(id)
       ? setKidsIds((ids) => ids.filter((_id) => _id !== id))
       : setKidsIds((ids) => [...ids, id]);
+  };
+
+  const onRecommendStory = () => {
+    if (!kidsIds.length) return;
+    mutate({ storyId: activeStoryId!, message: "", kidsIds });
   };
 
   return (
@@ -47,61 +57,39 @@ const RecommendStoryModal = ({ isOpen, onClose, storyId }: Proptypes) => {
           {data && data.length > 0 ? (
             <View className="flex flex-col gap-y-6">
               <View className="flex flex-col gap-y-3">
-                {data.map((kid) => {
-                  const isSelected = kidsIds.includes(kid.id);
-                  return (
-                    <Pressable
-                      key={kid.id}
+                {data.map((kid) => (
+                  <Pressable
+                    key={kid.id}
+                    onPress={() => toggleSelectKid(kid.id)}
+                    className="flex-row border-b border-border-light border items-center justify-between py-4 px-4 rounded-2xl"
+                  >
+                    <View className="flex-row items-center gap-x-3">
+                      <Image
+                        source={
+                          kid.avatar?.url
+                            ? { uri: kid?.avatar?.url }
+                            : require("../../../assets/avatars/Avatars-3.png")
+                        }
+                        className="size-12"
+                      />
+                      <Text className="text-base capitalize font-[abeezee]">
+                        {kid.name.split(" ")[0]}
+                      </Text>
+                    </View>
+                    <CheckBox
                       onPress={() => toggleSelectKid(kid.id)}
-                      className="flex-row border-b border-border-light border items-center justify-between py-4 px-4 rounded-2xl"
-                    >
-                      <View className="flex-row items-center gap-x-3">
-                        <Image
-                          source={
-                            kid.avatar?.url
-                              ? { uri: kid?.avatar?.url }
-                              : require("../../../assets/avatars/Avatars-3.png")
-                          }
-                          className="size-12"
-                        />
-                        <Text className="text-base capitalize font-[abeezee]">
-                          {kid.name.split(" ")[0]}
-                        </Text>
-                      </View>
-                      <View
-                        className={`
-                    w-6 h-6 rounded-full border-2 
-                    flex items-center justify-center
-                    ${isSelected ? "border-blue" : "border-gray-300"}
-                  `}
-                      >
-                        {isSelected && (
-                          <View className="w-3 h-3 rounded-full bg-blue" />
-                        )}
-                      </View>
-                    </Pressable>
-                  );
-                })}
+                      isSelected={kidsIds.includes(kid.id)}
+                    />
+                  </Pressable>
+                ))}
               </View>
-              <View className="flex flex-col">
+              <View className="flex flex-col items-center gap-y-4">
                 <CustomButton
-                  text="Select"
-                  onPress={() => {
-                    if (!kidsIds.length) {
-                      Alert.alert("No kid selected");
-                      return;
-                    }
-                    onClose();
-                  }}
+                  disabled={!kidsIds.length || isRecommending}
+                  text={isRecommending ? "Recommending..." : "Recommend story"}
+                  onPress={onRecommendStory}
                 />
-                <Pressable
-                  onPress={onClose}
-                  className="bg-transparent border self-center max-w-sm mx-auto border-black/20 py-4 rounded-full mt-4 w-full"
-                >
-                  <Text className="text-center text-black font-[abeezee]">
-                    Cancel
-                  </Text>
-                </Pressable>
+                <CustomButton transparent onPress={onClose} text="Cancel" />
               </View>
             </View>
           ) : (

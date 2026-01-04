@@ -45,7 +45,8 @@ const ProtectedRoutesNavigator = () => {
   if (error) {
     logout();
   }
-  const isUserProfileSetupComplete = data?.profile.language && data?.pinSet;
+  const isUserProfileSetupComplete =
+    data?.profile.language && data?.pinSet && data.avatar?.url;
 
   return (
     <Stack.Navigator

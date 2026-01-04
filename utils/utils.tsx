@@ -87,6 +87,12 @@ const getErrorMessage = (err: unknown, fallback?: string) => {
     : (fallback ?? "Unexpected error, try again.");
 };
 
+const urlToBlob = async (uri: string) => {
+  const response = await fetch(uri);
+  const blob = await response.blob();
+  return blob;
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -95,4 +101,5 @@ export {
   shareContent,
   getLanguageCode,
   getErrorMessage,
+  urlToBlob,
 };

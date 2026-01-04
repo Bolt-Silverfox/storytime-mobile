@@ -7,6 +7,7 @@ import CustomButton from "./UI/CustomButton";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
+import SubscriptionModal from "./modals/SubscriptionModal";
 
 type PropTypes = {
   story: Story;
@@ -22,19 +23,31 @@ type DisplayOptions =
 const StoryContentContainer = ({ story, isInteractive = false }: PropTypes) => {
   const paragraphs = story.textContent.split(/\n\s*\n/);
   const [activeParagraph, setActiveParagraph] = useState(0);
+  const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array().fill(story.questions.length)
   );
 
+  const isSubscribed = true;
+
   const storyLength = paragraphs.length - 1;
-  const isLastStory = activeParagraph === storyLength;
-  const isFirstStory = activeParagraph === 0;
+  const isLastParagraph = activeParagraph === storyLength;
+  const isFirstParagraph = activeParagraph === 0;
 
   const readAgain = () => {
     setCurrentlyDisplayed("story");
     setActiveParagraph(0);
+  };
+
+  const handleNextParagraph = () => {
+    if (isLastParagraph) return;
+    if (isSubscribed) {
+      setActiveParagraph((a) => a + 1);
+      return;
+    }
+    setIsSubscriptionModalOpen(true);
   };
 
   return (
@@ -50,21 +63,21 @@ const StoryContentContainer = ({ story, isInteractive = false }: PropTypes) => {
           </Text>
           <View className="flex flex-row justify-between items-center">
             <Pressable
-              disabled={isFirstStory}
+              disabled={isFirstParagraph}
               onPress={() => setActiveParagraph((a) => a - 1)}
-              className={`size-10 rounded-full justify-center flex items-center ${isFirstStory ? "bg-white/30" : "bg-white"}`}
+              className={`size-10 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-white/30" : "bg-white"}`}
             >
               <Icon name="ChevronLeft" />
             </Pressable>
             <Pressable
-              disabled={isLastStory}
-              onPress={() => setActiveParagraph((a) => a + 1)}
-              className={`size-10 rounded-full justify-center flex items-center ${isLastStory ? "bg-white/30" : "bg-white"}`}
+              disabled={isLastParagraph}
+              onPress={handleNextParagraph}
+              className={`size-10 rounded-full justify-center flex items-center ${isLastParagraph ? "bg-white/30" : "bg-white"}`}
             >
               <Icon name="ChevronRight" />
             </Pressable>
           </View>
-          {isLastStory && isInteractive && (
+          {isLastParagraph && isInteractive && (
             <CustomButton
               text="Finish"
               onPress={() => setCurrentlyDisplayed("endOfStoryMessage")}
@@ -89,6 +102,10 @@ const StoryContentContainer = ({ story, isInteractive = false }: PropTypes) => {
         isOpen={currentlyDisplayed === "endOfQuizMessage"}
         readAgain={readAgain}
         storyTitle="The bear and his fiends in the forest"
+      />
+      <SubscriptionModal
+        isOpen={isSubsriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
       />
     </View>
   );
