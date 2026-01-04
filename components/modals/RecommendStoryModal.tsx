@@ -149,11 +149,11 @@ export default function RecommendStoryModal({
 
                   <View
                     className={`w-6 h-6 rounded-full border-2 flex items-center justify-center ${
-                      isSelected ? "border-blue-600" : "border-gray-300"
+                      isSelected ? "border-blue" : "border-gray-300"
                     }`}
                   >
                     {isSelected && (
-                      <View className="w-3 h-3 rounded-full bg-blue-600" />
+                      <View className="w-3 h-3 rounded-full bg-blue" />
                     )}
                   </View>
                 </Pressable>

@@ -12,6 +12,7 @@ import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import LoadingOverlay from "./LoadingOverlay";
 import CustomButton from "./UI/CustomButton";
 import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
+import EmptyKidsState from "./emptyState/EmptyKidsState";
 
 type Props = {
   isOpen: boolean;
@@ -31,7 +32,7 @@ const KidSelectorModal = ({
   const { data, isPending, error } = useGetUserKids();
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error) return <ErrorMessageDisplay errorMessage={error.message} />;
-  if (!data.length) return <EmptyState onClose={onClose} />;
+  if (!data.length) return <EmptyKidsState onClose={onClose} />;
   return (
     <Modal
       visible={isOpen}
@@ -78,11 +79,11 @@ const KidSelectorModal = ({
                     className={`
                     w-6 h-6 rounded-full border-2 
                     flex items-center justify-center
-                    ${isSelected ? "border-blue-600" : "border-gray-300"}
+                    ${isSelected ? "border-blue" : "border-gray-300"}
                   `}
                   >
                     {isSelected && (
-                      <View className="w-3 h-3 rounded-full bg-blue-600" />
+                      <View className="w-3 h-3 rounded-full bg-blue" />
                     )}
                   </View>
                 </Pressable>
@@ -90,9 +91,9 @@ const KidSelectorModal = ({
             })}
           </View>
         ) : (
-          <EmptyState onClose={onClose} />
+          <EmptyKidsState onClose={onClose} />
         )}
-        <View>
+        <View className="flex flex-col">
           <CustomButton
             text="Continue"
             onPress={() => {
@@ -106,7 +107,7 @@ const KidSelectorModal = ({
           />
           <Pressable
             onPress={onClose}
-            className="bg-transparent border border-black/20 w-full py-4 rounded-full mt-4 max-w-screen-sm mx-auto"
+            className="bg-transparent border self-center max-w-sm mx-auto border-black/20 py-4 rounded-full mt-4 w-full"
           >
             <Text className="text-center text-black font-[abeezee]">
               Cancel
@@ -119,14 +120,3 @@ const KidSelectorModal = ({
 };
 
 export default KidSelectorModal;
-
-const EmptyState = ({ onClose }: { onClose: () => void }) => {
-  return (
-    <View className="flex flex-col gap-y-3 flex-1 justify-center items-center">
-      <Text className="font-[quilka] text-primary text-3xl text-center">
-        No child added yet{" "}
-      </Text>
-      <CustomButton onPress={onClose} text="Cancel" />
-    </View>
-  );
-};

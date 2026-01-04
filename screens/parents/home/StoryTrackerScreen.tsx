@@ -38,7 +38,9 @@ const StoryTrackerScreen: React.FC<{
   const [isFavorited, setIsFavorited] = useState<boolean>(!!story.isFavorited);
 
   const [playing, setPlaying] = useState<boolean>(true);
-  const [pendingAction, setPendingAction] = useState<"pause" | "play" | null>(null);
+  const [pendingAction, setPendingAction] = useState<"pause" | "play" | null>(
+    null
+  );
   const [modalVisible, setModalVisible] = useState(false);
   const [actionInProgress, setActionInProgress] = useState(false);
 
@@ -71,7 +73,6 @@ const StoryTrackerScreen: React.FC<{
     setModalVisible(false);
   };
 
-
   return (
     <View className="flex-1 p-4 bg-white">
       {/* Cover image */}
@@ -87,18 +88,25 @@ const StoryTrackerScreen: React.FC<{
 
       {/* Title */}
       {story.title ? (
-        <Text className="text-xl font-semibold mt-4 text-gray-900">{story.title}</Text>
+        <Text className="text-xl font-semibold mt-4 text-gray-900">
+          {story.title}
+        </Text>
       ) : null}
 
       {/* Story text - show up to 7 lines */}
-      <Text className="mt-3 text-base leading-6 text-gray-700" numberOfLines={7}>
+      <Text
+        className="mt-3 text-base leading-6 text-gray-700"
+        numberOfLines={7}
+      >
         {story.content ?? ""}
       </Text>
 
       {/* Progress bar */}
       <View className="mt-4">
         <ProgressBar progress={progress} />
-        <Text className="mt-2 text-sm text-gray-500">{Math.round(progress * 100)}% complete</Text>
+        <Text className="mt-2 text-sm text-gray-500">
+          {Math.round(progress * 100)}% complete
+        </Text>
       </View>
 
       {/* Play / Pause controls */}
@@ -106,22 +114,41 @@ const StoryTrackerScreen: React.FC<{
         <TouchableOpacity
           onPress={() => onToggleRequested(playing ? "pause" : "play")}
           className="p-3 rounded-md bg-black"
-          style={{ shadowColor: "#000", shadowOpacity: 0.12, shadowRadius: 2, elevation: 2 }}
+          style={{
+            shadowColor: "#000",
+            shadowOpacity: 0.12,
+            shadowRadius: 2,
+            elevation: 2,
+          }}
           accessibilityLabel={playing ? "Pause" : "Play"}
         >
-          {playing ? <Pause size={20} color="#fff" /> : <Play size={20} color="#fff" />}
+          {playing ? (
+            <Pause size={20} color="#fff" />
+          ) : (
+            <Play size={20} color="#fff" />
+          )}
         </TouchableOpacity>
 
-        <Text className="ml-4 text-base text-gray-800">{playing ? "Playing" : "Paused"}</Text>
+        <Text className="ml-4 text-base text-gray-800">
+          {playing ? "Playing" : "Paused"}
+        </Text>
       </View>
 
       {/* Confirmation Modal */}
-      <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={cancelAction}>
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={cancelAction}
+      >
         <View className="flex-1 bg-black/40 justify-center items-center px-4">
           <View className="w-full max-w-md bg-white rounded-lg p-5">
-            <Text className="text-lg font-semibold text-gray-900 mb-2">Confirm</Text>
+            <Text className="text-lg font-semibold text-gray-900 mb-2">
+              Confirm
+            </Text>
             <Text className="text-gray-700 mb-4">
-              Are you sure you want to {pendingAction === "pause" ? "pause" : "play"} this story?
+              Are you sure you want to{" "}
+              {pendingAction === "pause" ? "pause" : "play"} this story?
             </Text>
 
             <View className="flex-row justify-end space-x-3">
@@ -137,7 +164,7 @@ const StoryTrackerScreen: React.FC<{
                 {actionInProgress ? (
                   <ActivityIndicator />
                 ) : (
-                  <Text className="font-semibold text-blue-600">Yes</Text>
+                  <Text className="font-semibold text-blue">Yes</Text>
                 )}
               </Pressable>
             </View>

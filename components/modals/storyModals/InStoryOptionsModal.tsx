@@ -1,0 +1,78 @@
+import { Dispatch, SetStateAction, useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import Icon from "../../Icon";
+import ProgressBar from "../../UI/ProgressBar";
+import TopModal from "../TopModal";
+import ExitStoryModal from "./ExitStoryModal";
+import InStoryModeModal from "./InStoryModeModal";
+
+type PropTypes = {
+  setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
+  isOptionsModalOpen: boolean;
+};
+const InStoryOptionsModal = ({
+  isOptionsModalOpen,
+  setIsOptionsModalOpen,
+}: PropTypes) => {
+  const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
+  const [isExitModalOpen, setIsExitModalOpen] = useState(false);
+
+  return (
+    <TopModal
+      isOpen={isOptionsModalOpen}
+      onClose={() => setIsOptionsModalOpen(false)}
+    >
+      <View className="flex flex-col gap-y-4">
+        <ProgressBar
+          backgroundColor="#4807EC"
+          currentStep={15}
+          label="Page"
+          totalSteps={20}
+          height={11}
+        />
+        <View className="flex flex-row flex-wrap gap-6 justify-center gap-x-3">
+          <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
+            <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">
+              <Icon name="VolumeOff" />
+            </Pressable>
+            <Text className="text-xs text-text font-[abeezee]">Read aloud</Text>
+          </View>
+          <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
+            <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">
+              <Icon name="Play" />
+            </Pressable>
+            <Text className="text-xs text-text font-[abeezee]">Autoplay</Text>
+          </View>
+          <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
+            <Pressable
+              onPress={() => setIsStoryModeModalOpen(true)}
+              className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter"
+            >
+              <Icon name="ListMusic" />
+            </Pressable>
+            <Text className="text-xs text-text font-[abeezee]">Story Mode</Text>
+          </View>
+          <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center  items-center rounded-2xl">
+            <Pressable
+              onPress={() => setIsExitModalOpen(true)}
+              className="flex size-11 rounded-xl flex-col justify-center items-center bg-[#FFE0E0] border border-[#FFC8C8]"
+            >
+              <Icon name="LogOut" color="#EC0707" />
+            </Pressable>
+            <Text className="text-xs text-text font-[abeezee]">Exit Story</Text>
+          </View>
+        </View>
+      </View>
+      <InStoryModeModal
+        isOpen={isStoryModeModalOpen}
+        onClose={() => setIsStoryModeModalOpen(false)}
+      />
+      <ExitStoryModal
+        isOpen={isExitModalOpen}
+        onClose={() => setIsExitModalOpen(false)}
+      />
+    </TopModal>
+  );
+};
+
+export default InStoryOptionsModal;

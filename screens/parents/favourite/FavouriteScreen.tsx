@@ -266,7 +266,7 @@ const FavoritesScreen: React.FC = () => {
       <View className="flex-1 items-center justify-center p-5">
         <ErrorMessageDisplay errorMessage={error.message} />
         <TouchableOpacity onPress={() => refetch()}>
-          <Text className="text-blue-500 mt-2">Retry</Text>
+          <Text className="text-blue mt-2">Retry</Text>
         </TouchableOpacity>
       </View>
     );

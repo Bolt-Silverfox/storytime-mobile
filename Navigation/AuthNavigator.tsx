@@ -2,25 +2,23 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import LoginScreen from "../screens/auth/LoginScreen";
-import SignupScreen from "../screens/auth/SignupScreen";
-import ResetPasswordScreen from "../screens/auth/ResetPassword";
-import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
-import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
-import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
-import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
-import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
-import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
-import KidsInfoFormScreen from "../screens/auth/KidsInfoFormScreen";
-import AvatarScreen from "../screens/auth/SelectAvatarScreen";
-import CompleteProfileScreen from "../screens/auth/CompleteProfileScreen";
 import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
-import PrivacyScreen from "../screens/auth/PrivacyScreen";
-import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
+import CreateNewPasswordScreen from "../screens/auth/CreateNewPasswordScreen";
 import EmailResetSuccessfulScreen from "../screens/auth/EmailResetSuccessfulScreen";
-import RequestEmailVerification from "../screens/auth/RequestEmailVerification";
-import ResetPasswordSuccessful from "../screens/auth/ResetPasswordSuccessful";
+import ImageUploadScreen from "../screens/auth/ImageUploadScreen";
 import InputNewPassword from "../screens/auth/InputNewPassword";
+import KidsDetailsUploadScreen from "../screens/auth/KidsDetailsUploadScreen";
+import LoginScreen from "../screens/auth/LoginScreen";
+import OnBoardingScreen from "../screens/auth/OnBoardingScreen";
+import PasswordResetSuccessfulScreen from "../screens/auth/PasswordResetSuccessfulScreen";
+import PrivacyScreen from "../screens/auth/PrivacyScreen";
+import RequestEmailVerification from "../screens/auth/RequestEmailVerification";
+import ResetPasswordScreen from "../screens/auth/ResetPassword";
+import ResetPasswordSuccessful from "../screens/auth/ResetPasswordSuccessful";
+import AvatarScreen from "../screens/auth/SelectAvatarScreen";
+import SignupScreen from "../screens/auth/SignupScreen";
+import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
+import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
 
 type AuthNavigatorParamList = {
   login: undefined;
@@ -32,9 +30,7 @@ type AuthNavigatorParamList = {
   imageUpload: undefined;
   kidsDetailsUpload: undefined;
   onBoarding: undefined;
-  completeProfile: undefined;
   home: undefined;
-  kidsInfoForm: { kidsCount: number };
   avatarScreen: undefined;
   confirmResetPasswordToken: { email: string };
   inputNewPassword: { email: string; token: string };
@@ -73,8 +69,6 @@ const AuthNavigator = () => {
         name="kidsDetailsUpload"
         component={KidsDetailsUploadScreen}
       />
-      <Stack.Screen name="completeProfile" component={CompleteProfileScreen} />
-      <Stack.Screen name="kidsInfoForm" component={KidsInfoFormScreen} />
       <Stack.Screen name="avatarScreen" component={AvatarScreen} />
       <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
       <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />

@@ -8,6 +8,7 @@ import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
+import PageTitle from "../../components/PageTitle";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
@@ -44,16 +45,8 @@ const ConfirmResetPasswordTokenScreen = () => {
   }, [countDown]);
 
   return (
-    <View style={styles.screen}>
-      <Pressable
-        onPress={() => navigator.goBack()}
-        style={{ paddingHorizontal: 16 }}
-      >
-        <Image
-          style={styles.image}
-          source={require("../../assets/icons/arrow-left.png")}
-        />
-      </Pressable>
+    <View className="flex flex-1">
+      <PageTitle goBack={() => navigator.goBack()} title="" />
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
           {successMessage.length > 0 && (
@@ -63,7 +56,7 @@ const ConfirmResetPasswordTokenScreen = () => {
           )}
           <Text style={defaultStyles.heading}>Reset your password</Text>
           <Text style={styles.text}>
-            Enter the verification code sent to your email {route.params.email}
+            Enter the verification code sent to your emails {route.params.email}
           </Text>
         </View>
         <ErrorMessageDisplay errorMessage={error} />
@@ -119,13 +112,6 @@ const styles = StyleSheet.create({
   image: {
     height: 20,
     width: 20,
-  },
-  screen: {
-    ...defaultStyles.screen,
-    backgroundColor: "white",
-    gap: 16,
-    paddingHorizontal: 0,
-    paddingBottom: 0,
   },
   text: {
     ...defaultStyles.defaultText,

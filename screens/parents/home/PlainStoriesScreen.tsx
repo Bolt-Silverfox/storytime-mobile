@@ -16,7 +16,7 @@ import RecommendStoryModal from "../../../components/modals/RecommendStoryModal"
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import VoicePickerModal from "../../../components/modals/VoicePickerModal";
 import useGenerateStoryAudio from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAudio";
-import { useAudioPlayer, useAudioPlayerStatus } from 'expo-audio';
+import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import useRecommendStory from "../../../hooks/tanstack/queryHooks/useRecommendStory";
 
 const { height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -46,15 +46,14 @@ export default function PlainStoryScreen({ route, navigation }: any) {
   const [audioUri, setAudioUri] = useState<string | null>(null);
 
   const generateAudio = useGenerateStoryAudio({
-  onSuccess: (data) => {
-    // data.path = URL to the audio file
-    setAudioUri(data.path);
-  },
-});
+    onSuccess: (data) => {
+      // data.path = URL to the audio file
+      setAudioUri(data.path);
+    },
+  });
 
-const player = useAudioPlayer(audioUri ? { uri: audioUri } : null);
-const status = useAudioPlayerStatus(player);
-
+  const player = useAudioPlayer(audioUri ? { uri: audioUri } : null);
+  const status = useAudioPlayerStatus(player);
 
   // auto-play when opened in plain mode
   useEffect(() => {
@@ -68,28 +67,27 @@ const status = useAudioPlayerStatus(player);
   }, [storyQuery.isSuccess, mode, storyId]);
 
   useEffect(() => {
-  if (!story || !story.textContent) return;
+    if (!story || !story.textContent) return;
 
-  // You choose what “content” you want to send — full story or chunk
-  generateAudio.mutate({
-    content: story.textContent,
-    voiceType: preferredVoiceId.toUpperCase(),
-  });
-}, [storyId, storyQuery.isSuccess]);
+    // You choose what “content” you want to send — full story or chunk
+    generateAudio.mutate({
+      content: story.textContent,
+      voiceType: preferredVoiceId.toUpperCase(),
+    });
+  }, [storyId, storyQuery.isSuccess]);
 
-useEffect(() => {
-  setIsPlaying(Boolean(status?.playing));
-  setElapsed(Math.floor((status?.currentTime ?? 0)));
-}, [status?.playing, status?.currentTime, status]);
+  useEffect(() => {
+    setIsPlaying(Boolean(status?.playing));
+    setElapsed(Math.floor(status?.currentTime ?? 0));
+  }, [status?.playing, status?.currentTime, status]);
 
-
-// when chunk/uri changes, stop old player
-// useEffect(() => {
-//   return () => {
-//     player?.pause?.();
-//   };
-//   // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, [audioUri]);
+  // when chunk/uri changes, stop old player
+  // useEffect(() => {
+  //   return () => {
+  //     player?.pause?.();
+  //   };
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [audioUri]);
 
   if (storyQuery.isLoading)
     return <LoadingOverlay visible label="Loading story..." />;
@@ -241,7 +239,7 @@ useEffect(() => {
           )}
 
           {/* Read-along row with toggle (unchanged) */}
-          <View className="flex-row items-center py-2 px-4 w-[90%] mt-8 border border-[#FAF4F2] rounded-2xl">
+          <View className="flex-row items-center py-2 px-4 w-[90%] mt-8 border border-border-lighter rounded-2xl">
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>
@@ -299,21 +297,21 @@ useEffect(() => {
         </Text>
       </View>
 
-    <RecommendStoryModal
-      visible={isRecommendOpen}
-      onClose={() => setIsRecommendOpen(false)}
-      storyId={storyId}
-      handleRecommend={(sId, kidId) => {
-        if (!sId || !kidId) return;
-        recommendStory(
-          { storyId: sId, kidId }, // ✅ payload
-          {
-            onSuccess: () => alert("Story recommended successfully!"),
-            onError: (err) => alert(err.message),
+      <RecommendStoryModal
+        visible={isRecommendOpen}
+        onClose={() => setIsRecommendOpen(false)}
+        storyId={storyId}
+        handleRecommend={(sId, kidId) => {
+          if (!sId || !kidId) return;
+          recommendStory(
+            { storyId: sId, kidId }, // ✅ payload
+            {
+              onSuccess: () => alert("Story recommended successfully!"),
+              onError: (err) => alert(err.message),
             }
           );
         }}
-    />
+      />
 
       <VoicePickerModal
         visible={voicePickerOpen}

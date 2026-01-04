@@ -9,6 +9,7 @@ import PageTitle from "../../../components/PageTitle";
 import PasswordInput from "../../../components/PasswordInput";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
+import CustomButton from "../../../components/UI/CustomButton";
 
 const resetPasswordSchema = z
   .object({
@@ -76,7 +77,7 @@ export default function ResetParentPassword() {
         title="Reset your password"
         goBack={() => navigator.goBack()}
       />
-      <View className="mx-[17]  ">
+      <View className="mx-[17] md:mx-auto max-w-screen-md md:w-full">
         <View className="mt-[60] gap-[16px]">
           {error && <ErrorMessageDisplay errorMessage={error} />}
           <PasswordInput
@@ -103,16 +104,7 @@ export default function ResetParentPassword() {
         </View>
       </View>
       <View className="flex-1 mt-10 px-4 gap-6">
-        <Pressable onPress={onResetPassword}>
-          <Text
-            style={[defaultStyles.defaultText, { color: "white" }]}
-            className={`rounded-[99px] py-3 px-2 text-center mx-auto w-full bg-[#FF8771] ${
-              Object.keys(errors).length === 0 && "bg-[#EC4007]"
-            }`}
-          >
-            Reset Password
-          </Text>
-        </Pressable>
+        <CustomButton onPress={onResetPassword} text="Reset Password" />
       </View>
       <LoadingOverlay visible={isLoading} />
     </View>

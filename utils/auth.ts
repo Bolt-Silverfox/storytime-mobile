@@ -26,8 +26,9 @@ const auth = {
   signup: async (data: {
     email: string;
     password: string;
-    title: string;
+    nationality: string;
     fullName: string;
+    role: string;
   }) => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
