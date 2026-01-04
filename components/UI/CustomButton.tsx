@@ -9,6 +9,7 @@ const CustomButton = ({
   borderColor,
   borderWidth,
   transparent = false,
+  ariaLabel,
 }: {
   text: string;
   disabled?: boolean;
@@ -18,10 +19,12 @@ const CustomButton = ({
   borderColor?: string;
   borderWidth?: number;
   transparent?: boolean;
+  ariaLabel?: string;
 }) => {
   if (transparent) {
     return (
       <Pressable
+        aria-labelledby={ariaLabel}
         onPress={onPress}
         className="border max-w-sm flex w-full flex-row justify-center items-center h-[46px] rounded-full"
       >
@@ -31,6 +34,7 @@ const CustomButton = ({
   }
   return (
     <Pressable
+      aria-labelledby={ariaLabel}
       onPress={onPress}
       disabled={disabled}
       style={[

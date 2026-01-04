@@ -1,14 +1,20 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useCompleteProfile = ({ onSuccess }: { onSuccess: () => void }) => {
+  const { invalidateQueries } = useQueryClient();
   return useMutation({
     mutationFn: (data: ExpectedInput) => completeProfile(data),
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
+      console.log("i received the variables", variables);
       onSuccess();
+      invalidateQueries({
+        queryKey: ["userProfile", variables.userId],
+      });
     },
     onError: (err) => {
       console.error("complete profile error", err.message);
@@ -22,23 +28,25 @@ const completeProfile = async (data: ExpectedInput) => {
   const { imageUri, userId, language, languageCode, learningExpectations } =
     data;
   try {
-    let profileImageUrl = { url: "" };
+    // let profileImageUrl = { url: "" };
     if (imageUri) {
       console.log("awaiting upload image api");
-      profileImageUrl = await uploadImage(imageUri, userId);
+      await uploadImage(imageUri, userId);
     }
+
     const request = await apiFetch(`${BASE_URL}/auth/complete-profile`, {
       method: "POST",
       body: JSON.stringify({
         language,
         languageCode,
         learningExpectations,
-        profileImageUrl: profileImageUrl.url,
+        // profileImageUrl: profileImageUrl.url,
       }),
     });
     const response: QueryResponse = await request.json();
+    console.log("complete profile response", response);
     if (!response.success) throw new Error(response.message);
-    if (response) console.log("complete profile response", response);
+    return response;
   } catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "Unexpected error, try again";
@@ -56,42 +64,31 @@ type ExpectedInput = {
 
 export default useCompleteProfile;
 
-const uploadImage = async (
-  imageUri: string,
-  userId: string
-): Promise<{ url: string }> => {
+const uploadImage = async (imageUri: string, userId: string) => {
+  // no need to return the url for the image cos it updates the user's avatar directly on the backend.
   try {
-    console.log("uploading image...");
+    const token = await AsyncStorage.getItem("accessToken");
     const formData = new FormData();
-    const filename = imageUri.split("/").pop() || "image.jpg";
-    const match = /\.(\w+)$/.exec(filename);
-    const type = match ? `image/${match[1]}` : "image/jpeg";
-
     formData.append("image", {
       uri: imageUri,
-      name: filename,
-      type: type,
+      type: "image/jpeg",
+      name: "avatar.jpg",
     } as any);
     formData.append("userId", userId);
-    const response = await apiFetch(`${BASE_URL}/avatars/upload/user`, {
+    console.log("formdata", formData);
+    const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
       method: "POST",
       body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     });
-    console.log("response", response);
-    if (!response.ok) {
-      if (response.status === 413) {
-        throw new Error(
-          "Image file is too large. Please select a smaller image or reduce quality."
-        );
-      }
-      throw new Error("Failed to upload image");
-    }
 
-    const result = await response.json();
-    console.log("upload image response ", result);
-    return result;
+    const response: QueryResponse = await request.json();
+    if (!response.success) throw new Error(response.message);
+    return response;
   } catch (err: unknown) {
-    console.log("upload imae function error", err);
+    console.log("upload image function error", err);
     const message =
       err instanceof Error ? err.message : "Unexpected error, try again";
     throw new Error(message);

@@ -5,34 +5,49 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-const useRecommendStory = () => {
+const useRecommendStory = ({ onSuccess }: { onSuccess: () => void }) => {
   return useMutation({
     mutationFn: async (data: {
-      kidId: string;
+      kidsIds: string[];
       storyId: string;
       message: string;
     }) => {
-      try {
-        const request = await apiFetch(`${BASE_URL}/stories/recommend`, {
-          method: "POST",
-          body: JSON.stringify(data),
-        });
-        const response: QueryResponse = await request.json();
-        if (!response.success) throw new Error(response.message);
-        console.log("recommend story mutation response", response);
-        return response;
-      } catch (err: unknown) {
-        throw new Error(getErrorMessage(err));
-      }
+      await Promise.all(
+        data.kidsIds.map((kid) =>
+          recommendStory(kid, data.storyId, data.message)
+        )
+      );
     },
     onSuccess: () => {
+      onSuccess();
       Alert.alert("Story recommended successfully!");
     },
     onError: (err) => {
-      console.error("Error recommending story", err);
       Alert.alert(err.message);
     },
   });
+};
+
+const recommendStory = async (
+  kidId: string,
+  storyId: string,
+  message: string
+) => {
+  try {
+    const request = await apiFetch(`${BASE_URL}/stories/recommend`, {
+      method: "POST",
+      body: JSON.stringify({
+        kidId,
+        storyId,
+        message,
+      }),
+    });
+    const response: QueryResponse = await request.json();
+    if (!response.success) throw new Error(response.message);
+    return response;
+  } catch (err: unknown) {
+    throw new Error(getErrorMessage(err));
+  }
 };
 
 const useDeleteRecommendation = () => {

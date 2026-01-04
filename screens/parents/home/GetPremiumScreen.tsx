@@ -3,9 +3,8 @@ import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import Icon from "../../../components/Icon";
 import CustomButton from "../../../components/UI/CustomButton";
+import { subscriptionBenefits, subscriptionOptions } from "../../../data";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { StatusBar } from "expo-status-bar";
 
 const GetPremiumScreen = () => {
   const navigator = useNavigation<ParentsNavigatorProp>();
@@ -79,7 +78,7 @@ const GetPremiumScreen = () => {
               What you'll enjoy
             </Text>
             <View className="flex flex-col gap-y-5">
-              {benefits.map((benefit) => (
+              {subscriptionBenefits.map((benefit) => (
                 <View
                   key={benefit}
                   className="flex flex-row gap-x-1.5 items-center"
@@ -117,22 +116,3 @@ const GetPremiumScreen = () => {
 };
 
 export default GetPremiumScreen;
-
-const subscriptionOptions: { name: "Monthly" | "Yearly"; price: number }[] = [
-  {
-    name: "Monthly",
-    price: 4.99,
-  },
-  {
-    name: "Yearly",
-    price: 47.99,
-  },
-];
-
-const benefits = [
-  "Unlock full story library",
-  "Create unlimited child profiles",
-  "Encourage consistent reading habits",
-  "Perfect for bedtime & independent reading",
-  "Watch your child grow with every adventure",
-];

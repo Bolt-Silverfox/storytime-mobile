@@ -34,7 +34,7 @@ const NewPlainStoryMode = () => {
     <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
         source={{ uri: data.coverImageUrl }}
-        resizeMode="stretch"
+        resizeMode="cover"
         className="p-4 flex-1 flex flex-col "
       >
         <Pressable

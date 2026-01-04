@@ -181,7 +181,6 @@ const ChildStoryDetails = () => {
       <RecommendStoryModal
         isOpen={showRecommendationModal}
         onClose={() => setShowRecommendationModal(false)}
-        storyId={activeStoryId!}
       />
     </View>
   );

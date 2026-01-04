@@ -274,6 +274,26 @@ const parentControlsRouteGroups: {
     ],
   },
 ];
+
+const subscriptionOptions: { name: "Monthly" | "Yearly"; price: number }[] = [
+  {
+    name: "Monthly",
+    price: 4.99,
+  },
+  {
+    name: "Yearly",
+    price: 47.99,
+  },
+];
+
+const subscriptionBenefits = [
+  "Unlock full story library",
+  "Create unlimited child profiles",
+  "Encourage consistent reading habits",
+  "Perfect for bedtime & independent reading",
+  "Watch your child grow with every adventure",
+];
+
 export {
   popularSuggestions,
   childDetailsData,
@@ -284,4 +304,6 @@ export {
   ageRange,
   storyCategoriesColours,
   parentControlsRouteGroups,
+  subscriptionOptions,
+  subscriptionBenefits,
 };
