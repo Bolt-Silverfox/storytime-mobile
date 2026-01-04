@@ -38,7 +38,7 @@ const UpdateInAppPin = () => {
   return (
     <View className="flex flex-1 bg-bgLight">
       <PageTitle title="Update Pin" goBack={() => navigator.goBack()} />
-      <View className="flex-1 mx-4 flex gap-y-7 py-6">
+      <View className="flex-1 mx-4 md:max-w-md md:mx-auto md:w-full flex gap-y-7 py-6">
         <ErrorMessageDisplay errorMessage={error} />
         <View className="flex flex-col gap-y-2">
           <Text className="font-[abeezee]">Enter your Old Pin</Text>

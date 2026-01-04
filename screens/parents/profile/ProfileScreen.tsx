@@ -1,38 +1,42 @@
 import { useNavigation } from "@react-navigation/native";
-import { CreditCard, HelpCircle, Key } from "lucide-react-native";
+import {
+  FingerScan,
+  Logout,
+  Profile2User,
+  TrushSquare,
+} from "iconsax-react-nativejs";
+import {
+  BellRing,
+  CreditCard,
+  HelpCircle,
+  KeyRound,
+  Ban,
+} from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
-  Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   useWindowDimensions,
   View,
 } from "react-native";
 import colours from "../../../colours";
+import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import MenuItem from "../../../components/MenuItem";
+import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import MenuItem from "../../../components/MenuItem";
-import Avatar from "../../../components/Avatar";
-import LogoutModal from "../../../components/modals/ParentProfileIndexModal";
-import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
-import {
-  FingerScan,
-  Logout,
-  LogoutCurve,
-  Profile2User,
-  TrushSquare,
-} from "iconsax-react-nativejs";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import defaultStyles from "../../../styles";
 
 const ProfileScreen: FC = () => {
   const [uploaderVisible, setUploaderVisible] = useState(false);
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const parentNavigator = useNavigation<ParentsNavigatorProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
@@ -99,15 +103,32 @@ const ProfileScreen: FC = () => {
           </CustomText>
         </View>
 
-        <View style={styles.menuList}>
+        <View
+          className="max-w-screen-md w-full mx-auto"
+          style={styles.menuList}
+        >
           <MenuItem
             icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
-            label="Manage Child Profile"
+            label="Manage Child Profiles"
             onPress={() => navigator.navigate("manageChildProfiles")}
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Key color={"#EC4007"} size={isTablet ? 20 : 18} />}
+            icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
+            label="Notification Settings"
+            onPress={() =>
+              parentNavigator.navigate("notifications", { screen: "settings" })
+            }
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<Ban size={isTablet ? 20 : 18} color="#EC4007" />}
+            label="Blocked Stories"
+            onPress={() => navigator.navigate("blockedStories")}
+            isTablet={isTablet}
+          />
+          <MenuItem
+            icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Manage Password/Pin"
             onPress={() => navigator.navigate("managePassword")}
             isTablet={isTablet}
@@ -122,7 +143,7 @@ const ProfileScreen: FC = () => {
             icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("subscriptionIndex")}
+            onPress={() => parentNavigator.navigate("getPremium")}
           />
           <MenuItem
             icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
@@ -160,7 +181,7 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
-  scrollContent: { paddingBottom: 100 },
+  scrollContent: { paddingBottom: 10 },
   header: {
     width: "100%",
     height: 192,

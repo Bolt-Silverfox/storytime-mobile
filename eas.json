@@ -5,7 +5,6 @@
   },
   "build": {
     "development": {
-      "developmentClient": true,
       "distribution": "internal",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://api.staging.zhu-clan.emerj.net/api/v1"

@@ -125,6 +125,76 @@ type WeeklyReport = {
   totalScreenTimeMins: number;
 };
 
+type ValidParentControlsRoutes =
+  | "contentFilter"
+  | "excludeStoryTags"
+  | "recordVoice"
+  | "customizeReadingVoices"
+  | "setBedtime"
+  | "setDailyLimit"
+  | "viewActivityLog";
+
+type StoryModes = "interactive" | "plain";
+
+type LearningExpectation = {
+  id: string;
+  name: string;
+  description: string;
+  category: null | string;
+};
+
+type Story = {
+  id: string;
+  title: string;
+  description: string;
+  language: string;
+  coverImageUrl: string;
+  audioUrl: string;
+  textContent: string;
+  isInteractive: boolean;
+  ageMin: number;
+  ageMax: number;
+  backgroundColor: string;
+  recommend: true;
+  aiGenerated: boolean;
+  difficultyLevel: number;
+  wordCount: number;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+  deletedAt: string | null;
+  creatorKidId: null | string;
+  images: string[];
+  branches: string[];
+  categories: {
+    id: string;
+    name: string;
+    image: string;
+    description: string;
+    isDeleted: boolean;
+    deletedAt: null | string;
+  }[];
+  themes: {
+    id: string;
+    name: string;
+    imae: string | null;
+    description: string;
+    isDeleted: boolean;
+    deletedAt: string | null;
+  }[];
+  questions: {
+    id: string;
+    storyId: string;
+    question: string;
+    options: string[];
+    correctOption: number;
+    isDeleted: boolean;
+    deletedAt: string | null;
+  }[];
+};
+
+type ChildStoryStatus = "ongoing" | "completed";
+
 export type {
   User,
   Profile,
@@ -135,4 +205,9 @@ export type {
   KidProfile,
   WeeklyReport,
   KidReport,
+  ValidParentControlsRoutes,
+  StoryModes,
+  LearningExpectation,
+  Story,
+  ChildStoryStatus,
 };

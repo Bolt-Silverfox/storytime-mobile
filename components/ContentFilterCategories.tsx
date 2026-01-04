@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import useGetStoryCategories from "../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import ErrorComponent from "./ErrorComponent";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 type Props = {
   toggleCategory: (c: string) => void;
@@ -14,7 +15,7 @@ const ContentFilterCategories = ({
     data: categories,
     error: categoriesError,
     refetch: refetchCategories,
-  } = useGetStoryCategories();
+  } = useSuspenseQuery(useGetStoryCategories());
 
   if (categoriesError)
     return (

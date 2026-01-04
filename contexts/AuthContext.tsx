@@ -19,10 +19,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from '../constants';
-// import {
-//   GoogleSignin,
-//   isSuccessResponse,
-// } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from '@react-native-google-signin/google-signin';
 import { Alert } from 'react-native';
 
 type AuthFnTypes = {
@@ -35,7 +35,7 @@ type AuthFnTypes = {
     email: string;
     password: string;
     fullName: string;
-    title: string;
+    nationality: string;
     setErrorCb: SetErrorCallback;
   }) => void;
   verifyEmail: (data: { token: string; setErrorCb: SetErrorCallback }) => void;
@@ -255,7 +255,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     email,
     password,
     fullName,
-    title,
+    nationality,
     setErrorCb,
   }) => {
     setErrorCb('');
@@ -265,7 +265,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         jwt: string;
         refreshToken: string;
       }>
-    >(() => auth.signup({ email, password, fullName, title }));
+    >(() =>
+      auth.signup({ email, password, fullName, nationality, role: 'parent' })
+    );
+    console.log('signup resposne', signupData);
     if (!signupData.success) {
       setErrorCb(signupData.message);
       return;
@@ -389,42 +392,42 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  // const handleGoogleAuth = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const googlePlayService = await GoogleSignin.hasPlayServices();
-  //     if (!googlePlayService)
-  //       throw new Error(
-  //         "You don't have google play services enabled, enable it and try again."
-  //       );
-  //     const googleResponse = await GoogleSignin.signIn();
-  //     if (!isSuccessResponse(googleResponse)) {
-  //       throw new Error("Authentication unsuccesful, try again");
-  //     }
-  //     const { idToken } = googleResponse.data;
-  //     const request = await fetch(`${BASE_URL}/auth/google`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ id_token: idToken }),
-  //       method: "POST",
-  //     });
-  //     const response = await request.json();
-  //     if (!response.success) {
-  //       throw new Error(response.message);
-  //     }
-  //     await AsyncStorage.setItem("accessToken", response.data.jwt);
-  //     await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
-  //     await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-  //     setUser(response.data.user);
-  //   } catch (error) {
-  //     const message =
-  //       error instanceof Error ? error.message : "Unexpected error, try again";
-  //     Alert.alert(message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const handleGoogleAuth = async () => {
+    try {
+      setIsLoading(true);
+      const googlePlayService = await GoogleSignin.hasPlayServices();
+      if (!googlePlayService)
+        throw new Error(
+          "You don't have google play services enabled, enable it and try again."
+        );
+      const googleResponse = await GoogleSignin.signIn();
+      if (!isSuccessResponse(googleResponse)) {
+        throw new Error('Authentication unsuccesful, try again');
+      }
+      const { idToken } = googleResponse.data;
+      const request = await fetch(`${BASE_URL}/auth/google`, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id_token: idToken }),
+        method: 'POST',
+      });
+      const response = await request.json();
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      await AsyncStorage.setItem('accessToken', response.data.jwt);
+      await AsyncStorage.setItem('refreshToken', response.data.refreshToken);
+      await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+      setUser(response.data.user);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unexpected error, try again';
+      Alert.alert(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const setInAppPin: AuthFnTypes['setInAppPin'] = async ({
     pin,

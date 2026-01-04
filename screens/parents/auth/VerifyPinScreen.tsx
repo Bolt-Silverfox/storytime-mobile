@@ -1,15 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { ParentAuthNavigatorProps } from "../../../Navigation/ParentAuthNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import colours from "../../../colours";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
-import LoadingOverlay from "../../../components/LoadingOverlay";
+import CustomButton from "../../../components/UI/CustomButton";
 
 const VerifyPinScreen = () => {
   const navigator = useNavigation<ParentAuthNavigatorProps>();
@@ -27,7 +28,10 @@ const VerifyPinScreen = () => {
       pin: otp,
       setErrorCb: setError,
       onSuccess: () => {
-        parentNav.navigate("parents");
+        parentNav.reset({
+          index: 0,
+          routes: [{ name: "parents" }],
+        });
       },
     });
   };
@@ -46,7 +50,7 @@ const VerifyPinScreen = () => {
               <ErrorMessageDisplay errorMessage={error} />
             </View>
           )}
-          <View style={styles.container}>
+          <View className="mx-auto w-full sm:max-w-sm">
             <OtpInput
               numberOfDigits={6}
               onTextChange={(text) => setOtp(text)}
@@ -73,18 +77,11 @@ const VerifyPinScreen = () => {
               </Text>
             </Pressable>
           </View>
-
-          <Pressable
+          <CustomButton
             onPress={onSubmit}
-            className="mt-20"
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={{ ...styles.text, color: "white" }}>
-              {isLoading ? "Loading..." : "Verify"}
-            </Text>
-          </Pressable>
+            text={"Verify"}
+            disabled={otp.length < 6}
+          />
         </View>
       </View>
       <LoadingOverlay visible={isLoading} />
@@ -116,10 +113,6 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-
-  container: {
-    paddingHorizontal: 20,
   },
   box: {
     borderWidth: 1,

@@ -40,49 +40,51 @@ const CustomizeReadingVoice = () => {
   console.log("local", currentlyActiveVoiceId);
 
   return (
-    <View className="flex-1 min-h-full pb-10 bg-bgLight flex flex-col gap-y-10 sm:mx-auto max-w-screen-md w-full">
+    <View className="flex-1 min-h-full pb-10 bg-bgLight flex flex-col gap-y-10">
       <PageTitle
         title="Customize Reading Voice"
         goBack={() => navigator.goBack()}
       />
-      <View className="flex flex-row gap-x-3  bg-white mx-auto rounded-full ">
-        <Pressable
-          className={`px-6 py-2 rounded-full ${activeTab === "storytime" ? "bg-primary text-white " : null}`}
-          onPress={() => setActiveTab("storytime")}
-        >
-          <Text
-            className={`text-dark font-[abeezee] text-base ${activeTab === "storytime" ? "bg-primary text-white " : null}`}
+      <View className="flex flex-col gap-y-10 mx-auto w-full max-w-screen-md flex-1">
+        <View className="flex flex-row gap-x-3  bg-white mx-auto rounded-full ">
+          <Pressable
+            className={`px-6 py-2 rounded-full ${activeTab === "storytime" ? "bg-primary text-white " : null}`}
+            onPress={() => setActiveTab("storytime")}
           >
-            Storytime Voices
-          </Text>
-        </Pressable>
-        <Pressable
-          className={`px-6 py-2 rounded-full ${activeTab === "personal" ? "bg-primary text-white " : null}`}
-          onPress={() => setActiveTab("personal")}
-        >
-          <Text
-            className={`text-dark font-[abeezee] text-base ${activeTab === "personal" ? "bg-primary text-white " : null}`}
+            <Text
+              className={`text-dark font-[abeezee] text-base ${activeTab === "storytime" ? "bg-primary text-white " : null}`}
+            >
+              Storytime Voices
+            </Text>
+          </Pressable>
+          <Pressable
+            className={`px-6 py-2 rounded-full ${activeTab === "personal" ? "bg-primary text-white " : null}`}
+            onPress={() => setActiveTab("personal")}
           >
-            My Recordings
-          </Text>
-        </Pressable>
-      </View>
-      {activeTab === "storytime" ? (
-        <Suspense fallback={<ActivityIndicator size={"large"} />}>
-          <StorytimeVoices
-            currentlyActiveVoiceId={currentlyActiveVoiceId}
-            childId={params.childId}
-          />
-        </Suspense>
-      ) : null}
-      {activeTab === "personal" ? (
-        <View className="flex flex-1 bg-bgLight justify-center items-center">
-          <Text className="text-xl font-[abeezee] text-center">
-            You have no recordings yet
-          </Text>
-          <CustomButton disabled={true} text="Add Recording" />
+            <Text
+              className={`text-dark font-[abeezee] text-base ${activeTab === "personal" ? "bg-primary text-white " : null}`}
+            >
+              My Recordings
+            </Text>
+          </Pressable>
         </View>
-      ) : null}
+        {activeTab === "storytime" ? (
+          <Suspense fallback={<ActivityIndicator size={"large"} />}>
+            <StorytimeVoices
+              currentlyActiveVoiceId={currentlyActiveVoiceId}
+              childId={params.childId}
+            />
+          </Suspense>
+        ) : null}
+        {activeTab === "personal" ? (
+          <View className="flex flex-1 bg-bgLight justify-center items-center">
+            <Text className="text-xl font-[abeezee] text-center">
+              You have no recordings yet
+            </Text>
+            <CustomButton disabled={true} text="Add Recording" />
+          </View>
+        ) : null}
+      </View>
       <LoadingOverlay visible={isPending} />
     </View>
   );

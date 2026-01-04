@@ -26,9 +26,7 @@ export default function LoadingOverlay({
           style={{ width: size, height: size }}
         />
 
-        <Text className="text-white font-[abeezee] text-2xl font-bold mt-4">
-          {label}
-        </Text>
+        <Text className="text-white font-[abeezee] text-2xl mt-4">{label}</Text>
       </View>
     </Modal>
   );

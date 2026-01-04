@@ -26,6 +26,7 @@ import DeleteAccountSuccessful from "../screens/parents/profile/DeleteAccountSuc
 import SubscriptionIndex from "../screens/parents/profile/subscription/SubscriptionIndex";
 import ChildAvatar from "../screens/parents/profile/ChildAvatar";
 import UpdateInAppPin from "../screens/parents/profile/UpdateInAppPin";
+import BlockedStoriesScreen from "../screens/parents/profile/BlockedStoriesScreen";
 
 type ParentProfileNavigatorParamList = {
   indexPage: undefined;
@@ -72,6 +73,8 @@ type ParentProfileNavigatorParamList = {
   dailyLimit: undefined;
   activityLog: { childID: string };
   editChild: { childId: string };
+
+  blockedStories: undefined;
 };
 
 type ParentProfileNavigatorProp =
@@ -128,7 +131,9 @@ const ParentProfileNavigator = () => {
         name="deleteAccountSuccessful"
         component={DeleteAccountSuccessful}
       />
+
       <Stack.Screen name="subscriptionIndex" component={SubscriptionIndex} />
+      <Stack.Screen name="blockedStories" component={BlockedStoriesScreen} />
     </Stack.Navigator>
   );
 };

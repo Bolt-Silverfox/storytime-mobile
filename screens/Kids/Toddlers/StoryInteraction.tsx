@@ -46,10 +46,10 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
   if (!story) {
     return (
-      <View className="flex-1 items-center justify-center bg-[#FAF4F2] p-4">
+      <View className="flex-1 items-center justify-center bg-border-lighter p-4">
         <Text className="text-center mb-4">No story found.</Text>
         <Pressable
-          className="bg-blue-500 px-4 py-2 rounded-md"
+          className="bg-blue px-4 py-2 rounded-md"
           onPress={() => navigation.goBack()}
         >
           <Text className="text-white">Go back</Text>
@@ -80,7 +80,9 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
   }
   const durationLabel = getDurationRange(duration);
 
-  const coverSource = story?.coverImageUrl ? { uri: story.coverImageUrl } : null;
+  const coverSource = story?.coverImageUrl
+    ? { uri: story.coverImageUrl }
+    : null;
 
   const BottomSheet = (
     <View
@@ -115,9 +117,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
 
         <View className="flex-1 bg-white p-4 rounded-xl gap-2 items-center justify-center">
           <Text className="text-base font-[quilka] text-center">Duration</Text>
-          <Text className="text-[#212121] font-[abeezee]">
-            {durationLabel}
-          </Text>
+          <Text className="text-[#212121] font-[abeezee]">{durationLabel}</Text>
         </View>
 
         <View
