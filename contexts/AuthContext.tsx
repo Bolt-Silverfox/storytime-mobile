@@ -1,5 +1,5 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
 import {
   createContext,
   Dispatch,
@@ -9,21 +9,21 @@ import {
   useContext,
   useEffect,
   useState,
-} from "react";
-import { RootNavigatorProp } from "../Navigation/RootNavigator";
-import { User } from "../types";
-import auth from "../utils/auth";
+} from 'react';
+import { RootNavigatorProp } from '../Navigation/RootNavigator';
+import { User } from '../types';
+import auth from '../utils/auth';
 import {
   BASE_URL,
   emailRegex,
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
-} from "../constants";
-import {
-  GoogleSignin,
-  isSuccessResponse,
-} from "@react-native-google-signin/google-signin";
-import { Alert } from "react-native";
+} from '../constants';
+// import {
+//   GoogleSignin,
+//   isSuccessResponse,
+// } from "@react-native-google-signin/google-signin";
+import { Alert } from 'react-native';
 
 type AuthFnTypes = {
   login: (data: {
@@ -58,7 +58,7 @@ type AuthFnTypes = {
     newPassword: string;
     setErrorCb: SetErrorCallback;
   }) => void;
-  handleGoogleAuth: () => void;
+  // handleGoogleAuth: () => void;
   setInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
@@ -106,21 +106,21 @@ type AuthContextType = {
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
   logout: () => void;
-  login: AuthFnTypes["login"];
-  signUp: AuthFnTypes["signUp"];
-  verifyEmail: AuthFnTypes["verifyEmail"];
-  requestPasswordReset: AuthFnTypes["requestPasswordReset"];
-  resendVerificationEmail: AuthFnTypes["resendVerificationEmail"];
-  validatePasswordReset: AuthFnTypes["validatePasswordReset"];
-  resetPassword: AuthFnTypes["resetPassword"];
-  handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
-  changePassword: AuthFnTypes["changePassword"];
-  setInAppPin: AuthFnTypes["setInAppPin"];
-  verifyInAppPin: AuthFnTypes["verifyInAppPin"];
-  requestPinReset: AuthFnTypes["requestPinReset"];
-  validatePinResetOtp: AuthFnTypes["validatePinResetOtp"];
-  resetPinWithOtp: AuthFnTypes["resetPinWithOtp"];
-  updateInAppPin: AuthFnTypes["updateInAppPin"];
+  login: AuthFnTypes['login'];
+  signUp: AuthFnTypes['signUp'];
+  verifyEmail: AuthFnTypes['verifyEmail'];
+  requestPasswordReset: AuthFnTypes['requestPasswordReset'];
+  resendVerificationEmail: AuthFnTypes['resendVerificationEmail'];
+  validatePasswordReset: AuthFnTypes['validatePasswordReset'];
+  resetPassword: AuthFnTypes['resetPassword'];
+  // handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  changePassword: AuthFnTypes['changePassword'];
+  setInAppPin: AuthFnTypes['setInAppPin'];
+  verifyInAppPin: AuthFnTypes['verifyInAppPin'];
+  requestPinReset: AuthFnTypes['requestPinReset'];
+  validatePinResetOtp: AuthFnTypes['validatePinResetOtp'];
+  resetPinWithOtp: AuthFnTypes['resetPinWithOtp'];
+  updateInAppPin: AuthFnTypes['updateInAppPin'];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -147,40 +147,40 @@ type SetErrorCallback = Dispatch<SetStateAction<string>>;
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthContextType["user"]>(undefined);
+  const [user, setUser] = useState<AuthContextType['user']>(undefined);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<
     string | string[] | undefined
   >(undefined);
   const navigator = useNavigation<RootNavigatorProp>();
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      iosClientId: IOS_CLIENT_ID,
-      webClientId: WEB_CLIENT_ID,
-      profileImageSize: 200,
-    });
-  }, []);
+  // useEffect(() => {
+  //   GoogleSignin.configure({
+  //     iosClientId: IOS_CLIENT_ID,
+  //     webClientId: WEB_CLIENT_ID,
+  //     profileImageSize: 200,
+  //   });
+  // }, []);
 
   useEffect(() => {
     async function getUserSession() {
       try {
         setIsLoading(true);
         setErrorMessage(undefined);
-        const localStoredSession = await AsyncStorage.getItem("user");
-        const storedToken = await AsyncStorage.getItem("accessToken");
+        const localStoredSession = await AsyncStorage.getItem('user');
+        const storedToken = await AsyncStorage.getItem('accessToken');
         if (!localStoredSession || !storedToken) {
           setUser(null);
           return;
         }
-        console.log("access token", storedToken);
-        console.log("user id", localStoredSession);
+        console.log('access token', storedToken);
+        console.log('user id', localStoredSession);
         setUser(JSON.parse(localStoredSession));
       } catch (err) {
         const errMessage =
           err instanceof Error
             ? err.message
-            : "Unexpected error, reload the app and try again!";
+            : 'Unexpected error, reload the app and try again!';
         setErrorMessage(errMessage);
       } finally {
         setIsLoading(false);
@@ -201,13 +201,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       const message =
         err instanceof Error
           ? err.message
-          : "Unexpected error, reload the app and try again";
+          : 'Unexpected error, reload the app and try again';
       setErrorMessage(message);
       return {
         statusCode: 500,
         success: false,
-        error: "NetworkError",
-        message: message.length ? message : "Unexpected error, try again",
+        error: 'NetworkError',
+        message: message.length ? message : 'Unexpected error, try again',
         timeStamp: new Date().toISOString(),
       };
     } finally {
@@ -217,19 +217,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(() => {
     (async () => {
-      await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+      await AsyncStorage.multiRemove(['accessToken', 'refreshToken', 'user']);
       setUser(null);
       setErrorMessage(undefined);
     })();
   }, []);
 
-  const login: AuthFnTypes["login"] = async ({
+  const login: AuthFnTypes['login'] = async ({
     email,
     password,
     setErrorCb,
   }) => {
     if (!emailRegex.test(email)) {
-      setErrorCb("Invalid Email");
+      setErrorCb('Invalid Email');
       return;
     }
 
@@ -240,25 +240,25 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         refreshToken: string;
       }>
     >(() => auth.login(email, password));
-    setErrorCb("");
+    setErrorCb('');
     if (!loginData.success) {
       setErrorCb(loginData.message);
       return;
     }
-    await AsyncStorage.setItem("accessToken", loginData.data.jwt);
-    await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
-    await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
+    await AsyncStorage.setItem('accessToken', loginData.data.jwt);
+    await AsyncStorage.setItem('refreshToken', loginData.data.refreshToken);
+    await AsyncStorage.setItem('user', JSON.stringify(loginData.data.user));
     setUser(loginData.data.user);
   };
 
-  const signUp: AuthFnTypes["signUp"] = async ({
+  const signUp: AuthFnTypes['signUp'] = async ({
     email,
     password,
     fullName,
     title,
     setErrorCb,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const signupData = await authTryCatch<
       AuthResponse<{
         user: User;
@@ -270,19 +270,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(signupData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "verifyEmail",
+    navigator.navigate('auth', {
+      screen: 'verifyEmail',
       params: {
         email,
       },
     });
   };
 
-  const verifyEmail: AuthFnTypes["verifyEmail"] = async ({
+  const verifyEmail: AuthFnTypes['verifyEmail'] = async ({
     token,
     setErrorCb,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
       auth.verifyEmail(token)
     );
@@ -290,17 +290,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(verifyEmailData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "emailVerificationSuccessful",
+    navigator.navigate('auth', {
+      screen: 'emailVerificationSuccessful',
     });
   };
 
-  const resendVerificationEmail: AuthFnTypes["resendVerificationEmail"] =
+  const resendVerificationEmail: AuthFnTypes['resendVerificationEmail'] =
     async ({ email, setErrorCb }) => {
-      setErrorCb("");
+      setErrorCb('');
       if (!emailRegex.test(email)) {
-        setErrorCb("invalid email");
-        throw new Error("invalid email, try again");
+        setErrorCb('invalid email');
+        throw new Error('invalid email, try again');
       }
       const resendData = await authTryCatch(() =>
         auth.resendVerificationEmail(email)
@@ -312,13 +312,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return resendData;
     };
 
-  const requestPasswordReset: AuthFnTypes["requestPasswordReset"] = async ({
+  const requestPasswordReset: AuthFnTypes['requestPasswordReset'] = async ({
     email,
     setErrorCb,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     if (!emailRegex.test(email)) {
-      setErrorCb("Invalid email");
+      setErrorCb('Invalid email');
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
@@ -328,22 +328,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(requestData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "confirmResetPasswordToken",
+    navigator.navigate('auth', {
+      screen: 'confirmResetPasswordToken',
       params: {
         email,
       },
     });
   };
 
-  const validatePasswordReset: AuthFnTypes["validatePasswordReset"] = async ({
+  const validatePasswordReset: AuthFnTypes['validatePasswordReset'] = async ({
     email,
     token,
     setErrorCb,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     if (!emailRegex.test(email)) {
-      setErrorCb("Invalid email");
+      setErrorCb('Invalid email');
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
@@ -353,8 +353,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(requestData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "inputNewPassword",
+    navigator.navigate('auth', {
+      screen: 'inputNewPassword',
       params: {
         email,
         token,
@@ -362,13 +362,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const resetPassword: AuthFnTypes["resetPassword"] = async ({
+  const resetPassword: AuthFnTypes['resetPassword'] = async ({
     email,
     token,
     newPassword,
     setErrorCb,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.resetpassword(email, token, newPassword)
     );
@@ -380,58 +380,58 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       index: 0,
       routes: [
         {
-          name: "auth",
+          name: 'auth',
           params: {
-            screen: "resetPasswordSuccessful",
+            screen: 'resetPasswordSuccessful',
           },
         },
       ],
     });
   };
 
-  const handleGoogleAuth = async () => {
-    try {
-      setIsLoading(true);
-      const googlePlayService = await GoogleSignin.hasPlayServices();
-      if (!googlePlayService)
-        throw new Error(
-          "You don't have google play services enabled, enable it and try again."
-        );
-      const googleResponse = await GoogleSignin.signIn();
-      if (!isSuccessResponse(googleResponse)) {
-        throw new Error("Authentication unsuccesful, try again");
-      }
-      const { idToken } = googleResponse.data;
-      const request = await fetch(`${BASE_URL}/auth/google`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id_token: idToken }),
-        method: "POST",
-      });
-      const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message);
-      }
-      await AsyncStorage.setItem("accessToken", response.data.jwt);
-      await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
-      await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
-    } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unexpected error, try again";
-      Alert.alert(message);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // const handleGoogleAuth = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     const googlePlayService = await GoogleSignin.hasPlayServices();
+  //     if (!googlePlayService)
+  //       throw new Error(
+  //         "You don't have google play services enabled, enable it and try again."
+  //       );
+  //     const googleResponse = await GoogleSignin.signIn();
+  //     if (!isSuccessResponse(googleResponse)) {
+  //       throw new Error("Authentication unsuccesful, try again");
+  //     }
+  //     const { idToken } = googleResponse.data;
+  //     const request = await fetch(`${BASE_URL}/auth/google`, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ id_token: idToken }),
+  //       method: "POST",
+  //     });
+  //     const response = await request.json();
+  //     if (!response.success) {
+  //       throw new Error(response.message);
+  //     }
+  //     await AsyncStorage.setItem("accessToken", response.data.jwt);
+  //     await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+  //     await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+  //     setUser(response.data.user);
+  //   } catch (error) {
+  //     const message =
+  //       error instanceof Error ? error.message : "Unexpected error, try again";
+  //     Alert.alert(message);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  const setInAppPin: AuthFnTypes["setInAppPin"] = async ({
+  const setInAppPin: AuthFnTypes['setInAppPin'] = async ({
     pin,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.setInAppPin(pin)
     );
@@ -442,12 +442,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const verifyInAppPin: AuthFnTypes["verifyInAppPin"] = async ({
+  const verifyInAppPin: AuthFnTypes['verifyInAppPin'] = async ({
     pin,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.verifyInAppPin(pin)
     );
@@ -458,14 +458,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const updateInAppPin: AuthFnTypes["updateInAppPin"] = async ({
+  const updateInAppPin: AuthFnTypes['updateInAppPin'] = async ({
     oldPin,
     newPin,
     confirmNewPin,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
     );
@@ -476,11 +476,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const requestPinReset: AuthFnTypes["requestPinReset"] = async ({
+  const requestPinReset: AuthFnTypes['requestPinReset'] = async ({
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.requestPinReset()
     );
@@ -491,12 +491,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const validatePinResetOtp: AuthFnTypes["validatePinResetOtp"] = async ({
+  const validatePinResetOtp: AuthFnTypes['validatePinResetOtp'] = async ({
     otp,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.validatePinResetOtp(otp)
     );
@@ -507,14 +507,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const resetPinWithOtp: AuthFnTypes["resetPinWithOtp"] = async ({
+  const resetPinWithOtp: AuthFnTypes['resetPinWithOtp'] = async ({
     otp,
     newPin,
     confirmNewPin,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.resetInAppPin({ otp, newPin, confirmNewPin })
     );
@@ -525,13 +525,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  const changePassword: AuthFnTypes["changePassword"] = async ({
+  const changePassword: AuthFnTypes['changePassword'] = async ({
     oldPassword,
     newPassword,
     setErrorCb,
     onSuccess,
   }) => {
-    setErrorCb("");
+    setErrorCb('');
     const requestData = await authTryCatch<AuthResponse>(() =>
       auth.changePassword(oldPassword, newPassword)
     );
@@ -555,7 +555,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     resendVerificationEmail,
     validatePasswordReset,
     resetPassword,
-    handleGoogleAuth,
+    // handleGoogleAuth,
     setInAppPin,
     updateInAppPin,
     verifyInAppPin,
