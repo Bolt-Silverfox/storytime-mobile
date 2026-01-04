@@ -81,6 +81,12 @@ const getLanguageCode = (language: string): string => {
   }
 };
 
+const getErrorMessage = (err: unknown, fallback?: string) => {
+  return err instanceof Error
+    ? err.message
+    : (fallback ?? "Unexpected error, try again.");
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -88,4 +94,5 @@ export {
   getNotificationIcon,
   shareContent,
   getLanguageCode,
+  getErrorMessage,
 };
