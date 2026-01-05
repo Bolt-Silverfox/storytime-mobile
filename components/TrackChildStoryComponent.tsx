@@ -2,14 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../Navigation/ParentHomeNavigator";
+import useStoryMode from "../contexts/StoryModeContext";
 import queryGetKidsStories from "../hooks/tanstack/queryHooks/useGetKidsStories";
 import { ChildStoryStatus } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import Icon from "./Icon";
-import CustomEmptyState from "./emptyState/CustomEmptyState";
 import ProgressBar from "./UI/ProgressBar";
-import { queryRecommendedStories } from "../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import useStoryMode from "../contexts/StoryModeContext";
 
 const TrackChildStoryComponent = ({
   category,
@@ -18,21 +16,15 @@ const TrackChildStoryComponent = ({
   category: ChildStoryStatus;
   childId: string;
 }) => {
-  //   const { data, error, refetch } = useSuspenseQuery(
-  //     queryGetKidsStories(childId, category)
-  //   );
-  const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
+  const { data, error, refetch } = useSuspenseQuery(
+    queryGetKidsStories(childId, category)
+  );
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { setActiveStoryId } = useStoryMode();
   console.log("child id", childId);
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
-  if (!data.length)
-    return (
-      <CustomEmptyState
-        message={"No stories available yet for this category"}
-      />
-    );
+  if (!data.length) return <EmptyState category={category} />;
 
   return (
     <ScrollView
@@ -96,3 +88,20 @@ const TrackChildStoryComponent = ({
 };
 
 export default TrackChildStoryComponent;
+
+const EmptyState = ({ category }: { category: string }) => {
+  return (
+    <View className="flex flex-1 flex-col gap-y-4 mt-7 items-center">
+      <Image
+        source={require("../assets/images/stories-empty-state.png")}
+        className="size-[156px]"
+      />
+      <Text className="font-[abeezee] text-xl text-black">
+        No {category} stories
+      </Text>
+      <Text className="font-[abeezee] text-sm text-text">
+        You do not have any {category} stories yet.
+      </Text>
+    </View>
+  );
+};

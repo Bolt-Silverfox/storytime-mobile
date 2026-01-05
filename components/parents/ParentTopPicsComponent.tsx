@@ -3,9 +3,11 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import useStoryMode from "../../contexts/StoryModeContext";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+// import queryParentsTopPicks from "../../hooks/tanstack/queryHooks/queryParentsTopPicks";
 import ErrorComponent from "../ErrorComponent";
+import CustomEmptyState from "../emptyState/CustomEmptyState";
 import StoryItem from "./StoryItem";
+import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -21,7 +23,10 @@ const ParentsTopPicksComponent = () => {
           Top picks from parents
         </Text>
         <Text
-          onPress={() => navigator.navigate("parentsTopPicks")}
+          onPress={() => {
+            if (!data.length) return;
+            navigator.navigate("parentsTopPicks");
+          }}
           className="font-[abeezee]  text-base text-[#0731EC] leading-5"
         >
           View all
@@ -34,17 +39,23 @@ const ParentsTopPicksComponent = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
         >
-          {data.map((story, index) => (
-            <StoryItem
-              index={index}
-              key={story.id}
-              onNavigate={() => {
-                navigator.navigate("childStoryDetails", { storyId: story.id });
-                setActiveStoryId(story.id);
-              }}
-              story={story}
-            />
-          ))}
+          {data.length ? (
+            data.map((story, index) => (
+              <StoryItem
+                index={index}
+                key={story.id}
+                onNavigate={() => {
+                  navigator.navigate("childStoryDetails", {
+                    storyId: story.id,
+                  });
+                  setActiveStoryId(story.id);
+                }}
+                story={story}
+              />
+            ))
+          ) : (
+            <CustomEmptyState message="No data yet" />
+          )}
         </ScrollView>
       </View>
     </View>

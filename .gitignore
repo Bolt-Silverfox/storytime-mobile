@@ -30,6 +30,7 @@ app.json
 # macOS
 .DS_Store
 *.pem
+todo.txt
 
 # local env files
 .env*.local

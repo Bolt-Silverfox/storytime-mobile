@@ -68,6 +68,9 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
       queryClient.invalidateQueries({
         queryKey: ["userKids", user?.id],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["userProfile", user?.id],
+      });
 
       if (!user) return;
 
