@@ -18,20 +18,22 @@ import StoryContentContainer from "../../../components/StoryContentContainer";
 import useStoryMode from "../../../contexts/StoryModeContext";
 import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
 
+// CREATE REUSABLE COMPONENTS FOR STORY MODES
+
 const NewInteractiveStoryModeScreen = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const { activeStoryId } = useStoryMode();
+  const [activeParagraph, setActiveParagraph] = useState(0);
   const { isPending, error, refetch, data } = useQuery(
     queryGetStory(activeStoryId!)
   );
   const player = useAudioPlayer(data?.audioUrl);
 
-  console.log(activeStoryId);
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
-
+  const paragraphs = data.textContent.split(/\n\s*\n/);
   return (
     <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
@@ -45,9 +47,6 @@ const NewInteractiveStoryModeScreen = () => {
         >
           <Icon color="#5E4404" name="EllipsisVertical" />
         </Pressable>
-        {/* <Text className="font-[quilka] text-[#5E4404] text-2xl">
-          The bear and his friends in the forest
-        </Text> */}
         <View className="flex justify-end flex-1 flex-col gap-y-3">
           <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">
             <View className="flex flex-row gap-x-2 items-center">
@@ -65,7 +64,13 @@ const NewInteractiveStoryModeScreen = () => {
               />
             </Pressable>
           </View>
-          <StoryContentContainer isInteractive story={data} />
+          <StoryContentContainer
+            isInteractive
+            story={data}
+            paragraphs={paragraphs}
+            activeParagraph={activeParagraph}
+            setActiveParagraph={setActiveParagraph}
+          />
         </View>
       </ImageBackground>
       <SelectReadingVoiceModal
@@ -73,6 +78,8 @@ const NewInteractiveStoryModeScreen = () => {
         onClose={() => setIsVoiceModalOpen(false)}
       />
       <InStoryOptionsModal
+        totalPages={paragraphs.length}
+        currentPage={activeParagraph + 1}
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
       />

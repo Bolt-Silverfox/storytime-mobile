@@ -6,13 +6,13 @@ import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const useCompleteProfile = ({ onSuccess }: { onSuccess: () => void }) => {
-  const { invalidateQueries } = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (data: ExpectedInput) => completeProfile(data),
     onSuccess: (data, variables) => {
       console.log("i received the variables", variables);
       onSuccess();
-      invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: ["userProfile", variables.userId],
       });
     },
