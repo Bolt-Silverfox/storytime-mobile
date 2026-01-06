@@ -2,50 +2,48 @@ import {
   BottomTabNavigationProp,
   createBottomTabNavigator,
 } from "@react-navigation/bottom-tabs";
-import {
-  NavigatorScreenParams,
-  RouteProp,
-  useRoute,
-} from "@react-navigation/native";
-import React, { useEffect } from "react";
+import { NavigatorScreenParams } from "@react-navigation/native";
+import { Book } from "iconsax-react-nativejs";
+import React from "react";
 import colours from "../colours";
 import Icon from "../components/Icon";
 import KidsHomeScreen from "../screens/Kids/KidsHomeScreen";
+import ChallengeScreen from "../screens/Kids/Toddlers/DailyChallengeIntroScreen";
+import StoryInteractionScreen from "../screens/Kids/Toddlers/StoryInteraction";
+import StoryModeSelector from "../screens/Kids/Toddlers/StoryModeSelector";
+import StoryReaderScreen from "../screens/Kids/Toddlers/StoryReaderScreen";
 import KidsLibraryNavigator, {
   KidsLibraryNavigatorParamList,
 } from "./KidsLibraryNavigator";
-import { KidsNavigatorParamList } from "./KidsNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
-import { Book } from "iconsax-react-nativejs";
 import PersonalizeKidNavigator from "./PersonalizeKidNavigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type KidsTabNavigatorParamList = {
   home: { childId: string };
   library: NavigatorScreenParams<KidsLibraryNavigatorParamList>;
-  personalize: { childId: string };
+  generate: { childId: string };
   profile: { childId: string };
-};
 
+  storyModeSelector: { storyId?: string; story?: any; childId?: string };
+  storyInteraction: {
+    storyId: string;
+    mode?: string;
+    voice?: string;
+    childId?: string;
+  };
+  storyReader: {
+    storyId: string;
+    mode?: string;
+    voice?: string;
+    childId?: string;
+  };
+  challenge: { storyId?: string; childId?: string };
+};
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
 
 const Tab = createBottomTabNavigator<KidsTabNavigatorParamList>();
 
-type KidsTabNavigatorRouteProp = RouteProp<KidsNavigatorParamList, "index">;
-
 const KidsTabNavigator = () => {
-  const route = useRoute<KidsTabNavigatorRouteProp>();
-  const childId = route.params?.childId;
-
-  useEffect(() => {
-    if (childId) {
-      const onKidSelect = async () => {
-        await AsyncStorage.setItem("currentKid", childId);
-      };
-      onKidSelect();
-    }
-  }, [childId]);
-
   return (
     <Tab.Navigator
       screenOptions={{
@@ -56,7 +54,6 @@ const KidsTabNavigator = () => {
       <Tab.Screen
         name="home"
         component={KidsHomeScreen}
-        initialParams={{ childId: childId! }}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -84,13 +81,12 @@ const KidsTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="personalize"
-        initialParams={{ childId: childId }}
+        name="generate"
         component={PersonalizeKidNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
-              name="NotebookPen"
+              name="Wand"
               color={focused ? colours.primary : colours.black}
             />
           ),
@@ -103,7 +99,6 @@ const KidsTabNavigator = () => {
       <Tab.Screen
         name="profile"
         component={kidsProfileNavigator}
-        initialParams={{ childId: childId! }}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon
@@ -115,6 +110,38 @@ const KidsTabNavigator = () => {
           tabBarLabelStyle: {
             textTransform: "capitalize",
           },
+        }}
+      />
+      <Tab.Screen
+        name="storyModeSelector"
+        component={StoryModeSelector}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="storyInteraction"
+        component={StoryInteractionScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="storyReader"
+        component={StoryReaderScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="challenge"
+        component={ChallengeScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
         }}
       />
     </Tab.Navigator>

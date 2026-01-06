@@ -38,7 +38,7 @@ const StoryItem = ({
         <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
           <Icon name="Heart" color="white" />
         </Pressable>
-        <View className="flex px-0.5 flex-row justify-between items-center">
+        <View className="flex gap-x-2 px-0.5 flex-row justify-between items-center">
           <View className="flex flex-1 flex-row items-center">
             <Icon name="Dot" color={"#EC0794"} />
             <Text
@@ -50,7 +50,7 @@ const StoryItem = ({
               {story.categories[0].name}
             </Text>
           </View>
-          <View className="flex flex-row gap-x-2 items-center">
+          <View className="flex flex-row gap-x-1 items-center">
             <Icon size={12} name="Clock" color="#616161" />
             <Text className="font-[abeezee] text-text capitalize text-xs">
               {32} mins
