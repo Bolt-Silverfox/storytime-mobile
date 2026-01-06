@@ -1,11 +1,6 @@
-import { ChevronDown } from "lucide-react-native";
-import { useState } from "react";
-import {
-  Modal,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { ChevronDown } from 'lucide-react-native';
+import { useState } from 'react';
+import { Modal, Pressable, Text, View } from 'react-native';
 
 interface CustomDateRangeModalProps {
   isOpen: boolean;
@@ -24,21 +19,21 @@ const CustomDateRangeModal = ({
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December',
   ];
 
-  const daysOfWeek = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"];
+  const daysOfWeek = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
   const getDaysInMonth = (month: number, year: number) => {
     return new Date(year, month + 1, 0).getDate();
@@ -118,8 +113,8 @@ const CustomDateRangeModal = ({
   };
 
   const formatDate = (date: Date | null) => {
-    if (!date) return "";
-    const day = date.getDate().toString().padStart(2, "0");
+    if (!date) return '';
+    const day = date.getDate().toString().padStart(2, '0');
     const month = months[date.getMonth()].slice(0, 3);
     const year = date.getFullYear().toString().slice(-2);
     return `${day} ${month} ${year}`;
@@ -131,57 +126,57 @@ const CustomDateRangeModal = ({
     <Modal
       visible={isOpen}
       transparent
-      animationType="slide"
+      animationType='slide'
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-end bg-black/50">
-        <View className="bg-white rounded-t-3xl px-6 py-8">
+      <View className='flex-1 justify-end bg-black/50'>
+        <View className='bg-white rounded-t-3xl px-6 py-8'>
           {/* Handle bar */}
-          <View className="w-12 h-1 bg-gray-300 rounded-full self-center mb-6" />
+          <View className='w-12 h-1 bg-gray-300 rounded-full self-center mb-6' />
 
           {/* Title */}
-          <Text className="text-2xl font-bold text-center mb-2">
+          <Text className='text-2xl font-bold text-center mb-2'>
             Select Date Range
           </Text>
-          <Text className="text-center text-gray-600 mb-6">
-            Report covers 7 days from selected date
+          <Text className='text-center text-gray-600 mb-6'>
+            You can select a maximum date range of 90 days.
           </Text>
 
           {/* Date Range Display */}
-          <View className="flex flex-row items-center justify-center gap-x-4 mb-6">
-            <View className="border-2 border-gray-300 rounded-full px-6 py-3">
-              <Text className="text-base font-[abeezee]">
-                {startDate ? formatDate(startDate) : "Start Date"}
+          <View className='flex flex-row items-center justify-center gap-x-4 mb-6'>
+            <View className='border-2 border-gray-300 rounded-full px-6 py-3'>
+              <Text className='text-base font-[abeezee]'>
+                {startDate ? formatDate(startDate) : 'Start Date'}
               </Text>
             </View>
-            <Text className="text-xl">-</Text>
-            <View className="border-2 border-gray-300 rounded-full px-6 py-3">
-              <Text className="text-base font-[abeezee]">
-                {endDate ? formatDate(endDate) : "End Date"}
+            <Text className='text-xl'>-</Text>
+            <View className='border-2 border-gray-300 rounded-full px-6 py-3'>
+              <Text className='text-base font-[abeezee]'>
+                {endDate ? formatDate(endDate) : 'End Date'}
               </Text>
             </View>
           </View>
 
           {/* Month and Year Selectors */}
-          <View className="flex flex-row justify-between items-center mb-6">
-            <View className="flex flex-row items-center gap-x-2">
-              <Text className="text-lg font-[abeezee]">
+          <View className='flex flex-row justify-between items-center mb-6'>
+            <View className='flex flex-row items-center gap-x-2'>
+              <Text className='text-lg font-[abeezee]'>
                 {months[selectedMonth]}
               </Text>
               <ChevronDown size={20} />
             </View>
-            <View className="flex flex-row items-center gap-x-2">
-              <Text className="text-lg font-[abeezee]">{selectedYear}</Text>
+            <View className='flex flex-row items-center gap-x-2'>
+              <Text className='text-lg font-[abeezee]'>{selectedYear}</Text>
               <ChevronDown size={20} />
             </View>
           </View>
 
           {/* Days of Week */}
-          <View className="flex flex-row justify-around mb-4">
+          <View className='flex flex-row justify-around mb-4'>
             {daysOfWeek.map((day) => (
               <Text
                 key={day}
-                className="text-gray-500 text-sm font-[abeezee] w-10 text-center"
+                className='text-gray-500 text-sm font-[abeezee] w-10 text-center'
               >
                 {day}
               </Text>
@@ -189,7 +184,7 @@ const CustomDateRangeModal = ({
           </View>
 
           {/* Calendar Grid */}
-          <View className="flex flex-row flex-wrap mb-6">
+          <View className='flex flex-row flex-wrap mb-6'>
             {calendarDays.map((day, index) => {
               const isInRange = isDateInRange(day);
               const isStart = isStartDate(day);
@@ -200,28 +195,28 @@ const CustomDateRangeModal = ({
                   key={index}
                   onPress={() => handleDatePress(day)}
                   disabled={!day}
-                  className="w-[14.28%] aspect-square items-center justify-center"
+                  className='w-[14.28%] aspect-square items-center justify-center'
                 >
                   {day && (
                     <View
                       className={`w-10 h-10 items-center justify-center rounded-full ${
                         isStart || isEnd
-                          ? "bg-[#6B5FE8]"
+                          ? 'bg-[#6B5FE8]'
                           : isInRange
-                          ? "bg-[#D4D4F4]"
-                          : ""
+                            ? 'bg-[#D4D4F4]'
+                            : ''
                       }`}
                     >
                       <Text
                         className={`text-base font-[abeezee] ${
                           isStart || isEnd
-                            ? "text-white font-bold"
+                            ? 'text-white font-bold'
                             : isInRange
-                            ? "text-[#6B5FE8]"
-                            : "text-black"
-                        } ${!day ? "text-gray-300" : ""}`}
+                              ? 'text-[#6B5FE8]'
+                              : 'text-black'
+                        } ${!day ? 'text-gray-300' : ''}`}
                       >
-                        {day || ""}
+                        {day || ''}
                       </Text>
                     </View>
                   )}
@@ -231,23 +226,23 @@ const CustomDateRangeModal = ({
           </View>
 
           {/* Action Buttons */}
-          <View className="flex flex-col gap-y-3">
+          <View className='flex flex-col gap-y-3'>
             <Pressable
               onPress={handleContinue}
               disabled={!startDate || !endDate}
               className={`py-4 rounded-full ${
-                startDate && endDate ? "bg-[#FF6B4A]" : "bg-gray-300"
+                startDate && endDate ? 'bg-[#FF6B4A]' : 'bg-gray-300'
               }`}
             >
-              <Text className="text-white text-center text-base font-[abeezee] font-bold">
+              <Text className='text-white text-center text-base font-[abeezee] font-bold'>
                 Continue
               </Text>
             </Pressable>
             <Pressable
               onPress={onClose}
-              className="py-4 rounded-full border-2 border-gray-300"
+              className='py-4 rounded-full border-2 border-gray-300'
             >
-              <Text className="text-black text-center text-base font-[abeezee]">
+              <Text className='text-black text-center text-base font-[abeezee]'>
                 Cancel
               </Text>
             </Pressable>

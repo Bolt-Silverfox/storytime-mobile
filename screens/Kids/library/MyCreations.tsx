@@ -1,36 +1,26 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  ScrollView,
-  TextInput,
-} from "react-native";
+import { RouteProp, useNavigation } from "@react-navigation/native";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
+import { Search } from "lucide-react-native";
 import React, { useMemo, useState } from "react";
-import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import {
   KidsLibraryNavigatorParamList,
   KidsLibraryNavigatorProps,
 } from "../../../Navigation/KidsLibraryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
-import { ContinueReading } from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
-import { BookReading } from "./ContinueReading";
-import { Search } from "lucide-react-native";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
+import { BookReading } from "./ContinueReading";
 export type KidsLibraryNavigatorRouteProp = RouteProp<
   KidsLibraryNavigatorParamList,
   "myCreations"
 >;
 
 export default function MyCreations() {
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
+  const { childId } = useKidNavigator();
   const [searchText, setSearchText] = useState("");
-  const { data: createdStories } = useGetCreatedStories(params.childId);
+  const { data: createdStories } = useGetCreatedStories(childId!);
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
 
   const filteredCreatedStories = useMemo(

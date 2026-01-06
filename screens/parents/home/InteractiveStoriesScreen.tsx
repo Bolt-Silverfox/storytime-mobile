@@ -397,7 +397,7 @@ export default function InteractiveStoryScreen({ route, navigation }: any) {
           </View>
 
           {/* read-along row with toggle */}
-          <View className="flex-row items-center py-2 px-4 w-[90%] border border-[#FAF4F2] rounded-2xl">
+          <View className="flex-row items-center py-2 px-4 w-[90%] border border-border-lighter rounded-2xl">
             <Text className="text-lg font-[abeezee] flex-1">
               Read along with Cosmo
             </Text>

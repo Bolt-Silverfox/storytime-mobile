@@ -1,45 +1,20 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import React, { useMemo, useState } from "react";
-import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
-import {
-  KidsLibraryNavigatorParamList,
-  KidsLibraryNavigatorProps,
-} from "../../../Navigation/KidsLibraryNavigator";
-import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
-import { ContinueReading } from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
-import { BookReading } from "./ContinueReading";
+import { useNavigation } from "@react-navigation/native";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
 import { Search } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
-
-type KidsLibraryNavigatorRouteProp = RouteProp<
-  KidsLibraryNavigatorParamList,
-  "completed"
->;
+import { BookReading } from "./ContinueReading";
 
 export default function LibraryCompleted() {
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
+  const { childId } = useKidNavigator();
   const [searchText, setSearchText] = useState("");
-  const { isPending, error, data, refetch } = useGetKidById(params.childId);
-  const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
-  const { data: completedStories } = useGetCompletedStories(params.childId);
+  const { data: completedStories } = useGetCompletedStories(childId!);
   const filteredCompletedStories = useMemo(
     () => filterStoriesByTitle(completedStories || [], searchText),
     [completedStories, searchText]

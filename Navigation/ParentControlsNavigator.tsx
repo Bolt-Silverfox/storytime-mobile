@@ -18,7 +18,7 @@ type ParentControlNavigatorParamList = {
   linkChild: { childId: string };
   contentFilter: { childId: string };
   excludeStoryTags: { childId: string };
-  recordVoice: { childId: string };
+  recordVoice: { childId?: string };
   customizeReadingVoices: { childId: string };
 
   setBedtime: { childId: string };

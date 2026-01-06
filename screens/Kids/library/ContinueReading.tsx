@@ -1,42 +1,34 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  ScrollView,
-  ImageBackground,
-  TextInput,
-} from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from "@react-navigation/native";
+import { ArrowLeft2, Clock } from "iconsax-react-nativejs";
 import { Ellipsis, Search } from "lucide-react-native";
-import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
+import React, { useEffect, useMemo, useState } from "react";
 import {
-  KidsLibraryNavigatorParamList,
-  KidsLibraryNavigatorProps,
-} from "../../../Navigation/KidsLibraryNavigator";
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
+import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
-import { fi } from "zod/v4/locales";
-
-type KidsLibraryNavigatorRouteProp = RouteProp<
-  KidsLibraryNavigatorParamList,
-  "continueReading"
->;
 
 export default function ContinueReadingLibrary() {
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
+  const { childId } = useKidNavigator();
   const [searchText, setSearchText] = useState("");
   const {
     isPending: ContinueReadingIsPending,
     error: ContinueReadingError,
     refetch: refetchContinueReadingStories,
     data: continueReading,
-  } = useGetContinueReading(params.childId);
+  } = useGetContinueReading(childId!);
 
   const filteredContinueReading = useMemo(
     () => filterStoriesByTitle(continueReading || [], searchText),

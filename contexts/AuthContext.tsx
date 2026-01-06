@@ -35,7 +35,7 @@ type AuthFnTypes = {
     email: string;
     password: string;
     fullName: string;
-    title: string;
+    nationality: string;
     setErrorCb: SetErrorCallback;
   }) => void;
   verifyEmail: (data: { token: string; setErrorCb: SetErrorCallback }) => void;
@@ -98,6 +98,7 @@ type AuthFnTypes = {
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
+  deleteAccount: (setErrorCb: SetErrorCallback) => void;
 };
 
 type AuthContextType = {
@@ -121,6 +122,7 @@ type AuthContextType = {
   validatePinResetOtp: AuthFnTypes["validatePinResetOtp"];
   resetPinWithOtp: AuthFnTypes["resetPinWithOtp"];
   updateInAppPin: AuthFnTypes["updateInAppPin"];
+  deleteAccount: AuthFnTypes["deleteAccount"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -255,7 +257,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     email,
     password,
     fullName,
-    title,
+    nationality,
     setErrorCb,
   }) => {
     setErrorCb("");
@@ -265,7 +267,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         jwt: string;
         refreshToken: string;
       }>
-    >(() => auth.signup({ email, password, fullName, title }));
+    >(() =>
+      auth.signup({ email, password, fullName, nationality, role: "parent" })
+    );
+    console.log("signup resposne", signupData);
     if (!signupData.success) {
       setErrorCb(signupData.message);
       return;
@@ -542,6 +547,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
+  const deleteAccount: AuthFnTypes["deleteAccount"] = async (setErrorCb) => {
+    setErrorCb("");
+    const request = await authTryCatch<AuthResponse>(() =>
+      auth.deleteAccount()
+    );
+    if (!request.success) {
+      setErrorCb(request.message);
+      return;
+    }
+    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+    setUser(null);
+    setErrorMessage(undefined);
+  };
+
   const providerReturnValues = {
     user,
     setUser,
@@ -563,6 +582,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     validatePinResetOtp,
     resetPinWithOtp,
     changePassword,
+    deleteAccount,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>

@@ -1,17 +1,23 @@
 import { Dispatch, SetStateAction } from "react";
 import { Modal, Pressable, Text, View } from "react-native";
-
-const ageRanges = ["1 - 4", "5 - 8", "9 - 12"];
+import { ageRange } from "../../data";
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
-  selectAge: Dispatch<SetStateAction<string>>;
+  selectAge?: Dispatch<SetStateAction<string>>;
+  handleSelectAge?: (age: string) => void;
 };
 
-const AgeSelectionModal = ({ isOpen, onClose, selectAge }: Props) => {
+const AgeSelectionModal = ({
+  isOpen,
+  onClose,
+  selectAge,
+  handleSelectAge,
+}: Props) => {
   const onSelect = (range: string) => {
-    selectAge(range);
+    selectAge?.(range);
+    handleSelectAge?.(range);
     onClose();
   };
   return (
@@ -29,7 +35,7 @@ const AgeSelectionModal = ({ isOpen, onClose, selectAge }: Props) => {
         </Text>
 
         <View className="flex flex-col gap-y-3">
-          {ageRanges.map((range) => (
+          {ageRange.map((range) => (
             <Pressable
               key={range}
               onPress={() => onSelect(range)}

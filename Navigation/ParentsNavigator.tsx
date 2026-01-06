@@ -1,28 +1,36 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
-import colours from "../colours";
-import Icon from "../components/Icon";
-import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
-import ParentControlNavigator from "./ParentControlsNavigator";
-import ParentHomeNavigator from "./ParentHomeNavigator";
-import ParentProfileNavigator, {
-  ParentProfileNavigatorParamList,
-} from "./ParentProfileNavigator";
-import ParentReportNavigator from "./ParentsReportNavigator";
 import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { AlignBottom, Profile, SecurityUser } from "iconsax-react-nativejs";
 import { Heart } from "lucide-react-native";
+import colours from "../colours";
+import Icon from "../components/Icon";
+import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
+import NotificationsNavigator, {
+  NotificationsNavigatorParamList,
+} from "./NotificationsNavigator";
+import ParentControlNavigator from "./ParentControlsNavigator";
+import ParentHomeNavigator, {
+  ParentHomeNavigatorParamList,
+} from "./ParentHomeNavigator";
+import ParentProfileNavigator, {
+  ParentProfileNavigatorParamList,
+} from "./ParentProfileNavigator";
+import ParentReportNavigator from "./ParentsReportNavigator";
+import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
 
 type ParentsNavigatorParamList = {
-  home: undefined;
+  home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
   reports: undefined;
   controls: undefined;
   favourite: undefined;
   profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
+  getPremium: undefined;
+  notifications: NavigatorScreenParams<NotificationsNavigatorParamList>;
 };
 
 type ParentsNavigatorProp = BottomTabNavigationProp<ParentsNavigatorParamList>;
@@ -81,7 +89,7 @@ const ParentsTabNavigator = () => {
       />
       <Tab.Screen
         name="favourite"
-        component={FavouriteScreen}
+        component={ParentsFavouritesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Heart color={focused ? colours.primary : colours.black} />
@@ -95,18 +103,6 @@ const ParentsTabNavigator = () => {
       <Tab.Screen
         name="profile"
         component={ParentProfileNavigator}
-        // options={{
-        //   tabBarIcon: ({ focused }) => (
-        //     <Icon
-        //       name="User"
-        //       color={focused ? colours.primary : colours.black}
-        //     />
-        //   ),
-        //   tabBarActiveTintColor: colours.primary,
-        //   tabBarLabelStyle: {
-        //     textTransform: "capitalize",
-        //   },
-        // }},
         options={({ route }) => {
           const routeName = getFocusedRouteNameFromRoute(route) ?? "indexPage";
           return {
@@ -117,10 +113,23 @@ const ParentsTabNavigator = () => {
             tabBarLabelStyle: {
               textTransform: "capitalize",
             },
-            // tabBarStyle: {
-            //   opacity: routeName === "indexPage" ? 100 : 0,
-            // },
           };
+        }}
+      />
+      <Tab.Screen
+        name="getPremium"
+        component={GetPremiumScreen}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="notifications"
+        component={NotificationsNavigator}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
         }}
       />
     </Tab.Navigator>

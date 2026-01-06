@@ -1,25 +1,14 @@
-import React from "react";
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
+import React from "react";
 import BuddySelectionScreen from "../screens/Kids/BuddySelectionScreen";
 import KidWelcomeScreen from "../screens/Kids/KidWelcomeScreen";
-import ChooseHero from "../screens/Kids/ChooseHero";
-import StoryModeSelector from "../screens/Kids/Toddlers/StoryModeSelector";
-import StoryInteractionScreen from "../screens/Kids/Toddlers/StoryInteraction";
-import StoryReaderScreen from "../screens/Kids/Toddlers/StoryReaderScreen";
-import ChallengeScreen from "../screens/Kids/Toddlers/DailyChallengeIntroScreen";
 
 export type KidsSetupNavigatorParamList = {
-  buddySelectionPage: { childId: string};
-  welcomeScreen: { selected: string; childId: string };
-  chooseHero: { selected: string; childId: string };
-  storyModeSelector: { storyId?: string; story?: any; childId?: string; };
-  storyInteraction: { storyId: string; mode?: string; voice?: string; childId?: string; };
-  storyReader: { storyId: string; mode?: string; voice?: string, childId?: string };
-  challenge: { storyId?: string; childId?: string };
-
+  buddySelectionPage: undefined;
+  welcomeScreen: { selected: string };
 };
 
 const SetupStack = createNativeStackNavigator<KidsSetupNavigatorParamList>();
@@ -34,17 +23,6 @@ const KidSetupNavigator = () => {
         component={BuddySelectionScreen}
       />
       <SetupStack.Screen name="welcomeScreen" component={KidWelcomeScreen} />
-      <SetupStack.Screen name="chooseHero" component={ChooseHero} />
-      <SetupStack.Screen
-        name="storyModeSelector"
-        component={StoryModeSelector}
-      />
-      <SetupStack.Screen
-        name="storyInteraction"
-        component={StoryInteractionScreen}
-      />
-      <SetupStack.Screen name="storyReader" component={StoryReaderScreen} />
-      <SetupStack.Screen name="challenge" component={ChallengeScreen} />
     </SetupStack.Navigator>
   );
 };

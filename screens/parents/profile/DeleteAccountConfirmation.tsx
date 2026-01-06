@@ -30,7 +30,7 @@ export default function DeleteAccount() {
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
-  const { deleteAccount, isLoading } = useAuth();
+  const { isLoading, deleteAccount } = useAuth();
 
   const handleSubmit = async () => {
     setErrors({});
