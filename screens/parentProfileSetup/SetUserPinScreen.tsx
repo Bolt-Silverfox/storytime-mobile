@@ -18,17 +18,12 @@ const SetUserPinScreen = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [error, setError] = useState("");
   const [pin, setPin] = useState("");
-  const [confirmPin, setConfirmPin] = useState("");
   const { isLoading, setInAppPin, user } = useAuth();
   const [success, setSuccess] = useState(false);
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
 
   const onSubmit = () => {
-    if (pin !== confirmPin) {
-      setError("Both pins must match");
-      return;
-    }
     setInAppPin({
       pin,
       setErrorCb: setError,
@@ -45,7 +40,7 @@ const SetUserPinScreen = () => {
     navigator.replace("parentProfileSetup", { screen: "enableBiometrics" });
   };
 
-  const isButtonDisabled = pin !== confirmPin || !pin || !confirmPin;
+  const isButtonDisabled = pin.length < 6;
 
   return (
     <View className="flex flex-1 pb-5 bg-bgLight">
@@ -75,21 +70,6 @@ const SetUserPinScreen = () => {
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
-            theme={{
-              containerStyle: { width: "auto" },
-              pinCodeContainerStyle: styles.box,
-              pinCodeTextStyle: styles.text,
-              focusedPinCodeContainerStyle: styles.boxFocused,
-            }}
-            focusColor="blue"
-          />
-        </View>
-        <View className="flex flex-col gap-y-2 mx-auto max-w-screen-md w-full">
-          <Text className="font-[abeezee]">Confirm your Pin</Text>
-          <OtpInput
-            numberOfDigits={6}
-            onTextChange={(text) => setConfirmPin(text)}
             onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },

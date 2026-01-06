@@ -171,6 +171,12 @@ const auth = {
     });
     return await response.json();
   },
+  deleteAccount: async () => {
+    const request = await apiFetch(`${BASE_URL}/user/me?permanent=true`, {
+      method: "DELETE",
+    });
+    return await request.json();
+  },
 };
 
 export default auth;

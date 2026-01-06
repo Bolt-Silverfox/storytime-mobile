@@ -1,5 +1,6 @@
-import { ActivityIndicator, Image, Pressable, Text, View } from "react-native";
-import useGetStoryBuddies from "../hooks/tanstack/queryHooks/useGetStoryBuddies";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Image, Pressable, Text, View } from "react-native";
+import queryGetStoryBuddies from "../hooks/tanstack/queryHooks/useGetStoryBuddies";
 import ErrorComponent from "./ErrorComponent";
 
 const BuddySelectionComponent = ({
@@ -9,17 +10,16 @@ const BuddySelectionComponent = ({
   selected: string;
   setSelected: (str: string) => void;
 }) => {
-  const { data, error, refetch, isPending } = useGetStoryBuddies();
-  if (isPending) return <ActivityIndicator size={"large"} />;
+  const { data, error, refetch } = useSuspenseQuery(queryGetStoryBuddies());
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
   return (
-    <View className="flex flex-1 flex-row items-center flex-wrap gap-x-2 justify-center">
-      {data?.map((buddy) => (
+    <View className="flex flex-1 flex-row items-center flex-wrap gap-x-2 gap-y-4 justify-center">
+      {data.map((buddy) => (
         <Pressable
           key={buddy.id}
           onPress={() => setSelected(buddy.id)}
-          className={`rounded-3xl h-[275px] py-10 w-[180px] border ${selected === buddy.id ? "border-2 border-purple bg-purple/10" : "border-black/20 border"}`}
+          className={`rounded-3xl  h-[350px] py-10 w-[191px] ${selected === buddy.id ? "border-2  border-purple bg-white" : ""}`}
         >
           <View className="flex-1">
             <Image
@@ -28,9 +28,11 @@ const BuddySelectionComponent = ({
               alt={`Picture of ${buddy.name}`}
             />
           </View>
-          <Text className="font-[quilka] text-xl text-center">
-            {buddy.name}
-          </Text>
+          <View className="bg-purple h-16 mt-5 rounded-full w-[153px] mx-auto flex justify-center items-center">
+            <Text className="font-[quilka] text-xl capitalize text-white text-center">
+              {buddy.name}
+            </Text>
+          </View>
         </Pressable>
       ))}
     </View>

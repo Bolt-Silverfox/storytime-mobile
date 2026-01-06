@@ -98,6 +98,7 @@ type AuthFnTypes = {
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
+  deleteAccount: (setErrorCb: SetErrorCallback) => void;
 };
 
 type AuthContextType = {
@@ -106,21 +107,22 @@ type AuthContextType = {
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
   logout: () => void;
-  login: AuthFnTypes['login'];
-  signUp: AuthFnTypes['signUp'];
-  verifyEmail: AuthFnTypes['verifyEmail'];
-  requestPasswordReset: AuthFnTypes['requestPasswordReset'];
-  resendVerificationEmail: AuthFnTypes['resendVerificationEmail'];
-  validatePasswordReset: AuthFnTypes['validatePasswordReset'];
-  resetPassword: AuthFnTypes['resetPassword'];
-  // handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
-  changePassword: AuthFnTypes['changePassword'];
-  setInAppPin: AuthFnTypes['setInAppPin'];
-  verifyInAppPin: AuthFnTypes['verifyInAppPin'];
-  requestPinReset: AuthFnTypes['requestPinReset'];
-  validatePinResetOtp: AuthFnTypes['validatePinResetOtp'];
-  resetPinWithOtp: AuthFnTypes['resetPinWithOtp'];
-  updateInAppPin: AuthFnTypes['updateInAppPin'];
+  login: AuthFnTypes["login"];
+  signUp: AuthFnTypes["signUp"];
+  verifyEmail: AuthFnTypes["verifyEmail"];
+  requestPasswordReset: AuthFnTypes["requestPasswordReset"];
+  resendVerificationEmail: AuthFnTypes["resendVerificationEmail"];
+  validatePasswordReset: AuthFnTypes["validatePasswordReset"];
+  resetPassword: AuthFnTypes["resetPassword"];
+  handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  changePassword: AuthFnTypes["changePassword"];
+  setInAppPin: AuthFnTypes["setInAppPin"];
+  verifyInAppPin: AuthFnTypes["verifyInAppPin"];
+  requestPinReset: AuthFnTypes["requestPinReset"];
+  validatePinResetOtp: AuthFnTypes["validatePinResetOtp"];
+  resetPinWithOtp: AuthFnTypes["resetPinWithOtp"];
+  updateInAppPin: AuthFnTypes["updateInAppPin"];
+  deleteAccount: AuthFnTypes["deleteAccount"];
 };
 
 type AuthSuccessResponse<T = { message: string }> = {
@@ -545,6 +547,20 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
+  const deleteAccount: AuthFnTypes["deleteAccount"] = async (setErrorCb) => {
+    setErrorCb("");
+    const request = await authTryCatch<AuthResponse>(() =>
+      auth.deleteAccount()
+    );
+    if (!request.success) {
+      setErrorCb(request.message);
+      return;
+    }
+    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+    setUser(null);
+    setErrorMessage(undefined);
+  };
+
   const providerReturnValues = {
     user,
     setUser,
@@ -566,6 +582,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     validatePinResetOtp,
     resetPinWithOtp,
     changePassword,
+    deleteAccount,
   };
   return (
     <AuthContext.Provider value={providerReturnValues}>

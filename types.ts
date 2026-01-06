@@ -195,6 +195,24 @@ type Story = {
 
 type ChildStoryStatus = "ongoing" | "completed";
 
+type StoryBuddy = {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string;
+  type: string;
+  imageUrl: string;
+  profileAvatarUrl: string;
+  isActive: boolean;
+  themeColor: string;
+  ageGroupMin: number;
+  ageGroupMax: number;
+  createdAt: string;
+  updatedAt: string;
+  isDeleted: boolean;
+  deletedAt: string | null;
+};
+
 export type {
   User,
   Profile,
@@ -210,4 +228,5 @@ export type {
   LearningExpectation,
   Story,
   ChildStoryStatus,
+  StoryBuddy,
 };

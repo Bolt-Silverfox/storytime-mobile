@@ -1,34 +1,25 @@
+import { useNavigation } from "@react-navigation/native";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
+import { Search } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
 import {
-  View,
-  Text,
+  ImageBackground,
   Pressable,
   ScrollView,
-  ImageBackground,
+  Text,
   TextInput,
+  View,
 } from "react-native";
-import React, { useMemo, useState } from "react";
-import { ArrowLeft2 } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Search } from "lucide-react-native";
-import {
-  KidsLibraryNavigatorParamList,
-  KidsLibraryNavigatorProps,
-} from "../../../Navigation/KidsLibraryNavigator";
+import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
-import { BookReading } from "./ContinueReading";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
-
-
-export type KidsLibraryNavigatorRouteProp = RouteProp<
-  KidsLibraryNavigatorParamList,
-  "continueReading"
->;
-
+import { BookReading } from "./ContinueReading";
 
 export default function LibraryDownloads() {
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
-  const { data: kidDownloads } = useGetDownloadStories(params.childId);
+  const { childId } = useKidNavigator();
+  const { data: kidDownloads } = useGetDownloadStories(childId!);
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   const [searchText, setSearchText] = useState("");
 

@@ -1,40 +1,24 @@
-import {
-  View,
-  Text,
-  Image,
-  Pressable,
-  ActivityIndicator,
-  ScrollView,
-} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import React, { Suspense } from "react";
-import KidAvatar from "../../../components/KidAvatar";
-import useGetStoryBuddyById from "../../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
-import { Book, RotuteProps } from "./KidsLibraryScreen";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import { ActivityIndicator, ScrollView, Text, View } from "react-native";
 import ErrorComponent from "../../../components/ErrorComponent";
+import KidAvatar from "../../../components/KidAvatar";
+import KidBookItem from "../../../components/kids/KidBookItem";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import queryKidsStories from "../../../hooks/tanstack/queryHooks/queryKidsStories";
+import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
-import defaultStyles from "../../../styles";
-import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
 
 export default function AllStories() {
-  const { params } = useRoute<RotuteProps>();
+  const { childId } = useKidNavigator();
+  const { data } = useGetKidById(childId!);
+  const { data: stories } = useSuspenseQuery(queryKidsStories(childId!));
 
-  const { isPending, error, data, refetch } = useGetKidById(params.childId);
-  const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
   const parentNav = useNavigation<ProtectedRoutesNavigationProp>();
   const navigation = useNavigation<KidsTabNavigatorProp>();
-  //   const libNav = useNavigation<KidsLibraryNavigatorProps>();
 
-  if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
   if (!data)
     return (
       <ErrorComponent
@@ -42,13 +26,6 @@ export default function AllStories() {
         refetch={() => navigation.goBack()}
       />
     );
-  //   if (buddyError)
-  //     return (
-  //       <ErrorComponent
-  //         message={buddyError.message ?? "Buddy not found"}
-  //         refetch={refetchBuddy}
-  //       />
-  //     );
   return (
     <View className="bg-bg-light flex-1">
       <View className="flex flex-row  pt-[14] bg-white px-[16]   items-center gap-x-3">
@@ -69,7 +46,7 @@ export default function AllStories() {
         <Suspense fallback={<ActivityIndicator size={"large"} />}>
           <View className="flex-row flex-wrap gap-5 justify-center">
             {stories.map((story) => (
-              <Book key={story.id} story={story} />
+              <KidBookItem key={story.id} story={story} />
             ))}
           </View>
         </Suspense>

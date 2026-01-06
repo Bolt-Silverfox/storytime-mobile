@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react-native";
 import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
 import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 
 const themes = [
   {
@@ -47,6 +48,7 @@ const themes = [
 export default function ChangekidTheme() {
   const [selected, setSelected] = useState<string | null>(null);
   const navigator = useNavigation<kidsProfileNavigatorProp>();
+  const { childId } = useKidNavigator();
 
   const renderItem = ({ item }: { item: (typeof themes)[0] }) => (
     <Pressable

@@ -1,63 +1,50 @@
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
+import useKidNavigator from "../contexts/KidNavigatorContext";
+import { queryGetUserKids } from "../hooks/tanstack/queryHooks/useGetUserKids";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import ChildrenEmptyState from "./emptyState/ChildrenEmptyState";
 import ErrorComponent from "./ErrorComponent";
 import KidAvatar from "./KidAvatar";
 
 const UserKids = () => {
-  const { data, isPending, error, refetch } = useGetUserKids();
-  const navigation = useNavigation<ProtectedRoutesNavigationProp>();
+  const { data, isPending, error, refetch } = useQuery(queryGetUserKids());
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const { setChildId } = useKidNavigator();
 
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
   if (isPending) return <ActivityIndicator size={"large"} />;
+
+  const onNavigate = (kidId: string, storyBuddyId: string | null) => {
+    if (storyBuddyId) {
+      setChildId(kidId);
+      navigator.navigate("kid", {
+        screen: "index",
+        params: { screen: "home" },
+      });
+    } else {
+      setChildId(kidId);
+      navigator.navigate("kid", {
+        screen: "setup",
+        params: {
+          screen: "buddySelectionPage",
+        },
+      });
+    }
+  };
   return (
     <View className="flex flex-row justify-around flex-wrap gap-y-6 gap-x-1">
       {data?.length ? (
         data?.map((kid) => (
           <Pressable
-            onPress={async () => {
-              if (kid.storyBuddyId) {
-                navigation.navigate("kid", {
-                  screen: "index",
-                  params: {
-                    childId: kid.id,
-                  },
-                });
-              } else {
-                navigation.navigate("kid", {
-                  screen: "setup",
-                  params: {
-                    screen: "buddySelectionPage",
-                    params: { childId: kid.id },
-                  },
-                });
-              }
-            }}
+            onPress={() => onNavigate(kid.id, kid.storyBuddyId)}
             key={kid.id}
             className="flex w-[100px] items-center flex-col gap-y-3"
           >
             <KidAvatar
-              onPress={async () => {
-                if (kid.storyBuddyId) {
-                  navigation.navigate("kid", {
-                    screen: "index",
-                    params: {
-                      childId: kid.id,
-                    },
-                  });
-                } else {
-                  navigation.navigate("kid", {
-                    screen: "setup",
-                    params: {
-                      screen: "buddySelectionPage",
-                      params: { childId: kid.id },
-                    },
-                  });
-                }
-              }}
+              onPress={() => onNavigate(kid.id, kid.storyBuddyId)}
               uri={kid.avatar?.url}
               size={87}
             />
@@ -72,7 +59,7 @@ const UserKids = () => {
           </Pressable>
         ))
       ) : (
-        <ChildrenEmptyState navigate={() => navigation.navigate("addChild")} />
+        <ChildrenEmptyState navigate={() => navigator.navigate("addChild")} />
       )}
     </View>
   );
