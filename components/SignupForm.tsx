@@ -1,60 +1,24 @@
-import { useState } from "react";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
+import { lazy, useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
+import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
 import defaultStyles from "../styles";
+import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
-import PasswordInput from "./PasswordInput";
-import TitleModal from "./TitleModal";
-import colours from "../colours";
-import { useNavigation } from "@react-navigation/native";
-import { RootNavigatorProp } from "../Navigation/RootNavigator";
+import Icon from "./Icon";
 import LoadingOverlay from "./LoadingOverlay";
+import PasswordInput from "./PasswordInput";
+import SuspenseWrapper from "./supsense/SuspenseWrapper";
 
-const registerSchema = z
-  .object({
-    fullName: z.string().trim().min(1, "Name is required"),
-    email: z.email("Invalid email, try again"),
-    title: z.string().trim().min(1, "Title is required"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters long")
-      .regex(
-        /(?=.*[a-z])/,
-        "Password must contain at least one lowercase letter"
-      )
-      .regex(
-        /(?=.*[A-Z])/,
-        "Password must contain at least one uppercase letter"
-      )
-      .regex(/(?=.*\d)/, "Password must contain at least one number"),
-    confirmPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long")
-      .regex(
-        /(?=.*[!@#$%^&*])/,
-        "Password must contain at least one special character (!@#$%^&*)"
-      ),
-  })
-  .refine((data) => data.fullName.split(" ").length >= 2, {
-    path: ["fullName"],
-    message: "Full name must contain at least two parts",
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Both password fields must match",
-  });
+const CountriesSelectionModal = lazy(
+  () => import("./modals/CountriesSelectionModal")
+);
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
 
+// cleanup with reducer later
 const SignupForm = () => {
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
@@ -62,8 +26,8 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [title, setTitle] = useState("");
-  const [titleModal, setTitleModal] = useState(false);
+  const [nationality, setNationality] = useState("");
+  const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const { isLoading, signUp } = useAuth();
 
   const onRegister = async () => {
@@ -71,7 +35,7 @@ const SignupForm = () => {
     const result = registerSchema.safeParse({
       fullName,
       email,
-      title,
+      nationality,
       password,
       confirmPassword,
     });
@@ -91,7 +55,7 @@ const SignupForm = () => {
       email: email.trim().toLowerCase(),
       password,
       fullName: fullName.trim(),
-      title,
+      nationality,
       setErrorCb: setApiError,
     });
   };
@@ -100,35 +64,9 @@ const SignupForm = () => {
     <View>
       <View style={styles.form}>
         <ErrorMessageDisplay errorMessage={apiError} />
-        <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Title:</Text>
-          <Pressable
-            className={`border rounded-full h-[50px] font-[abeezee] justify-center text-sm relative px-4 ${errors.title ? "border-red-600" : "border-border"}`}
-            onPress={() => setTitleModal(true)}
-          >
-            <Text>{title || "Select Title"}</Text>
-          </Pressable>
-          <Text style={defaultStyles.smallText}>
-            Example : Mr/Ms/Mrs/Sir/Dr.
-          </Text>
-          <Pressable
-            style={{ position: "absolute", right: 16, top: 35 }}
-            onPress={() => setTitleModal(true)}
-          >
-            <Image source={require("../assets/icons/arrow-down.png")} />
-          </Pressable>
-          {errors.title && (
-            <Text className="text-red-600 text-sm">{errors.title}</Text>
-          )}
-        </View>
-        <TitleModal
-          open={titleModal}
-          setOpen={setTitleModal}
-          setValue={setTitle}
-        />
 
         <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Full Name:</Text>
+          <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
             className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.fullName ? "red" : colours.text}
@@ -141,9 +79,9 @@ const SignupForm = () => {
           )}
         </View>
         <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Email:</Text>
+          <Text style={defaultStyles.label}>Email Address</Text>
           <TextInput
-            placeholder="Enter your email"
+            placeholder="Enter your email address"
             onChangeText={setEmail}
             value={email}
             className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
@@ -151,6 +89,35 @@ const SignupForm = () => {
           />
           {errors.email && (
             <Text className="text-red-600 text-sm">{errors.email}</Text>
+          )}
+        </View>
+        <View style={styles.formItem} className="relative">
+          <Text style={defaultStyles.label}>Nationality</Text>
+          <Pressable
+            className="relative"
+            onPress={() => setIsCountriesModalOpen((o) => !0)}
+          >
+            <TextInput
+              editable={false}
+              placeholder="Select your nationality"
+              onChangeText={setNationality}
+              value={nationality}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.nationality ? "red" : colours.text}
+            />
+            <Pressable
+              onPress={() => setIsCountriesModalOpen((o) => !o)}
+              className="absolute top-4 right-2"
+            >
+              {!isCountriesModalOpen ? (
+                <Icon name="ChevronDown" />
+              ) : (
+                <Icon name="ChevronUp" />
+              )}
+            </Pressable>
+          </Pressable>
+          {errors.nationality && (
+            <Text className="text-red-600 text-sm">{errors.nationality}</Text>
           )}
         </View>
 
@@ -175,6 +142,14 @@ const SignupForm = () => {
       >
         <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
       </Pressable>
+      <SuspenseWrapper>
+        <CountriesSelectionModal
+          isOpen={isCountriesModalOpen}
+          onClose={() => setIsCountriesModalOpen(false)}
+          setCountry={setNationality}
+        />
+      </SuspenseWrapper>
+
       <LoadingOverlay visible={isLoading} />
     </View>
   );

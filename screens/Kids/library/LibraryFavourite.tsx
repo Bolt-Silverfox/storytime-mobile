@@ -1,48 +1,31 @@
+import { useNavigation } from "@react-navigation/native";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ArrowLeft2 } from "iconsax-react-nativejs";
+import { Search } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
 import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  ScrollView,
   ImageBackground,
+  Pressable,
+  ScrollView,
+  Text,
   TextInput,
+  View,
 } from "react-native";
-import React, { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, ArrowLeft2, Clock } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
-import useGetStories, {
-  Story,
-} from "../../../hooks/tanstack/queryHooks/useGetStories";
-import { Ellipsis, Search } from "lucide-react-native";
-import ToddlerBookActionsModal from "../../../components/modals/ToddlerBookActionsModal";
-import {
-  KidsLibraryNavigatorParamList,
-  KidsLibraryNavigatorProps,
-} from "../../../Navigation/KidsLibraryNavigator";
+import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import queryKidsStories from "../../../hooks/tanstack/queryHooks/queryKidsStories";
 import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
-import { BookReading } from "./ContinueReading";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
-
-type KidsLibraryNavigatorRouteProp = RouteProp<
-  KidsLibraryNavigatorParamList,
-  "continueReading"
->;
+import { BookReading } from "./ContinueReading";
 
 export default function LibraryFavourite() {
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
+  const { childId } = useKidNavigator();
   const [searchText, setSearchText] = useState("");
-  const { isPending, error, data, refetch } = useGetKidById(params.childId);
-  const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
-  const { data: kidsFavorites } = useGetKidFavorites(params.childId);
+
+  const { data: stories } = useSuspenseQuery(queryKidsStories(childId!));
+  const { data: kidsFavorites } = useGetKidFavorites(childId!);
   const favouriteStoryIds = kidsFavorites?.map((f) => f.storyId);
   const favouriteStories = stories.filter((story) =>
     favouriteStoryIds?.includes(story.id)

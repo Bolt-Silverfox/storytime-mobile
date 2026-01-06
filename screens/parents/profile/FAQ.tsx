@@ -51,7 +51,7 @@ export default function FaQ() {
           </Text>
           <View
             style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
+            className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.parentAcountManagement.map((faq, i) => (
               <MenuItem
@@ -72,7 +72,7 @@ export default function FaQ() {
           </Text>
           <View
             style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
+            className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.safety.map((faq, i) => (
               <MenuItem
@@ -94,7 +94,7 @@ export default function FaQ() {
           </Text>
           <View
             style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
+            className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.storiesAndAudio.map((faq, i) => (
               <MenuItem
@@ -116,7 +116,7 @@ export default function FaQ() {
           </Text>
           <View
             style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
+            className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.subscription.map((faq, i) => (
               <MenuItem
@@ -138,7 +138,7 @@ export default function FaQ() {
           </Text>
           <View
             style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-[#FAF4F2]"
+            className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.privacy.map((faq, i) => (
               <MenuItem

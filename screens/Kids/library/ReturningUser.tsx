@@ -1,57 +1,49 @@
+import { useNavigation } from "@react-navigation/native";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Search } from "lucide-react-native";
+import React, { useMemo, useState } from "react";
 import {
-  View,
+  FlatList,
+  Image,
+  ImageBackground,
+  Pressable,
+  ScrollView,
   Text,
   TextInput,
-  FlatList,
-  Pressable,
-  Image,
-  ScrollView,
-  ImageBackground,
+  View,
 } from "react-native";
-import React, { useMemo, useState } from "react";
-import defaultStyles from "../../../styles";
-import { Search } from "lucide-react-native";
-import useGetStories from "../../../hooks/tanstack/queryHooks/useGetStories";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import {
   KidsLibraryNavigatorParamList,
   KidsLibraryNavigatorProps,
 } from "../../../Navigation/KidsLibraryNavigator";
-import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
-import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
-import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import queryKidsStories from "../../../hooks/tanstack/queryHooks/queryKidsStories";
 import useGetCompletedStories from "../../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import useGetContinueReading from "../../../hooks/tanstack/queryHooks/useGetContinueReading";
 import useGetCreatedStories from "../../../hooks/tanstack/queryHooks/useGetCreatedStories";
+import useGetDownloadStories from "../../../hooks/tanstack/queryHooks/useGetDownloadStories";
+import useGetKidFavorites from "../../../hooks/tanstack/queryHooks/useGetKidFavorites";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
+import defaultStyles from "../../../styles";
 import { filterStoriesByTitle } from "../../../utils/utils";
 
-type KidsLibraryNavigatorRouteProp = RouteProp<
-  KidsLibraryNavigatorParamList,
-  "continueReading"
->;
-
 export default function ReturningUser() {
-  const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
   const navigation = useNavigation<KidsLibraryNavigatorProps>();
   const [searchText, setSearchText] = useState("");
+  const { childId } = useKidNavigator();
 
-  const {
-    isPending: storiesIsPending,
-    error: storiesError,
-    refetch: refetchStories,
-    data: stories,
-  } = useGetStories(params.childId);
+  const { data: stories } = useSuspenseQuery(queryKidsStories(childId!));
 
   const {
     isPending: ContinueReadingIsPending,
     error: ContinueReadingError,
     refetch: refetchContinueReadingStories,
     data: continueReading,
-  } = useGetContinueReading(params.childId);
-  const { data: completedStories } = useGetCompletedStories(params.childId);
-  const { data: createdStories } = useGetCreatedStories(params.childId);
-  const { data: kidsFavorites } = useGetKidFavorites(params.childId);
-  const { data: kidDownloads } = useGetDownloadStories(params.childId);
+  } = useGetContinueReading(childId!);
+  const { data: completedStories } = useGetCompletedStories(childId!);
+  const { data: createdStories } = useGetCreatedStories(childId!);
+  const { data: kidsFavorites } = useGetKidFavorites(childId!);
+  const { data: kidDownloads } = useGetDownloadStories(childId!);
   const favouriteStoryIds = kidsFavorites?.map((f) => f.storyId);
   const favouriteStories = stories.filter((story) =>
     favouriteStoryIds?.includes(story.id)
@@ -92,12 +84,8 @@ export default function ReturningUser() {
       filteredCreatedStories.length > 0);
 
   const StoryCard = ({ item }: { item: any }) => {
-    const { params } = useRoute<KidsLibraryNavigatorRouteProp>();
     const navigator = useNavigation<KidsLibraryNavigatorProps>();
-    const { data: storyProgress } = useGetStoryProgress(
-      params.childId!,
-      item?.id
-    );
+    const { data: storyProgress } = useGetStoryProgress(childId!!, item?.id);
 
     const progress = (storyProgress?.progress! / 100) * 211;
 
@@ -166,7 +154,7 @@ export default function ReturningUser() {
     const handleNavigation = () => {
       // @ts-ignore - Dynamic navigation with consistent params
       navigation.navigate(navigateTo, {
-        childId: params.childId!,
+        childId: childId!!,
       } as KidsLibraryNavigatorParamList[T]);
     };
 
@@ -208,28 +196,6 @@ export default function ReturningUser() {
       </View>
     );
   };
-
-  // Loading state
-  if (storiesIsPending) {
-    return (
-      <View className="flex-1 bg-[#866EFF] justify-center items-center">
-        <Text style={[defaultStyles.defaultText, { color: "#fff" }]}>
-          Loading stories...
-        </Text>
-      </View>
-    );
-  }
-
-  // Error state
-  if (storiesError) {
-    return (
-      <View className="flex-1 bg-[#866EFF] justify-center items-center">
-        <Text style={[defaultStyles.defaultText, { color: "#fff" }]}>
-          Error loading stories
-        </Text>
-      </View>
-    );
-  }
 
   return (
     <View className="flex-1  items-center gap-x-3 pb-4 ">

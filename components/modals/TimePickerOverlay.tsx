@@ -54,7 +54,7 @@ const TimePickerOverlay = ({ visible, onClose, onConfirm }: Props) => {
           </View>
 
           <TouchableOpacity
-            className="mt-6 bg-blue-600 px-6 py-2 rounded-xl"
+            className="mt-6 bg-blue px-6 py-2 rounded-xl"
             onPress={handleConfirm}
           >
             <Text className="text-white text-base">Done</Text>

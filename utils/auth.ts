@@ -26,8 +26,9 @@ const auth = {
   signup: async (data: {
     email: string;
     password: string;
-    title: string;
+    nationality: string;
     fullName: string;
+    role: string;
   }) => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
@@ -169,6 +170,12 @@ const auth = {
       body: JSON.stringify({ oldPassword, newPassword }),
     });
     return await response.json();
+  },
+  deleteAccount: async () => {
+    const request = await apiFetch(`${BASE_URL}/user/me?permanent=true`, {
+      method: "DELETE",
+    });
+    return await request.json();
   },
 };
 

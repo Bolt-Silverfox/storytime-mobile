@@ -8,6 +8,8 @@ const CustomButton = ({
   textColor,
   borderColor,
   borderWidth,
+  transparent = false,
+  ariaLabel,
 }: {
   text: string;
   disabled?: boolean;
@@ -16,9 +18,23 @@ const CustomButton = ({
   textColor?: string;
   borderColor?: string;
   borderWidth?: number;
+  transparent?: boolean;
+  ariaLabel?: string;
 }) => {
+  if (transparent) {
+    return (
+      <Pressable
+        aria-labelledby={ariaLabel}
+        onPress={onPress}
+        className="border max-w-sm flex w-full flex-row justify-center items-center h-[46px] rounded-full"
+      >
+        <Text className="font-[abeezee] text-black text-base">{text}</Text>
+      </Pressable>
+    );
+  }
   return (
     <Pressable
+      aria-labelledby={ariaLabel}
       onPress={onPress}
       disabled={disabled}
       style={[
@@ -27,7 +43,7 @@ const CustomButton = ({
         borderWidth ? { borderWidth } : null,
         disabled && { opacity: 0.5 },
       ]}
-      className="self-center mx-5 max-sm:max-w-sm w-full py-4 rounded-full mt-4 md:max-w-screen-sm sm:mx-auto bg-primary"
+      className="self-center mx-5 max-w-sm w-full flex justify-center items-center h-[46px] rounded-full mt-4  sm:mx-auto bg-primary"
     >
       <Text
         className="text-center font-[abeezee]"

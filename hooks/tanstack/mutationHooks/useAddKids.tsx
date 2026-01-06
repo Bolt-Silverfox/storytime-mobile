@@ -21,7 +21,7 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     mutationFn: async (
       kids: {
         name: string;
-        avatarId: string;
+        avatarId?: string;
         ageRange: string;
       }[]
     ) => {
@@ -67,6 +67,9 @@ const useAddKids = (numOfKids: number, redirect?: () => void) => {
     onSuccess: async () => {
       queryClient.invalidateQueries({
         queryKey: ["userKids", user?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["userProfile", user?.id],
       });
 
       if (!user) return;

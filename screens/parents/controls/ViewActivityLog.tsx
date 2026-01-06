@@ -29,35 +29,36 @@ const ViewActivityLog = () => {
     );
 
   return (
-    <View className="flex-1 ">
+    <View className="flex-1 bg-bgLight">
       <PageTitle goBack={() => navigator.goBack()} title="Activity Logs" />
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="flex-1 bg-bgLight"
-        contentContainerClassName="min-h-full py-5 gap-y-10 max-w-screem-md mx-auto w-full"
-      >
-        {data.length > 0 ? (
-          <View className="flex flex-col gap-y-4">
-            {data.map((activity) => (
-              <View
-                className="p-4 rounded-2xl bg-slate-200 mx-5"
-                key={activity.id}
-              >
-                <Text className="text-xl font-[abeezee] mb-10">
-                  {new Date(activity.createdAt).toLocaleString()}
-                </Text>
-                <Text>Device : {activity.deviceName}</Text>
-                <Text>IP : {activity.ipAddress}</Text>
-                <Text>Status : {activity.status}</Text>
-                <Text>Detail : {activity.details}</Text>
-              </View>
-            ))}
-          </View>
-        ) : (
-          <EmptyState />
-        )}
-      </ScrollView>
+      <View className="flex-1 max-w-screen-md mx-auto w-full">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1 bg-bgLight"
+          contentContainerClassName="min-h-full py-5 gap-y-10 "
+        >
+          {data.length > 0 ? (
+            <View className="flex flex-col gap-y-4">
+              {data.map((activity) => (
+                <View
+                  className="p-4 rounded-2xl bg-slate-200 mx-5"
+                  key={activity.id}
+                >
+                  <Text className="text-xl font-[abeezee] mb-10">
+                    {new Date(activity.createdAt).toLocaleString()}
+                  </Text>
+                  <Text>Device : {activity.deviceName}</Text>
+                  <Text>IP : {activity.ipAddress}</Text>
+                  <Text>Status : {activity.status}</Text>
+                  <Text>Detail : {activity.details}</Text>
+                </View>
+              ))}
+            </View>
+          ) : (
+            <EmptyState />
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 };
@@ -66,7 +67,7 @@ export default ViewActivityLog;
 
 const EmptyState = () => {
   return (
-    <View className="rounded-lg mx-5 h-[30%] justify-center items-center flex flex-col bg-[#f5f5f5]">
+    <View className="rounded-lg mx-5 h-full justify-center items-center flex flex-col ">
       <Text className="text-xl font-[abeezee] text-dark text-center">
         No activity reports yet
       </Text>

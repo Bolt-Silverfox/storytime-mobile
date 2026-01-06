@@ -61,8 +61,8 @@ const ContentFilter = () => {
       <PageTitle title="Content Filters" goBack={() => navigator.goBack()} />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1 bg-bgLight"
-        contentContainerClassName="min-h-full max-w-screen-md mx-auto w-full "
+        className="bg-bgLight"
+        contentContainerClassName="flex max-w-screen-md mx-auto w-full "
       >
         <Text className="text-base font-[abeezee] my-5 text-center">
           Select the stories your child can read
@@ -129,7 +129,7 @@ const ContentFilter = () => {
 
         <LoadingOverlay visible={isPending} />
       </ScrollView>
-      <View className="mb-5">
+      <View className="pb-5 bg-white">
         <CustomButton
           disabled={isUpdating || !filterByAge}
           text={isUpdating ? "Saving..." : "Save Changes"}

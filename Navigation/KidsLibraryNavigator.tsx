@@ -2,35 +2,31 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import KidsLibraryScreen from "../screens/Kids/library/KidsLibraryScreen";
-import BookDetailsScreen from "../screens/Kids/BookDetailsScreen";
-import { RouteProp, useRoute } from "@react-navigation/native";
-import { KidsTabNavigatorParamList } from "./KidsTabNavigator";
-import AllStories from "../screens/Kids/library/AllStories";
-import LibraryFavourite from "../screens/Kids/library/LibraryFavourite";
-import ContinueReading from "../screens/Kids/library/ContinueReading";
-import LibraryDownloads from "../screens/Kids/library/LibraryDownloads";
-import MyCreations from "../screens/Kids/library/MyCreations";
-import LibraryCompleted from "../screens/Kids/library/LibraryCompleted";
-import ReturningUser from "../screens/Kids/library/ReturningUser";
-import ContinueReadingLibrary from "../screens/Kids/library/ContinueReading";
-import useGetContinueReading from "../hooks/tanstack/queryHooks/useGetContinueReading";
-import { useEffect, useState } from "react";
 import LoadingOverlay from "../components/LoadingOverlay";
+import useKidNavigator from "../contexts/KidNavigatorContext";
 import useGetCompletedStories from "../hooks/tanstack/queryHooks/useGetCompletedStories";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import useGetContinueReading from "../hooks/tanstack/queryHooks/useGetContinueReading";
+import BookDetailsScreen from "../screens/Kids/BookDetailsScreen";
+import AllStories from "../screens/Kids/library/AllStories";
+import ContinueReadingLibrary from "../screens/Kids/library/ContinueReading";
+import KidsLibraryScreen from "../screens/Kids/library/KidsLibraryScreen";
+import LibraryCompleted from "../screens/Kids/library/LibraryCompleted";
+import LibraryDownloads from "../screens/Kids/library/LibraryDownloads";
+import LibraryFavourite from "../screens/Kids/library/LibraryFavourite";
+import MyCreations from "../screens/Kids/library/MyCreations";
+import ReturningUser from "../screens/Kids/library/ReturningUser";
 
 type KidsLibraryNavigatorParamList = {
-  indexPage: { childId: string };
-  allStories: { childId: string };
+  indexPage: undefined;
+  allStories: undefined;
   bookDetails: { bookId: string };
   readBook: { bookId: string };
-  returningUser: { childId: string };
-  continueReading: { childId: string };
-  favourite: { childId: string };
-  downloads: { childId: string };
-  myCreations: { childId: string };
-  completed: { childId: string };
+  returningUser: undefined;
+  continueReading: undefined;
+  favourite: undefined;
+  downloads: undefined;
+  myCreations: undefined;
+  completed: undefined;
 };
 
 type KidsLibraryNavigatorProps =
@@ -38,28 +34,8 @@ type KidsLibraryNavigatorProps =
 
 const Stack = createNativeStackNavigator<KidsLibraryNavigatorParamList>();
 
-type KidsTabNavigatorRouteProp = RouteProp<
-  KidsTabNavigatorParamList,
-  "library"
->;
-
-type KidsLibraryNavigatorRouteProp =
-  RouteProp<KidsLibraryNavigatorParamList, 'continueReading'>;
-
 const KidsLibraryNavigator = () => {
-  const { params } = useRoute<KidsTabNavigatorRouteProp>();
-  const [childId, setChildId] = useState<string | null>(null);
-  console.log(childId, "childId");
-  useEffect(() => {
-    const loadKid = async () => {
-      const id = await AsyncStorage.getItem("currentKid");
-      setChildId(id);
-    };
-
-    loadKid();
-  }, []);
-
-  // const childId = params.childId;
+  const { childId } = useKidNavigator();
   const { data: continueReading, isLoading } = useGetContinueReading(childId!);
   const { data: completedStories, isLoading: completedStoriesLoading } =
     useGetCompletedStories(childId!);
@@ -72,27 +48,15 @@ const KidsLibraryNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       {returningUser ? (
-        <Stack.Screen
-          name="returningUser"
-          component={ReturningUser}
-          initialParams={{ childId: childId! }}
-        />
+        <Stack.Screen name="returningUser" component={ReturningUser} />
       ) : (
-        <Stack.Screen
-          name="indexPage"
-          component={KidsLibraryScreen}
-          initialParams={{ childId: childId! }}
-        />
+        <Stack.Screen name="indexPage" component={KidsLibraryScreen} />
       )}
 
       <Stack.Screen name="allStories" component={AllStories} />
       <Stack.Screen name="bookDetails" component={BookDetailsScreen} />
       <Stack.Screen name="readBook" component={KidsLibraryScreen} />
-      <Stack.Screen
-        name="continueReading"
-        component={ContinueReadingLibrary}
-        initialParams={{ childId: childId! }}
-      />
+      <Stack.Screen name="continueReading" component={ContinueReadingLibrary} />
       <Stack.Screen name="favourite" component={LibraryFavourite} />
       <Stack.Screen name="downloads" component={LibraryDownloads} />
       <Stack.Screen name="myCreations" component={MyCreations} />

@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 
@@ -14,9 +14,11 @@ type Categories = {
   name: string;
   image: string;
   description: string;
+  storyCount: number;
 };
-const useGetStoryCategories = () => {
-  return useSuspenseQuery({
+
+const queryStoryCategories = () => {
+  return queryOptions({
     queryKey: ["storyCategories"],
     queryFn: async () => {
       const url = `${BASE_URL}/stories/categories`;
@@ -32,8 +34,8 @@ const useGetStoryCategories = () => {
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
-    select: (res) => res.data ?? [],
+    select: (res) => res.data,
   });
 };
 
-export default useGetStoryCategories;
+export default queryStoryCategories;
