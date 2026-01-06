@@ -18,18 +18,21 @@ import StoryContentContainer from "../../../components/StoryContentContainer";
 import useStoryMode from "../../../contexts/StoryModeContext";
 import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
 
+// CREATE REUSABLE COMPONENTS FOR STORY MODES
+
 const NewPlainStoryMode = () => {
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const { activeStoryId } = useStoryMode();
+  const [activeParagraph, setActiveParagraph] = useState(0);
   const { isPending, error, refetch, data } = useQuery(
     queryGetStory(activeStoryId!)
   );
   const player = useAudioPlayer(data?.audioUrl);
-  console.log(activeStoryId);
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+  const paragraphs = data.textContent.split(/\n\s*\n/);
   return (
     <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
@@ -63,10 +66,17 @@ const NewPlainStoryMode = () => {
               />
             </Pressable>
           </View>
-          <StoryContentContainer story={data} />
+          <StoryContentContainer
+            story={data}
+            activeParagraph={activeParagraph}
+            setActiveParagraph={setActiveParagraph}
+            paragraphs={paragraphs}
+          />
         </View>
       </ImageBackground>
       <InStoryOptionsModal
+        totalPages={paragraphs.length}
+        currentPage={activeParagraph + 1}
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
       />

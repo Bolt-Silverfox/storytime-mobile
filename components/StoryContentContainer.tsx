@@ -1,5 +1,5 @@
 import { BlurView } from "expo-blur";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { Story } from "../types";
 import Icon from "./Icon";
@@ -12,6 +12,9 @@ import SubscriptionModal from "./modals/SubscriptionModal";
 type PropTypes = {
   story: Story;
   isInteractive?: boolean;
+  paragraphs: string[];
+  activeParagraph: number;
+  setActiveParagraph: Dispatch<SetStateAction<number>>;
 };
 
 type DisplayOptions =
@@ -20,9 +23,13 @@ type DisplayOptions =
   | "quiz"
   | "endOfQuizMessage";
 
-const StoryContentContainer = ({ story, isInteractive = false }: PropTypes) => {
-  const paragraphs = story.textContent.split(/\n\s*\n/);
-  const [activeParagraph, setActiveParagraph] = useState(0);
+const StoryContentContainer = ({
+  story,
+  isInteractive = false,
+  setActiveParagraph,
+  activeParagraph,
+  paragraphs,
+}: PropTypes) => {
   const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");

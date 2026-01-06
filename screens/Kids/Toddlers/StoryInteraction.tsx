@@ -1,35 +1,36 @@
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { ArrowRight, Heart } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
+  ActivityIndicator,
   Image,
   ImageBackground,
   Pressable,
-  ActivityIndicator,
+  Text,
+  View,
 } from "react-native";
-import type { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { ArrowRight, Heart } from "lucide-react-native";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import { KidsSetupNavigatorParamList } from "../../../Navigation/KidsSetupNavigator";
-import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import {
+  KidsTabNavigatorParamList,
+  KidsTabNavigatorProp,
+} from "../../../Navigation/KidsTabNavigator";
 
-type Props = NativeStackScreenProps<
-  KidsSetupNavigatorParamList,
-  "storyInteraction"
->;
+type Props = RouteProp<KidsTabNavigatorParamList, "storyInteraction">;
 
-const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { storyId } = route.params;
-  const storyQuery = useGetStory(storyId);
+const StoryInteractionScreen = () => {
+  const { params } = useRoute<Props>();
+  const storyQuery = useGetStory(params.storyId);
   const story = storyQuery?.data ?? null;
+  const navigator = useNavigation<KidsTabNavigatorProp>();
 
   const [imageLoading, setImageLoading] = useState(true);
   const [imageFailed, setImageFailed] = useState(false);
 
   useEffect(() => {
-    if (!storyId) navigation.goBack();
-  }, [storyId]);
+    if (!params.storyId) navigator.goBack();
+  }, [params.storyId]);
 
   if (storyQuery.isLoading)
     return <LoadingOverlay visible label="Loading story..." />;
@@ -50,7 +51,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
         <Text className="text-center mb-4">No story found.</Text>
         <Pressable
           className="bg-blue px-4 py-2 rounded-md"
-          onPress={() => navigation.goBack()}
+          onPress={() => navigator.goBack()}
         >
           <Text className="text-white">Go back</Text>
         </Pressable>
@@ -138,7 +139,9 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
       <View style={{ height: 40 }} />
       <Pressable
         className="bg-[#866EFF] p-4 flex-row gap-4 items-center justify-center border-b-4 border-[#5942CC] mx-4 mb-4 rounded-full"
-        onPress={() => navigation.navigate("storyModeSelector", { storyId })}
+        onPress={() =>
+          navigator.navigate("storyModeSelector", { storyId: params.storyId })
+        }
       >
         <Text className="font-[quilka] text-3xl text-white">Start reading</Text>
         <ArrowRight size={36} color="#fff" />
@@ -151,7 +154,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
       {/* Back & Heart buttons always on top */}
       <Pressable
         className="absolute top-8 left-2 w-12 h-12 z-30"
-        onPress={() => navigation.goBack()}
+        onPress={() => navigator.goBack()}
       >
         <Image
           source={require("../../../assets/story-home.png")}
@@ -161,7 +164,7 @@ const StoryInteractionScreen: React.FC<Props> = ({ route, navigation }) => {
       </Pressable>
       <Pressable
         className="absolute top-8 right-2 w-12 h-12 z-30"
-        onPress={() => navigation.goBack()}
+        onPress={() => navigator.goBack()}
       >
         <Heart color="#fff" size={24} />
       </Pressable>

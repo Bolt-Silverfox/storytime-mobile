@@ -1,23 +1,25 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
 import {
   Image,
+  ImageSourcePropType,
   Pressable,
   ScrollView,
   Text,
   TextInput,
   View,
 } from "react-native";
-import {
-  PersonalizeKidNavigatorParamList,
-  PersonalizeKidsNavigatorProps,
-} from "../../../Navigation/PersonalizeKidNavigator";
 import colours from "../../../colours";
 import Icon from "../../../components/Icon";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import ChildButton from "../../../components/UI/ChildButton";
-import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 import useCreateStory from "../../../hooks/tanstack/mutationHooks/useCreateStory";
-import LoadingOverlay from "../../../components/LoadingOverlay";
+import {
+  GenerateStoryNavigatorParamList,
+  GenerateStoryNavigatorProps,
+} from "../../../Navigation/GenerateStoryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 
 const themes = [
   {
@@ -49,22 +51,21 @@ const themes = [
 export type ThemeTypes = (typeof themes)[number]["name"];
 
 type RoutePropTypes = RouteProp<
-  PersonalizeKidNavigatorParamList,
+  GenerateStoryNavigatorParamList,
   "customizeStory"
 >;
+
 const CustomizeKidStory = () => {
   const { params } = useRoute<RoutePropTypes>();
-  const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
-  const {
-    heroName,
-    setHeroName,
-    storyTheme,
-    setStoryTheme,
-    avatarSource,
-    setThemeImage,
-  } = useCustomizeStory();
+  const { heroName, setHeroName, avatarSource } = params;
+  const { childId } = useKidNavigator();
+  const navigator = useNavigation<GenerateStoryNavigatorProps>();
+  const [storyTheme, setStoryTheme] = useState<ThemeTypes>("castle");
+  const [themeImage, setThemeImage] = useState<ImageSourcePropType>(
+    require("../../../assets/images/castle.png")
+  );
   const { mutate, isPending } = useCreateStory({
-    kidId: params.childId,
+    kidId: childId!,
     // onSuccess: () => {
     // Alert.alert("Story created successfully");
 

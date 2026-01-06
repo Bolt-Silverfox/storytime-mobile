@@ -9,7 +9,6 @@ import { AlignBottom, Profile, SecurityUser } from "iconsax-react-nativejs";
 import { Heart } from "lucide-react-native";
 import colours from "../colours";
 import Icon from "../components/Icon";
-import FavouriteScreen from "../screens/parents/favourite/FavouriteScreen";
 import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
 import NotificationsNavigator, {
   NotificationsNavigatorParamList,
@@ -22,6 +21,7 @@ import ParentProfileNavigator, {
   ParentProfileNavigatorParamList,
 } from "./ParentProfileNavigator";
 import ParentReportNavigator from "./ParentsReportNavigator";
+import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
 
 type ParentsNavigatorParamList = {
   home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
@@ -89,7 +89,7 @@ const ParentsTabNavigator = () => {
       />
       <Tab.Screen
         name="favourite"
-        component={FavouriteScreen}
+        component={ParentsFavouritesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
             <Heart color={focused ? colours.primary : colours.black} />

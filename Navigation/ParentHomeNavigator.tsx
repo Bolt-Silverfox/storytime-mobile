@@ -16,7 +16,6 @@ import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen
 import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
 import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
-import StoriesListScreen from "../screens/parents/home/StoriesListScreen";
 import ChallengeTrackerNavigator, {
   ChallengeTrackerNavigatorParamList,
 } from "./ChallengeTrackerNavigator";
@@ -68,7 +67,6 @@ const ParentHomeNavigator = () => {
           component={ParentHomeScreen}
           options={{}}
         />
-        <Stack.Screen name="storiesList" component={StoriesListScreen} />
         <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
         <Stack.Screen
           name="interactiveStories"

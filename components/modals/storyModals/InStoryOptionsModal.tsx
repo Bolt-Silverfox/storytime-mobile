@@ -9,10 +9,14 @@ import InStoryModeModal from "./InStoryModeModal";
 type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
   isOptionsModalOpen: boolean;
+  totalPages: number;
+  currentPage: number;
 };
 const InStoryOptionsModal = ({
   isOptionsModalOpen,
   setIsOptionsModalOpen,
+  totalPages,
+  currentPage,
 }: PropTypes) => {
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -25,9 +29,9 @@ const InStoryOptionsModal = ({
       <View className="flex flex-col gap-y-4">
         <ProgressBar
           backgroundColor="#4807EC"
-          currentStep={15}
+          currentStep={currentPage}
           label="Page"
-          totalSteps={20}
+          totalSteps={totalPages}
           height={11}
         />
         <View className="flex flex-row flex-wrap gap-6 justify-center gap-x-3">

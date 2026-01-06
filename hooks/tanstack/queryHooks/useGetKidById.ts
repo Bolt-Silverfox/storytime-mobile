@@ -82,6 +82,8 @@ const queryGetKidById = (id: string) => {
     retryOnMount: false,
     refetchOnWindowFocus: false,
     select: (res) => res.data,
+    staleTime: Infinity,
+    gcTime: 60 * 60 * 10,
   });
 };
 
