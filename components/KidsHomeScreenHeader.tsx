@@ -29,7 +29,7 @@ const KidsHomeScreenHeader = ({ childId }: { childId: string }) => {
   }
 
   return (
-    <View className="flex flex-row pb-4 items-center gap-x-3">
+    <View className="flex bg-white border-b px-4 py-5 border-b-border-lighter flex-row pb-4 items-center gap-x-3">
       <KidAvatar
         uri={data.avatar?.url}
         size={50}

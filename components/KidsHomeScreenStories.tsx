@@ -28,7 +28,7 @@ const KidsHomeScreenStories = ({ kidId }: KidsHomeScreenStoriesProps) => {
   return (
     <FlatList
       data={data}
-      className="flex-1 gap-4"
+      className="flex-1 gap-4 mx-4"
       contentContainerClassName=""
       showsVerticalScrollIndicator={false}
       numColumns={2}

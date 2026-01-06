@@ -3,6 +3,7 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, UserProfile } from "../../../types";
+import { getErrorMessage } from "../../../utils/utils";
 
 const useGetUserProfile = () => {
   const { user } = useAuth();
@@ -21,9 +22,7 @@ const useGetUserProfile = () => {
         if (!userProfile.success) throw new Error(userProfile.message);
         return userProfile;
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : "unexpected error, try again";
-        throw new Error(message);
+        throw new Error(getErrorMessage(err));
       }
     },
     refetchOnMount: false,
