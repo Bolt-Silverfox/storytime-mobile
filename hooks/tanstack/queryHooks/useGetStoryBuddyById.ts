@@ -25,6 +25,7 @@ const queryStoryBuddyById = (id: string) => {
     staleTime: Infinity,
     select: (res) => res.data.data,
     enabled: !!id,
+    gcTime: 60 * 60 * 10,
   });
 };
 
