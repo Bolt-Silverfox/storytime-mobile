@@ -25,6 +25,7 @@ const queryGetKidsStories = (kidId: string, category: ChildStoryStatus) => {
     },
     staleTime: Infinity,
     select: (res) => res.data,
+    gcTime: 60 * 60 * 10,
   });
 };
 
