@@ -2,7 +2,7 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Icon from '../../../components/Icon';
-import { ParentProfileNavigatorProp } from '../../../Navigation/ParentProfileNavigator';
+import { ParntReportNavigatorProp } from '../../../Navigation/ParentsReportNavigator';
 import CustomDateRangeModal from './DateRangeModalComponent';
 import ShareReportModal from './ShareReportModalComponent';
 import { Share2, Star, Target } from 'lucide-react-native';
@@ -31,7 +31,7 @@ interface ScreenTimeData {
 type RouteProps = RouteProp<ParentReportNavigatorParamList, 'reportDetails'>;
 
 const ReportDetailScreen = () => {
-  const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const navigator = useNavigation<ParntReportNavigatorProp>();
   const { params } = useRoute<RouteProps>();
   const childId = params.childId;
   const { data, isLoading, isFetching } = useGetReportByKidId(childId);
@@ -78,10 +78,12 @@ const ReportDetailScreen = () => {
   const maxHours = 5;
 
   const handleDownloadPDF = () => {
-    // navigator.navigate("pdfReportPreview", {
-    //   childId,
-    //   weekRange: getWeekDisplay(),
-    // });
+    if (!data) return;
+    navigator.navigate('pdfReportPreview', {
+      childId,
+      weekRange: getWeekDisplay(),
+      reportData: data,
+    });
   };
 
   const handlePeriodChange = (period: ReportPeriod) => {
@@ -373,11 +375,13 @@ const ReportDetailScreen = () => {
       )}
 
       {/* Share Report Modal */}
-      {isShareModalOpen && (
+      {isShareModalOpen && data && (
         <ShareReportModal
           isOpen={isShareModalOpen}
           onClose={() => setIsShareModalOpen(false)}
-          childName={data?.kidName!}
+          childName={data.kidName}
+          reportData={data}
+          weekRange={getWeekDisplay()}
         />
       )}
     </ScrollView>
