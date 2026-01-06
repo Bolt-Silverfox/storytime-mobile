@@ -4,8 +4,8 @@ import { FlatList, Pressable, View } from "react-native";
 import { KidsTabNavigatorProp } from "../Navigation/KidsTabNavigator";
 import ErrorComponent from "./ErrorComponent";
 import ImageWithFallback from "./parents/ImageWithFallback";
-import queryKidRecommendedStories from "../hooks/tanstack/queryHooks/queryKidsStories";
 import CustomEmptyState from "./emptyState/CustomEmptyState";
+import queryKidsStories from "../hooks/tanstack/queryHooks/queryKidsStories";
 
 interface KidsHomeScreenStoriesProps {
   kidId: string;
@@ -13,9 +13,7 @@ interface KidsHomeScreenStoriesProps {
 
 const KidsHomeScreenStories = ({ kidId }: KidsHomeScreenStoriesProps) => {
   const navigator = useNavigation<KidsTabNavigatorProp>();
-  const { error, refetch, data } = useSuspenseQuery(
-    queryKidRecommendedStories(kidId)
-  );
+  const { error, refetch, data } = useSuspenseQuery(queryKidsStories(kidId));
   const FALLBACK = require("../assets/parents/unseen-world.jpg");
 
   if (error)

@@ -1,36 +1,25 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Image,
-  ScrollView,
-  Pressable,
-} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { CloudMinus, MagicStar } from "iconsax-react-nativejs";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import defaultStyles from "../../../styles";
-import {
-  KidsProfileNavigatorParams,
-  kidsProfileNavigatorProp,
-} from "../../../Navigation/KidsProfileNavigator";
-import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import React from "react";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { KidsNavigatorProp } from "../../../Navigation/KidsNavigator";
+import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
+import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
 import KidAvatar from "../../../components/KidAvatar";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-import { KidsTabNavigatorProp } from "../../../Navigation/KidsTabNavigator";
-import { KidsNavigatorProp } from "../../../Navigation/KidsNavigator";
-import { KidsLibraryNavigatorProps } from "../../../Navigation/KidsLibraryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import { queryGetKidById } from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import defaultStyles from "../../../styles";
 
-type ProfileParams = RouteProp<KidsProfileNavigatorParams, "indexPage">;
 const KidsIndexProfileScreen = () => {
-  const { params } = useRoute<ProfileParams>();
+  const { childId } = useKidNavigator();
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const libraryNav = useNavigation<KidsLibraryNavigatorProps>();
 
   const tabsNavigator = useNavigation<KidsTabNavigatorProp>();
   const parentNavigator = useNavigation<KidsNavigatorProp>();
 
-  const { data, isLoading, isFetching } = useGetKidById(params.childId);
+  const { data, isPending } = useQuery(queryGetKidById(childId!));
   const kidAvatar = data?.avatar?.url;
   const kidName = data?.name;
   const kidAge = data?.ageRange;
@@ -66,11 +55,7 @@ const KidsIndexProfileScreen = () => {
         <View className="mt-[66] gap-[30] mx-auto ">
           <View className="flex-row justify-between max-w-[390] gap-3">
             <Pressable
-              onPress={() =>
-                navigator.navigate("changeKidAvatar", {
-                  childId: params.childId,
-                })
-              }
+              onPress={() => navigator.navigate("changeKidAvatar")}
               className="bg-[#8681FF] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3B34DD]"
             >
               <View className="w-[93] h-[79] absolute -right-[35px] -top-[15px] rounded-full bg-[#938FFE]" />
@@ -88,7 +73,6 @@ const KidsIndexProfileScreen = () => {
               onPress={() =>
                 tabsNavigator.navigate("library", {
                   screen: "continueReading",
-                  params: { childId: params.childId },
                 })
               }
               className="bg-[#FEBADC] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#EC0794]"
@@ -108,7 +92,6 @@ const KidsIndexProfileScreen = () => {
               onPress={() =>
                 parentNavigator.navigate("setup", {
                   screen: "buddySelectionPage",
-                  params: { childId: params.childId },
                 })
               }
               className="bg-[#EFCDFB] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#B362D0]"
@@ -125,11 +108,7 @@ const KidsIndexProfileScreen = () => {
             </Pressable>
 
             <Pressable
-              onPress={() =>
-                navigator.navigate("kidAchievement", {
-                  childId: params.childId,
-                })
-              }
+              onPress={() => navigator.navigate("kidAchievement")}
               className="bg-[#9FFFF7] border-b-[5px] w-[177px] overflow-hidden justify-center items-center h-[169px] rounded-[20px] border-[#3DC4B9]"
             >
               <View className="w-[73px] h-[79px] absolute -left-[35px] top-[50%] -translate-y-1/2 rounded-full bg-[#6FE6DC]" />
@@ -157,7 +136,7 @@ const KidsIndexProfileScreen = () => {
           />
         </View>
       </View>
-      <LoadingOverlay visible={isLoading || isFetching} />
+      <LoadingOverlay visible={isPending} />
     </ScrollView>
   );
 };

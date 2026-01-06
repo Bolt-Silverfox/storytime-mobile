@@ -9,13 +9,14 @@ import UserKids from "../components/UserKids";
 import useAuth from "../contexts/AuthContext";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import defaultStyles from "../styles";
+import useKidNavigator from "../contexts/KidNavigatorContext";
 
 const KidSelectionScreen = () => {
   const { user } = useAuth();
   const { data, isPending, error, refetch } = useGetUserProfile();
+  const { childId } = useKidNavigator();
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible={isPending} />;
-
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
@@ -26,7 +27,6 @@ const KidSelectionScreen = () => {
     }
     navigator.navigate("parents");
   };
-
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}

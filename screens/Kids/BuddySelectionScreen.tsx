@@ -1,4 +1,5 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import React, { lazy, useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import ErrorComponent from "../../components/ErrorComponent";
@@ -6,31 +7,27 @@ import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import SuspenseWrapper from "../../components/supsense/SuspenseWrapper";
 import CustomButton from "../../components/UI/CustomButton";
+import useKidNavigator from "../../contexts/KidNavigatorContext";
 import useSetStoryBuddy from "../../hooks/tanstack/mutationHooks/useSetStoryBuddy";
-import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
-import {
-  KidsSetupNavigatorParamList,
-  KidsSetupProp,
-} from "../../Navigation/KidsSetupNavigator";
+import { queryGetKidById } from "../../hooks/tanstack/queryHooks/useGetKidById";
+import { KidsSetupProp } from "../../Navigation/KidsSetupNavigator";
 
 const BuddySelectionComponent = lazy(
   () => import("../../components/BuddySelectionComponent")
 );
 
-type RouteProps = RouteProp<KidsSetupNavigatorParamList, "buddySelectionPage">;
-
 const BuddySelectionScreen = () => {
-  const { params } = useRoute<RouteProps>();
-  const { childId } = params;
   const navigator = useNavigation<KidsSetupProp>();
   const [selected, setSelected] = useState<string>("");
-  const { isPending, data, error, refetch } = useGetKidById(childId);
-
+  const { childId } = useKidNavigator();
+  const { isPending, data, error, refetch } = useQuery(
+    queryGetKidById(childId!)
+  );
   const { mutate, isPending: isUpdating } = useSetStoryBuddy({
-    kidId: childId,
+    kidId: childId!,
     id: selected,
     onSuccess: async () => {
-      navigator.navigate("welcomeScreen", { childId, selected });
+      navigator.navigate("welcomeScreen", { selected });
     },
   });
 

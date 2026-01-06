@@ -4,7 +4,7 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-const queryKidRecommendedStories = (kidId: string) => {
+const queryKidsStories = (kidId: string) => {
   return queryOptions({
     queryKey: ["getStories", kidId],
     queryFn: async () => {
@@ -17,10 +17,11 @@ const queryKidRecommendedStories = (kidId: string) => {
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
+    staleTime: Infinity,
   });
 };
 
-export default queryKidRecommendedStories;
+export default queryKidsStories;
 
 const getStoriesByKidId = async (kidId: string) => {
   try {

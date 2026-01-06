@@ -9,20 +9,22 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import CustomButton from "../../components/UI/CustomButton";
 import useGetKidById from "../../hooks/tanstack/queryHooks/useGetKidById";
 import queryStoryBuddyById from "../../hooks/tanstack/queryHooks/useGetStoryBuddyById";
+import useKidNavigator from "../../contexts/KidNavigatorContext";
 
 type RouteProps = RouteProp<KidsSetupNavigatorParamList, "welcomeScreen">;
 
 const KidWelcomeScreen = () => {
   const { params } = useRoute<RouteProps>();
   const navigator = useNavigation<KidsNavigatorProp>();
-  const { childId, selected } = params;
+  const { selected } = params;
+  const { childId } = useKidNavigator();
 
   const {
     data: kid,
     isPending,
     error,
     refetch: refetchKid,
-  } = useGetKidById(childId);
+  } = useGetKidById(childId!);
   const {
     data: buddy,
     isPending: buddyLoading,
@@ -66,9 +68,9 @@ const KidWelcomeScreen = () => {
         </View>
         <CustomButton
           text="Let's go"
-          onPress={() =>
-            navigator.replace("index", { screen: "home", params: { childId } })
-          }
+          onPress={() => {
+            navigator.replace("index", { screen: "home" });
+          }}
           bgColor="white"
           textColor="black"
         />
