@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet } from "react-native";
-import React from "react";
+import { View, Text, StyleSheet } from 'react-native';
+import React from 'react';
 
 type ReportScoreProps = {
   icon: any;
@@ -17,26 +17,28 @@ export default function ReportScore({
   return (
     <View
       style={styles.container}
-      className="gap-4  px-[18] w-[160] py-[31] items-center rounded-[20px] bg-white"
+      className='gap-4  px-[18] w-[180] py-[31] items-center rounded-[20px] bg-white'
     >
       <View
         style={{ backgroundColor: color }}
-        className="rounded-full  p-[19] "
+        className='rounded-full  p-[19] '
       >
         {icon}
       </View>
-      <Text className="font-[quilka] text-center  text-[20px]">{score}</Text>
-      <Text className="font-[abeezee] text-center text-[#616161] ">{title}</Text>
+      <Text className='font-[quilka] text-center  text-[20px]'>{score}</Text>
+      <Text className='font-[abeezee] text-center text-[#616161] '>
+        {title}
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 4,
+    shadowRadius: 2,
+    elevation: 1,
   },
 });
