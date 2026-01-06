@@ -19,7 +19,7 @@ module.exports = {
         bgLight: "#FFFCFBFB",
         light: "#FAF42",
         disabled: "#FF8771",
-        purple: "#4807EC",
+        purple: "#866EFF",
         "border-light": "#E0E0E0",
         "border-lighter": "#FAF4F2",
         blue: "#4807EC",

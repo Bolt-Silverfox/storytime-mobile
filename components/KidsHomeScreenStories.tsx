@@ -1,40 +1,22 @@
 import { useNavigation } from "@react-navigation/native";
-import { FlatList, Image, Pressable, Text, View } from "react-native";
-import useGetStories, {
-  Story,
-} from "../hooks/tanstack/queryHooks/useGetStories";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { FlatList, Pressable, View } from "react-native";
 import { KidsTabNavigatorProp } from "../Navigation/KidsTabNavigator";
 import ErrorComponent from "./ErrorComponent";
 import ImageWithFallback from "./parents/ImageWithFallback";
+import queryKidRecommendedStories from "../hooks/tanstack/queryHooks/queryKidsStories";
+import CustomEmptyState from "./emptyState/CustomEmptyState";
 
 interface KidsHomeScreenStoriesProps {
-  id: string;
-  recommendedStories?: any[]; // optional
+  kidId: string;
 }
 
-const KidsHomeScreenStories = ({
-  id,
-  recommendedStories = [],
-}: KidsHomeScreenStoriesProps) => {
-  const navigation = useNavigation<KidsTabNavigatorProp>();
-  const { isPending, error, refetch, data } = useGetStories(id);
+const KidsHomeScreenStories = ({ kidId }: KidsHomeScreenStoriesProps) => {
+  const navigator = useNavigation<KidsTabNavigatorProp>();
+  const { error, refetch, data } = useSuspenseQuery(
+    queryKidRecommendedStories(kidId)
+  );
   const FALLBACK = require("../assets/parents/unseen-world.jpg");
-
-  const stories: Story[] = (() => {
-    const r: any = data;
-    if (Array.isArray(r)) return r;
-    if (Array.isArray(r?.data)) return r.data;
-    if (Array.isArray(r?.data?.data)) return r.data.data;
-    console.warn("useGetStories: unexpected shape ->", r);
-    return [];
-  })();
-
-  const mergedStories = [
-    ...recommendedStories.map((rec) => rec.story),
-    ...stories.filter(
-      (s) => !recommendedStories.some((rec) => rec.story.id === s.id)
-    ),
-  ];
 
   if (error)
     return (
@@ -43,9 +25,11 @@ const KidsHomeScreenStories = ({
         message={error.message ?? "Unexpected error"}
       />
     );
+
+  if (!data.length) return <CustomEmptyState message="No stories yet" />;
   return (
     <FlatList
-      data={mergedStories}
+      data={data}
       className="flex-1 gap-4"
       contentContainerClassName=""
       showsVerticalScrollIndicator={false}
@@ -55,10 +39,7 @@ const KidsHomeScreenStories = ({
         <Pressable
           key={item.id}
           onPress={() => {
-            navigation.navigate("setup" as any, {
-              screen: "storyInteraction",
-              params: { storyId: item.id },
-            });
+            navigator.navigate("storyInteraction", { storyId: item.id });
           }}
           className="overflow-hidden rounded-lg flex-1 mb-10"
         >
