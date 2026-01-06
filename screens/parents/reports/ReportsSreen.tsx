@@ -86,14 +86,14 @@ const ReportScreen: FC = () => {
             >
               Reports
             </CustomText>
-            <View className=' relative -top-[25] flex-row gap-7 justify-end'>
+            {/* <View className=' relative -top-[25] flex-row gap-7 justify-end'>
               <Pressable onPress={handleDownloadPDF}>
                 <ImportCurve size={24} />
               </Pressable>
               <Pressable onPress={() => setIsShareModalOpen(true)}>
                 <Share2 size={24} />
               </Pressable>
-            </View>
+            </View> */}
           </View>
         </ImageBackground>
         <View className='min-h-[153] border-b border-[#BDBDBD] justify-between '>
