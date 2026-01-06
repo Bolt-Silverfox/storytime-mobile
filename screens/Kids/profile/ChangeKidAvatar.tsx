@@ -1,35 +1,32 @@
-import {
-  View,
-  Text,
-  Pressable,
-  Image,
-  FlatList,
-  useWindowDimensions,
-} from "react-native";
-import React from "react";
+import { useNavigation } from "@react-navigation/native";
 import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import React from "react";
 import {
-  KidsProfileNavigatorParams,
-  kidsProfileNavigatorProp,
-} from "../../../Navigation/KidsProfileNavigator";
-import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
-import { SystemAvatar } from "../../../types";
-import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
+  FlatList,
+  Image,
+  Pressable,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import { kidsProfileNavigatorProp } from "../../../Navigation/KidsProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-type RouteProps = RouteProp<KidsProfileNavigatorParams, "changeKidAvatar">;
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
+import { useAssignKidAvatar } from "../../../hooks/tanstack/mutationHooks/useAssignKidAvatar";
+import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
+import defaultStyles from "../../../styles";
+import { SystemAvatar } from "../../../types";
 
 export default function ChangeKidAvatar() {
   const [selectedAvatarId, setSelectedAvatarId] = React.useState<string | null>(
     null
   );
   const navigator = useNavigation<kidsProfileNavigatorProp>();
-  const { params } = useRoute<RouteProps>();
   const { width } = useWindowDimensions();
+  const { childId } = useKidNavigator();
   const { data: avatars, isLoading, isFetching } = useGetAvatars();
   const { mutateAsync: updateKid, isPending } = useAssignKidAvatar(
-    params.childId,
+    childId!,
     () => navigator.goBack()
   );
   const kidsAvatars: SystemAvatar[] = avatars?.data || [];

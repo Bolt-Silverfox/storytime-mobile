@@ -21,8 +21,6 @@ const useImagePicker = (
       quality: 1,
     });
 
-    console.log("picked image", result);
-
     if (!result.canceled) {
       if (result.assets[0].fileSize && result.assets[0].fileSize > 2000000) {
         Alert.alert("Maximum image size is 2MB");

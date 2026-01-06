@@ -1,14 +1,17 @@
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import useGetUserKids from "../hooks/tanstack/queryHooks/useGetUserKids";
+import useKidNavigator from "../contexts/KidNavigatorContext";
+import { queryGetUserKids } from "../hooks/tanstack/queryHooks/useGetUserKids";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import ChildrenEmptyState from "./emptyState/ChildrenEmptyState";
 import ErrorComponent from "./ErrorComponent";
 import KidAvatar from "./KidAvatar";
 
 const UserKids = () => {
-  const { data, isPending, error, refetch } = useGetUserKids();
+  const { data, isPending, error, refetch } = useQuery(queryGetUserKids());
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const { setChildId } = useKidNavigator();
 
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
@@ -16,16 +19,17 @@ const UserKids = () => {
 
   const onNavigate = (kidId: string, storyBuddyId: string | null) => {
     if (storyBuddyId) {
+      setChildId(kidId);
       navigator.navigate("kid", {
         screen: "index",
-        params: { screen: "home", params: { childId: kidId } },
+        params: { screen: "home" },
       });
     } else {
+      setChildId(kidId);
       navigator.navigate("kid", {
         screen: "setup",
         params: {
           screen: "buddySelectionPage",
-          params: { childId: kidId },
         },
       });
     }

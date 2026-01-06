@@ -1,8 +1,7 @@
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { lazy } from "react";
 import { View } from "react-native";
 import SuspenseWrapper from "../../components/supsense/SuspenseWrapper";
-import { KidsTabNavigatorParamList } from "../../Navigation/KidsTabNavigator";
+import useKidNavigator from "../../contexts/KidNavigatorContext";
 
 const KidsHomeScreenStories = lazy(
   () => import("../../components/KidsHomeScreenStories")
@@ -10,18 +9,17 @@ const KidsHomeScreenStories = lazy(
 const KidsHomeScreenHeader = lazy(
   () => import("../../components/KidsHomeScreenHeader")
 );
-type RouteProps = RouteProp<KidsTabNavigatorParamList, "home">;
 
 const KidHomeScreen = () => {
-  const { params } = useRoute<RouteProps>();
+  const { childId } = useKidNavigator();
 
   return (
     <View style={{ padding: 20 }} className="flex-1">
       <SuspenseWrapper>
-        <KidsHomeScreenHeader childId={params.childId} />
+        <KidsHomeScreenHeader childId={childId!} />
       </SuspenseWrapper>
       <SuspenseWrapper>
-        <KidsHomeScreenStories kidId={params.childId} />
+        <KidsHomeScreenStories kidId={childId!} />
       </SuspenseWrapper>
     </View>
   );

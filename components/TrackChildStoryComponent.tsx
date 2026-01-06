@@ -21,7 +21,6 @@ const TrackChildStoryComponent = ({
   );
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { setActiveStoryId } = useStoryMode();
-  console.log("child id", childId);
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
   if (!data.length) return <EmptyState category={category} />;

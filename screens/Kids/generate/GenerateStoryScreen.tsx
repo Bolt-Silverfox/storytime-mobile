@@ -1,40 +1,40 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { useState } from "react";
 import {
   Image,
   ImageBackground,
+  ImageSourcePropType,
   Pressable,
   ScrollView,
   Text,
   TextInput,
   View,
 } from "react-native";
-import {
-  PersonalizeKidNavigatorParamList,
-  PersonalizeKidsNavigatorProps,
-} from "../../../Navigation/PersonalizeKidNavigator";
 import colours from "../../../colours";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ChildButton from "../../../components/UI/ChildButton";
-import useCustomizeStory from "../../../contexts/CustomizeStoryContext";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
+import {
+  GenerateStoryNavigatorParamList,
+  GenerateStoryNavigatorProps,
+} from "../../../Navigation/GenerateStoryNavigator";
+import useKidNavigator from "../../../contexts/KidNavigatorContext";
 
 type RoutePropTypes = RouteProp<
-  PersonalizeKidNavigatorParamList,
+  GenerateStoryNavigatorParamList,
   "generateStory"
 >;
 const GenerateStoryScreen = () => {
-  const navigator = useNavigation<PersonalizeKidsNavigatorProps>();
+  const navigator = useNavigation<GenerateStoryNavigatorProps>();
   const { params } = useRoute<RoutePropTypes>();
-  const { data, isLoading, error, refetch } = useGetKidById(params.childId);
-  const {
-    setAvatarSource,
-    avatarSource,
-    heroName,
-    setHeroName,
-    setHeroGender,
-    heroGender,
-  } = useCustomizeStory();
+  const { childId } = useKidNavigator();
+  const { data, isLoading, error, refetch } = useGetKidById(childId!);
+  const [heroName, setHeroName] = useState("");
+  const [heroGender, setHeroGender] = useState("");
+  const [avatarSource, setAvatarSource] = useState<ImageSourcePropType>(
+    require("../../../assets/avatars/Avatars-4.png")
+  );
 
   if (isLoading) return <LoadingOverlay visible={isLoading} />;
   if (error)
@@ -154,7 +154,9 @@ const GenerateStoryScreen = () => {
         <ChildButton
           onPress={() =>
             navigator.navigate("customizeStory", {
-              childId: params.childId,
+              avatarSource,
+              heroName,
+              setHeroName,
             })
           }
           disabled={!heroName.length || !avatarSource}

@@ -12,17 +12,17 @@ import ChallengeScreen from "../screens/Kids/Toddlers/DailyChallengeIntroScreen"
 import StoryInteractionScreen from "../screens/Kids/Toddlers/StoryInteraction";
 import StoryModeSelector from "../screens/Kids/Toddlers/StoryModeSelector";
 import StoryReaderScreen from "../screens/Kids/Toddlers/StoryReaderScreen";
+import GenerateStoryNavigator from "./GenerateStoryNavigator";
 import KidsLibraryNavigator, {
   KidsLibraryNavigatorParamList,
 } from "./KidsLibraryNavigator";
 import kidsProfileNavigator from "./KidsProfileNavigator";
-import PersonalizeKidNavigator from "./PersonalizeKidNavigator";
 
 type KidsTabNavigatorParamList = {
-  home: { childId: string };
+  home: undefined;
   library: NavigatorScreenParams<KidsLibraryNavigatorParamList>;
-  generate: { childId: string };
-  profile: { childId: string };
+  generate: undefined;
+  profile: undefined;
 
   storyModeSelector: { storyId?: string; story?: any; childId?: string };
   storyInteraction: {
@@ -39,6 +39,7 @@ type KidsTabNavigatorParamList = {
   };
   challenge: { storyId?: string; childId?: string };
 };
+
 type KidsTabNavigatorProp = BottomTabNavigationProp<KidsTabNavigatorParamList>;
 
 const Tab = createBottomTabNavigator<KidsTabNavigatorParamList>();
@@ -82,7 +83,7 @@ const KidsTabNavigator = () => {
       />
       <Tab.Screen
         name="generate"
-        component={PersonalizeKidNavigator}
+        component={GenerateStoryNavigator}
         options={{
           tabBarIcon: ({ focused }) => (
             <Icon

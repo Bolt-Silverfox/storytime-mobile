@@ -7,9 +7,8 @@ import BuddySelectionScreen from "../screens/Kids/BuddySelectionScreen";
 import KidWelcomeScreen from "../screens/Kids/KidWelcomeScreen";
 
 export type KidsSetupNavigatorParamList = {
-  buddySelectionPage: { childId: string };
-  welcomeScreen: { selected: string; childId: string };
-  chooseHero: { selected: string; childId: string };
+  buddySelectionPage: undefined;
+  welcomeScreen: { selected: string };
 };
 
 const SetupStack = createNativeStackNavigator<KidsSetupNavigatorParamList>();
