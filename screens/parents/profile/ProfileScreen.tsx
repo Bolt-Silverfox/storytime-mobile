@@ -33,7 +33,6 @@ import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import defaultStyles from "../../../styles";
 
 const ProfileScreen: FC = () => {
-  const [uploaderVisible, setUploaderVisible] = useState(false);
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const parentNavigator = useNavigation<ParentsNavigatorProp>();
@@ -103,10 +102,7 @@ const ProfileScreen: FC = () => {
           </CustomText>
         </View>
 
-        <View
-          className="max-w-screen-md w-full mx-auto"
-          style={styles.menuList}
-        >
+        <View className="max-w-screen-md bg-white rounded-3xl  mx-auto mt-7 pt-4 p-4 border border-border-lighter w-[90%]">
           <MenuItem
             icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Manage Child Profiles"
@@ -209,18 +205,4 @@ const styles = StyleSheet.create({
   },
   addPhotoText: { fontSize: 10, color: "#6B7280", marginTop: 4 },
   nameContainer: { alignItems: "center", marginTop: 30 },
-  menuList: {
-    marginTop: 29,
-    paddingTop: 15,
-    paddingHorizontal: 16,
-    alignSelf: "center",
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
 });

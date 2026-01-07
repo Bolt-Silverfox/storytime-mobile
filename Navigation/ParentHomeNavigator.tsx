@@ -4,53 +4,35 @@ import {
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
 import { StoryModeProvider } from "../contexts/StoryModeContext";
-import CategoriesListScreen from "../screens/parents/home/CategoriesList";
-import ChallengeTracker from "../screens/parents/home/ChallengeTracker";
 import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
-import DailyChallengeScreen from "../screens/parents/home/DailyChallengeScreen";
-import InteractiveStoriesScreen from "../screens/parents/home/InteractiveStoriesScreen";
+import FunAndADventureStoriesScreen from "../screens/parents/home/FunAndAdventureStoriesScreen";
 import NewInteractiveStoryModeScreen from "../screens/parents/home/NewInteractiveStoryModeScreen";
 import NewPlainStoryMode from "../screens/parents/home/NewPlainStoryMode";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
 import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
-import PlainStoriesScreen from "../screens/parents/home/PlainStoriesScreen";
+import SeasonalStoriesScreen from "../screens/parents/home/SeasonalStoriesScreen";
+import StoriesByAgeScreen from "../screens/parents/home/StoriesByAgeScreen";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
+import TrackChildStoryScreen from "../screens/parents/home/TrackChildStoryScreen";
+import TrackStoriesScreen from "../screens/parents/home/TrackStoriesScreen";
 import ChallengeTrackerNavigator, {
   ChallengeTrackerNavigatorParamList,
 } from "./ChallengeTrackerNavigator";
-import TrackStoriesScreen from "../screens/parents/home/TrackStoriesScreen";
-import SeasonalStoriesScreen from "../screens/parents/home/SeasonalStoriesScreen";
-import StoriesByAgeScreen from "../screens/parents/home/StoriesByAgeScreen";
-import FunAndADventureStoriesScreen from "../screens/parents/home/FunAndAdventureStoriesScreen";
-import TrackChildStoryScreen from "../screens/parents/home/TrackChildStoryScreen";
 
 type ParentHomeNavigatorParamList = {
+  homePage: undefined;
   childStoryDetails: { storyId: string };
-  newPlainStoryMode: { storyId: string };
   newInteractiveStoryMode: { storyId: string };
+  newPlainStoryMode: { storyId: string };
   storiesByCategory: { category: string; id: string };
-  testScreen: undefined;
   topRecommendations: undefined;
   trackChallenge: NavigatorScreenParams<ChallengeTrackerNavigatorParamList>;
   trackStories: undefined;
   trackChildStory: { childId: string };
   seasonalStories: undefined;
-  storiesByAge: undefined;
   funAndAdventureStories: undefined;
-
-  storiesList: {
-    categoryId?: string;
-    categoryName?: string;
-    kidId?: string;
-    storyId?: string;
-  };
-  interactiveStories: { storyId: string; mode?: "interactive" } | undefined;
-  plainStories: { storyId: string; mode?: "plain" } | undefined;
-  dailyChallenge: undefined;
-  challengeTracker: undefined;
-  homePage: undefined;
-  categoriesList: undefined;
+  storiesByAge: undefined;
   parentsTopPicks: undefined;
 };
 
@@ -69,19 +51,9 @@ const ParentHomeNavigator = () => {
         />
         <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
         <Stack.Screen
-          name="interactiveStories"
-          component={InteractiveStoriesScreen}
-        />
-        <Stack.Screen name="plainStories" component={PlainStoriesScreen} />
-        <Stack.Screen name="dailyChallenge" component={DailyChallengeScreen} />
-        <Stack.Screen name="challengeTracker" component={ChallengeTracker} />
-        <Stack.Screen name="categoriesList" component={CategoriesListScreen} />
-
-        <Stack.Screen
           name="parentsTopPicks"
           component={ParentsTopPicksScreen}
         />
-
         <Stack.Screen
           name="newInteractiveStoryMode"
           component={NewInteractiveStoryModeScreen}

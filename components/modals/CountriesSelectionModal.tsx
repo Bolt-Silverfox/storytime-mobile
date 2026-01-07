@@ -49,19 +49,29 @@ const CountriesSelectionModal = ({
         onChangeText={setSearchValue}
         placeholder="Search country"
       />
-      <FlatList
-        data={filteredCountries}
-        keyExtractor={({ name }) => name.common}
-        renderItem={({ item }) => (
-          <Pressable
-            onPress={() => selectCountry(item.name.common)}
-            key={item.name.common}
-            className="py-4 px-3"
-          >
-            <Text>{item.name.common}</Text>
-          </Pressable>
-        )}
-      />
+
+      {filteredCountries.length ? (
+        <FlatList
+          data={filteredCountries}
+          keyExtractor={({ name }) => name.common}
+          renderItem={({ item }) => (
+            <Pressable
+              onPress={() => selectCountry(item.name.common)}
+              key={item.name.common}
+              className="py-4 px-3"
+            >
+              <Text>{item.name.common}</Text>
+            </Pressable>
+          )}
+        />
+      ) : (
+        <Text className="text-sm font-[abeezee] text-center mt-5">
+          No results found for{" "}
+          <Text className="text-xl font-[quilka] text-primary">
+            {searchValue}
+          </Text>
+        </Text>
+      )}
     </CustomModal>
   );
 };

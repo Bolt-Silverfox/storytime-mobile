@@ -56,16 +56,14 @@ export default function App() {
     <SafeAreaProvider>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar style="auto" />
-        <NavigationContainer>
-          <AuthProvider>
-            <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
               <RootNavigator />
-            </QueryClientProvider>
-          </AuthProvider>
-        </NavigationContainer>
+            </NavigationContainer>
+          </QueryClientProvider>
+        </AuthProvider>
       </SafeAreaView>
     </SafeAreaProvider>
   );
 }
-
-// REMEMBER TO WRAP THE NAV CONTAINER WITH THE AUTH CONTEXT TO FIX CRASH ON ENV CHANGE, BEFORE THAT, REMOVE NAVIGATOR OBJECT FROM AUTHCONTEXT

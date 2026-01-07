@@ -4,10 +4,10 @@ import { ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import useStoryMode from "../../contexts/StoryModeContext";
 // import queryParentsTopPicks from "../../hooks/tanstack/queryHooks/queryParentsTopPicks";
+import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import ErrorComponent from "../ErrorComponent";
 import CustomEmptyState from "../emptyState/CustomEmptyState";
 import StoryItem from "./StoryItem";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();

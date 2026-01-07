@@ -47,7 +47,6 @@ const SetPin = () => {
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -62,7 +61,6 @@ const SetPin = () => {
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setConfirmPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,

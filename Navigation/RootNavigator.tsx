@@ -19,14 +19,13 @@ type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
 const RootNavigator = () => {
-  const { logout, user } = useAuth();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     setLogoutCallBack(logout);
   }, [logout]);
 
   if (user === undefined) return <CustomSplashScreen />;
-
   return (
     <Stack.Navigator>
       {!user ? (
