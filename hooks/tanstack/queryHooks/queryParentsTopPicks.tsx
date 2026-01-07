@@ -15,7 +15,6 @@ const queryParentsTopPicks = ({ limit = 10 }: { limit?: number }) => {
         );
         const response: QueryResponse<Story[]> = await request.json();
         if (!response.success) throw new Error(response.message);
-        console.log("recommended stories data", response);
         return response;
       } catch (err: unknown) {
         throw new Error(getErrorMessage(err));

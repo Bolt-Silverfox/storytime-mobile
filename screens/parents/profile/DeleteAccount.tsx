@@ -44,8 +44,6 @@ export default function DeleteAccount() {
       setErrors(formatted);
       return;
     }
-    // await signUp(email, password, fullName.trim(), title);
-    // navigator.navigate("feedBackMessageSuccessful");
   };
 
   const handleToggle = (id: number) => {

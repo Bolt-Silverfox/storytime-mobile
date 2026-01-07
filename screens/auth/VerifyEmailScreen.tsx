@@ -1,35 +1,58 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Keyboard, Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
+import PageTitle from "../../components/PageTitle";
+import SuccessScreen from "../../components/UI/SuccessScreen";
 import useAuth from "../../contexts/AuthContext";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
-import PageTitle from "../../components/PageTitle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
+
+const successMessages = [
+  "Otp resent successfully",
+  "Email verification Successful",
+] as const;
+
+type SuccessMessageType = (typeof successMessages)[number];
 
 const VerifyEmailScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
   const [otp, setOtp] = useState("");
-  const [successMessage, setSuccesMessage] = useState("");
+  const [successMessage, setSuccesMessage] =
+    useState<SuccessMessageType | null>(null);
   const [error, setError] = useState("");
-  const { isLoading, verifyEmail, resendVerificationEmail } = useAuth();
+  const { isLoading, verifyEmail, resendVerificationEmail, setUser } =
+    useAuth();
   const [countDown, setCountdown] = useState(59);
 
   const handleResendEmail = async () => {
-    setSuccesMessage("");
+    setSuccesMessage(null);
     const data = await resendVerificationEmail({
-      email: route.params.email,
+      email: route.params.email.trim(),
       setErrorCb: setError,
     });
     if (data.success) {
       setCountdown(59);
       setSuccesMessage("Otp resent successfully");
+    }
+  };
+
+  const onSuccessCb = async () => {
+    const unverifiedUser = await AsyncStorage.getItem("unverifiedUser");
+    if (unverifiedUser) {
+      await AsyncStorage.setItem("user", unverifiedUser);
+      setUser(JSON.parse(unverifiedUser));
+      Keyboard.dismiss();
+    } else {
+      Keyboard.dismiss();
+      navigator.navigate("auth", { screen: "login" });
     }
   };
 
@@ -45,7 +68,7 @@ const VerifyEmailScreen = () => {
       <PageTitle goBack={() => navigator.goBack()} title="" />
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
-          {successMessage.length > 0 && (
+          {successMessage && (
             <Text className="font-[abeezee] text-xl text-primary uppercase text-center">
               {successMessage}
             </Text>
@@ -60,7 +83,6 @@ const VerifyEmailScreen = () => {
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setOtp(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,
@@ -82,7 +104,14 @@ const VerifyEmailScreen = () => {
         </View>
 
         <Pressable
-          onPress={() => verifyEmail({ token: otp, setErrorCb: setError })}
+          onPress={() =>
+            verifyEmail({
+              token: otp,
+              setErrorCb: setError,
+              onSuccess: () =>
+                setSuccesMessage("Email verification Successful"),
+            })
+          }
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
@@ -92,6 +121,12 @@ const VerifyEmailScreen = () => {
           </Text>
         </Pressable>
       </View>
+      <SuccessScreen
+        message="Successful!"
+        secondaryMessage={successMessage!}
+        visible={successMessage === "Email verification Successful"}
+        onProceed={onSuccessCb}
+      />
     </View>
   );
 };

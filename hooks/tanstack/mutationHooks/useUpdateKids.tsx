@@ -53,7 +53,6 @@ const useUpdateKids = ({
         }),
       });
       const results = await request.json();
-      console.log("update kids result", results);
       if (!results.success) {
         throw new Error(results.message ?? "unexpected error, try again");
       }

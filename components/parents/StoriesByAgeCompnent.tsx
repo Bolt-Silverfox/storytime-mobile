@@ -33,7 +33,11 @@ const StoriesByAgeComponent = () => {
           View all
         </Text>
       </View>
-      <View className="flex flex-row items-center gap-x-2 gap-y-4 justify-center">
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerClassName="flex flex-row items-center gap-x-2 gap-y-4 justify-center min-w-full"
+      >
         {ageRange.map((age) => (
           <Text
             onPress={() => setActiveRange(age)}
@@ -43,7 +47,7 @@ const StoriesByAgeComponent = () => {
             {age}
           </Text>
         ))}
-      </View>
+      </ScrollView>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

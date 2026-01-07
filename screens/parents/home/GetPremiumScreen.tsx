@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import Icon from "../../../components/Icon";
 import CustomButton from "../../../components/UI/CustomButton";
 import { subscriptionBenefits, subscriptionOptions } from "../../../data";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import Feather from "@expo/vector-icons/Feather";
 
 const GetPremiumScreen = () => {
   const navigator = useNavigation<ParentsNavigatorProp>();
@@ -18,7 +19,7 @@ const GetPremiumScreen = () => {
     <View className="flex flex-1  bg-[#866EFF]">
       <View className="flex flex-row pt-5 pb-3 px-4">
         <Pressable onPress={() => navigator.goBack()}>
-          <Icon name="ChevronLeft" color="white" />
+          <Feather name="chevron-left" size={24} color="white" />
         </Pressable>
         <Text className="text-center flex-1 text-[18px] text-white font-[abeezee]">
           Subscription
@@ -30,7 +31,7 @@ const GetPremiumScreen = () => {
       >
         <View className="flex flex-col justify-center items-center">
           <Pressable className="bg-white size-[100px] rounded-full flex justify-center items-center">
-            <Icon name="Crown" color="#866EFF" size={50} />
+            <FontAwesome5 name="crown" size={50} color="#866EFF" />
           </Pressable>
           <Text className="font-[quilka] text-2xl text-white mt-4">
             Unlock Magical Adventures
