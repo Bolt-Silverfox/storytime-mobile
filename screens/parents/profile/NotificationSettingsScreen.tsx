@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import NotificationSettingsScreenComponent from "../../../components/screens/NotificationSettingsScreenComponent";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 
-const NotificationsSettingsScreen = () => {
-  const navigator = useNavigation<ParentsNavigatorProp>();
+const NotificationSettingsScreen = () => {
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
   return (
     <NotificationSettingsScreenComponent goBack={() => navigator.goBack()} />
   );
 };
 
-export default NotificationsSettingsScreen;
+export default NotificationSettingsScreen;
