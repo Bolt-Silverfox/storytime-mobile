@@ -1,10 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
-import {
-  FingerScan,
-  Logout,
-  Profile2User,
-  TrushSquare,
-} from "iconsax-react-nativejs";
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
 import {
   Ban,
   BellRing,
@@ -128,13 +124,21 @@ const ProfileScreen: FC = () => {
             }
           />
           <MenuItem
-            icon={<Logout color="#EC4007" size={isTablet ? 20 : 18} />}
+            icon={
+              <AntDesign
+                name="logout"
+                color="#EC4007"
+                size={isTablet ? 20 : 18}
+              />
+            }
             label="Log Out"
             isTablet={isTablet}
             onPress={() => setOpenModal("logout")}
           />
           <MenuItem
-            icon={<TrushSquare color="#EC4007" size={isTablet ? 20 : 18} />}
+            icon={
+              <Feather name="trash" color="#EC4007" size={isTablet ? 20 : 18} />
+            }
             label="Delete Account"
             textColor="#DC2626"
             isTablet={isTablet}

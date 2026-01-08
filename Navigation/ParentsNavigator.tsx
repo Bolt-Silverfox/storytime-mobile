@@ -5,7 +5,7 @@ import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-import { Profile } from "iconsax-react-nativejs";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Heart } from "lucide-react-native";
 import colours from "../colours";
 import Icon from "../components/Icon";
@@ -113,7 +113,11 @@ const ParentsTabNavigator = () => {
             getFocusedRouteNameFromRoute(route) ?? "indexPage";
           return {
             tabBarIcon: ({ focused }) => (
-              <Profile color={focused ? colours.primary : colours.black} />
+              <Ionicons
+                name="person-outline"
+                size={24}
+                color={focused ? colours.primary : colours.black}
+              />
             ),
             tabBarActiveTintColor: colours.primary,
             tabBarLabelStyle: {

@@ -1,12 +1,15 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
 import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoadingOverlay from "../components/LoadingOverlay";
 import useAuth from "../contexts/AuthContext";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
-import ParentsTabNavigator from "./ParentsNavigator";
+import ParentsTabNavigator, {
+  ParentsNavigatorParamList,
+} from "./ParentsNavigator";
 
 type ProtectedRoutesParamList = {
-  parents: undefined;
+  parents: NavigatorScreenParams<ParentsNavigatorParamList>;
 };
 
 type ProtectedRoutesNavigationProp =
