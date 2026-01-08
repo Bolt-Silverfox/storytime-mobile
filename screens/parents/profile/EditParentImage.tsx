@@ -6,7 +6,7 @@ import { Alert, Image, Pressable, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
-import useImagePicker from "../../../hooks/useImagePicker";
+import useImagePicker from "../../../hooks/others/useImagePicker";
 import defaultStyles from "../../../styles";
 
 export default function EditParentImage() {

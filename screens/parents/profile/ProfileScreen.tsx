@@ -102,33 +102,15 @@ const ProfileScreen: FC = () => {
 
         <View className="max-w-screen-md bg-white rounded-3xl  mx-auto mt-7 pt-4 p-4 border border-border-lighter w-[90%]">
           <MenuItem
-            icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
-            label="Manage Child Profiles"
-            onPress={() => navigator.navigate("manageChildProfiles")}
-            isTablet={isTablet}
-          />
-          <MenuItem
             icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Notification Settings"
             onPress={() => navigator.navigate("notificationSettings")}
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Ban size={isTablet ? 20 : 18} color="#EC4007" />}
-            label="Blocked Stories"
-            onPress={() => navigator.navigate("blockedStories")}
-            isTablet={isTablet}
-          />
-          <MenuItem
             icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
-            label="Manage Password/Pin"
-            onPress={() => navigator.navigate("managePassword")}
-            isTablet={isTablet}
-          />
-          <MenuItem
-            icon={<FingerScan color={"#EC4007"} size={isTablet ? 20 : 18} />}
-            label="Enable Finger Print / Face ID"
-            onPress={() => navigator.navigate("enableBiometrics")}
+            label="Change Password"
+            onPress={() => navigator.navigate("resetParentPassword")}
             isTablet={isTablet}
           />
           <MenuItem
