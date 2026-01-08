@@ -7,14 +7,14 @@ import {
   ScrollView,
 } from "react-native";
 import React from "react";
-import MenuItem from "../../../components/MenuItem";
+import MenuItem from "../../../../components/MenuItem";
 import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
+import defaultStyles from "../../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import { FAQ } from "../../../constants/constants";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import { FAQ } from "../../../../constants/constants";
 
-export default function FaQ() {
+export default function FaQScreen() {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const navigator = useNavigation<ParentProfileNavigatorProp>();

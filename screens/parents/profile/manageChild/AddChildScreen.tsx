@@ -1,36 +1,26 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import Icon from "../../../components/Icon";
-import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
-import useAddKids from "../../../hooks/tanstack/mutationHooks/useAddKids";
-import {
-  ParentProfileNavigatorParamList,
-  ParentProfileNavigatorProp,
-} from "../../../Navigation/ParentProfileNavigator";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import KidAvatar from "../../../components/KidAvatar";
 import { ChevronDown } from "lucide-react-native";
-import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
-import { SystemAvatar } from "../../../types";
-import ChooseChildAvatarModal from "../../../components/modals/ChooseChildAvatarModal";
+import { useState } from "react";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
+import Icon from "../../../../components/Icon";
+import KidAvatar from "../../../../components/KidAvatar";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
+import AgeSelectionModal from "../../../../components/modals/AgeSelectionModal";
+import ChooseChildAvatarModal from "../../../../components/modals/ChooseChildAvatarModal";
+import useAddKids from "../../../../hooks/tanstack/mutationHooks/useAddKids";
+import useGetAvatars from "../../../../hooks/tanstack/queryHooks/useGetAvatars";
+import { ManageChildProfilesNavigatorParamList } from "../../../../Navigation/ManageChildProfilesNavigator";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import { SystemAvatar } from "../../../../types";
 
-type RouteProps = RouteProp<ParentProfileNavigatorParamList, "addChild">;
+type RouteProps = RouteProp<ManageChildProfilesNavigatorParamList, "addChild">;
 
 const AddChildScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { params } = useRoute<RouteProps>();
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
-  const [userName, setUsername] = useState("");
   const [error, setError] = useState("");
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [chooseAvatarOpen, setChooseAvatarOpen] = useState(false);
@@ -40,10 +30,7 @@ const AddChildScreen = () => {
   const { isPending, mutate } = useAddKids(1, () =>
     navigator.reset({
       index: 1,
-      routes: [
-        { name: "indexPage" },
-        { name: "manageChildProfiles" },
-      ],
+      routes: [{ name: "indexPage" }, { name: "manageChildProfiles" }],
     })
   );
   const { data } = useGetAvatars();

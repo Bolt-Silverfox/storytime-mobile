@@ -14,7 +14,6 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useGetKidById from "../../../hooks/tanstack/queryHooks/useGetKidById";
 import ErrorComponent from "../../../components/ErrorComponent";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import { flattenError } from "zod";
 
 type PropRoutes = RouteProp<ParentControlNavigatorParamList, "setBedtime">;
 

@@ -1,47 +1,32 @@
-import {
-  CommonActions,
-  RouteProp,
-  useNavigation,
-  useRoute,
-} from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
-import {
-  Image,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
-import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import AgeSelectionModal from "../../../components/modals/AgeSelectionModal";
-import DeleteChildModal from "../../../components/modals/DeleteChildModal";
-import PageTitle from "../../../components/PageTitle";
-import useDeleteKid from "../../../hooks/tanstack/mutationHooks/useDeleteKid";
-import useUpdateKids from "../../../hooks/tanstack/mutationHooks/useUpdateKids";
-import {
-  ParentProfileNavigatorParamList,
-  ParentProfileNavigatorProp,
-} from "../../../Navigation/ParentProfileNavigator";
-import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
-import { SystemAvatar } from "../../../types";
-import KidAvatar from "../../../components/KidAvatar";
-import ChooseChildAvatarModal from "../../../components/modals/ChooseChildAvatarModal";
+import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
+import KidAvatar from "../../../../components/KidAvatar";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
+import AgeSelectionModal from "../../../../components/modals/AgeSelectionModal";
+import ChooseChildAvatarModal from "../../../../components/modals/ChooseChildAvatarModal";
+import DeleteChildModal from "../../../../components/modals/DeleteChildModal";
+import PageTitle from "../../../../components/PageTitle";
+import useDeleteKid from "../../../../hooks/tanstack/mutationHooks/useDeleteKid";
+import useUpdateKids from "../../../../hooks/tanstack/mutationHooks/useUpdateKids";
+import useGetAvatars from "../../../../hooks/tanstack/queryHooks/useGetAvatars";
+import { ManageChildProfilesNavigatorParamList } from "../../../../Navigation/ManageChildProfilesNavigator";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import { SystemAvatar } from "../../../../types";
 
 type EditChildProfileRouteProp = RouteProp<
-  ParentProfileNavigatorParamList,
+  ManageChildProfilesNavigatorParamList,
   "editChildProfile"
 >;
 
-const EditChildProfile = () => {
+const EditChildProfileScreen = () => {
   const { params } = useRoute<EditChildProfileRouteProp>();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [name, setName] = useState(params.name ?? "");
   const [age, setAge] = useState(params.ageRange ?? "");
   const [selectedAvatarId, setSelectedAvatarId] = useState<string | null>(null);
   const [chooseAvatarOpen, setChooseAvatarOpen] = useState(false);
-  const [userName, setUsername] = useState(params?.userName ?? "");
   const [error, setError] = useState("");
   const [currentlyOpenModal, setCurrentlyOpenModal] = useState<
     "age" | "delete" | null
@@ -164,4 +149,4 @@ const EditChildProfile = () => {
   );
 };
 
-export default EditChildProfile;
+export default EditChildProfileScreen;
