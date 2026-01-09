@@ -1,5 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
-import { Call, Facebook, Instagram, Sms } from "iconsax-react-nativejs";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Image, Pressable, Text, View } from "react-native";
@@ -32,7 +34,7 @@ export default function ContactUsScreen() {
       </View>
       <View className="mt-[24px] mx-[16] gap-4">
         <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8] gap-3 rounded-[20px] px-[16] bg-white">
-          <Sms />
+          <Ionicons name="mail-outline" size={24} color="black" />
           <View>
             <Text style={[defaultStyles.defaultText, { color: "black" }]}>
               Email us
@@ -43,7 +45,7 @@ export default function ContactUsScreen() {
           </View>
         </View>
         <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8] gap-3 rounded-[20px] px-[16] bg-white">
-          <Call />
+          <Ionicons name="call-outline" size={24} color="black" />
           <View>
             <Text style={[defaultStyles.defaultText, { color: "black" }]}>
               Call us
@@ -57,8 +59,8 @@ export default function ContactUsScreen() {
           Our social media links
         </Text>
         <View className="flex-row gap-3">
-          <Facebook size="50" color="#EC4007" variant="Bold" />
-          <Instagram size="50" color="#EC4007" variant="Bold" />
+          <FontAwesome5 name="facebook-square" size={50} color="#EC4007" />
+          <FontAwesome6 name="square-instagram" size={50} color="#EC4007" />
           <Image
             source={require("../../../../assets/icons/tiktok.png")}
             width={50}

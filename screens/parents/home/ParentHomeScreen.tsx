@@ -1,7 +1,5 @@
 import { lazy } from "react";
 import { ScrollView, View } from "react-native";
-import ChildrenActivitiesComponent from "../../../components/parents/ChildrenActivitiesComponent";
-import IncompleteProfileBanner from "../../../components/parents/IncompleteProfileBanner";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
 
@@ -20,9 +18,6 @@ const SeasonalStoriesComponent = lazy(
 const FunAndAdventuresComponent = lazy(
   () => import("../../../components/parents/FunAndAdventuresComponent")
 );
-const StoriesByAgeComponent = lazy(
-  () => import("../../../components/parents/StoriesByAgeCompnent")
-);
 
 const ParentHomeScreen = () => {
   return (
@@ -32,22 +27,17 @@ const ParentHomeScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerClassName=" flex min-h-full flex-col gap-y-8"
       >
-        <IncompleteProfileBanner />
         <SuspenseWrapper>
           <ParentsTopRecommendations />
         </SuspenseWrapper>
         <SuspenseWrapper>
           <ParentsTopPicksComponent />
         </SuspenseWrapper>
-        <ChildrenActivitiesComponent />
         <SuspenseWrapper>
           <SeasonalStoriesComponent />
         </SuspenseWrapper>
         <SuspenseWrapper>
           <FunAndAdventuresComponent />
-        </SuspenseWrapper>
-        <SuspenseWrapper>
-          <StoriesByAgeComponent />
         </SuspenseWrapper>
         <SuspenseWrapper>
           <StoryCategoriesList />

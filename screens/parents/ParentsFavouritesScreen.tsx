@@ -1,12 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import Icon from "../../components/Icon";
-import { Story } from "../../types";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
-import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
+import { useQuery } from "@tanstack/react-query";
+import { Image, ScrollView, Text, View } from "react-native";
 import ErrorComponent from "../../components/ErrorComponent";
+import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
+import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import { Story } from "../../types";
 // import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsFavouritesScreen = () => {

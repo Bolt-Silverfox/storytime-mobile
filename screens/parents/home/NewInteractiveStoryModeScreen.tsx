@@ -16,7 +16,7 @@ import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoi
 import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
 import StoryContentContainer from "../../../components/StoryContentContainer";
 import useStoryMode from "../../../contexts/StoryModeContext";
-import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
+import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 
 // CREATE REUSABLE COMPONENTS FOR STORY MODES
 
@@ -45,7 +45,7 @@ const NewInteractiveStoryModeScreen = () => {
           onPress={() => setIsOptionsModalOpen(true)}
           className="size-10 self-end rounded-full border border-[#5E4404] flex justify-center items-center"
         >
-          <Icon color="#5E4404" name="EllipsisVertical" />
+          <Icon color="#EC4007" name="EllipsisVertical" />
         </Pressable>
         <View className="flex justify-end flex-1 flex-col gap-y-3">
           <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">

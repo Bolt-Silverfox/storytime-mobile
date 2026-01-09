@@ -25,9 +25,9 @@ const ParentsHomeScreenHeader = () => {
         <Avatar
           size={40}
           onPress={() =>
-            navigator.reset({
-              index: 0,
-              routes: [{ name: "selection" }],
+            navigator.navigate("parents", {
+              screen: "profile",
+              params: { screen: "indexPage" },
             })
           }
         />

@@ -1,4 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   ImageBackground,
@@ -7,23 +8,20 @@ import {
   Text,
   View,
 } from "react-native";
+import ErrorComponent from "../../../components/ErrorComponent";
 import Icon from "../../../components/Icon";
+import LoadingOverlay from "../../../components/LoadingOverlay";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
-import RecommendStoryModal from "../../../components/modals/storyModals/RecommendStoryModal";
 import CustomButton from "../../../components/UI/CustomButton";
 import useStoryMode from "../../../contexts/StoryModeContext";
 import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
-import { useQuery } from "@tanstack/react-query";
-import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import ErrorComponent from "../../../components/ErrorComponent";
+import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 
 const ChildStoryDetails = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const [showRecommendationModal, setShowRecommendationModal] = useState(false);
   const { storyMode, setStoryMode, activeStoryId } = useStoryMode();
   const { isPending, data, error, refetch } = useQuery(
     queryGetStory(activeStoryId!)
@@ -152,15 +150,6 @@ const ChildStoryDetails = () => {
               Favourite
             </Text>
           </Pressable>
-          <Pressable
-            onPress={() => setShowRecommendationModal(true)}
-            className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
-          >
-            <Icon name="HandHeart" />
-            <Text className="font-[abeezee] text-base text-black">
-              Recommend
-            </Text>
-          </Pressable>
         </View>
       </ScrollView>
       <View className="border-t px-4 bg-bgLight border-t-border-light">
@@ -177,10 +166,6 @@ const ChildStoryDetails = () => {
       <ShareStoryModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
-      />
-      <RecommendStoryModal
-        isOpen={showRecommendationModal}
-        onClose={() => setShowRecommendationModal(false)}
       />
     </View>
   );

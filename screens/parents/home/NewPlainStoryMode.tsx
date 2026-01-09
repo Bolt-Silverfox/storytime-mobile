@@ -16,7 +16,7 @@ import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoi
 import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
 import StoryContentContainer from "../../../components/StoryContentContainer";
 import useStoryMode from "../../../contexts/StoryModeContext";
-import { queryGetStory } from "../../../hooks/tanstack/queryHooks/useGetStory";
+import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 
 // CREATE REUSABLE COMPONENTS FOR STORY MODES
 
@@ -44,7 +44,7 @@ const NewPlainStoryMode = () => {
           onPress={() => setIsOptionsModalOpen(true)}
           className="size-10 self-end rounded-full border border-[#5E4404] flex justify-center items-center"
         >
-          <Icon color="#5E4404" name="EllipsisVertical" />
+          <Icon color="#EC4007" name="EllipsisVertical" />
         </Pressable>
         {/* <Text className="font-[quilka] text-[#5E4404] text-2xl">
           {data.title}
