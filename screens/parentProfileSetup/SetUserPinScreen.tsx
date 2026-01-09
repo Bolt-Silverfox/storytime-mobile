@@ -70,7 +70,6 @@ const SetUserPinScreen = () => {
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setPin(text)}
-            onFilled={(text) => console.log("OTP:", text)}
             theme={{
               containerStyle: { width: "auto" },
               pinCodeContainerStyle: styles.box,

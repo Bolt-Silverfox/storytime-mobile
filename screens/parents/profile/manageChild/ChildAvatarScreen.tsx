@@ -8,15 +8,15 @@ import {
 } from "react-native";
 import React from "react";
 import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
+import defaultStyles from "../../../../styles";
 import { useNavigation } from "@react-navigation/native";
 
-import useGetAvatars from "../../../hooks/tanstack/queryHooks/useGetAvatars";
-import { SystemAvatar } from "../../../types";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import useGetAvatars from "../../../../hooks/tanstack/queryHooks/useGetAvatars";
+import { SystemAvatar } from "../../../../types";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 
-export default function ChildAvatar() {
+export default function ChildAvatarScreen() {
   const [selectedAvatarId, setSelectedAvatarId] = React.useState<string | null>(
     null
   );
@@ -36,7 +36,10 @@ export default function ChildAvatar() {
       alert("Please select an avatar");
       return;
     }
-    navigator.navigate("addChild", { avatarId: selectedAvatarId });
+    navigator.navigate("manageChildProfiles", {
+      screen: "addChild",
+      params: { avatarId: selectedAvatarId },
+    });
   };
 
   return (

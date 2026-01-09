@@ -1,15 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { Alert, Pressable, Text, View } from "react-native";
+import { View } from "react-native";
 import { z } from "zod";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import PasswordInput from "../../../components/PasswordInput";
-import useAuth from "../../../contexts/AuthContext";
-import defaultStyles from "../../../styles";
 import CustomButton from "../../../components/UI/CustomButton";
+import useAuth from "../../../contexts/AuthContext";
+import SuccessScreen from "../../../components/UI/SuccessScreen";
 
 const resetPasswordSchema = z
   .object({
@@ -40,6 +40,7 @@ export default function ResetParentPassword() {
   const [errors, setErrors] = useState<Errors>({});
   const [error, setError] = useState("");
   const { isLoading, changePassword } = useAuth();
+  const [success, setSuccess] = useState(false);
 
   const onResetPassword = async () => {
     setErrors({});
@@ -63,10 +64,7 @@ export default function ResetParentPassword() {
     changePassword({
       oldPassword,
       newPassword,
-      onSuccess: () => {
-        Alert.alert("Password changed");
-        navigator.goBack();
-      },
+      onSuccess: () => setSuccess(true),
       setErrorCb: setError,
     });
   };
@@ -106,6 +104,12 @@ export default function ResetParentPassword() {
       <View className="flex-1 mt-10 px-4 gap-6">
         <CustomButton onPress={onResetPassword} text="Reset Password" />
       </View>
+      <SuccessScreen
+        visible={success}
+        message="Success!"
+        secondaryMessage="Password reset successful"
+        onProceed={() => navigator.goBack()}
+      />
       <LoadingOverlay visible={isLoading} />
     </View>
   );

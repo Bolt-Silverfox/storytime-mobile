@@ -19,7 +19,12 @@ const NotificationsScreen = () => {
   return (
     <View className="flex flex-1 bg-bgLight">
       <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
-      <View className="flex flex-row items-center gap-x-2 my-5 gap-y-4 justify-center">
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        className="max-h-20"
+        horizontal
+        contentContainerClassName="flex flex-row items-center  gap-x-2 p-5 justify-center"
+      >
         {notificationsLabel.map((notification) => (
           <Text
             onPress={() => setActiveLabel(notification)}
@@ -29,7 +34,7 @@ const NotificationsScreen = () => {
             {notification}
           </Text>
         ))}
-      </View>
+      </ScrollView>
       <View className="flex-1 max-w-screen-md mx-auto w-full">
         <ScrollView
           showsVerticalScrollIndicator={false}

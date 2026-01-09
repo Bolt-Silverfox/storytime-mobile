@@ -6,11 +6,11 @@ import {
   TrushSquare,
 } from "iconsax-react-nativejs";
 import {
+  Ban,
   BellRing,
   CreditCard,
   HelpCircle,
   KeyRound,
-  Ban,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -29,14 +29,11 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import defaultStyles from "../../../styles";
 
 const ProfileScreen: FC = () => {
-  const [uploaderVisible, setUploaderVisible] = useState(false);
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const parentNavigator = useNavigation<ParentsNavigatorProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
@@ -103,10 +100,7 @@ const ProfileScreen: FC = () => {
           </CustomText>
         </View>
 
-        <View
-          className="max-w-screen-md w-full mx-auto"
-          style={styles.menuList}
-        >
+        <View className="max-w-screen-md bg-white rounded-3xl  mx-auto mt-7 pt-4 p-4 border border-border-lighter w-[90%]">
           <MenuItem
             icon={<Profile2User size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Manage Child Profiles"
@@ -116,9 +110,7 @@ const ProfileScreen: FC = () => {
           <MenuItem
             icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Notification Settings"
-            onPress={() =>
-              parentNavigator.navigate("notifications", { screen: "settings" })
-            }
+            onPress={() => navigator.navigate("notificationSettings")}
             isTablet={isTablet}
           />
           <MenuItem
@@ -143,13 +135,15 @@ const ProfileScreen: FC = () => {
             icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
-            onPress={() => parentNavigator.navigate("getPremium")}
+            onPress={() => navigator.navigate("subscription")}
           />
           <MenuItem
             icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
             label="Help & Support"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("helpAndSupport")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", { screen: "index" })
+            }
           />
           <MenuItem
             icon={<Logout color="#EC4007" size={isTablet ? 20 : 18} />}
@@ -209,18 +203,4 @@ const styles = StyleSheet.create({
   },
   addPhotoText: { fontSize: 10, color: "#6B7280", marginTop: 4 },
   nameContainer: { alignItems: "center", marginTop: 30 },
-  menuList: {
-    marginTop: 29,
-    paddingTop: 15,
-    paddingHorizontal: 16,
-    alignSelf: "center",
-    width: "90%",
-    backgroundColor: "white",
-    borderRadius: 20,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
-    elevation: 2,
-  },
 });

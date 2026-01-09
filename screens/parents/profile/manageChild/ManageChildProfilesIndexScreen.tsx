@@ -1,21 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
+import { ChevronRight } from "lucide-react-native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import ChildrenEmptyState from "../../../components/emptyState/ChildrenEmptyState";
-import ErrorComponent from "../../../components/ErrorComponent";
-import Icon from "../../../components/Icon";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import PageTitle from "../../../components/PageTitle";
-import CustomButton from "../../../components/UI/CustomButton";
-import useGetUserKids from "../../../hooks/tanstack/queryHooks/useGetUserKids";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
-import { KidProfile } from "../../../types";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
-import { ChevronRight } from "lucide-react-native";
-import MaximumChildAlert from "../../../components/modals/MaximumChildAlert";
+import ChildrenEmptyState from "../../../../components/emptyState/ChildrenEmptyState";
+import ErrorComponent from "../../../../components/ErrorComponent";
+import LoadingOverlay from "../../../../components/LoadingOverlay";
+import MaximumChildAlert from "../../../../components/modals/MaximumChildAlert";
+import PageTitle from "../../../../components/PageTitle";
+import CustomButton from "../../../../components/UI/CustomButton";
+import useGetUserKids from "../../../../hooks/tanstack/queryHooks/useGetUserKids";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import { KidProfile } from "../../../../types";
 
-const ManageChildProfilesScreen = () => {
-  const parentNavigator = useNavigation<ParentsNavigatorProp>();
+const ManageChildProfilesIndexScreen = () => {
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { data, isPending, error, refetch } = useGetUserKids();
   const [selectedKid, setSelectedKid] = useState<string | null>(null);
   const [isOpen, setIsOpen] = useState(false);
@@ -30,7 +28,7 @@ const ManageChildProfilesScreen = () => {
     if (data.length >= 4) {
       setIsOpen(true);
     } else {
-      parentNavigator.navigate("profile", { screen: "addChild" });
+      navigator.navigate("manageChildProfiles", { screen: "addChild" });
     }
   };
 
@@ -38,11 +36,7 @@ const ManageChildProfilesScreen = () => {
     <View className="flex-1 bg-bgLight pb-5">
       <PageTitle
         title="Manage Child Profiles"
-        goBack={() =>
-          parentNavigator.navigate("profile", {
-            screen: "indexPage",
-          })
-        }
+        goBack={() => navigator.goBack()}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
@@ -66,7 +60,9 @@ const ManageChildProfilesScreen = () => {
           <View className="mt-20">
             <ChildrenEmptyState
               navigate={() =>
-                parentNavigator.navigate("profile", { screen: "addChild" })
+                navigator.navigate("manageChildProfiles", {
+                  screen: "addChild",
+                })
               }
             />
           </View>
@@ -82,14 +78,14 @@ const ManageChildProfilesScreen = () => {
         onClose={() => setIsOpen(false)}
         subscribe={() => {
           setIsOpen(false);
-          parentNavigator.navigate("profile", { screen: "subscriptionIndex" });
+          navigator.navigate("subscription");
         }}
       />
     </View>
   );
 };
 
-export default ManageChildProfilesScreen;
+export default ManageChildProfilesIndexScreen;
 
 const ChildItem = ({
   kid,
@@ -100,8 +96,7 @@ const ChildItem = ({
   selectedKid: string | null;
   setSelectedKid: Dispatch<SetStateAction<string | null>>;
 }) => {
-  const parentNavigator = useNavigation<ParentsNavigatorProp>();
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   const toggleShowKid = (id: string) => {
     if (selectedKid === id) {
@@ -114,7 +109,7 @@ const ChildItem = ({
   return (
     <Pressable
       onPress={() =>
-        parentNavigator.navigate("profile", {
+        navigator.navigate("manageChildProfiles", {
           screen: "editChildProfile",
           params: {
             ageRange: kid.ageRange,
@@ -130,7 +125,7 @@ const ChildItem = ({
         source={
           kid.avatar?.url
             ? { uri: kid?.avatar?.url }
-            : require("../../../assets/avatars/Avatars-3.png")
+            : require("../../../../assets/avatars/Avatars-3.png")
         }
         className="size-[80px]"
       />

@@ -1,13 +1,13 @@
 import { View, Text, Switch, Pressable, Image, ScrollView } from "react-native";
 import React, { useEffect, useState } from "react";
 import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
+import defaultStyles from "../../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 
-import { privacy, terms } from "../../../constants/constants";
+import { terms } from "../../../../constants/constants";
 
-export default function PrivacyAndPolicy() {
+export default function TermsAndConditions() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return (
@@ -20,7 +20,7 @@ export default function PrivacyAndPolicy() {
           style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
           className="self-center text-center  "
         >
-          Privacy Policy
+          Terms and Conditions
         </Text>
       </View>
 
@@ -28,7 +28,7 @@ export default function PrivacyAndPolicy() {
         showsVerticalScrollIndicator={false}
         className=" mx-[16] gap-4 "
       >
-        {privacy.map((term, i) => (
+        {terms.map((term, i) => (
           <View key={i} className="mt-5">
             <Text
               style={[

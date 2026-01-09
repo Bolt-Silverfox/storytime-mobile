@@ -27,8 +27,8 @@ const useDeleteKid = () => {
         queryKey: ["userKids", user?.id],
       });
       navigator.reset({
-        index: 0,
-        routes: [{ name: "deleteProfileSucessful" }],
+        index: 1,
+        routes: [{ name: "indexPage" }, { name: "manageChildProfiles" }],
       });
     },
     onError: (err) => {

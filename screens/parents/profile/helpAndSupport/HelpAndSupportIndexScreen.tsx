@@ -1,26 +1,25 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-  ScrollView,
-} from "react-native";
-import React from "react";
-import MenuItem from "../../../components/MenuItem";
-import { ChevronLeft, MessageCircleQuestionMark } from "lucide-react-native";
+import { useNavigation } from "@react-navigation/native";
 import {
   Headphone,
   LockCircle,
-  Message2,
   Messages2,
   Notepad2,
 } from "iconsax-react-nativejs";
-import defaultStyles from "../../../styles";
-import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ChevronLeft, MessageCircleQuestionMark } from "lucide-react-native";
+import React from "react";
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import MenuItem from "../../../../components/MenuItem";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
 
-export default function HelpAndSupport() {
+export default function HelpAndSupportIndexScreen() {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -51,13 +50,17 @@ export default function HelpAndSupport() {
               />
             }
             label="FAQs"
-            onPress={() => navigator.navigate("FAQ")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", { screen: "faq" })
+            }
             isTablet={isTablet}
           />
           <MenuItem
             icon={<Messages2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Suggestions & Feedback"
-            onPress={() => navigator.navigate("feedBack")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", { screen: "suggestions" })
+            }
             isTablet={isTablet}
           />
           <MenuItem
@@ -69,20 +72,30 @@ export default function HelpAndSupport() {
               />
             }
             label="Contact us"
-            onPress={() => navigator.navigate("contactUs")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", { screen: "contactUs" })
+            }
             isTablet={isTablet}
           />
           <MenuItem
             icon={<Notepad2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Terms and Conditions"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("termsAndConditions")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", {
+                screen: "termsAndConditions",
+              })
+            }
           />
           <MenuItem
             icon={<LockCircle color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Privacy and Policy"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("privacyAndPolicy")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", {
+                screen: "privacyAndPolicy",
+              })
+            }
           />
         </View>
       </ScrollView>

@@ -10,6 +10,8 @@ import Icon from "./Icon";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
 import SuspenseWrapper from "./supsense/SuspenseWrapper";
+import { useNavigation } from "@react-navigation/native";
+import { RootNavigatorProp } from "../Navigation/RootNavigator";
 
 const CountriesSelectionModal = lazy(
   () => import("./modals/CountriesSelectionModal")
@@ -29,6 +31,7 @@ const SignupForm = () => {
   const [nationality, setNationality] = useState("");
   const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const { isLoading, signUp } = useAuth();
+  const navigator = useNavigation<RootNavigatorProp>();
 
   const onRegister = async () => {
     setErrors({});
@@ -57,6 +60,13 @@ const SignupForm = () => {
       fullName: fullName.trim(),
       nationality,
       setErrorCb: setApiError,
+      onSuccess: () =>
+        navigator.navigate("auth", {
+          screen: "verifyEmail",
+          params: {
+            email,
+          },
+        }),
     });
   };
 

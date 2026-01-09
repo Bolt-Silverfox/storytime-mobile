@@ -6,8 +6,10 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
 import defaultStyles from "../../styles";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
+import SuccessScreen from "../../components/UI/SuccessScreen";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 
 const resetPasswordSchema = z
   .object({
@@ -30,12 +32,14 @@ type Errors = Partial<Record<keyof ResetSchema, string>>;
 type PropRoutes = RouteProp<AuthNavigatorParamList, "inputNewPassword">;
 
 const InputNewPassword = () => {
+  const navigator = useNavigation<RootNavigatorProp>();
   const route = useRoute<PropRoutes>();
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { isLoading, resetPassword } = useAuth();
+  const [success, setSuccess] = useState(false);
 
   const onRegister = async () => {
     setErrors({});
@@ -60,6 +64,7 @@ const InputNewPassword = () => {
       token: route.params.token.trim(),
       newPassword: confirmPassword,
       setErrorCb: setApiError,
+      onSuccess: () => setSuccess(true),
     });
   };
 
@@ -93,6 +98,12 @@ const InputNewPassword = () => {
         <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
       </Pressable>
       <LoadingOverlay visible={isLoading} />
+      <SuccessScreen
+        visible={success}
+        message="Successful!"
+        secondaryMessage="Your password has been reset"
+        onProceed={() => navigator.navigate("auth", { screen: "login" })}
+      />
     </View>
   );
 };

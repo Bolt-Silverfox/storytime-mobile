@@ -1,5 +1,8 @@
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { BASE_URL } from "../constants";
+import { QueryResponse } from "../types";
 
 const filterStoriesByTitle = (stories: any[], searchQuery: string) => {
   if (!searchQuery.trim()) return stories;
@@ -93,6 +96,34 @@ const urlToBlob = async (uri: string) => {
   return blob;
 };
 
+const uploadUserAvatar = async (imageUri: string, userId: string) => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    const formData = new FormData();
+    formData.append("image", {
+      uri: imageUri,
+      type: "image/jpeg",
+      name: "avatar.jpg",
+    } as any);
+    formData.append("userId", userId);
+    const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
+      method: "POST",
+      body: formData,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const response: QueryResponse = await request.json();
+    if (!response.success) throw new Error(response.message);
+    return response;
+  } catch (err: unknown) {
+    const message =
+      err instanceof Error ? err.message : "Unexpected error, try again";
+    throw new Error(message);
+  }
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -102,4 +133,5 @@ export {
   getLanguageCode,
   getErrorMessage,
   urlToBlob,
+  uploadUserAvatar,
 };
