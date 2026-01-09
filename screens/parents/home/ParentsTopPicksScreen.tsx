@@ -1,21 +1,19 @@
-import { ImageBackground, ScrollView, Text, View } from "react-native";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import useStoryMode from "../../../contexts/StoryModeContext";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import LoadingOverlay from "../../../components/LoadingOverlay";
+import { useState } from "react";
+import { ImageBackground, ScrollView, Text, View } from "react-native";
+import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
 import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { AgeGroupType } from "../../../types";
-import { useState } from "react";
-import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
 
 const ParentsTopPicksScreen = () => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
   );
@@ -66,7 +64,6 @@ const ParentsTopPicksScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                setActiveStoryId(story.id);
                 navigator.navigate("childStoryDetails", { storyId: story.id });
               }}
               story={story}

@@ -1,12 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import {
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { ImageBackground, ScrollView, Text, View } from "react-native";
 import {
   ParentHomeNavigatorParamList,
   ParntHomeNavigatorProp,
@@ -16,13 +10,11 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
 import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import useStoryMode from "../../../contexts/StoryModeContext";
 
 type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
 const StoriesByAgeScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
   );
@@ -68,7 +60,6 @@ const StoriesByAgeScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                setActiveStoryId(story.id);
                 navigator.navigate("childStoryDetails", { storyId: story.id });
               }}
               story={story}
