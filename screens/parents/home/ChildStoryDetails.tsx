@@ -1,4 +1,4 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
@@ -14,25 +14,27 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
 import CustomButton from "../../../components/UI/CustomButton";
-import useStoryMode from "../../../contexts/StoryModeContext";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import {
+  ParentHomeNavigatorParamList,
+  ParntHomeNavigatorProp,
+} from "../../../Navigation/ParentHomeNavigator";
+import { StoryModes } from "../../../types";
+
+type RoutePropTypes = RouteProp<
+  ParentHomeNavigatorParamList,
+  "childStoryDetails"
+>;
 
 const ChildStoryDetails = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { params } = useRoute<RoutePropTypes>();
+  const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
-  const { storyMode, setStoryMode, activeStoryId } = useStoryMode();
   const { isPending, data, error, refetch } = useQuery(
-    queryGetStory(activeStoryId!)
+    queryGetStory(params.storyId)
   );
-  const onNavigate = () => {
-    if (storyMode === "plain") {
-      navigator.navigate("newPlainStoryMode", { storyId: activeStoryId! });
-      return;
-    }
-    navigator.navigate("newInteractiveStoryMode", { storyId: activeStoryId! });
-  };
 
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
@@ -154,7 +156,12 @@ const ChildStoryDetails = () => {
       </ScrollView>
       <View className="border-t px-4 bg-bgLight border-t-border-light">
         <CustomButton
-          onPress={onNavigate}
+          onPress={() =>
+            navigator.navigate("readStory", {
+              storyId: params.storyId,
+              mode: storyMode,
+            })
+          }
           text="Start Reading"
           disabled={!storyMode}
         />

@@ -1,17 +1,35 @@
-import { useState } from "react";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
-import useStoryMode from "../../../contexts/StoryModeContext";
+import {
+  ParentHomeNavigatorParamList,
+  ParntHomeNavigatorProp,
+} from "../../../Navigation/ParentHomeNavigator";
 import { StoryModes } from "../../../types";
 import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 
-interface Props extends Omit<CustomModalProps, "children"> {}
+interface Props extends Omit<CustomModalProps, "children"> {
+  setActiveParagraph: Dispatch<SetStateAction<number>>;
+}
 
-const InStoryModeModal = ({ isOpen, onClose }: Props) => {
-  const { storyMode, confirmStoryMode } = useStoryMode();
-  const [newMode, setNewMode] = useState<StoryModes>(storyMode);
+type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "readStory">;
 
+const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
+  const { params } = useRoute<RoutePropTypes>();
+  const [newMode, setNewMode] = useState<StoryModes>(params.mode);
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
+
+  const handleChangeStoryMode = () => {
+    if (newMode === params.mode) {
+      onClose();
+      return;
+    }
+    setActiveParagraph(0);
+    navigator.navigate("readStory", { mode: newMode, storyId: params.storyId });
+    onClose();
+  };
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="bg-white flex flex-col gap-y-6">
@@ -52,7 +70,7 @@ const InStoryModeModal = ({ isOpen, onClose }: Props) => {
           </Pressable>
         </View>
         <CustomButton
-          onPress={() => confirmStoryMode(onClose, newMode)}
+          onPress={handleChangeStoryMode}
           text="Select preferred story mode"
           disabled={!newMode}
         />

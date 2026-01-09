@@ -1,46 +1,39 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useQuery } from "@tanstack/react-query";
-import { useAudioPlayer } from "expo-audio";
-import { useState } from "react";
-import {
-  Image,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  Switch,
-  Text,
-  View,
-} from "react-native";
-import ErrorComponent from "../../../components/ErrorComponent";
-import Icon from "../../../components/Icon";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import SelectReadingVoiceModal from "../../../components/modals/SelectReadingVoiceModal";
-import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryOptionsModal";
-import StoryContentContainer from "../../../components/StoryContentContainer";
-import useStoryMode from "../../../contexts/StoryModeContext";
-import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
-import ProgressBar from "../../../components/UI/ProgressBar";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { ImageBackground, Pressable, ScrollView, View } from "react-native";
+import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
+import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import ErrorComponent from "./ErrorComponent";
+import LoadingOverlay from "./LoadingOverlay";
+import StoryAudioPlayer from "./StoryAudioPlayer";
+import StoryContentContainer from "./StoryContentContainer";
+import ProgressBar from "./UI/ProgressBar";
+import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
+import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import { StoryModes } from "../types";
 
-// CREATE REUSABLE COMPONENTS FOR STORY MODES, wouldn't need to use context when this is handled.
-
-const NewInteractiveStoryModeScreen = () => {
+const StoryComponent = ({
+  storyId,
+  storyMode,
+}: {
+  storyId: string;
+  storyMode: StoryModes;
+}) => {
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const { activeStoryId } = useStoryMode();
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const { isPending, error, refetch, data } = useQuery(
-    queryGetStory(activeStoryId!)
-  );
-  const player = useAudioPlayer(data?.audioUrl);
 
+  const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+
   const paragraphs = data.textContent.split(/\n\s*\n/);
+  // split story by number of words instead, cos some stories might not have newline characters
+
   return (
     <ScrollView contentContainerClassName="flex min-h-full">
       <ImageBackground
@@ -65,23 +58,9 @@ const NewInteractiveStoryModeScreen = () => {
           </Pressable>
         </View>
         <View className="flex justify-end flex-1 flex-col gap-y-3">
-          <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">
-            <View className="flex flex-row gap-x-2 items-center">
-              <Pressable className="bg-blue size-12 rounded-full flex flex-col justify-center items-center">
-                <Ionicons
-                  name="volume-medium-outline"
-                  size={24}
-                  color="white"
-                />
-              </Pressable>
-              <Text className="font-[quilka] text-xl">Mute Voice</Text>
-            </View>
-            <Pressable onPress={() => player.play()}>
-              <Switch value={true} />
-            </Pressable>
-          </View>
+          <StoryAudioPlayer audioUrl={data.audioUrl} />
           <StoryContentContainer
-            isInteractive
+            isInteractive={storyMode === "interactive"}
             story={data}
             paragraphs={paragraphs}
             activeParagraph={activeParagraph}
@@ -90,9 +69,9 @@ const NewInteractiveStoryModeScreen = () => {
           <View className="bg-white p-4 rounded-2xl">
             <ProgressBar
               backgroundColor="#4807EC"
-              currentStep={1}
+              currentStep={activeParagraph + 1}
               label="Page"
-              totalSteps={4}
+              totalSteps={paragraphs.length}
               height={11}
             />
           </View>
@@ -106,9 +85,10 @@ const NewInteractiveStoryModeScreen = () => {
         handleVoiceModal={setIsVoiceModalOpen}
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
+        setActiveParagraph={setActiveParagraph}
       />
     </ScrollView>
   );
 };
 
-export default NewInteractiveStoryModeScreen;
+export default StoryComponent;

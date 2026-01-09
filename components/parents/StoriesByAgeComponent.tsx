@@ -3,7 +3,6 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import useStoryMode from "../../contexts/StoryModeContext";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { AgeGroupType } from "../../types";
 import ErrorComponent from "../ErrorComponent";
@@ -13,7 +12,6 @@ import StoryItem from "./StoryItem";
 const StoriesByAgeComponent = () => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
   if (error)
@@ -36,7 +34,6 @@ const StoriesByAgeComponent = () => {
             isPremium={true}
             key={story.id}
             onNavigate={() => {
-              setActiveStoryId(story.id);
               navigator.navigate("childStoryDetails", { storyId: story.id });
             }}
             story={story}

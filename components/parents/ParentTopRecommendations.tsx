@@ -2,14 +2,12 @@ import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import useStoryMode from "../../contexts/StoryModeContext";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import ErrorComponent from "../ErrorComponent";
 import StoryItem from "./StoryItem";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
   if (error)
@@ -41,7 +39,6 @@ const ParentsTopRecommendations = () => {
               key={story.id}
               onNavigate={() => {
                 navigator.navigate("childStoryDetails", { storyId: story.id });
-                setActiveStoryId(story.id);
               }}
               story={story}
             />
