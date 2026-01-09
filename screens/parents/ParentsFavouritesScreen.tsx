@@ -2,10 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import Icon from "../../components/Icon";
 import { Story } from "../../types";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import ErrorComponent from "../../components/ErrorComponent";
 import LoadingOverlay from "../../components/LoadingOverlay";
+// import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
@@ -38,6 +40,8 @@ const ParentsFavouritesScreen = () => {
 
 export default ParentsFavouritesScreen;
 
+// add modal to confirm removal from favourites
+
 const FavouriteStoryItem = ({ story }: { story: Story }) => {
   return (
     <View className="flex flex-row p-2 gap-x-2 bg-white border border-border-lighter rounded-3xl">
@@ -56,9 +60,12 @@ const FavouriteStoryItem = ({ story }: { story: Story }) => {
         <Text className="font-[abeezee] text-text text-sm">
           {story.ageMin} - {story.ageMax}
         </Text>
-        <Pressable className="self-end">
-          <Icon name="Heart" color="red" />
-        </Pressable>
+        <FontAwesome
+          name="heart"
+          className="self-end"
+          size={24}
+          color="red"
+        />{" "}
       </View>
     </View>
   );

@@ -51,7 +51,17 @@ const ResetPasswordScreen = () => {
         </View>
         <Pressable
           onPress={() =>
-            requestPasswordReset({ email: email.trim(), setErrorCb: setError })
+            requestPasswordReset({
+              email: email.trim(),
+              setErrorCb: setError,
+              onSuccess: () =>
+                navigator.navigate("auth", {
+                  screen: "confirmResetPasswordToken",
+                  params: {
+                    email,
+                  },
+                }),
+            })
           }
           disabled={isLoading}
           style={

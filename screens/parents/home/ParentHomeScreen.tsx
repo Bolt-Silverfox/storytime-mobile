@@ -1,9 +1,9 @@
+import { lazy } from "react";
 import { ScrollView, View } from "react-native";
 import ChildrenActivitiesComponent from "../../../components/parents/ChildrenActivitiesComponent";
 import IncompleteProfileBanner from "../../../components/parents/IncompleteProfileBanner";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
-import { lazy } from "react";
 
 const StoryCategoriesList = lazy(
   () => import("../../../components/parents/StoryCategoriesList")

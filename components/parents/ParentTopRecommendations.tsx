@@ -1,12 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
-import { ImageSourcePropType, ScrollView, Text, View } from "react-native";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import { ageRange } from "../../data";
-import StoryItem from "./StoryItem";
 import useStoryMode from "../../contexts/StoryModeContext";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import ErrorComponent from "../ErrorComponent";
+import StoryItem from "./StoryItem";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();

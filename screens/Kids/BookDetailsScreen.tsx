@@ -11,7 +11,6 @@ const BookDetailsScreen = () => {
     "getStories",
     childId,
   ]);
-  console.log("cached id", childId);
 
   return (
     <View style={styles.screen}>

@@ -48,17 +48,25 @@ const ParentsTabNavigator = () => {
       <Tab.Screen
         name="home"
         component={ParentHomeNavigator}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <Icon
-              name="House"
-              color={focused ? colours.primary : colours.black}
-            />
-          ),
-          tabBarActiveTintColor: colours.primary,
-          tabBarLabelStyle: {
-            textTransform: "capitalize",
-          },
+        options={({ route }) => {
+          const currentRoute =
+            getFocusedRouteNameFromRoute(route) ?? "homePage";
+
+          return {
+            tabBarStyle: {
+              display: currentRoute === "homePage" ? "flex" : "none",
+            },
+            tabBarIcon: ({ focused }) => (
+              <Icon
+                name="House"
+                color={focused ? colours.primary : colours.black}
+              />
+            ),
+            tabBarActiveTintColor: colours.primary,
+            tabBarLabelStyle: {
+              textTransform: "capitalize",
+            },
+          };
         }}
       />
       <Tab.Screen
@@ -77,14 +85,22 @@ const ParentsTabNavigator = () => {
       <Tab.Screen
         name="controls"
         component={ParentControlNavigator}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <SecurityUser color={focused ? colours.primary : colours.black} />
-          ),
-          tabBarActiveTintColor: colours.primary,
-          tabBarLabelStyle: {
-            textTransform: "capitalize",
-          },
+        options={({ route }) => {
+          const currentRoute =
+            getFocusedRouteNameFromRoute(route) ?? "indexPage";
+
+          return {
+            tabBarIcon: ({ focused }) => (
+              <SecurityUser color={focused ? colours.primary : colours.black} />
+            ),
+            tabBarStyle: {
+              display: currentRoute === "indexPage" ? "flex" : "none",
+            },
+            tabBarActiveTintColor: colours.primary,
+            tabBarLabelStyle: {
+              textTransform: "capitalize",
+            },
+          };
         }}
       />
       <Tab.Screen
@@ -104,7 +120,8 @@ const ParentsTabNavigator = () => {
         name="profile"
         component={ParentProfileNavigator}
         options={({ route }) => {
-          const routeName = getFocusedRouteNameFromRoute(route) ?? "indexPage";
+          const currentRoute =
+            getFocusedRouteNameFromRoute(route) ?? "indexPage";
           return {
             tabBarIcon: ({ focused }) => (
               <Profile color={focused ? colours.primary : colours.black} />
@@ -112,6 +129,9 @@ const ParentsTabNavigator = () => {
             tabBarActiveTintColor: colours.primary,
             tabBarLabelStyle: {
               textTransform: "capitalize",
+            },
+            tabBarStyle: {
+              display: currentRoute === "indexPage" ? "flex" : "none",
             },
           };
         }}
@@ -122,6 +142,7 @@ const ParentsTabNavigator = () => {
         options={{
           tabBarButton: () => null,
           tabBarItemStyle: { display: "none" },
+          tabBarStyle: { display: "none" },
         }}
       />
       <Tab.Screen
@@ -130,6 +151,7 @@ const ParentsTabNavigator = () => {
         options={{
           tabBarButton: () => null,
           tabBarItemStyle: { display: "none" },
+          tabBarStyle: { display: "none" },
         }}
       />
     </Tab.Navigator>

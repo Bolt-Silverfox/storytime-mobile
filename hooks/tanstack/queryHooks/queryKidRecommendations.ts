@@ -24,6 +24,7 @@ const queryKidRecommendations = (kidId: string) => {
     },
     staleTime: Infinity,
     select: (res) => res.data,
+    gcTime: 60 * 60 * 10,
   });
 };
 

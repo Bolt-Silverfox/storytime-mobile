@@ -91,6 +91,14 @@ const ConfirmResetPasswordTokenScreen = () => {
               email: route.params.email.trim(),
               token: otp,
               setErrorCb: setError,
+              onSuccess: () =>
+                navigator.navigate("auth", {
+                  screen: "inputNewPassword",
+                  params: {
+                    email: route.params.email.trim(),
+                    token: otp,
+                  },
+                }),
             })
           }
           style={

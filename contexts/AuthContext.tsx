@@ -1,5 +1,4 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useNavigation } from "@react-navigation/native";
 import {
   createContext,
   Dispatch,
@@ -10,7 +9,6 @@ import {
   useEffect,
   useState,
 } from "react";
-import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import { User } from "../types";
 import auth from "../utils/auth";
 import {
@@ -37,11 +35,17 @@ type AuthFnTypes = {
     fullName: string;
     nationality: string;
     setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
   }) => void;
-  verifyEmail: (data: { token: string; setErrorCb: SetErrorCallback }) => void;
+  verifyEmail: (data: {
+    token: string;
+    setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
+  }) => void;
   requestPasswordReset: (data: {
     email: string;
     setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
   }) => void;
   resendVerificationEmail: (data: {
     email: string;
@@ -51,12 +55,14 @@ type AuthFnTypes = {
     email: string;
     token: string;
     setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
   }) => void;
   resetPassword: (data: {
     email: string;
     token: string;
     newPassword: string;
     setErrorCb: SetErrorCallback;
+    onSuccess: () => void;
   }) => void;
   handleGoogleAuth: () => void;
   setInAppPin: (data: {
@@ -154,7 +160,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [errorMessage, setErrorMessage] = useState<
     string | string[] | undefined
   >(undefined);
-  const navigator = useNavigation<RootNavigatorProp>();
 
   useEffect(() => {
     GoogleSignin.configure({
@@ -259,6 +264,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     fullName,
     nationality,
     setErrorCb,
+    onSuccess,
   }) => {
     setErrorCb("");
     const signupData = await authTryCatch<
@@ -275,17 +281,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(signupData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "verifyEmail",
-      params: {
-        email,
-      },
-    });
+    await AsyncStorage.setItem("accessToken", signupData.data.jwt);
+    await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
+    await AsyncStorage.setItem(
+      "unverifiedUser",
+      JSON.stringify(signupData.data.user)
+    );
+    onSuccess();
   };
 
   const verifyEmail: AuthFnTypes["verifyEmail"] = async ({
     token,
     setErrorCb,
+    onSuccess,
   }) => {
     setErrorCb("");
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
@@ -295,9 +303,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(verifyEmailData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "emailVerificationSuccessful",
-    });
+    onSuccess();
   };
 
   const resendVerificationEmail: AuthFnTypes["resendVerificationEmail"] =
@@ -320,6 +326,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const requestPasswordReset: AuthFnTypes["requestPasswordReset"] = async ({
     email,
     setErrorCb,
+    onSuccess,
   }) => {
     setErrorCb("");
     if (!emailRegex.test(email)) {
@@ -333,18 +340,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(requestData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "confirmResetPasswordToken",
-      params: {
-        email,
-      },
-    });
+    onSuccess();
   };
 
   const validatePasswordReset: AuthFnTypes["validatePasswordReset"] = async ({
     email,
     token,
     setErrorCb,
+    onSuccess,
   }) => {
     setErrorCb("");
     if (!emailRegex.test(email)) {
@@ -358,13 +361,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(requestData.message);
       return;
     }
-    navigator.navigate("auth", {
-      screen: "inputNewPassword",
-      params: {
-        email,
-        token,
-      },
-    });
+    onSuccess();
   };
 
   const resetPassword: AuthFnTypes["resetPassword"] = async ({
@@ -372,6 +369,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     token,
     newPassword,
     setErrorCb,
+    onSuccess,
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
@@ -381,17 +379,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(requestData.message);
       return;
     }
-    navigator.reset({
-      index: 0,
-      routes: [
-        {
-          name: "auth",
-          params: {
-            screen: "resetPasswordSuccessful",
-          },
-        },
-      ],
-    });
+    onSuccess();
   };
 
   const handleGoogleAuth = async () => {
@@ -593,7 +581,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 const useAuth = () => {
   const context = useContext(AuthContext);
-  if (!context) throw new Error("AuthContext was used outside of it's scope");
+  if (!context) throw new Error("AuthContext was used outside of its scope");
   return context;
 };
 
