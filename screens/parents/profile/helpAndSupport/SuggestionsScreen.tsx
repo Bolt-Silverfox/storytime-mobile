@@ -1,19 +1,12 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-  ScrollView,
-  TextInput,
-} from "react-native";
-import React, { useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ChevronLeft } from "lucide-react-native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
-import colours from "../../../colours";
+import colours from "../../../../colours";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
+import SuccessScreen from "../../../../components/UI/SuccessScreen";
 
 const feedBack = z.object({
   fullName: z.string().trim().min(1, "Name is required"),
@@ -26,10 +19,11 @@ const feedBack = z.object({
 type FeedBackSchema = z.infer<typeof feedBack>;
 type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
-export default function Feedback() {
+export default function SuggestionsScreen() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [succcess, setSuccess] = useState(false);
 
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [errors, setErrors] = useState<Errors>({});
@@ -53,7 +47,7 @@ export default function Feedback() {
       return;
     }
     // await signUp(email, password, fullName.trim(), title);
-    navigator.navigate("feedBackMessageSuccessful");
+    setSuccess(true);
   };
 
   return (
@@ -113,7 +107,7 @@ export default function Feedback() {
             }}
             onChangeText={setMessage}
             value={message}
-            className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message? "border-red-600" : "border-border"}`}
+            className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message ? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.message ? "red" : colours.text}
             multiline
           />
@@ -134,6 +128,12 @@ export default function Feedback() {
           </Text>
         </Pressable>
       </View>
+      <SuccessScreen
+        message="Success!"
+        secondaryMessage="Your message has been sent sucessfully"
+        visible={succcess}
+        onProceed={() => navigator.goBack()}
+      />
     </View>
   );
 }

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Alert, Keyboard, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import colours from "../../../colours";
@@ -10,6 +10,7 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
 import { useQueryClient } from "@tanstack/react-query";
+import SuccessScreen from "../../../components/UI/SuccessScreen";
 
 const SetPin = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -17,6 +18,7 @@ const SetPin = () => {
   const [pin, setPin] = useState("");
   const [confirmPin, setConfirmPin] = useState("");
   const { isLoading, setInAppPin, user } = useAuth();
+  const [success, setSuccess] = useState(false);
   const queryClient = useQueryClient();
 
   const onSubmit = () => {
@@ -28,8 +30,8 @@ const SetPin = () => {
       pin,
       setErrorCb: setError,
       onSuccess: () => {
-        Alert.alert("Pin set successfully!");
-        navigator.goBack();
+        Keyboard.dismiss();
+        setSuccess(true);
         queryClient.invalidateQueries({
           queryKey: ["userProfile", user?.id],
         });
@@ -75,6 +77,12 @@ const SetPin = () => {
           text={isLoading ? "Loading..." : "Save changes"}
         />
       </View>
+      <SuccessScreen
+        visible={success}
+        message="Success!"
+        secondaryMessage="Pin set successfully"
+        onProceed={() => navigator.goBack()}
+      />
     </View>
   );
 };
