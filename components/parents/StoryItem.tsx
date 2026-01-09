@@ -1,7 +1,6 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { Story } from "../../types";
 import Icon from "../Icon";
-// import CustomImage from "../UI/CustomImage";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -34,7 +33,6 @@ const StoryItem = ({
       >
         <Image
           className=" h-[150px] w-full -z-10 rounded-xl bg-cover"
-          // uri={story.coverImageUrl}
           source={{ uri: story.coverImageUrl }}
           height={150}
         />
