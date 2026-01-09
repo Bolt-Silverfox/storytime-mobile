@@ -26,7 +26,6 @@ const StoriesByCategoryScreen = () => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const { params } = useRoute<RouteProps>();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const [isImageLoading, setIsImageLoading] = useState(false);
   const { isPending, data, refetch, error } = useQuery(
     queryStoryByCategory(params.id)
@@ -88,7 +87,6 @@ const StoriesByCategoryScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                setActiveStoryId(story.id);
                 navigator.navigate("childStoryDetails", { storyId: story.id });
               }}
               story={story}

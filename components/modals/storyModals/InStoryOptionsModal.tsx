@@ -10,11 +10,13 @@ type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
   handleVoiceModal: Dispatch<SetStateAction<boolean>>;
   isOptionsModalOpen: boolean;
+  setActiveParagraph: Dispatch<SetStateAction<number>>;
 };
 const InStoryOptionsModal = ({
   isOptionsModalOpen,
   setIsOptionsModalOpen,
   handleVoiceModal,
+  setActiveParagraph,
 }: PropTypes) => {
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -64,8 +66,12 @@ const InStoryOptionsModal = ({
         </View>
       </View>
       <InStoryModeModal
+        setActiveParagraph={setActiveParagraph}
         isOpen={isStoryModeModalOpen}
-        onClose={() => setIsStoryModeModalOpen(false)}
+        onClose={() => {
+          setIsOptionsModalOpen(false);
+          setIsStoryModeModalOpen(false);
+        }}
       />
       <ExitStoryModal
         isOpen={isExitModalOpen}

@@ -1,21 +1,19 @@
-import { useQuery } from "@tanstack/react-query";
-import { ImageBackground, ScrollView, Text, View } from "react-native";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import useStoryMode from "../../../contexts/StoryModeContext";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import { useNavigation } from "@react-navigation/native";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import ErrorComponent from "../../../components/ErrorComponent";
-import CustomButton from "../../../components/UI/CustomButton";
-import StoryItem from "../../../components/parents/StoryItem";
+import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { AgeGroupType } from "../../../types";
+import { ImageBackground, ScrollView, Text, View } from "react-native";
+import ErrorComponent from "../../../components/ErrorComponent";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import StoryItem from "../../../components/parents/StoryItem";
 import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
+import CustomButton from "../../../components/UI/CustomButton";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
+import { AgeGroupType } from "../../../types";
 
 const ParentsTopRecommendationsScreen = () => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
   );
@@ -66,7 +64,6 @@ const ParentsTopRecommendationsScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                setActiveStoryId(story.id);
                 navigator.navigate("childStoryDetails", { storyId: story.id });
               }}
               story={story}
