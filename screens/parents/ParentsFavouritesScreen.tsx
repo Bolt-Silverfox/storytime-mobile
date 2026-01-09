@@ -17,7 +17,15 @@ const ParentsFavouritesScreen = () => {
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (isPending) return <LoadingOverlay visible />;
-  if (!data.length) return <CustomEmptyState message="No Favourites yet" />;
+  // if (!data.length) return <CustomEmptyState message="No Favourites yet" />;
+  if (!data.length)
+    return (
+      <CustomEmptyState
+        url={require("../../assets/images/favourites-empty-state.png")}
+        message="No Favourites added yet"
+        secondaryMessage="You do not have any favourite stories aded yet"
+      />
+    );
   return (
     <View className="flex-1 bg-bgLight">
       <View className="bg-white px-4 border-b border-b-border-lighter py-5 flex flex-row items-center justify-between">
