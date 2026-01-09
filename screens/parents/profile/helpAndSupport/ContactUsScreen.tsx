@@ -1,18 +1,12 @@
-import { View, Text, Switch, Pressable, Image } from "react-native";
-import React, { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import {
-  Call,
-  Facebook,
-  Instagram,
-  Message,
-  Sms,
-} from "iconsax-react-nativejs";
+import { Call, Facebook, Instagram, Sms } from "iconsax-react-nativejs";
+import { ChevronLeft } from "lucide-react-native";
+import React from "react";
+import { Image, Pressable, Text, View } from "react-native";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
 
-export default function ContactUs() {
+export default function ContactUsScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return (
@@ -51,9 +45,7 @@ export default function ContactUs() {
         <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8] gap-3 rounded-[20px] px-[16] bg-white">
           <Call />
           <View>
-            <Text
-              style={[defaultStyles.defaultText, { color: "black" }]}
-            >
+            <Text style={[defaultStyles.defaultText, { color: "black" }]}>
               Call us
             </Text>
             <Text>+1 (765) 765 7656</Text>
@@ -68,7 +60,7 @@ export default function ContactUs() {
           <Facebook size="50" color="#EC4007" variant="Bold" />
           <Instagram size="50" color="#EC4007" variant="Bold" />
           <Image
-            source={require("../../../assets/icons/tiktok.png")}
+            source={require("../../../../assets/icons/tiktok.png")}
             width={50}
             height={50}
           />

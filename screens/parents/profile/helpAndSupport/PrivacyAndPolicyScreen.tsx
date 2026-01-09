@@ -1,13 +1,12 @@
-import { View, Text, Switch, Pressable, Image, ScrollView } from "react-native";
-import React, { useEffect, useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../styles";
 import { useNavigation } from "@react-navigation/native";
-import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ChevronLeft } from "lucide-react-native";
+import React from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
+import { privacy } from "../../../../constants/constants";
 
-import { terms } from "../../../constants/constants";
-
-export default function TermsAndConditions() {
+export default function PrivacyAndPolicyScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
 
   return (
@@ -20,12 +19,15 @@ export default function TermsAndConditions() {
           style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
           className="self-center text-center  "
         >
-          Terms and Conditions
+          Privacy Policy
         </Text>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} className=" mx-[16] gap-4 ">
-        {terms.map((term, i) => (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        className=" mx-[16] gap-4 "
+      >
+        {privacy.map((term, i) => (
           <View key={i} className="mt-5">
             <Text
               style={[

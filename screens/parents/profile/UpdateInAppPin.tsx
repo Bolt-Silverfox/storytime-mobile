@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Alert, StyleSheet, Text, View } from "react-native";
+import { Keyboard, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import colours from "../../../colours";
@@ -9,6 +9,7 @@ import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import defaultStyles from "../../../styles";
+import SuccessScreen from "../../../components/UI/SuccessScreen";
 
 const UpdateInAppPin = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -17,6 +18,7 @@ const UpdateInAppPin = () => {
   const [confirmPin, setConfirmPin] = useState("");
   const [oldPin, setOldPin] = useState("");
   const { isLoading, updateInAppPin } = useAuth();
+  const [success, setSuccess] = useState(false);
 
   const onSubmit = () => {
     if (pin !== confirmPin) {
@@ -29,8 +31,8 @@ const UpdateInAppPin = () => {
       confirmNewPin: confirmPin,
       setErrorCb: setError,
       onSuccess: () => {
-        Alert.alert("Pin Updated successfully");
-        navigator.goBack();
+        Keyboard.dismiss();
+        setSuccess(true);
       },
     });
   };
@@ -87,6 +89,12 @@ const UpdateInAppPin = () => {
           text={isLoading ? "Loading..." : "Save changes"}
         />
       </View>
+      <SuccessScreen
+        visible={success}
+        message="Success!"
+        secondaryMessage="Pin updated successfully"
+        onProceed={() => navigator.goBack()}
+      />
     </View>
   );
 };

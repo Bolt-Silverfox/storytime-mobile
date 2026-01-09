@@ -6,11 +6,11 @@ import {
   TrushSquare,
 } from "iconsax-react-nativejs";
 import {
+  Ban,
   BellRing,
   CreditCard,
   HelpCircle,
   KeyRound,
-  Ban,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -29,13 +29,11 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import defaultStyles from "../../../styles";
 
 const ProfileScreen: FC = () => {
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const parentNavigator = useNavigation<ParentsNavigatorProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
@@ -112,9 +110,7 @@ const ProfileScreen: FC = () => {
           <MenuItem
             icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Notification Settings"
-            onPress={() =>
-              parentNavigator.navigate("notifications", { screen: "settings" })
-            }
+            onPress={() => navigator.navigate("notificationSettings")}
             isTablet={isTablet}
           />
           <MenuItem
@@ -139,13 +135,15 @@ const ProfileScreen: FC = () => {
             icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
-            onPress={() => parentNavigator.navigate("getPremium")}
+            onPress={() => navigator.navigate("subscription")}
           />
           <MenuItem
             icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
             label="Help & Support"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("helpAndSupport")}
+            onPress={() =>
+              navigator.navigate("helpAndSupport", { screen: "index" })
+            }
           />
           <MenuItem
             icon={<Logout color="#EC4007" size={isTablet ? 20 : 18} />}
