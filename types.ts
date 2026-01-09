@@ -212,7 +212,9 @@ type StoryBuddy = {
   isDeleted: boolean;
   deletedAt: string | null;
 };
+const ageGroups = ["1-2", "3-4", "5-6", "7-8", "9-12"] as const;
 
+type AgeGroupType = (typeof ageGroups)[number];
 export type {
   User,
   Profile,
@@ -229,4 +231,6 @@ export type {
   Story,
   ChildStoryStatus,
   StoryBuddy,
+  AgeGroupType,
 };
+export { ageGroups };

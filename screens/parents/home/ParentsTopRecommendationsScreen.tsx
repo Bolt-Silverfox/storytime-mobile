@@ -8,8 +8,12 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
+import { useState } from "react";
+import { AgeGroupType } from "../../../types";
+import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
 
 const ParentsTopRecommendationsScreen = () => {
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { setActiveStoryId } = useStoryMode();
   const { isPending, error, refetch, data } = useQuery(
@@ -49,9 +53,13 @@ const ParentsTopRecommendationsScreen = () => {
       </ImageBackground>
       <ScrollView
         className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col"
+        contentContainerClassName="flex flex-col px-4"
         showsVerticalScrollIndicator={false}
       >
+        <AgeSelectionComponent
+          selectedAgeGroup={selectedGroup}
+          setSelectedAgeGroup={setSelectedGroup}
+        />
         <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
           {data.map((story, index) => (
             <StoryItem

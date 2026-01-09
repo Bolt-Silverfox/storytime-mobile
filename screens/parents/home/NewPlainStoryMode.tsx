@@ -46,9 +46,6 @@ const NewPlainStoryMode = () => {
         >
           <Icon color="#EC4007" name="EllipsisVertical" />
         </Pressable>
-        {/* <Text className="font-[quilka] text-[#5E4404] text-2xl">
-          {data.title}
-        </Text> */}
         <View className="flex justify-end flex-1 flex-col gap-y-3">
           <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">
             <View className="flex flex-row gap-x-2 items-center">
@@ -75,8 +72,7 @@ const NewPlainStoryMode = () => {
         </View>
       </ImageBackground>
       <InStoryOptionsModal
-        totalPages={paragraphs.length}
-        currentPage={activeParagraph + 1}
+        handleVoiceModal={setIsVoiceModalOpen}
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
       />

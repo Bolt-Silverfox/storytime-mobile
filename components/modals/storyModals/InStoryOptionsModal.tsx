@@ -1,22 +1,20 @@
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import Icon from "../../Icon";
-import ProgressBar from "../../UI/ProgressBar";
 import TopModal from "../TopModal";
 import ExitStoryModal from "./ExitStoryModal";
 import InStoryModeModal from "./InStoryModeModal";
 
 type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
+  handleVoiceModal: Dispatch<SetStateAction<boolean>>;
   isOptionsModalOpen: boolean;
-  totalPages: number;
-  currentPage: number;
 };
 const InStoryOptionsModal = ({
   isOptionsModalOpen,
   setIsOptionsModalOpen,
-  totalPages,
-  currentPage,
+  handleVoiceModal,
 }: PropTypes) => {
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -27,19 +25,17 @@ const InStoryOptionsModal = ({
       onClose={() => setIsOptionsModalOpen(false)}
     >
       <View className="flex flex-col gap-y-4">
-        <ProgressBar
-          backgroundColor="#4807EC"
-          currentStep={currentPage}
-          label="Page"
-          totalSteps={totalPages}
-          height={11}
-        />
         <View className="flex flex-row flex-wrap gap-6 justify-center gap-x-3">
           <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
-            <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">
-              <Icon name="VolumeOff" />
+            <Pressable
+              onPress={() => handleVoiceModal(true)}
+              className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter"
+            >
+              <MaterialIcons name="multitrack-audio" size={24} color="black" />
             </Pressable>
-            <Text className="text-xs text-text font-[abeezee]">Read aloud</Text>
+            <Text className="text-xs text-text font-[abeezee]">
+              Change voice
+            </Text>
           </View>
           <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
             <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">

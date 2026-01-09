@@ -12,6 +12,8 @@ import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen
 import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
 import SeasonalStoriesScreen from "../screens/parents/home/SeasonalStoriesScreen";
 import StoriesByCategoryScreen from "../screens/parents/home/StoriesByCategoryScreen";
+import { AgeGroupType } from "../types";
+import StoriesByAgeScreen from "../screens/parents/home/StoriesByAgeScreen";
 
 type ParentHomeNavigatorParamList = {
   homePage: undefined;
@@ -23,6 +25,7 @@ type ParentHomeNavigatorParamList = {
   seasonalStories: undefined;
   funAndAdventureStories: undefined;
   parentsTopPicks: undefined;
+  storiesByAge: { ageGroup: AgeGroupType };
 };
 
 type ParntHomeNavigatorProp =
@@ -60,6 +63,7 @@ const ParentHomeNavigator = () => {
           name="funAndAdventureStories"
           component={FunAndADventureStoriesScreen}
         />
+        <Stack.Screen name="storiesByAge" component={StoriesByAgeScreen} />
       </Stack.Navigator>
     </StoryModeProvider>
   );

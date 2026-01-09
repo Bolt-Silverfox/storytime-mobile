@@ -1,3 +1,4 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
 import { useState } from "react";
@@ -6,6 +7,7 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
+  Switch,
   Text,
   View,
 } from "react-native";
@@ -17,10 +19,15 @@ import InStoryOptionsModal from "../../../components/modals/storyModals/InStoryO
 import StoryContentContainer from "../../../components/StoryContentContainer";
 import useStoryMode from "../../../contexts/StoryModeContext";
 import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import ProgressBar from "../../../components/UI/ProgressBar";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 
-// CREATE REUSABLE COMPONENTS FOR STORY MODES
+// CREATE REUSABLE COMPONENTS FOR STORY MODES, wouldn't need to use context when this is handled.
 
 const NewInteractiveStoryModeScreen = () => {
+  const navigator = useNavigation<ParentsNavigatorProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const { activeStoryId } = useStoryMode();
@@ -41,27 +48,36 @@ const NewInteractiveStoryModeScreen = () => {
         resizeMode="cover"
         className="p-4 flex-1 flex flex-col "
       >
-        <Pressable
-          onPress={() => setIsOptionsModalOpen(true)}
-          className="size-10 self-end rounded-full border border-[#5E4404] flex justify-center items-center"
-        >
-          <Icon color="#EC4007" name="EllipsisVertical" />
-        </Pressable>
+        <View className="flex flex-row justify-between items-center">
+          <Pressable
+            onPress={() =>
+              navigator.reset({ index: 0, routes: [{ name: "home" }] })
+            }
+            className="bg-blue size-12 rounded-full flex flex-col justify-center items-center"
+          >
+            <FontAwesome6 name="house" size={20} color="white" />
+          </Pressable>
+          <Pressable
+            onPress={() => setIsOptionsModalOpen(true)}
+            className="bg-blue size-12 rounded-full flex flex-col justify-center items-center"
+          >
+            <FontAwesome6 name="ellipsis" size={20} color="white" />
+          </Pressable>
+        </View>
         <View className="flex justify-end flex-1 flex-col gap-y-3">
           <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">
             <View className="flex flex-row gap-x-2 items-center">
-              <Text className="font-[quilka] text-xl">Fanice</Text>
-              <Icon
-                name="SquarePen"
-                size={20}
-                onPress={() => setIsVoiceModalOpen(true)}
-              />
+              <Pressable className="bg-blue size-12 rounded-full flex flex-col justify-center items-center">
+                <Ionicons
+                  name="volume-medium-outline"
+                  size={24}
+                  color="white"
+                />
+              </Pressable>
+              <Text className="font-[quilka] text-xl">Mute Voice</Text>
             </View>
             <Pressable onPress={() => player.play()}>
-              <Image
-                source={require("../../../assets/recording-in-progress.png")}
-                className="h-12 w-12"
-              />
+              <Switch value={true} />
             </Pressable>
           </View>
           <StoryContentContainer
@@ -71,6 +87,15 @@ const NewInteractiveStoryModeScreen = () => {
             activeParagraph={activeParagraph}
             setActiveParagraph={setActiveParagraph}
           />
+          <View className="bg-white p-4 rounded-2xl">
+            <ProgressBar
+              backgroundColor="#4807EC"
+              currentStep={1}
+              label="Page"
+              totalSteps={4}
+              height={11}
+            />
+          </View>
         </View>
       </ImageBackground>
       <SelectReadingVoiceModal
@@ -78,8 +103,7 @@ const NewInteractiveStoryModeScreen = () => {
         onClose={() => setIsVoiceModalOpen(false)}
       />
       <InStoryOptionsModal
-        totalPages={paragraphs.length}
-        currentPage={activeParagraph + 1}
+        handleVoiceModal={setIsVoiceModalOpen}
         isOptionsModalOpen={isOptionsModalOpen}
         setIsOptionsModalOpen={setIsOptionsModalOpen}
       />
