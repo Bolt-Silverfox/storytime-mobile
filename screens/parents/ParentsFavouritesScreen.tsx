@@ -7,7 +7,6 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
-// import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
@@ -17,7 +16,14 @@ const ParentsFavouritesScreen = () => {
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (isPending) return <LoadingOverlay visible />;
-  if (!data.length) return <CustomEmptyState message="No Favourites yet" />;
+  if (!data.length)
+    return (
+      <CustomEmptyState
+        url={require("../../assets/images/favourites-empty-state.png")}
+        message="No Favourites added yet"
+        secondaryMessage="You do not have any favourite stories aded yet"
+      />
+    );
   return (
     <View className="flex-1 bg-bgLight">
       <View className="bg-white px-4 border-b border-b-border-lighter py-5 flex flex-row items-center justify-between">
@@ -56,7 +62,6 @@ const FavouriteStoryItem = ({ story }: { story: Story }) => {
         <Text className="font-[abeezee] text-text text-sm">
           {story.description}
         </Text>
-        {/* <Text className="font-[abeezee] text-black">Written by : Samuel Liu</Text> */}
         <Text className="font-[abeezee] text-text text-sm">
           {story.ageMin} - {story.ageMax}
         </Text>
