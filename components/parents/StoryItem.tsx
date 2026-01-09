@@ -1,7 +1,7 @@
 import { Image, Pressable, Text, View } from "react-native";
 import { Story } from "../../types";
 import Icon from "../Icon";
-import CustomImage from "../UI/CustomImage";
+// import CustomImage from "../UI/CustomImage";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -32,9 +32,10 @@ const StoryItem = ({
       <View
         className={`flex-1 w-full h-full rounded-2xl relative ${isLocked ? "bg-[#4807EC66]" : null}`}
       >
-        <CustomImage
+        <Image
           className=" h-[150px] w-full -z-10 rounded-xl bg-cover"
-          uri={story.coverImageUrl}
+          // uri={story.coverImageUrl}
+          source={{ uri: story.coverImageUrl }}
           height={150}
         />
         <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
