@@ -1,13 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
-import { BASE_URL } from "../../../constants";
 import apiFetch from "../../../apiFetch";
-import { useNavigation } from "@react-navigation/native";
-import { ParentControlNavigatorProp } from "../../../Navigation/ParentControlsNavigator";
+import { BASE_URL } from "../../../constants";
 
-const useSetPreferredVoice = () => {
-  const navigator = useNavigation<ParentControlNavigatorProp>();
-
+const useSetPreferredVoice = ({ onSuccess }: { onSuccess: () => void }) => {
   return useMutation({
     mutationFn: async (voiceId: string) => {
       const URL = `${BASE_URL}/voices/preferred`;
@@ -18,10 +14,7 @@ const useSetPreferredVoice = () => {
       return request;
     },
     onSuccess: () => {
-      navigator.reset({
-        index: 0,
-        routes: [{ name: "successScreen" }],
-      });
+      onSuccess();
     },
     onError: (err) => {
       Alert.alert(err.message ?? "Unexpected error, try again later");

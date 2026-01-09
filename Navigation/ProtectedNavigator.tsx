@@ -4,27 +4,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import LoadingOverlay from "../components/LoadingOverlay";
 import useAuth from "../contexts/AuthContext";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
-import AddChildScreen from "../screens/AddChild";
-import KidSelectionScreen from "../screens/KidSelectionScreen";
-import KidsNavigator, { KidsNavigatorParamList } from "./KidsNavigator";
-import KidsSetupNavigator, {
-  KidsSetupNavigatorParamList,
-} from "./KidsSetupNavigator";
-import ParentAuthNavigator from "./ParentAuthNavigator";
-import ParentProfileSetupNavigator, {
-  ParentProfileSetupParamList,
-} from "./ParentProfileSetupNavigator";
-import ParentsTabNavigator from "./ParentsNavigator";
-import { KidNavigatorProvider } from "../contexts/KidNavigatorContext";
+import ParentsTabNavigator, {
+  ParentsNavigatorParamList,
+} from "./ParentsNavigator";
 
 type ProtectedRoutesParamList = {
-  selection: undefined;
-  parents: undefined;
-  kid: NavigatorScreenParams<KidsNavigatorParamList>;
-  addChild: undefined;
-  kidsSetup: NavigatorScreenParams<KidsSetupNavigatorParamList>;
-  parentAuth: undefined;
-  parentProfileSetup: NavigatorScreenParams<ParentProfileSetupParamList>;
+  parents: NavigatorScreenParams<ParentsNavigatorParamList>;
 };
 
 type ProtectedRoutesNavigationProp =
@@ -46,29 +31,11 @@ const ProtectedRoutesNavigator = () => {
   if (error) {
     logout();
   }
-  const isUserProfileSetupComplete =
-    data?.profile.language && data?.pinSet && data.avatar?.url;
 
   return (
-    <KidNavigatorProvider>
-      <Stack.Navigator
-        screenOptions={{ headerShown: false }}
-        initialRouteName={
-          isUserProfileSetupComplete ? "selection" : "parentProfileSetup"
-        }
-      >
-        <Stack.Screen name="parents" component={ParentsTabNavigator} />
-        <Stack.Screen name="addChild" component={AddChildScreen} />
-        <Stack.Screen name="selection" component={KidSelectionScreen} />
-        <Stack.Screen name="kid" component={KidsNavigator} />
-        <Stack.Screen name="kidsSetup" component={KidsSetupNavigator} />
-        <Stack.Screen name="parentAuth" component={ParentAuthNavigator} />
-        <Stack.Screen
-          name="parentProfileSetup"
-          component={ParentProfileSetupNavigator}
-        />
-      </Stack.Navigator>
-    </KidNavigatorProvider>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="parents" component={ParentsTabNavigator} />
+    </Stack.Navigator>
   );
 };
 

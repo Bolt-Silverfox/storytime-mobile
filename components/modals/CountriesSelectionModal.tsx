@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction, useState } from "react";
 import { FlatList, Pressable, Text, TextInput, View } from "react-native";
-import getCountriesQuery from "../../hooks/useGetCountries";
+import getCountriesQuery from "../../hooks/others/useGetCountries";
 import CustomButton from "../UI/CustomButton";
 import CustomModal from "./CustomModal";
 

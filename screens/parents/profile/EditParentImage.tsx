@@ -1,12 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
-import { GalleryAdd } from "iconsax-react-nativejs";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
-import useImagePicker from "../../../hooks/useImagePicker";
+import useImagePicker from "../../../hooks/others/useImagePicker";
 import defaultStyles from "../../../styles";
 
 export default function EditParentImage() {
@@ -44,7 +44,11 @@ export default function EditParentImage() {
           ) : (
             <>
               <View className="gap-5 items-center">
-                <GalleryAdd size={24} color="#212121" />
+                <MaterialCommunityIcons
+                  name="image-plus-outline"
+                  size={24}
+                  color="#212121"
+                />
                 <Text style={[defaultStyles.defaultText, { fontSize: 14 }]}>
                   Please upload a profile picture
                 </Text>

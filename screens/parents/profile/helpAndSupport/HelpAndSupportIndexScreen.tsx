@@ -1,11 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import {
-  Headphone,
-  LockCircle,
-  Messages2,
-  Notepad2,
-} from "iconsax-react-nativejs";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import SimpleLineIcons from "@expo/vector-icons/SimpleLineIcons";
 import { ChevronLeft, MessageCircleQuestionMark } from "lucide-react-native";
+import Feather from "@expo/vector-icons/Feather";
 import React from "react";
 import {
   Pressable,
@@ -56,7 +53,13 @@ export default function HelpAndSupportIndexScreen() {
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Messages2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+            icon={
+              <Ionicons
+                name="chatbubbles-outline"
+                color={"#EC4007"}
+                size={isTablet ? 20 : 18}
+              />
+            }
             label="Suggestions & Feedback"
             onPress={() =>
               navigator.navigate("helpAndSupport", { screen: "suggestions" })
@@ -65,9 +68,9 @@ export default function HelpAndSupportIndexScreen() {
           />
           <MenuItem
             icon={
-              <Headphone
+              <Feather
+                name="headphones"
                 color={"#EC4007"}
-                variant="Outline"
                 size={isTablet ? 20 : 18}
               />
             }
@@ -78,7 +81,13 @@ export default function HelpAndSupportIndexScreen() {
             isTablet={isTablet}
           />
           <MenuItem
-            icon={<Notepad2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+            icon={
+              <SimpleLineIcons
+                name="notebook"
+                color={"#EC4007"}
+                size={isTablet ? 20 : 18}
+              />
+            }
             label="Terms and Conditions"
             isTablet={isTablet}
             onPress={() =>
@@ -88,7 +97,13 @@ export default function HelpAndSupportIndexScreen() {
             }
           />
           <MenuItem
-            icon={<LockCircle color={"#EC4007"} size={isTablet ? 20 : 18} />}
+            icon={
+              <Feather
+                name="lock"
+                color={"#EC4007"}
+                size={isTablet ? 20 : 18}
+              />
+            }
             label="Privacy and Policy"
             isTablet={isTablet}
             onPress={() =>
