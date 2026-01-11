@@ -1,10 +1,10 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Alert, Image, Pressable, Text, View } from "react-native";
+import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
+import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
 import Icon from "../Icon";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useAddToFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -21,9 +21,12 @@ const StoryItem = ({
 }: Proptypes) => {
   // move favourites data to another parent component to avoid multiple fetch requests on every instance of this component
   const { data, isPending, error } = useSuspenseQuery(queryParentsFavourites());
-  const { mutate, isPending: isMutating } = useAddToFavourites({
+  const { mutate: onToggle, isPending: isToggling } = useToggleFavourites({
     storyId: story.id,
-    onSuccess: () => Alert.alert("Story added to favourites"),
+    onSuccess: () =>
+      Alert.alert(
+        `Story ${isStoryLiked(story.id) ? "unliked" : "liked"} successfully!`
+      ),
   });
 
   const isLocked = isPremium && index > 0;
@@ -35,6 +38,7 @@ const StoryItem = ({
 
   const isStoryLiked = (storyId: string) => {
     return data.some((stories) => stories.id === storyId);
+    // return data.some((stories) => stories.storyId === storyId);
   };
   console.log("favourietes on story item", data);
 
@@ -52,16 +56,14 @@ const StoryItem = ({
           source={{ uri: story.coverImageUrl }}
           height={150}
         />
-        <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
+        <Pressable
+          onPress={() => onToggle()}
+          className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full"
+        >
           {isStoryLiked(story.id) ? (
             <FontAwesome name="heart" size={24} color="red" />
           ) : (
-            <FontAwesome
-              onPress={() => mutate()}
-              name="heart-o"
-              size={24}
-              color="white"
-            />
+            <FontAwesome name="heart-o" size={24} color="white" />
           )}
         </Pressable>
         <View className="flex gap-x-2 px-0.5 flex-row justify-between items-center">
@@ -89,7 +91,6 @@ const StoryItem = ({
         <Text className="font-[abeezee] px-1 text-text text-xs">
           {story.ageMin} - {story.ageMax} years
         </Text>
-        {isStoryLiked(story.id) && <Text>Liked</Text>}
       </View>
       {isLocked && (
         <Image

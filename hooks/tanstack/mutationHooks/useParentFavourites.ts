@@ -1,8 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { QueryResponse } from "../../../types";
+import { QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
@@ -16,12 +15,6 @@ const useAddToFavourites = ({
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
 
-  const favouritesData = queryClient.getQueryData([
-    "parentsFavourites",
-    data?.id,
-  ]);
-
-  console.log("parents favourites data", favouritesData);
   return useMutation({
     mutationFn: async () => await addToFavourites(storyId),
     onSuccess: () => {
@@ -31,7 +24,6 @@ const useAddToFavourites = ({
       queryClient.invalidateQueries({
         queryKey: ["recommendedStoriesForParents", data?.id],
       });
-      Alert.alert("Added to favourites successfully");
       onSuccess?.();
     },
     onError: (err) => {
@@ -58,7 +50,6 @@ const useDeleteFromFavourites = ({
       queryClient.invalidateQueries({
         queryKey: ["recommendedStoriesForParents", data?.id],
       });
-      Alert.alert("Added to favourites successfully");
       onSuccess?.();
     },
     onError: (err) => {
@@ -76,18 +67,19 @@ const useToggleFavourites = ({
 }) => {
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
-  const favouritesData = queryClient.getQueryData([
-    "parentsFavourites",
-    data?.id,
-  ]);
 
-  console.log("parents favourites data", favouritesData);
-  const isLiked = true;
+  const favouritesQueryData: QueryResponse<Story[]> | undefined =
+    queryClient.getQueryData(["parentsFavourites", data?.id]);
+  const cachedData = favouritesQueryData?.data ?? [];
+
+  const isLiked = cachedData.some((stories) => stories.id === storyId);
+  // const isLiked = cachedData.some((stories) => stories.storyId === storyId);
   return useMutation({
     mutationFn: async () => {
       if (isLiked) {
         return await deleteFromFavourites(storyId);
       }
+
       return await addToFavourites(storyId);
     },
     onSuccess: () => {

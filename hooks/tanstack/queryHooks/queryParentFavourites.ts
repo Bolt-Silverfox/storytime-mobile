@@ -23,6 +23,7 @@ const queryParentsFavourites = () => {
     },
     staleTime: Infinity,
     select: (res) => res.data,
+    gcTime: 60 * 60 * 20,
   });
 };
 
