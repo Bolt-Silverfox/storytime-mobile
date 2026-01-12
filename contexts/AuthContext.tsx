@@ -33,7 +33,6 @@ type AuthFnTypes = {
     email: string;
     password: string;
     fullName: string;
-    nationality: string;
     setErrorCb: SetErrorCallback;
     onSuccess: () => void;
   }) => void;
@@ -262,7 +261,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     email,
     password,
     fullName,
-    nationality,
     setErrorCb,
     onSuccess,
   }) => {
@@ -273,9 +271,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         jwt: string;
         refreshToken: string;
       }>
-    >(() =>
-      auth.signup({ email, password, fullName, nationality, role: "parent" })
-    );
+    >(() => auth.signup({ email, password, fullName, role: "parent" }));
     console.log("signup resposne", signupData);
     if (!signupData.success) {
       setErrorCb(signupData.message);
