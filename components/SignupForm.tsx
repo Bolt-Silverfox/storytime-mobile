@@ -1,21 +1,15 @@
-import { lazy, useState } from "react";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
+import { RootNavigatorProp } from "../Navigation/RootNavigator";
 import defaultStyles from "../styles";
 import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
-import Icon from "./Icon";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
-import SuspenseWrapper from "./supsense/SuspenseWrapper";
-import { useNavigation } from "@react-navigation/native";
-import { RootNavigatorProp } from "../Navigation/RootNavigator";
-
-const CountriesSelectionModal = lazy(
-  () => import("./modals/CountriesSelectionModal")
-);
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
@@ -28,8 +22,6 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [nationality, setNationality] = useState("");
-  const [isCountriesModalOpen, setIsCountriesModalOpen] = useState(false);
   const { isLoading, signUp } = useAuth();
   const navigator = useNavigation<RootNavigatorProp>();
 
@@ -38,7 +30,6 @@ const SignupForm = () => {
     const result = registerSchema.safeParse({
       fullName,
       email,
-      nationality,
       password,
       confirmPassword,
     });
@@ -58,7 +49,6 @@ const SignupForm = () => {
       email: email.trim().toLowerCase(),
       password,
       fullName: fullName.trim(),
-      nationality,
       setErrorCb: setApiError,
       onSuccess: () =>
         navigator.navigate("auth", {
@@ -74,7 +64,6 @@ const SignupForm = () => {
     <View>
       <View style={styles.form}>
         <ErrorMessageDisplay errorMessage={apiError} />
-
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
@@ -101,36 +90,6 @@ const SignupForm = () => {
             <Text className="text-red-600 text-sm">{errors.email}</Text>
           )}
         </View>
-        <View style={styles.formItem} className="relative">
-          <Text style={defaultStyles.label}>Nationality</Text>
-          <Pressable
-            className="relative"
-            onPress={() => setIsCountriesModalOpen((o) => !0)}
-          >
-            <TextInput
-              editable={false}
-              placeholder="Select your nationality"
-              onChangeText={setNationality}
-              value={nationality}
-              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errors.nationality ? "red" : colours.text}
-            />
-            <Pressable
-              onPress={() => setIsCountriesModalOpen((o) => !o)}
-              className="absolute top-4 right-2"
-            >
-              {!isCountriesModalOpen ? (
-                <Icon name="ChevronDown" />
-              ) : (
-                <Icon name="ChevronUp" />
-              )}
-            </Pressable>
-          </Pressable>
-          {errors.nationality && (
-            <Text className="text-red-600 text-sm">{errors.nationality}</Text>
-          )}
-        </View>
-
         <PasswordInput
           label="Password:"
           setPassword={setPassword}
@@ -152,13 +111,6 @@ const SignupForm = () => {
       >
         <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
       </Pressable>
-      <SuspenseWrapper>
-        <CountriesSelectionModal
-          isOpen={isCountriesModalOpen}
-          onClose={() => setIsCountriesModalOpen(false)}
-          setCountry={setNationality}
-        />
-      </SuspenseWrapper>
 
       <LoadingOverlay visible={isLoading} />
     </View>
