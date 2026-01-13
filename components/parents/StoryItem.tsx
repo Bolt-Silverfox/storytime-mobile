@@ -22,11 +22,17 @@ const StoryItem = ({
   // move favourites data to another parent component to avoid multiple fetch requests on every instance of this component
   const { data, isPending, error } = useSuspenseQuery(queryParentsFavourites());
   const { mutate: onToggle, isPending: isToggling } = useToggleFavourites({
-    storyId: story.id,
-    onSuccess: () =>
-      Alert.alert(
-        `Story ${isStoryLiked(story.id) ? "unliked" : "liked"} successfully!`
-      ),
+    story: {
+      id: story.id,
+      storyId: story.id,
+      title: story.title,
+      description: story.description,
+      coverImageUrl: story.coverImageUrl,
+      createdAt: story.createdAt,
+      ageMax: story.ageMax,
+      ageMin: story.ageMin,
+    },
+    onSuccess: () => Alert.alert("Update successfully!"),
   });
 
   const isLocked = isPremium && index > 0;
@@ -37,10 +43,8 @@ const StoryItem = ({
   };
 
   const isStoryLiked = (storyId: string) => {
-    return data.some((stories) => stories.id === storyId);
-    // return data.some((stories) => stories.storyId === storyId);
+    return data.some((stories) => stories.storyId === storyId);
   };
-  console.log("favourietes on story item", data);
 
   return (
     <Pressable

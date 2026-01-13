@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { QueryResponse, Story } from "../../../types";
+import { FavouriteStory, QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
@@ -58,40 +58,68 @@ const useDeleteFromFavourites = ({
   });
 };
 
+// pass the revalidate function directly in the onsuccess method, to revalidate whatever stories the favourite was toggled from.
+// above won't work cos some stories may appear on different endpoints, only way is to revalidate all stories endpoints.
+// might not need to revalidate anything, cos all storyitems are just checking if their id's exist on the favourite stories endponit, only need to revalidate favourite stories.
+
 const useToggleFavourites = ({
-  storyId,
+  story,
   onSuccess,
 }: {
-  storyId: string;
+  story: FavouriteStory;
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
 
-  const favouritesQueryData: QueryResponse<Story[]> | undefined =
+  const favouritesQueryData: QueryResponse<FavouriteStory[]> | undefined =
     queryClient.getQueryData(["parentsFavourites", data?.id]);
   const cachedData = favouritesQueryData?.data ?? [];
 
-  const isLiked = cachedData.some((stories) => stories.id === storyId);
-  // const isLiked = cachedData.some((stories) => stories.storyId === storyId);
+  const isLiked = cachedData.some(
+    (stories) => stories.storyId === story.storyId
+  );
   return useMutation({
     mutationFn: async () => {
+      // await new Promise<void>((resolve) =>
+      //   setTimeout(() => {
+      //     resolve();
+      //   }, 3000)
+      // );
       if (isLiked) {
-        return await deleteFromFavourites(storyId);
+        return await deleteFromFavourites(story.storyId);
       }
 
-      return await addToFavourites(storyId);
+      return await addToFavourites(story.storyId);
+    },
+    onMutate: () => {
+      queryClient.setQueryData(
+        ["parentsFavourites", data?.id],
+        (old: QueryResponse<FavouriteStory[]>) => {
+          if (!old.data) return;
+          if (isLiked) {
+            const newFavourites = old.data.filter(
+              (item) => item.storyId !== story.storyId
+            );
+            return { ...old, data: newFavourites };
+          } else {
+            return { ...old, data: [...old.data, story] };
+          }
+        }
+      );
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["parentsFavourites", data?.id],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["recommendedStoriesForParents", data?.id],
-      });
+      // i don't need to invalidate cos it's the same data coming from the backend and i already added it on the onmutate method.
+      // queryClient.invalidateQueries({
+      //   queryKey: ["parentsFavourites", data?.id],
+      // });
       onSuccess?.();
     },
     onError: (err) => {
+      queryClient.setQueryData(
+        ["parentsFavourites", data?.id],
+        favouritesQueryData
+      );
       throw new Error(getErrorMessage(err));
     },
   });
