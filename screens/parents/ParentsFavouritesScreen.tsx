@@ -1,17 +1,20 @@
-import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useQuery } from "@tanstack/react-query";
-import { Image, ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { ScrollView, Text, View } from "react-native";
+import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import ErrorComponent from "../../components/ErrorComponent";
+import FavouriteStoryItem from "../../components/FavouriteStoryItem";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
-import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
+import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
-import { Story } from "../../types";
+import { FavouriteStory } from "../../types";
 
 const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryParentsFavourites()
   );
+  const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -36,42 +39,23 @@ const ParentsFavouritesScreen = () => {
         </View>
       </View>
       <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
-        {data?.map((story) => (
-          <FavouriteStoryItem key={story.id} story={story} />
+        {data.map((story) => (
+          <FavouriteStoryItem
+            key={story.id}
+            story={story}
+            setActiveStory={setActiveItem}
+          />
         ))}
       </ScrollView>
+      {activeItem && (
+        <FavouriteStoriesModal
+          isOpen={activeItem !== null}
+          onClose={() => setActiveItem(null)}
+          story={activeItem}
+        />
+      )}
     </View>
   );
 };
 
 export default ParentsFavouritesScreen;
-
-// add modal to confirm removal from favourites
-
-const FavouriteStoryItem = ({ story }: { story: Story }) => {
-  return (
-    <View className="flex flex-row p-2 gap-x-2 bg-white border border-border-lighter rounded-3xl">
-      <Image
-        source={{ uri: story.coverImageUrl }}
-        height={171}
-        width={186}
-        className="rounded-3xl"
-      />
-      <View className="flex flex-col gap-y-2 flex-1">
-        <Text className="font-[abeezee] text-black text-sm">{story.title}</Text>
-        <Text className="font-[abeezee] text-text text-sm">
-          {story.description}
-        </Text>
-        <Text className="font-[abeezee] text-text text-sm">
-          {story.ageMin} - {story.ageMax}
-        </Text>
-        <FontAwesome
-          name="heart"
-          className="self-end"
-          size={24}
-          color="red"
-        />{" "}
-      </View>
-    </View>
-  );
-};

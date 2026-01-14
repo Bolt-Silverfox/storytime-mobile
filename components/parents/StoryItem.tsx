@@ -1,4 +1,8 @@
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Image, Pressable, Text, View } from "react-native";
+import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
+import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
 import Icon from "../Icon";
 
@@ -15,11 +19,29 @@ const StoryItem = ({
   index,
   isPremium = false,
 }: Proptypes) => {
+  const { data } = useSuspenseQuery(queryParentsFavourites());
+  const { mutate: onToggle } = useToggleFavourites({
+    story: {
+      id: story.id,
+      storyId: story.id,
+      title: story.title,
+      description: story.description,
+      coverImageUrl: story.coverImageUrl,
+      createdAt: story.createdAt,
+      ageMax: story.ageMax,
+      ageMin: story.ageMin,
+    },
+  });
+
   const isLocked = isPremium && index > 0;
 
   const navigate = () => {
     if (isLocked) return;
     onNavigate();
+  };
+
+  const isStoryLiked = (storyId: string) => {
+    return data.some((stories) => stories.storyId === storyId);
   };
 
   return (
@@ -36,8 +58,15 @@ const StoryItem = ({
           source={{ uri: story.coverImageUrl }}
           height={150}
         />
-        <Pressable className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full">
-          <Icon name="Heart" color="white" />
+        <Pressable
+          onPress={() => onToggle()}
+          className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full"
+        >
+          {isStoryLiked(story.id) ? (
+            <FontAwesome name="heart" size={24} color="red" />
+          ) : (
+            <FontAwesome name="heart-o" size={24} color="white" />
+          )}
         </Pressable>
         <View className="flex gap-x-2 px-0.5 flex-row justify-between items-center">
           <View className="flex flex-1 flex-row items-center">

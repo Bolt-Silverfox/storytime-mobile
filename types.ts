@@ -212,6 +212,18 @@ type StoryBuddy = {
   isDeleted: boolean;
   deletedAt: string | null;
 };
+
+type FavouriteStory = {
+  id: string;
+  storyId: string;
+  title: string;
+  description: string;
+  coverImageUrl: string;
+  createdAt: string;
+  ageMin: number;
+  ageMax: number;
+};
+
 const ageGroups = ["1-2", "3-4", "5-6", "7-8", "9-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
@@ -232,5 +244,6 @@ export type {
   ChildStoryStatus,
   StoryBuddy,
   AgeGroupType,
+  FavouriteStory,
 };
 export { ageGroups };
