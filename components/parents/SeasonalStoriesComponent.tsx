@@ -1,15 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { ScrollView, Text, View } from "react-native";
-import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import StoryItem from "./StoryItem";
-import useStoryMode from "../../contexts/StoryModeContext";
 import { useSuspenseQuery } from "@tanstack/react-query";
+import { ScrollView, Text, View } from "react-native";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../ErrorComponent";
+import StoryItem from "./StoryItem";
 
 const SeasonalStoriesComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
   if (error)
@@ -41,7 +39,6 @@ const SeasonalStoriesComponent = () => {
               key={story.id}
               onNavigate={() => {
                 navigator.navigate("childStoryDetails", { storyId: story.id });
-                setActiveStoryId(story.id);
               }}
               story={story}
             />

@@ -72,16 +72,16 @@ const StoryContentContainer = ({
             <Pressable
               disabled={isFirstParagraph}
               onPress={() => setActiveParagraph((a) => a - 1)}
-              className={`size-10 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-white/30" : "bg-white"}`}
+              className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-blue/50" : "bg-blue"}`}
             >
-              <Icon name="ChevronLeft" />
+              <Icon name="SkipBack" color="white" />
             </Pressable>
             <Pressable
               disabled={isLastParagraph}
               onPress={handleNextParagraph}
-              className={`size-10 rounded-full justify-center flex items-center ${isLastParagraph ? "bg-white/30" : "bg-white"}`}
+              className={`size-12 rounded-full justify-center flex items-center ${isLastParagraph ? "bg-blue/50" : "bg-blue"}`}
             >
-              <Icon name="ChevronRight" />
+              <Icon name="SkipForward" color="white" />
             </Pressable>
           </View>
           {isLastParagraph && isInteractive && (

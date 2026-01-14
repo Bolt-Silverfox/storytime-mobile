@@ -1,18 +1,19 @@
-import { useNavigation } from "@react-navigation/native";
+import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
 import { ImageBackground, ScrollView, Text, View } from "react-native";
+import {
+  ParentHomeNavigatorParamList,
+  ParntHomeNavigatorProp,
+} from "../../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-import StoryItem from "../../../components/parents/StoryItem";
-import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
 import CustomButton from "../../../components/UI/CustomButton";
+import StoryItem from "../../../components/parents/StoryItem";
 import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
-import { AgeGroupType } from "../../../types";
 
-const ParentsTopRecommendationsScreen = () => {
-  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
+type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
+const StoriesByAgeScreen = () => {
+  const { params } = useRoute<RoutePropTypes>();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
@@ -32,33 +33,28 @@ const ParentsTopRecommendationsScreen = () => {
       </View>
     );
   }
-
   return (
     <View className="flex flex-1 bg-bgLight">
       <ImageBackground
-        source={require("../../../assets/images/top-recommendations.jpg")}
+        source={require("../../../assets/images/fun-and-adventure-stories.jpg")}
         resizeMode="cover"
         className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
       >
         <View className="flex flex-col gap-y-1.5">
           <Text className="font-[quilka] text-3xl capitalize text-white">
-            Top recommendations{" "}
+            Age {params.ageGroup}
           </Text>
           <Text className="font-[abeezee] text-base text-white">
-            Stories recommended based on your preferred categories
+            Access all stories from ages {params.ageGroup}
           </Text>
         </View>
       </ImageBackground>
       <ScrollView
         className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col px-4"
+        contentContainerClassName="flex flex-col"
         showsVerticalScrollIndicator={false}
       >
-        <AgeSelectionComponent
-          selectedAgeGroup={selectedGroup}
-          setSelectedAgeGroup={setSelectedGroup}
-        />
-        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
+        <View className="flex flex-row flex-wrap py-6  gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
           {data.map((story, index) => (
             <StoryItem
               index={index}
@@ -75,4 +71,4 @@ const ParentsTopRecommendationsScreen = () => {
   );
 };
 
-export default ParentsTopRecommendationsScreen;
+export default StoriesByAgeScreen;
