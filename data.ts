@@ -1,3 +1,5 @@
+import { AgeGroupType } from "./types";
+
 const privacyPolicyData: {
   title: string;
   paragraph: string;
@@ -130,10 +132,22 @@ const subscriptionBenefits = [
   "Watch your child grow with every adventure",
 ];
 
+const storiesByAgeImages: Record<AgeGroupType, string> = {
+  "1-3":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_1-3_djfdem.jpg",
+  "4-6":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_4-6_javzsh.jpg",
+  "7-9":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_7-9_emuxav.jpg",
+  "10-12":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_10-12_1_ub4ist.jpg",
+};
+
 export {
   privacyPolicyData,
   storyCategoriesColours,
   subscriptionBenefits,
   subscriptionOptions,
   termsAndConditionsData,
+  storiesByAgeImages,
 };
