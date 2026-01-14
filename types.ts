@@ -221,8 +221,7 @@ type FavouriteStory = {
   description: string;
   coverImageUrl: string;
   createdAt: string;
-  ageMin: number;
-  ageMax: number;
+  ageRange: string;
 };
 
 const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;

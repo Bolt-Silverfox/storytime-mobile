@@ -13,21 +13,20 @@ import Icon from "../../../components/Icon";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import {
-  ParentHomeNavigatorParamList,
-  ParntHomeNavigatorProp,
-} from "../../../Navigation/ParentHomeNavigator";
+  StoryNavigatorParamList,
+  StoryNavigatorProp,
+} from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
+import { secondsToMinutes } from "../../../utils/utils";
 
-type RoutePropTypes = RouteProp<
-  ParentHomeNavigatorParamList,
-  "childStoryDetails"
->;
+type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
 const ChildStoryDetails = () => {
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<StoryNavigatorProp>();
   const { params } = useRoute<RoutePropTypes>();
   const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [showAboutModal, setShowAboutModal] = useState(false);
@@ -39,6 +38,8 @@ const ChildStoryDetails = () => {
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+
+  const duration = secondsToMinutes(data.durationSeconds);
   return (
     <View className="flex flex-1 pb-5 bg-bgLight">
       <ScrollView contentContainerClassName="flex min-h-full pb-10 bg-bgLight flex-col">
@@ -61,7 +62,7 @@ const ChildStoryDetails = () => {
                 Duration
               </Text>
               <Text className="font-[abeezee] text-xs text-purple-light text-center">
-                32 mins
+                {duration} {duration > 1 ? "mins" : "min"}
               </Text>
             </View>
             <View className="flex flex-col gap-y-2">
@@ -138,21 +139,7 @@ const ChildStoryDetails = () => {
             </View>
           </View>
         </View>
-        <View className="flex px-4 flex-row gap-x-3">
-          <Pressable
-            onPress={() => setShowShareModal(true)}
-            className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
-          >
-            <Icon name="Share2" />
-            <Text className="font-[abeezee] text-base text-black">Share</Text>
-          </Pressable>
-          <Pressable className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11">
-            <Icon name="Heart" />
-            <Text className="font-[abeezee] text-base text-black">
-              Favourite
-            </Text>
-          </Pressable>
-        </View>
+        <StoryDetailsCTA setShowShareModal={setShowAboutModal} story={data} />
       </ScrollView>
       <View className="border-t px-4 bg-bgLight border-t-border-light">
         <CustomButton

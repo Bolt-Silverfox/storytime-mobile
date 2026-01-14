@@ -124,6 +124,9 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
   }
 };
 
+const secondsToMinutes = (durationInSeconds: number): number => {
+  return Math.round(durationInSeconds / 60);
+};
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -134,4 +137,5 @@ export {
   getErrorMessage,
   urlToBlob,
   uploadUserAvatar,
+  secondsToMinutes,
 };

@@ -24,7 +24,7 @@ const StoriesByAgeComponent = lazy(
 
 const ParentHomeScreen = () => {
   return (
-    <View className="flex flex-1 px-4 bg-bgLight pb-5">
+    <View className="flex flex-1 px-4 bg-bgLight">
       <ParentsHomeScreenHeader />
       <ScrollView
         showsVerticalScrollIndicator={false}

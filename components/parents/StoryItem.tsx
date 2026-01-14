@@ -5,6 +5,7 @@ import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParen
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
 import Icon from "../Icon";
+import { secondsToMinutes } from "../../utils/utils";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -28,8 +29,7 @@ const StoryItem = ({
       description: story.description,
       coverImageUrl: story.coverImageUrl,
       createdAt: story.createdAt,
-      ageMax: story.ageMax,
-      ageMin: story.ageMin,
+      ageRange: `${story.ageMin}-${story.ageMax}`,
     },
   });
 
@@ -44,7 +44,7 @@ const StoryItem = ({
     return data.some((stories) => stories.storyId === storyId);
   };
 
-  const duration = Math.round(story.durationSeconds / 60);
+  const duration = secondsToMinutes(story.durationSeconds);
 
   return (
     <Pressable
