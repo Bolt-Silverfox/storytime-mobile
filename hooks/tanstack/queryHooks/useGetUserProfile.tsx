@@ -28,6 +28,7 @@ const useGetUserProfile = () => {
     refetchOnMount: false,
     staleTime: Infinity,
     select: (res) => res?.data,
+    gcTime: Infinity,
   });
 };
 

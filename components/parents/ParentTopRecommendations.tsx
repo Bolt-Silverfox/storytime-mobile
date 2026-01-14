@@ -9,7 +9,6 @@ import StoryItem from "./StoryItem";
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
-
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
   return (
