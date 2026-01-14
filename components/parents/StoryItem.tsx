@@ -1,6 +1,6 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Alert, Image, Pressable, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
@@ -19,9 +19,8 @@ const StoryItem = ({
   index,
   isPremium = false,
 }: Proptypes) => {
-  // move favourites data to another parent component to avoid multiple fetch requests on every instance of this component
-  const { data, isPending, error } = useSuspenseQuery(queryParentsFavourites());
-  const { mutate: onToggle, isPending: isToggling } = useToggleFavourites({
+  const { data } = useSuspenseQuery(queryParentsFavourites());
+  const { mutate: onToggle } = useToggleFavourites({
     story: {
       id: story.id,
       storyId: story.id,
@@ -32,7 +31,6 @@ const StoryItem = ({
       ageMax: story.ageMax,
       ageMin: story.ageMin,
     },
-    onSuccess: () => Alert.alert("Update successfully!"),
   });
 
   const isLocked = isPremium && index > 0;

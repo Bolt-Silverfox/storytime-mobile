@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { FavouriteStory, QueryResponse, Story } from "../../../types";
+import { FavouriteStory, QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
+import { Alert } from "react-native";
 
 const useAddToFavourites = ({
   storyId,
@@ -58,10 +59,6 @@ const useDeleteFromFavourites = ({
   });
 };
 
-// pass the revalidate function directly in the onsuccess method, to revalidate whatever stories the favourite was toggled from.
-// above won't work cos some stories may appear on different endpoints, only way is to revalidate all stories endpoints.
-// might not need to revalidate anything, cos all storyitems are just checking if their id's exist on the favourite stories endponit, only need to revalidate favourite stories.
-
 const useToggleFavourites = ({
   story,
   onSuccess,
@@ -81,11 +78,6 @@ const useToggleFavourites = ({
   );
   return useMutation({
     mutationFn: async () => {
-      // await new Promise<void>((resolve) =>
-      //   setTimeout(() => {
-      //     resolve();
-      //   }, 3000)
-      // );
       if (isLiked) {
         return await deleteFromFavourites(story.storyId);
       }
@@ -109,10 +101,6 @@ const useToggleFavourites = ({
       );
     },
     onSuccess: () => {
-      // i don't need to invalidate cos it's the same data coming from the backend and i already added it on the onmutate method.
-      // queryClient.invalidateQueries({
-      //   queryKey: ["parentsFavourites", data?.id],
-      // });
       onSuccess?.();
     },
     onError: (err) => {
@@ -120,7 +108,10 @@ const useToggleFavourites = ({
         ["parentsFavourites", data?.id],
         favouritesQueryData
       );
-      throw new Error(getErrorMessage(err));
+      Alert.alert(
+        getErrorMessage(err),
+        "Failed to add/remove story from favourites"
+      );
     },
   });
 };
