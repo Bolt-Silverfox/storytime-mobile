@@ -1,7 +1,9 @@
 import { Dispatch, SetStateAction } from "react";
 import { FavouriteStory } from "../types";
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useNavigation } from "@react-navigation/native";
+import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
 
 const FavouriteStoryItem = ({
   story,
@@ -10,8 +12,19 @@ const FavouriteStoryItem = ({
   story: FavouriteStory;
   setActiveStory: Dispatch<SetStateAction<null | FavouriteStory>>;
 }) => {
+  const navigator = useNavigation<ParentsNavigatorProp>();
+
+  const onNavigate = () => {
+    navigator.navigate("home", {
+      screen: "childStoryDetails",
+      params: { storyId: story.storyId },
+    });
+  };
   return (
-    <View className="flex flex-row p-2 gap-x-2 bg-white border border-border-lighter rounded-3xl">
+    <Pressable
+      onPress={onNavigate}
+      className="flex flex-row p-2 gap-x-2 bg-white border border-border-lighter rounded-3xl"
+    >
       <Image
         source={{ uri: story.coverImageUrl }}
         height={171}
@@ -34,7 +47,7 @@ const FavouriteStoryItem = ({
           color="red"
         />
       </View>
-    </View>
+    </Pressable>
   );
 };
 

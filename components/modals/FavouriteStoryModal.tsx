@@ -1,8 +1,8 @@
-import { Alert, Text, View } from "react-native";
+import { Text, View } from "react-native";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
-import CustomModal from "./CustomModal";
-import CustomButton from "../UI/CustomButton";
 import { FavouriteStory } from "../../types";
+import CustomButton from "../UI/CustomButton";
+import CustomModal from "./CustomModal";
 
 const FavouriteStoriesModal = ({
   isOpen,
@@ -13,9 +13,8 @@ const FavouriteStoriesModal = ({
   onClose: () => void;
   story: FavouriteStory;
 }) => {
-  const { mutate, isPending } = useToggleFavourites({
+  const { mutate } = useToggleFavourites({
     story,
-    onSuccess: () => Alert.alert("updated successfully!"),
   });
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
