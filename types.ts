@@ -155,10 +155,11 @@ type Story = {
   ageMin: number;
   ageMax: number;
   backgroundColor: string;
-  recommend: true;
+  recommend: boolean;
   aiGenerated: boolean;
   difficultyLevel: number;
   wordCount: number;
+  durationSeconds: number;
   createdAt: string;
   updatedAt: string;
   isDeleted: boolean;
@@ -224,7 +225,7 @@ type FavouriteStory = {
   ageMax: number;
 };
 
-const ageGroups = ["1-2", "3-4", "5-6", "7-8", "9-12"] as const;
+const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 export type {
