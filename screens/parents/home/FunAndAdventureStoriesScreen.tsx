@@ -1,17 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { ImageBackground, ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import AgeSelectionComponent from "../../../components/UI/AgeSelectionComponent";
 import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
-import useStoryMode from "../../../contexts/StoryModeContext";
 import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { AgeGroupType } from "../../../types";
 
 const FunAndADventureStoriesScreen = () => {
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { setActiveStoryId } = useStoryMode();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
   );
@@ -47,18 +49,22 @@ const FunAndADventureStoriesScreen = () => {
           </Text>
         </View>
       </ImageBackground>
+
       <ScrollView
         className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col"
+        contentContainerClassName="flex flex-col px-4"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex flex-row flex-wrap py-6  gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
+        <AgeSelectionComponent
+          selectedAgeGroup={selectedGroup}
+          setSelectedAgeGroup={setSelectedGroup}
+        />
+        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
           {data.map((story, index) => (
             <StoryItem
               index={index}
               key={story.id}
               onNavigate={() => {
-                setActiveStoryId(story.id);
                 navigator.navigate("childStoryDetails", { storyId: story.id });
               }}
               story={story}

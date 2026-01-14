@@ -1,12 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { ScrollView, Text, View } from "react-native";
+import { useState } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { AgeGroupType } from "../../types";
 import ErrorComponent from "../ErrorComponent";
+import AgeSelectionComponent from "../UI/AgeSelectionComponent";
 import StoryItem from "./StoryItem";
 
-const FunAndAdventuresComponent = () => {
+const StoriesByAgeComponent = () => {
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
@@ -14,19 +18,11 @@ const FunAndAdventuresComponent = () => {
     return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
-    <View className="flex max-w-screen-md mx-auto w-full flex-col gap-y-4 border-b border-b-border-light pb-8">
-      <View className="flex flex-row justify-between items-center">
-        <Text className="font-[abeezee]  text-base text-black leading-5">
-          Fun and adventures
-        </Text>
-        <Text
-          onPress={() => navigator.navigate("funAndAdventureStories")}
-          className="font-[abeezee]  text-base text-[#0731EC] leading-5"
-        >
-          View all
-        </Text>
-      </View>
-
+    <View className="flex max-w-screen-md mx-auto w-full flex-col border-b gap-y-6 border-b-border-light pb-8">
+      <AgeSelectionComponent
+        selectedAgeGroup={selectedGroup}
+        setSelectedAgeGroup={setSelectedGroup}
+      />
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
@@ -44,8 +40,18 @@ const FunAndAdventuresComponent = () => {
           />
         ))}
       </ScrollView>
+      <Pressable
+        onPress={() =>
+          navigator.navigate("storiesByAge", { ageGroup: selectedGroup })
+        }
+        className="border border-border-light bg-white rounded-full px-5 h-10 mx-auto flex justify-center items-center"
+      >
+        <Text className="text-base font-[abeezee] text-black">
+          See all stories Age {selectedGroup}
+        </Text>
+      </Pressable>
     </View>
   );
 };
 
-export default FunAndAdventuresComponent;
+export default StoriesByAgeComponent;
