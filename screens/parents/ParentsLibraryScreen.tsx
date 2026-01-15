@@ -7,6 +7,8 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import ProgressBar from "../../components/UI/ProgressBar";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { secondsToMinutes } from "../../utils/utils";
+import { useNavigation } from "@react-navigation/native";
+import { ParentsNavigatorProp } from "../../Navigation/ParentsNavigator";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] =
@@ -14,6 +16,7 @@ const ParentsLibraryScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryRecommendedStories()
   );
+  const navigator = useNavigation<ParentsNavigatorProp>();
   if (isPending) return <LoadingOverlay visible />;
   return (
     <View className="flex-1 bg-bgLight flex-col gap-y-8">
@@ -40,6 +43,12 @@ const ParentsLibraryScreen = () => {
           data?.map((story) => (
             <Pressable
               key={story.id}
+              onPress={() =>
+                navigator.navigate("story", {
+                  screen: "childStoryDetails",
+                  params: { storyId: story.id },
+                })
+              }
               className="border border-border-light p-1 rounded-xl flex flex-col"
             >
               <Image
