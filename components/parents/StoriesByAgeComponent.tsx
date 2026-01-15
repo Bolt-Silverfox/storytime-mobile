@@ -1,16 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { AgeGroupType } from "../../types";
 import ErrorComponent from "../ErrorComponent";
+import StoryCarousel from "../StoryCarousel";
 import AgeSelectionComponent from "../UI/AgeSelectionComponent";
-import StoryItem from "./StoryItem";
 
 const StoriesByAgeComponent = () => {
-  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-2");
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(queryRecommendedStories());
 
@@ -23,23 +23,7 @@ const StoriesByAgeComponent = () => {
         selectedAgeGroup={selectedGroup}
         setSelectedAgeGroup={setSelectedGroup}
       />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
-      >
-        {data.map((story, index) => (
-          <StoryItem
-            index={index}
-            isPremium={true}
-            key={story.id}
-            onNavigate={() => {
-              navigator.navigate("childStoryDetails", { storyId: story.id });
-            }}
-            story={story}
-          />
-        ))}
-      </ScrollView>
+      <StoryCarousel stories={data} />
       <Pressable
         onPress={() =>
           navigator.navigate("storiesByAge", { ageGroup: selectedGroup })

@@ -44,6 +44,8 @@ const StoryItem = ({
     return data.some((stories) => stories.storyId === storyId);
   };
 
+  const duration = Math.round(story.durationSeconds / 60);
+
   return (
     <Pressable
       onPress={navigate}
@@ -83,7 +85,7 @@ const StoryItem = ({
           <View className="flex flex-row gap-x-1 items-center">
             <Icon size={12} name="Clock" color="#616161" />
             <Text className="font-[abeezee] text-text capitalize text-xs">
-              {32} mins
+              {duration} {duration > 1 ? "mins" : "min"}
             </Text>
           </View>
         </View>
