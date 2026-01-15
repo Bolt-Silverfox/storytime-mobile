@@ -22,6 +22,7 @@ import {
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
+import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -31,13 +32,25 @@ const ChildStoryDetails = () => {
   const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPending, data, error, refetch } = useQuery(
     queryGetStory(params.storyId)
   );
+  const isPremium = false;
 
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
+
+  const handleStoryMode = (storyMode: StoryModes) => {
+    if (storyMode === "interactive") {
+      isPremium
+        ? setStoryMode("interactive")
+        : setIsSubscriptionModalOpen(true);
+      return;
+    }
+    setStoryMode("plain");
+  };
 
   const duration = secondsToMinutes(data.durationSeconds);
   return (
@@ -103,7 +116,7 @@ const ChildStoryDetails = () => {
             </View>
             <View className="flex flex-row gap-x-2">
               <Pressable
-                onPress={() => setStoryMode("plain")}
+                onPress={() => handleStoryMode("plain")}
                 className={`border flex-1 p-3 rounded-lg ${storyMode === "plain" ? "bg-primary border-primary/20" : "bg-white border-border-light"}`}
               >
                 <Text
@@ -120,7 +133,9 @@ const ChildStoryDetails = () => {
                 </Text>
               </Pressable>
               <Pressable
-                onPress={() => setStoryMode("interactive")}
+                onPress={() => {
+                  handleStoryMode("interactive");
+                }}
                 className={`border flex-1 p-3 rounded-lg ${storyMode === "interactive" ? "bg-primary border-primary/20" : "bg-white border-border-light"}`}
               >
                 <Text
@@ -135,6 +150,13 @@ const ChildStoryDetails = () => {
                 >
                   Listen, enjoy and answer questions to the stories.
                 </Text>
+                {!isPremium && (
+                  <View className="bg-[#FFF8D2] self-end rounded-full h-6 flex justify-center items-center px-2">
+                    <Text className="font-[abeezee] text-black text-xs">
+                      Premium
+                    </Text>
+                  </View>
+                )}
               </Pressable>
             </View>
           </View>
@@ -160,6 +182,10 @@ const ChildStoryDetails = () => {
       <ShareStoryModal
         isOpen={showShareModal}
         onClose={() => setShowShareModal(false)}
+      />
+      <SubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
       />
     </View>
   );
