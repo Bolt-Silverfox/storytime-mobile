@@ -14,6 +14,7 @@ import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import { StoryModes } from "../types";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
+import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 
 const StoryComponent = ({
   storyId,
@@ -22,7 +23,7 @@ const StoryComponent = ({
   storyId: string;
   storyMode: StoryModes;
 }) => {
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
@@ -44,7 +45,7 @@ const StoryComponent = ({
         <View className="flex flex-row justify-between items-center">
           <Pressable
             onPress={() =>
-              navigator.reset({ index: 0, routes: [{ name: "home" }] })
+              navigator.reset({ index: 0, routes: [{ name: "parents" }] })
             }
             className="bg-blue size-12 rounded-full flex flex-col justify-center items-center"
           >

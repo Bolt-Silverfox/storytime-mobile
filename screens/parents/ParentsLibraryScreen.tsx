@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
@@ -6,9 +7,8 @@ import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import ProgressBar from "../../components/UI/ProgressBar";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { secondsToMinutes } from "../../utils/utils";
-import { useNavigation } from "@react-navigation/native";
-import { ParentsNavigatorProp } from "../../Navigation/ParentsNavigator";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] =
@@ -16,7 +16,7 @@ const ParentsLibraryScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryRecommendedStories()
   );
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible />;
   return (
     <View className="flex-1 bg-bgLight flex-col gap-y-8">
@@ -44,7 +44,7 @@ const ParentsLibraryScreen = () => {
             <Pressable
               key={story.id}
               onPress={() =>
-                navigator.navigate("story", {
+                protectedNavigator.navigate("stories", {
                   screen: "childStoryDetails",
                   params: { storyId: story.id },
                 })
