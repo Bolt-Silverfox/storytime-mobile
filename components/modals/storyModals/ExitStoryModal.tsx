@@ -1,18 +1,18 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, Pressable, Text, View } from "react-native";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 
 interface ExitModalProps extends Omit<CustomModalProps, "children"> {}
 
 const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
 
   const onExitStory = () => {
     navigator.reset({
       index: 0,
-      routes: [{ name: "home" }],
+      routes: [{ name: "parents" }],
     });
   };
 

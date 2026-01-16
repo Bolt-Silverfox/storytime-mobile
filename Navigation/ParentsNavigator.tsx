@@ -1,37 +1,29 @@
 import type { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
+import Feather from "@expo/vector-icons/Feather";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-import Ionicons from "@expo/vector-icons/Ionicons";
 import { Heart } from "lucide-react-native";
 import colours from "../colours";
 import Icon from "../components/Icon";
-import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
 import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
-import NotificationsNavigator, {
-  NotificationsNavigatorParamList,
-} from "./NotificationsNavigator";
+import ParentsLibraryScreen from "../screens/parents/ParentsLibraryScreen";
 import ParentHomeNavigator, {
   ParentHomeNavigatorParamList,
 } from "./ParentHomeNavigator";
 import ParentProfileNavigator, {
   ParentProfileNavigatorParamList,
 } from "./ParentProfileNavigator";
-import ParentsLibraryScreen from "../screens/parents/ParentsLibraryScreen";
-import Feather from "@expo/vector-icons/Feather";
-import StoryNavigator, { StoryNavigatorParamList } from "./StoryNavigator";
 
 type ParentsNavigatorParamList = {
   home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
   library: undefined;
   favourite: undefined;
   profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
-  getPremium: undefined;
-  notifications: NavigatorScreenParams<NotificationsNavigatorParamList>;
-  story: NavigatorScreenParams<StoryNavigatorParamList>;
 };
 
 type ParentsNavigatorProp = BottomTabNavigationProp<ParentsNavigatorParamList>;
@@ -129,33 +121,6 @@ const ParentsTabNavigator = () => {
               display: currentRoute === "indexPage" ? "flex" : "none",
             },
           };
-        }}
-      />
-      <Tab.Screen
-        name="getPremium"
-        component={GetPremiumScreen}
-        options={{
-          tabBarButton: () => null,
-          tabBarItemStyle: { display: "none" },
-          tabBarStyle: { display: "none" },
-        }}
-      />
-      <Tab.Screen
-        name="notifications"
-        component={NotificationsNavigator}
-        options={{
-          tabBarButton: () => null,
-          tabBarItemStyle: { display: "none" },
-          tabBarStyle: { display: "none" },
-        }}
-      />
-      <Tab.Screen
-        name="story"
-        component={StoryNavigator}
-        options={{
-          tabBarButton: () => null,
-          tabBarItemStyle: { display: "none" },
-          tabBarStyle: { display: "none" },
         }}
       />
     </Tab.Navigator>
