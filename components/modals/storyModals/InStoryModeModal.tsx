@@ -2,24 +2,37 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import {
-  ParentHomeNavigatorParamList,
-  ParntHomeNavigatorProp,
-} from "../../../Navigation/ParentHomeNavigator";
+  StoryNavigatorParamList,
+  StoryNavigatorProp,
+} from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
 import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
+import SubscriptionModal from "../SubscriptionModal";
 
 interface Props extends Omit<CustomModalProps, "children"> {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
 }
 
-type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "readStory">;
+type RoutePropTypes = RouteProp<StoryNavigatorParamList, "readStory">;
 
 const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
   const { params } = useRoute<RoutePropTypes>();
   const [newMode, setNewMode] = useState<StoryModes>(params.mode);
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+
+  const navigator = useNavigation<StoryNavigatorProp>();
+
+  const isPremium = false;
+
+  const handleStoryMode = (storyMode: StoryModes) => {
+    if (storyMode === "interactive") {
+      isPremium ? setNewMode("interactive") : setIsSubscriptionModalOpen(true);
+      return;
+    }
+    setNewMode("plain");
+  };
 
   const handleChangeStoryMode = () => {
     if (newMode === params.mode) {
@@ -39,7 +52,7 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
         </View>
         <View className="flex flex-col gap-y-6 pb-6 border-b border-b-border-light">
           <Pressable
-            onPress={() => setNewMode("plain")}
+            onPress={() => handleStoryMode("plain")}
             className={`rounded-3xl p-6 flex flex-col gap-y-2 ${newMode === "plain" ? "border-2 bg-primary border-[#EC400740]" : "border border-border-light bg-white"}`}
           >
             <Text
@@ -54,9 +67,16 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
             </Text>
           </Pressable>
           <Pressable
-            onPress={() => setNewMode("interactive")}
+            onPress={() => handleStoryMode("interactive")}
             className={`rounded-3xl p-6 flex flex-col gap-y-2 ${newMode === "interactive" ? "border-2 border-primary/25 bg-primary" : "border border-border-light bg-white"}`}
           >
+            {!isPremium && (
+              <View className="bg-[#FFF8D2] self-start rounded-full h-6 flex justify-center items-center px-2">
+                <Text className="font-[abeezee] text-black text-xs">
+                  Premium
+                </Text>
+              </View>
+            )}
             <Text
               className={`font-[quilka] text-xl ${newMode === "interactive" ? "text-white" : "text-black"}`}
             >
@@ -75,6 +95,10 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
           disabled={!newMode}
         />
       </View>
+      <SubscriptionModal
+        isOpen={isSubscriptionModalOpen}
+        onClose={() => setIsSubscriptionModalOpen(false)}
+      />
     </CustomModal>
   );
 };

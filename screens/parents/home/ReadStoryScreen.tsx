@@ -1,8 +1,8 @@
 import { RouteProp, useRoute } from "@react-navigation/native";
 import StoryComponent from "../../../components/StoryComponent";
-import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
+import { StoryNavigatorParamList } from "../../../Navigation/StoryNavigator";
 
-type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "readStory">;
+type RoutePropTypes = RouteProp<StoryNavigatorParamList, "readStory">;
 
 const ReadStoryScreen = () => {
   const { params } = useRoute<RoutePropTypes>();

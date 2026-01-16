@@ -9,6 +9,8 @@ const SelectReadingVoiceModal = ({
   onClose,
 }: Omit<CustomModalProps, "children">) => {
   const [selectedVoice, setSelectedVoice] = useState("");
+
+  const isPremium = false;
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="flex flex-1 flex-col gap-y-6">
@@ -32,7 +34,7 @@ const SelectReadingVoiceModal = ({
             <Icon name="CircleCheck" color="green" />
           </View>
           <View className="border-t border-t-border-lighter gap-x-4 flex-wrap justify-center gap-y-6 py-6 flex flex-row">
-            {voicesDummyData.map((voice) => (
+            {voicesDummyData.map((voice, index) => (
               <View
                 key={voice.id}
                 className={` rounded-3xl min-w-48 py-6 flex flex-col px-4 ${selectedVoice === voice.id ? "border-primary border-2" : "border-border-light border"}`}
@@ -41,6 +43,20 @@ const SelectReadingVoiceModal = ({
                   source={voice.avatarUrl}
                   className="size-[70px] self-center"
                 />
+                {!isPremium && index > 0 && (
+                  <View className="bg-[#FFF8D2] self-center  rounded-full h-6 flex justify-center items-center px-2">
+                    <Text className="font-[abeezee] text-black text-xs">
+                      Premium
+                    </Text>
+                  </View>
+                )}
+                {index === 0 && (
+                  <View className="bg-[#FAEFEB] self-centerd rounded-full h-6 flex justify-center items-center px-2">
+                    <Text className="font-[abeezee] text-[#EC4007] text-xs">
+                      Default
+                    </Text>
+                  </View>
+                )}
                 <Text className="text-2xl text-black self-center font-[abeezee]">
                   {voice.name}
                 </Text>
