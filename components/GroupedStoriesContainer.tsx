@@ -1,38 +1,49 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
 import {
   ActivityIndicator,
   ImageBackground,
+  ImageSourcePropType,
   ScrollView,
   Text,
   View,
 } from "react-native";
-import {
-  ParentHomeNavigatorParamList,
-  ParntHomeNavigatorProp,
-} from "../../../Navigation/ParentHomeNavigator";
-import ErrorComponent from "../../../components/ErrorComponent";
-import LoadingOverlay from "../../../components/LoadingOverlay";
-import CustomButton from "../../../components/UI/CustomButton";
-import StoryItem from "../../../components/parents/StoryItem";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import { storiesByAgeImages } from "../../../data";
-import { useState } from "react";
+import { ParntHomeNavigatorProp } from "../Navigation/ParentHomeNavigator";
+import { AgeGroupType, Story } from "../types";
+import ErrorComponent from "./ErrorComponent";
+import AgeSelectionComponent from "./UI/AgeSelectionComponent";
+import CustomButton from "./UI/CustomButton";
+import StoryItem from "./parents/StoryItem";
+import LoadingOverlay from "./LoadingOverlay";
 
-type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
-const StoriesByAgeScreen = () => {
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const { params } = useRoute<RoutePropTypes>();
+type PropTypes = {
+  stories: Story[] | undefined;
+  error: Error | null;
+  imageSource?: ImageSourcePropType;
+  title: string;
+  description: string;
+  isPending: boolean;
+  refetch: () => void;
+};
+
+const GroupedStoriesContainer = ({
+  stories,
+  error,
+  imageSource,
+  title,
+  description,
+  isPending,
+  refetch,
+}: PropTypes) => {
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories()
-  );
+  const [isImageLoading, setIsImageLoading] = useState(false);
 
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
-  if (!data.length) {
+  if (!stories?.length) {
     return (
       <View className="flex-1 flex flex-col gap-y-3 bg-bgLight justify-center items-center">
         <Text className="text-xl font-[abeezee] text-black">
@@ -42,6 +53,7 @@ const StoriesByAgeScreen = () => {
       </View>
     );
   }
+
   return (
     <View className="flex flex-1 bg-bgLight">
       <ImageBackground
@@ -49,8 +61,8 @@ const StoriesByAgeScreen = () => {
           setIsImageLoading(true);
         }}
         onLoadEnd={() => setIsImageLoading(false)}
-        source={{ uri: storiesByAgeImages[params.ageGroup] }}
-        resizeMode="stretch"
+        source={imageSource ?? { uri: stories[0].coverImageUrl }}
+        resizeMode="cover"
         className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
       >
         {isImageLoading && (
@@ -58,22 +70,27 @@ const StoriesByAgeScreen = () => {
             <ActivityIndicator size="large" color="EC4007" />
           </View>
         )}
+
         <View className="flex flex-col gap-y-1.5">
           <Text className="font-[quilka] text-3xl capitalize text-white">
-            Age {params.ageGroup}
+            {title}
           </Text>
           <Text className="font-[abeezee] text-base text-white">
-            Access all stories from ages {params.ageGroup}
+            {description}
           </Text>
         </View>
       </ImageBackground>
       <ScrollView
         className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col"
+        contentContainerClassName="flex flex-col px-4 pb-5"
         showsVerticalScrollIndicator={false}
       >
-        <View className="flex flex-row flex-wrap py-6  gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
-          {data.map((story, index) => (
+        <AgeSelectionComponent
+          selectedAgeGroup={selectedGroup}
+          setSelectedAgeGroup={setSelectedGroup}
+        />
+        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
+          {stories.map((story, index) => (
             <StoryItem
               index={index}
               key={story.id}
@@ -89,4 +106,4 @@ const StoriesByAgeScreen = () => {
   );
 };
 
-export default StoriesByAgeScreen;
+export default GroupedStoriesContainer;

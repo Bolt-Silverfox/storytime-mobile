@@ -1,18 +1,16 @@
-import { Edit, Profile } from "iconsax-react-nativejs";
-import React, { useState } from "react";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import React from "react";
 import {
   Image,
   ImageStyle,
   StyleProp,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
-import { url } from "zod";
-import { Pencil } from "lucide-react-native";
 
 export type AvatarProps = {
   size?: number;
@@ -64,10 +62,10 @@ const Avatar: React.FC<AvatarProps> = ({
       ]}
     >
       {Content}
-      <Profile
+      <Ionicons
         size={size}
         style={{ position: "absolute" }}
-        variant="Bold"
+        name="person-outline"
         color="white"
       />
 
@@ -77,7 +75,7 @@ const Avatar: React.FC<AvatarProps> = ({
           style={{ zIndex: 11 }}
         >
           {/* <Image source={require("../assets/icons/pen.png")} /> */}
-          <Edit size={15} />
+          <FontAwesome5 name="edit" size={15} color="black" />
         </View>
       )}
     </TouchableOpacity>

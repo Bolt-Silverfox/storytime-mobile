@@ -16,7 +16,7 @@ type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
 const successMessages = [
   "Otp resent successfully",
-  "Email verification Successful",
+  "Start enjoying amazing Storytime with your kids.",
 ] as const;
 
 type SuccessMessageType = (typeof successMessages)[number];
@@ -68,11 +68,6 @@ const VerifyEmailScreen = () => {
       <PageTitle goBack={() => navigator.goBack()} title="" />
       <View style={defaultStyles.screen}>
         <View style={styles.textContainer}>
-          {successMessage && (
-            <Text className="font-[abeezee] text-xl text-primary uppercase text-center">
-              {successMessage}
-            </Text>
-          )}
           <Text style={defaultStyles.heading}>Verify your Email</Text>
           <Text style={styles.text}>
             Enter the verification code sent to your email {route.params.email}
@@ -104,14 +99,17 @@ const VerifyEmailScreen = () => {
         </View>
 
         <Pressable
-          onPress={() =>
+          onPress={() => {
+            Keyboard.dismiss();
             verifyEmail({
               token: otp,
               setErrorCb: setError,
               onSuccess: () =>
-                setSuccesMessage("Email verification Successful"),
-            })
-          }
+                setSuccesMessage(
+                  "Start enjoying amazing Storytime with your kids."
+                ),
+            });
+          }}
           style={
             isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
@@ -122,9 +120,11 @@ const VerifyEmailScreen = () => {
         </Pressable>
       </View>
       <SuccessScreen
-        message="Successful!"
+        message="Congratulations, your account has been created succesfully!"
         secondaryMessage={successMessage!}
-        visible={successMessage === "Email verification Successful"}
+        visible={
+          successMessage === "Start enjoying amazing Storytime with your kids."
+        }
         onProceed={onSuccessCb}
       />
     </View>

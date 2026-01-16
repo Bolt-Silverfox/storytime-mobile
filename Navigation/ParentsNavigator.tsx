@@ -5,28 +5,27 @@ import {
   getFocusedRouteNameFromRoute,
   NavigatorScreenParams,
 } from "@react-navigation/native";
-import { AlignBottom, Profile, SecurityUser } from "iconsax-react-nativejs";
+import Ionicons from "@expo/vector-icons/Ionicons";
 import { Heart } from "lucide-react-native";
 import colours from "../colours";
 import Icon from "../components/Icon";
 import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
+import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
 import NotificationsNavigator, {
   NotificationsNavigatorParamList,
 } from "./NotificationsNavigator";
-import ParentControlNavigator from "./ParentControlsNavigator";
 import ParentHomeNavigator, {
   ParentHomeNavigatorParamList,
 } from "./ParentHomeNavigator";
 import ParentProfileNavigator, {
   ParentProfileNavigatorParamList,
 } from "./ParentProfileNavigator";
-import ParentReportNavigator from "./ParentsReportNavigator";
-import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
+import ParentsLibraryScreen from "../screens/parents/ParentsLibraryScreen";
+import Feather from "@expo/vector-icons/Feather";
 
 type ParentsNavigatorParamList = {
   home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
-  reports: undefined;
-  controls: undefined;
+  library: undefined;
   favourite: undefined;
   profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
   getPremium: undefined;
@@ -70,32 +69,22 @@ const ParentsTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="reports"
-        component={ParentReportNavigator}
-        options={{
-          tabBarIcon: ({ focused }) => (
-            <AlignBottom color={focused ? colours.primary : colours.black} />
-          ),
-          tabBarActiveTintColor: colours.primary,
-          tabBarLabelStyle: {
-            textTransform: "capitalize",
-          },
-        }}
-      />
-      <Tab.Screen
-        name="controls"
-        component={ParentControlNavigator}
+        name="library"
+        component={ParentsLibraryScreen}
         options={({ route }) => {
-          const currentRoute =
-            getFocusedRouteNameFromRoute(route) ?? "indexPage";
+          const currentRoute = getFocusedRouteNameFromRoute(route) ?? "index";
 
           return {
-            tabBarIcon: ({ focused }) => (
-              <SecurityUser color={focused ? colours.primary : colours.black} />
-            ),
             tabBarStyle: {
-              display: currentRoute === "indexPage" ? "flex" : "none",
+              display: currentRoute === "index" ? "flex" : "none",
             },
+            tabBarIcon: ({ focused }) => (
+              <Feather
+                name="book"
+                size={24}
+                color={focused ? colours.primary : colours.black}
+              />
+            ),
             tabBarActiveTintColor: colours.primary,
             tabBarLabelStyle: {
               textTransform: "capitalize",
@@ -124,7 +113,11 @@ const ParentsTabNavigator = () => {
             getFocusedRouteNameFromRoute(route) ?? "indexPage";
           return {
             tabBarIcon: ({ focused }) => (
-              <Profile color={focused ? colours.primary : colours.black} />
+              <Ionicons
+                name="person-outline"
+                size={24}
+                color={focused ? colours.primary : colours.black}
+              />
             ),
             tabBarActiveTintColor: colours.primary,
             tabBarLabelStyle: {

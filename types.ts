@@ -155,10 +155,11 @@ type Story = {
   ageMin: number;
   ageMax: number;
   backgroundColor: string;
-  recommend: true;
+  recommend: boolean;
   aiGenerated: boolean;
   difficultyLevel: number;
   wordCount: number;
+  durationSeconds: number;
   createdAt: string;
   updatedAt: string;
   isDeleted: boolean;
@@ -213,6 +214,20 @@ type StoryBuddy = {
   deletedAt: string | null;
 };
 
+type FavouriteStory = {
+  id: string;
+  storyId: string;
+  title: string;
+  description: string;
+  coverImageUrl: string;
+  createdAt: string;
+  ageMin: number;
+  ageMax: number;
+};
+
+const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;
+
+type AgeGroupType = (typeof ageGroups)[number];
 export type {
   User,
   Profile,
@@ -229,4 +244,7 @@ export type {
   Story,
   ChildStoryStatus,
   StoryBuddy,
+  AgeGroupType,
+  FavouriteStory,
 };
+export { ageGroups };
