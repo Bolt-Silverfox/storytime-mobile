@@ -1,8 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
+import { useNavigation } from "@react-navigation/native";
 import {
-  Ban,
   BellRing,
   CreditCard,
   HelpCircle,
@@ -26,10 +25,12 @@ import ParentProfileModal from "../../../components/modals/ParentProfileIndexMod
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../styles";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
   const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
     false
   );
@@ -65,10 +66,8 @@ const ProfileScreen: FC = () => {
             edit={true}
             size={80}
             style={{
-              // position: "absolute",
               bottom: -30,
               margin: "auto",
-              // marginLeft: -56,
             }}
           />
         </ImageBackground>
@@ -100,7 +99,11 @@ const ProfileScreen: FC = () => {
           <MenuItem
             icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
             label="Notification Settings"
-            onPress={() => navigator.navigate("notificationSettings")}
+            onPress={() =>
+              protectedNavigator.navigate("notification", {
+                screen: "settings",
+              })
+            }
             isTablet={isTablet}
           />
           <MenuItem
@@ -113,7 +116,7 @@ const ProfileScreen: FC = () => {
             icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
             label="Subscription"
             isTablet={isTablet}
-            onPress={() => navigator.navigate("subscription")}
+            onPress={() => protectedNavigator.navigate("getPremium")}
           />
           <MenuItem
             icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
