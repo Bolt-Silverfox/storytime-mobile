@@ -6,12 +6,14 @@ type Props = {
   onTestKnowledge: () => void;
   isOpen: boolean;
   readAgain: () => void;
+  isInteractive: boolean;
 };
 const EndOfStoryMessage = ({
   storyTitle,
   onTestKnowledge,
   isOpen,
   readAgain,
+  isInteractive,
 }: Props) => {
   if (!isOpen) return null;
   return (
@@ -24,12 +26,16 @@ const EndOfStoryMessage = ({
       <Text className="font-[quilka] text-xl">
         Congratulations! You have successfully completed "{storyTitle}".
       </Text>
-      <Text className="font-[abeezee] text-text text-base">
-        Test your knowledge on the story you just completed and see how well you
-        did.
-      </Text>
+      {isInteractive && (
+        <Text className="font-[abeezee] text-text text-base">
+          Test your knowledge on the story you just completed and see how well
+          you did.
+        </Text>
+      )}
       <View className="flex flex-col gap-y-3">
-        <CustomButton text="Test knowledge" onPress={onTestKnowledge} />
+        {isInteractive && (
+          <CustomButton text="Test knowledge" onPress={onTestKnowledge} />
+        )}
         <CustomButton text="Read story again" transparent onPress={readAgain} />
       </View>
     </View>

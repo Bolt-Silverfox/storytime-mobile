@@ -36,7 +36,7 @@ const ChildStoryDetails = () => {
   const { isPending, data, error, refetch } = useQuery(
     queryGetStory(params.storyId)
   );
-  const isPremium = false;
+  const [isPremium, setIsPremium] = useState(false);
 
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
@@ -173,6 +173,11 @@ const ChildStoryDetails = () => {
           }
           text="Start Reading"
           disabled={!storyMode}
+        />
+        <CustomButton
+          onPress={() => setStoryMode("interactive")}
+          text="Override premium (TEST ONLY)"
+          bgColor="#4807EC"
         />
       </View>
       <AboutStoryModesModal
