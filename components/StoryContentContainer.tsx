@@ -11,7 +11,7 @@ import SubscriptionModal from "./modals/SubscriptionModal";
 
 type PropTypes = {
   story: Story;
-  isInteractive?: boolean;
+  isInteractive: boolean;
   paragraphs: string[];
   activeParagraph: number;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -25,7 +25,7 @@ type DisplayOptions =
 
 const StoryContentContainer = ({
   story,
-  isInteractive = false,
+  isInteractive,
   setActiveParagraph,
   activeParagraph,
   paragraphs,
@@ -49,7 +49,10 @@ const StoryContentContainer = ({
   };
 
   const handleNextParagraph = () => {
-    if (isLastParagraph) return;
+    if (isLastParagraph) {
+      setCurrentlyDisplayed("endOfStoryMessage");
+      return;
+    }
     if (isSubscribed) {
       setActiveParagraph((a) => a + 1);
       return;
@@ -68,31 +71,34 @@ const StoryContentContainer = ({
           <Text className="text-xl font-[quilka] text-white">
             {paragraphs[activeParagraph]}
           </Text>
-          <View className="flex flex-row justify-between items-center">
+          <View className="flex flex-row mt-4 justify-between items-center">
+            {
+              <Pressable
+                onPress={() => setActiveParagraph((a) => a - 1)}
+                className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+              >
+                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+              </Pressable>
+            }
             <Pressable
-              disabled={isFirstParagraph}
-              onPress={() => setActiveParagraph((a) => a - 1)}
-              className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-blue/50" : "bg-blue"}`}
-            >
-              <Icon name="SkipBack" color="white" />
-            </Pressable>
-            <Pressable
-              disabled={isLastParagraph}
               onPress={handleNextParagraph}
-              className={`size-12 rounded-full justify-center flex items-center ${isLastParagraph ? "bg-blue/50" : "bg-blue"}`}
+              className={`justify-center flex items-center ${isLastParagraph ? "rounded-xl" : "rounded-full bg-blue size-12"}`}
             >
-              <Icon name="SkipForward" color="white" />
+              {!isLastParagraph ? (
+                <Icon name="SkipForward" color="white" />
+              ) : (
+                <CustomButton
+                  text="Finish story"
+                  bgColor="#4807EC"
+                  onPress={() => setCurrentlyDisplayed("endOfStoryMessage")}
+                />
+              )}
             </Pressable>
           </View>
-          {isLastParagraph && isInteractive && (
-            <CustomButton
-              text="Finish"
-              onPress={() => setCurrentlyDisplayed("endOfStoryMessage")}
-            />
-          )}
         </BlurView>
       )}
       <EndOfStoryMessage
+        isInteractive={isInteractive}
         isOpen={currentlyDisplayed === "endOfStoryMessage"}
         onTestKnowledge={() => setCurrentlyDisplayed("quiz")}
         readAgain={readAgain}
