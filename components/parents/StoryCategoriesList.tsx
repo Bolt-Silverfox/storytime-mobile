@@ -12,7 +12,7 @@ const StoryCategoriesList = () => {
     return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
-    <View className="flex  flex-col gap-y-4">
+    <View className="flex flex-col gap-y-4 pb-5">
       <View className="flex max-w-screen-md mx-auto w-full flex-col gap-y-1.5">
         <Text className="font-[abeezee] text-black text-[18px]">
           All catgories

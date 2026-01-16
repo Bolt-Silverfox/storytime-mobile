@@ -13,6 +13,7 @@ import ProgressBar from "./UI/ProgressBar";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import { StoryModes } from "../types";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 const StoryComponent = ({
   storyId,
@@ -31,8 +32,7 @@ const StoryComponent = ({
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
-  const paragraphs = data.textContent.split(/\n\s*\n/);
-  // split story by number of words instead, cos some stories might not have newline characters
+  const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
 
   return (
     <ScrollView contentContainerClassName="flex min-h-full">

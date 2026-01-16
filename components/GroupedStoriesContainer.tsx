@@ -8,13 +8,13 @@ import {
   Text,
   View,
 } from "react-native";
-import { ParntHomeNavigatorProp } from "../Navigation/ParentHomeNavigator";
+import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
 import { AgeGroupType, Story } from "../types";
 import ErrorComponent from "./ErrorComponent";
+import LoadingOverlay from "./LoadingOverlay";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
 import StoryItem from "./parents/StoryItem";
-import LoadingOverlay from "./LoadingOverlay";
 
 type PropTypes = {
   stories: Story[] | undefined;
@@ -36,7 +36,7 @@ const GroupedStoriesContainer = ({
   refetch,
 }: PropTypes) => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<ParentsNavigatorProp>();
   const [isImageLoading, setIsImageLoading] = useState(false);
 
   if (isPending) return <LoadingOverlay visible />;
@@ -95,7 +95,10 @@ const GroupedStoriesContainer = ({
               index={index}
               key={story.id}
               onNavigate={() => {
-                navigator.navigate("childStoryDetails", { storyId: story.id });
+                navigator.navigate("story", {
+                  screen: "childStoryDetails",
+                  params: { storyId: story.id },
+                });
               }}
               story={story}
             />

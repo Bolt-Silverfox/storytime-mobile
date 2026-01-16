@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import {
   ActivityIndicator,
   ImageBackground,
@@ -7,23 +8,20 @@ import {
   Text,
   View,
 } from "react-native";
-import {
-  ParentHomeNavigatorParamList,
-  ParntHomeNavigatorProp,
-} from "../../../Navigation/ParentHomeNavigator";
+import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
+import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { storiesByAgeImages } from "../../../data";
-import { useState } from "react";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
 const StoriesByAgeScreen = () => {
   const [isImageLoading, setIsImageLoading] = useState(false);
   const { params } = useRoute<RoutePropTypes>();
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<ParentsNavigatorProp>();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories()
   );
@@ -78,7 +76,10 @@ const StoriesByAgeScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                navigator.navigate("childStoryDetails", { storyId: story.id });
+                navigator.navigate("story", {
+                  screen: "childStoryDetails",
+                  params: { storyId: story.id },
+                });
               }}
               story={story}
             />

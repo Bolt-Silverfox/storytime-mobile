@@ -22,6 +22,7 @@ import ParentProfileNavigator, {
 } from "./ParentProfileNavigator";
 import ParentsLibraryScreen from "../screens/parents/ParentsLibraryScreen";
 import Feather from "@expo/vector-icons/Feather";
+import StoryNavigator, { StoryNavigatorParamList } from "./StoryNavigator";
 
 type ParentsNavigatorParamList = {
   home: NavigatorScreenParams<ParentHomeNavigatorParamList>;
@@ -30,6 +31,7 @@ type ParentsNavigatorParamList = {
   profile: NavigatorScreenParams<ParentProfileNavigatorParamList>;
   getPremium: undefined;
   notifications: NavigatorScreenParams<NotificationsNavigatorParamList>;
+  story: NavigatorScreenParams<StoryNavigatorParamList>;
 };
 
 type ParentsNavigatorProp = BottomTabNavigationProp<ParentsNavigatorParamList>;
@@ -141,6 +143,15 @@ const ParentsTabNavigator = () => {
       <Tab.Screen
         name="notifications"
         component={NotificationsNavigator}
+        options={{
+          tabBarButton: () => null,
+          tabBarItemStyle: { display: "none" },
+          tabBarStyle: { display: "none" },
+        }}
+      />
+      <Tab.Screen
+        name="story"
+        component={StoryNavigator}
         options={{
           tabBarButton: () => null,
           tabBarItemStyle: { display: "none" },

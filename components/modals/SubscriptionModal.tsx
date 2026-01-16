@@ -1,9 +1,9 @@
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { subscriptionBenefits, subscriptionOptions } from "../../data";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
-import Icon from "../Icon";
 
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
 
@@ -23,7 +23,7 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
           aria-labelledby="Subscription modal header"
         >
           <View className="size-[100px] rounded-full border-2 border-[#866EFF] flex justify-center items-center bg-white">
-            <Icon name="Crown" size={50} color="#866EFF" />
+            <FontAwesome5 name="crown" size={50} color="#866EFF" />
           </View>
           <View className="flex flex-col gap-y-2">
             <Text className="font-[quilka] text-center text-2xl text-black">
