@@ -19,15 +19,15 @@ const ParentsHomeScreenHeader = () => {
   return (
     <View
       aria-labelledby="user avatar container"
-      className="flex flex-row bg-white pb-4 items-center gap-2 sticky top-0"
+      className="flex flex-row bg-white pb-4 border-b mb-8 border-b-border-lighter items-center gap-2 sticky top-0"
     >
       <View>
         <Avatar
           size={40}
           onPress={() =>
-            navigator.reset({
-              index: 0,
-              routes: [{ name: "selection" }],
+            navigator.navigate("parents", {
+              screen: "profile",
+              params: { screen: "indexPage" },
             })
           }
         />

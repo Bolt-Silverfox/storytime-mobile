@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { QueryResponse, Story } from "../../../types";
+import { FavouriteStory, QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "./useGetUserProfile";
 
@@ -14,7 +14,7 @@ const queryParentsFavourites = () => {
         const request = await apiFetch(`${BASE_URL}/parent-favorites`, {
           method: "GET",
         });
-        const response: QueryResponse<Story[]> = await request.json();
+        const response: QueryResponse<FavouriteStory[]> = await request.json();
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err) {
@@ -23,6 +23,7 @@ const queryParentsFavourites = () => {
     },
     staleTime: Infinity,
     select: (res) => res.data,
+    gcTime: 60 * 60 * 20,
   });
 };
 

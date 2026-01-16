@@ -1,72 +1,4 @@
-import { ImageSourcePropType } from "react-native";
-import { ValidParentControlsRoutes } from "./types";
-import { IconName } from "./components/Icon";
-
-const popularSuggestions = [
-  {
-    source: require("./assets/lost-secrets.png"),
-    title: "Secrets of the lost woods",
-    ageRange: "7 - 10",
-    label: "adventure",
-    id: "1",
-    bgColour: "#0731EC1A",
-    textColour: "#0731EC",
-  },
-  {
-    source: require("./assets/little-miss-pi.png"),
-    title: "Brume",
-    ageRange: "7 - 10",
-    label: "mystery",
-    id: "2",
-    bgColour: "#07CAEC1A",
-    textColour: "#07CAEC",
-  },
-  {
-    source: require("./assets/lost-secrets.png"),
-    title: "Secrets of the lost woods",
-    ageRange: "7 - 10",
-    label: "adventure",
-    id: "3",
-    bgColour: "#0731EC1A",
-    textColour: "#0731EC",
-  },
-  {
-    source: require("./assets/little-miss-pi.png"),
-    title: "Brume",
-    ageRange: "7 - 10",
-    label: "mystery",
-    id: "4",
-    bgColour: "#07CAEC1A",
-    textColour: "#07CAEC",
-  },
-];
-
-const childDetailsData = [
-  {
-    source: require("./assets/images/books/mice-town.png"),
-    id: "1",
-  },
-  {
-    source: require("./assets/images/books/mother-hen.png"),
-    id: "2",
-  },
-  {
-    source: require("./assets/images/books/life-of-pi.png"),
-    id: "3",
-  },
-  {
-    source: require("./assets/images/books/ponyo.png"),
-    id: "4",
-  },
-  {
-    source: require("./assets/images/books/little-miss-nettie.png"),
-    id: "5",
-  },
-  {
-    source: require("./assets/images/books/animals.png"),
-    id: "6",
-  },
-];
+import { AgeGroupType } from "./types";
 
 const privacyPolicyData: {
   title: string;
@@ -168,45 +100,6 @@ const termsAndConditionsData: {
   },
 ];
 
-const storyTrackerData: {
-  id: string;
-  name: string;
-  category: string;
-  kid: string;
-  progress: number;
-  source?: ImageSourcePropType;
-}[] = [
-  {
-    id: "1",
-    name: "Unseen World",
-    category: "Adventure & Action",
-    kid: "Jacob",
-    progress: 26,
-    source: require("./assets/parents/unseen-world.jpg"),
-  },
-  {
-    id: "2",
-    name: "The Boy in the sea",
-    category: "Mystery & Detective Stories",
-    kid: "Jacob",
-    progress: 13,
-    source: require("./assets/parents/boy-in-the-sea.jpg"),
-  },
-];
-
-const PALETTE = [
-  { id: 1, name: "Adventure", colour: "#039222", bg: "#CDFBD7" },
-  { id: 2, name: "Coming of Age", colour: "#925403", bg: "#FBE5CD" },
-  { id: 3, name: "Courage/Bravery", colour: "#926903", bg: "#FBF9CD" },
-  { id: 4, name: "Mystery", colour: "#008D81", bg: "#CDFBF7" },
-  { id: 5, name: "Fantasy", colour: "#5B007C", bg: "#EFCDFB" },
-  { id: 6, name: "Love & Family", colour: "#039222", bg: "#CDFBD7" },
-  { id: 7, name: "Transformation", colour: "#925403", bg: "#FBE5CD" },
-  { id: 8, name: "Honesty", colour: "#926903", bg: "#FBF9CD" },
-];
-
-const ageRange = ["1 - 4", "5 -  8", "9 - 12"] as const;
-
 const storyCategoriesColours = [
   "#008D81",
   "#0A2DBA",
@@ -218,61 +111,6 @@ const storyCategoriesColours = [
   "#0C85B8",
   "#EF12A7",
   "#C9240B",
-];
-
-const parentControlsRouteGroups: {
-  groupName: string;
-  routes: {
-    route: ValidParentControlsRoutes;
-    name: string;
-    iconName: IconName;
-  }[];
-}[] = [
-  {
-    groupName: "story customisation",
-    routes: [
-      {
-        route: "contentFilter",
-        name: "Content Filter",
-        iconName: "Funnel",
-      },
-      {
-        route: "excludeStoryTags",
-        name: "Exclude Story Tags",
-        iconName: "FunnelX",
-      },
-      {
-        route: "recordVoice",
-        name: "Record Voice",
-        iconName: "Mic",
-      },
-      {
-        route: "customizeReadingVoices",
-        name: "Customize Reading Voices",
-        iconName: "Volume2",
-      },
-    ],
-  },
-  {
-    groupName: "reading & usage",
-    routes: [
-      {
-        route: "setBedtime",
-        name: "Set Bedtime Mode",
-        iconName: "Moon",
-      },
-      {
-        route: "setDailyLimit",
-        name: "Daily Usage Limit",
-        iconName: "Hourglass",
-      },
-      {
-        route: "viewActivityLog",
-        name: "View Activity Log",
-        iconName: "Clock",
-      },
-    ],
-  },
 ];
 
 const subscriptionOptions: { name: "Monthly" | "Yearly"; price: number }[] = [
@@ -294,16 +132,22 @@ const subscriptionBenefits = [
   "Watch your child grow with every adventure",
 ];
 
+const storiesByAgeImages: Record<AgeGroupType, string> = {
+  "1-3":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_1-3_djfdem.jpg",
+  "4-6":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_4-6_javzsh.jpg",
+  "7-9":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_7-9_emuxav.jpg",
+  "10-12":
+    "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_10-12_1_ub4ist.jpg",
+};
+
 export {
-  popularSuggestions,
-  childDetailsData,
   privacyPolicyData,
-  termsAndConditionsData,
-  storyTrackerData,
-  PALETTE,
-  ageRange,
   storyCategoriesColours,
-  parentControlsRouteGroups,
-  subscriptionOptions,
   subscriptionBenefits,
+  subscriptionOptions,
+  termsAndConditionsData,
+  storiesByAgeImages,
 };

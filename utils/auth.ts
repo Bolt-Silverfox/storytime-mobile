@@ -26,7 +26,6 @@ const auth = {
   signup: async (data: {
     email: string;
     password: string;
-    nationality: string;
     fullName: string;
     role: string;
   }) => {
