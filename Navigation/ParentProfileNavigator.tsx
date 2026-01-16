@@ -1,3 +1,4 @@
+import { NavigatorScreenParams } from "@react-navigation/native";
 import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
@@ -5,11 +6,9 @@ import {
 import DeleteAccount from "../screens/parents/profile/DeleteAccount";
 import DeleteAccountConfirmation from "../screens/parents/profile/DeleteAccountConfirmation";
 import EditParentImage from "../screens/parents/profile/EditParentImage";
-import { NavigatorScreenParams } from "@react-navigation/native";
 import NotificationSettingsScreen from "../screens/parents/profile/NotificationSettingsScreen";
 import ProfileScreen from "../screens/parents/profile/ProfileScreen";
 import ResetParentPassword from "../screens/parents/profile/ResetParentPassword";
-import SubscriptionScreen from "../screens/parents/profile/SubscriptionScreen";
 import HelpAndSupportNavigator, {
   HelpAndSupportNavigatorParamList,
 } from "./HelpAndSupportNavigator";
@@ -18,7 +17,6 @@ type ParentProfileNavigatorParamList = {
   indexPage: undefined;
   notificationSettings: undefined;
   resetParentPassword: undefined;
-  subscription: undefined;
   helpAndSupport: NavigatorScreenParams<HelpAndSupportNavigatorParamList>;
   deleteAccount: undefined;
   deleteAccountConfirmation: undefined;
@@ -41,7 +39,6 @@ const ParentProfileNavigator = () => {
         name="resetParentPassword"
         component={ResetParentPassword}
       />
-      <Stack.Screen name="subscription" component={SubscriptionScreen} />
       <Stack.Screen name="helpAndSupport" component={HelpAndSupportNavigator} />
       <Stack.Screen name="deleteAccount" component={DeleteAccount} />
       <Stack.Screen
