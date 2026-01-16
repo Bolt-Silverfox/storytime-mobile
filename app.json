@@ -56,14 +56,7 @@
           "iosUrlScheme": "com.googleusercontent.apps.368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba"
         }
       ],
-      [
-        "expo-local-authentication",
-        {
-          "faceIDPermission": "Allow StoryTime4Kids to use Face ID."
-        }
-      ],
-      "expo-asset",
-      "expo-secure-store"
+      "expo-asset"
     ],
     "extra": {
       "eas": {
