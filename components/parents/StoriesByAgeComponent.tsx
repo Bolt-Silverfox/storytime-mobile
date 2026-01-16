@@ -18,7 +18,7 @@ const StoriesByAgeComponent = () => {
     return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
-    <View className="flex max-w-screen-md mx-auto w-full flex-col border-b gap-y-6 border-b-border-light pb-8">
+    <View className="flex max-w-screen-md mx-auto w-full flex-col border-b gap-y-6 border-b-border-light py-8">
       <AgeSelectionComponent
         selectedAgeGroup={selectedGroup}
         setSelectedAgeGroup={setSelectedGroup}

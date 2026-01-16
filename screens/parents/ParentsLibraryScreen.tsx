@@ -6,6 +6,9 @@ import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import ProgressBar from "../../components/UI/ProgressBar";
 import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { secondsToMinutes } from "../../utils/utils";
+import { useNavigation } from "@react-navigation/native";
+import { ParentsNavigatorProp } from "../../Navigation/ParentsNavigator";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] =
@@ -13,6 +16,7 @@ const ParentsLibraryScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryRecommendedStories()
   );
+  const navigator = useNavigation<ParentsNavigatorProp>();
   if (isPending) return <LoadingOverlay visible />;
   return (
     <View className="flex-1 bg-bgLight flex-col gap-y-8">
@@ -34,14 +38,17 @@ const ParentsLibraryScreen = () => {
           </Pressable>
         ))}
       </View>
-      <ScrollView
-        contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5
-      "
-      >
+      <ScrollView contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5">
         {data?.length ? (
           data?.map((story) => (
             <Pressable
               key={story.id}
+              onPress={() =>
+                navigator.navigate("story", {
+                  screen: "childStoryDetails",
+                  params: { storyId: story.id },
+                })
+              }
               className="border border-border-light p-1 rounded-xl flex flex-col"
             >
               <Image
@@ -58,7 +65,10 @@ const ParentsLibraryScreen = () => {
                 <View className="flex flex-row gap-x-2 items-center flex-1">
                   <Icon name="Clock" size={12} color="#616161" />
                   <Text className="font-[abeezee] text-text text-xs">
-                    32 mins
+                    {secondsToMinutes(story.durationSeconds)}{" "}
+                    {secondsToMinutes(story.durationSeconds) > 1
+                      ? "mins"
+                      : "min"}
                   </Text>
                 </View>
               </View>

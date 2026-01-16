@@ -1,9 +1,9 @@
-import { Dispatch, SetStateAction } from "react";
-import { FavouriteStory } from "../types";
-import { Image, Pressable, Text, View } from "react-native";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
+import { Dispatch, SetStateAction } from "react";
+import { Image, Pressable, Text, View } from "react-native";
 import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
+import { FavouriteStory } from "../types";
 
 const FavouriteStoryItem = ({
   story,
@@ -15,7 +15,7 @@ const FavouriteStoryItem = ({
   const navigator = useNavigation<ParentsNavigatorProp>();
 
   const onNavigate = () => {
-    navigator.navigate("home", {
+    navigator.navigate("story", {
       screen: "childStoryDetails",
       params: { storyId: story.storyId },
     });
@@ -37,15 +37,16 @@ const FavouriteStoryItem = ({
           {story.description}
         </Text>
         <Text className="font-[abeezee] text-text text-sm">
-          {story.ageMin} - {story.ageMax}
+          {story.ageRange} years
         </Text>
-        <FontAwesome
-          onPress={() => setActiveStory(story)}
-          name="heart"
-          className="self-end"
-          size={24}
-          color="red"
-        />
+        <Pressable className="size-11 self-end bg-black/5 flex justify-center items-center rounded-full">
+          <FontAwesome
+            onPress={() => setActiveStory(story)}
+            name="heart"
+            size={24}
+            color="red"
+          />
+        </Pressable>
       </View>
     </Pressable>
   );
