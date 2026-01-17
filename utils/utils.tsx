@@ -115,9 +115,11 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     });
 
     const response: QueryResponse = await request.json();
+    console.error("uplaod avatar error", response);
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {
+    console.error("error message", err);
     const message =
       err instanceof Error ? err.message : "Unexpected error, try again";
     throw new Error(message);
