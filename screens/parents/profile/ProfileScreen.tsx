@@ -24,7 +24,6 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import useAuth from "../../../contexts/AuthContext";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../styles";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
@@ -54,11 +53,7 @@ const ProfileScreen: FC = () => {
             borderBottomRightRadius: 24,
           }}
         >
-          <Text
-            style={[defaultStyles.heading, { bottom: -40, margin: "auto" }]}
-          >
-            Profile
-          </Text>
+          <Text className="font-[abeezee] text-xl m-4">Profile</Text>
           <Avatar
             onPress={() => {
               navigator.navigate("editParentImage");

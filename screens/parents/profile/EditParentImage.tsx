@@ -1,22 +1,25 @@
-import { useNavigation } from "@react-navigation/native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { useNavigation } from "@react-navigation/native";
 import { ChevronLeft } from "lucide-react-native";
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
 import useImagePicker from "../../../hooks/others/useImagePicker";
+import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
 import defaultStyles from "../../../styles";
+import CustomModal from "../../../components/modals/CustomModal";
+import Icon from "../../../components/Icon";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [image, setImage] = useState<string | undefined>(undefined);
-  const { pickImage } = useImagePicker(setImage);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const { isPending, mutate } = useUploadCustomAvatar({
     onSuccess: () => navigator.goBack(),
   });
-
+  console.log("image", image);
   return (
     <View className="flex-1 bg-[bg-light] ">
       <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
@@ -37,10 +40,18 @@ export default function EditParentImage() {
         </Text>
         <View className="w-[250px] mt-16 gap-11 h-[250px] border border-[#616161] mx-auto border-dashed rounded-full justify-center items-center">
           {image ? (
-            <Image
-              source={{ uri: image }}
-              className="w-[250] h-[250] rounded-full absolute"
-            />
+            <View className="relative">
+              <Image
+                source={{ uri: image }}
+                className="w-[250] h-[250] rounded-full"
+              />
+              <Pressable
+                onPress={() => setIsModalOpen(true)}
+                className="absolute bottom-0 right-6 border border-border-light size-12 bg-white rounded-full flex justify-center items-center"
+              >
+                <FontAwesome5 name="edit" size={15} color="black" />
+              </Pressable>
+            </View>
           ) : (
             <>
               <View className="gap-5 items-center">
@@ -54,7 +65,7 @@ export default function EditParentImage() {
                 </Text>
               </View>
 
-              <Pressable onPress={pickImage}>
+              <Pressable onPress={() => setIsModalOpen(true)}>
                 <Text
                   className="border-[0.5px] border-[#616161] rounded-[31px] p-2"
                   style={[defaultStyles.defaultText]}
@@ -95,6 +106,35 @@ export default function EditParentImage() {
         </View>
       </View>
       <LoadingOverlay label="Uploading" visible={isPending} />
+      <ImagePickerModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        setImage={setImage}
+      />
     </View>
   );
 }
+
+const ImagePickerModal = ({
+  isOpen,
+  onClose,
+  setImage,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+  setImage: Dispatch<SetStateAction<string | undefined>>;
+}) => {
+  const { pickImage, launchCamera } = useImagePicker({ onClose, setImage });
+  return (
+    <CustomModal isOpen={isOpen} onClose={onClose}>
+      <View className="flex flex-row gap-x-14 items-center">
+        <Pressable className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]">
+          <Icon name="Camera" onPress={launchCamera} />
+        </Pressable>
+        <Pressable className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]">
+          <Icon name="Folder" onPress={pickImage} />
+        </Pressable>
+      </View>
+    </CustomModal>
+  );
+};
