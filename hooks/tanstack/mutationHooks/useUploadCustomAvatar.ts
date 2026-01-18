@@ -7,10 +7,8 @@ const useUploadCustomAvatar = ({ onSuccess }: { onSuccess: () => void }) => {
   const queryClient = useQueryClient();
   const { user } = useAuth();
   return useMutation({
-    mutationFn: async (imageUri: string) => {
-      const response = await uploadUserAvatar(imageUri, user?.id!);
-      console.log("uplaod response", response);
-    },
+    mutationFn: async (imageUri: string) =>
+      await uploadUserAvatar(imageUri, user?.id!),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["userProfile", user?.id],
