@@ -224,6 +224,11 @@ type FavouriteStory = {
   ageRange: string;
 };
 
+type AvailableVoices = {
+  voice_id: string;
+  name: string;
+};
+
 const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
@@ -245,5 +250,6 @@ export type {
   StoryBuddy,
   AgeGroupType,
   FavouriteStory,
+  AvailableVoices,
 };
 export { ageGroups };
