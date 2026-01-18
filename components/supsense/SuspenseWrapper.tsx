@@ -1,9 +1,15 @@
 import { ReactNode, Suspense } from "react";
 import { ActivityIndicator } from "react-native";
 
-const SuspenseWrapper = ({ children }: { children: ReactNode }) => {
+const SuspenseWrapper = ({
+  children,
+  fallbackUI,
+}: {
+  children: ReactNode;
+  fallbackUI?: ReactNode;
+}) => {
   return (
-    <Suspense fallback={<ActivityIndicator size={"large"} />}>
+    <Suspense fallback={fallbackUI ?? <ActivityIndicator size={"large"} />}>
       {children}
     </Suspense>
   );
