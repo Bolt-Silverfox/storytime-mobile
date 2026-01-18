@@ -34,7 +34,7 @@ const getCategoryColour = (category: string) => {
 };
 
 const getNotificationIcon = (
-  category: "security" | "achievement" | "limit"
+  category: "security" | "achievement" | "limit",
 ) => {
   if (category === "security") {
     return <Icon name="ShieldAlert" color="#866EFF" />;
@@ -132,7 +132,6 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     if (!request.ok) {
       const text = await request.text();
-      console.error("Server error:", text);
       throw new Error(`Upload failed with status ${request.status}`);
     }
 
@@ -140,7 +139,6 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {
-    console.error("error message", err);
     const message =
       err instanceof Error ? err.message : "Unexpected error, try again";
     throw new Error(message);
@@ -168,7 +166,7 @@ const splitByWordCount = (text: string, wordsPerChunk: number): string[] => {
 
 const splitByWordCountPreservingSentences = (
   text: string,
-  wordsPerChunk: number
+  wordsPerChunk: number,
 ): string[] => {
   const cleanedText = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
   const sentences = cleanedText.split(/([.!?]+\s+)/).filter((s) => s.trim());
