@@ -1,8 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAudioPlayer } from "expo-audio";
+import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
-import { useEffect, useState } from "react";
 
 const StoryAudioPlayer = ({
   audioUrl,
@@ -16,14 +16,16 @@ const StoryAudioPlayer = ({
   const [generatedAudio, setGeneratedAudio] = useState<string | undefined>(
     undefined,
   );
-  const { isPending, mutate } = useTextToAudio({ setGeneratedAudio });
-  const player = useAudioPlayer(generatedAudio ?? audioUrl);
+  const { data, isPending } = useTextToAudio({
+    content: textContent,
+    voiceType: selectedVoice,
+  });
+  const player = useAudioPlayer(data?.audioUrl ?? audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     player.pause();
     setIsPlaying(false);
-    mutate({ content: textContent, voiceType: selectedVoice });
   }, [selectedVoice]);
 
   const playAudio = () => {
