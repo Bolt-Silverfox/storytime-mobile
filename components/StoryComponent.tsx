@@ -27,6 +27,7 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
+  const [selectedVoice, setSelectedVoice] = useState("MILO");
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
   if (isPending) return <LoadingOverlay visible />;
@@ -59,7 +60,11 @@ const StoryComponent = ({
           </Pressable>
         </View>
         <View className="flex justify-end flex-1 flex-col gap-y-3">
-          <StoryAudioPlayer audioUrl={data.audioUrl} />
+          <StoryAudioPlayer
+            audioUrl={data.audioUrl}
+            textContent={data.textContent}
+            selectedVoice={selectedVoice}
+          />
           <StoryContentContainer
             isInteractive={storyMode === "interactive"}
             story={data}
@@ -81,6 +86,8 @@ const StoryComponent = ({
       <SelectReadingVoiceModal
         isOpen={isVoiceModalOpen}
         onClose={() => setIsVoiceModalOpen(false)}
+        selectedVoice={selectedVoice}
+        setSelectedVoice={setSelectedVoice}
       />
       <InStoryOptionsModal
         handleVoiceModal={setIsVoiceModalOpen}
