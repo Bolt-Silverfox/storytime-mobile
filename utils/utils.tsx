@@ -1,4 +1,4 @@
-import { Alert, Share } from "react-native";
+import { Alert, Platform, Share } from "react-native";
 import Icon from "../components/Icon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../constants";
@@ -99,12 +99,28 @@ const urlToBlob = async (uri: string) => {
 const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
     const token = await AsyncStorage.getItem("accessToken");
+
+    let normalizedUri = imageUri;
+
+    if (Platform.OS === "android" && imageUri.startsWith("content://")) {
+      normalizedUri = imageUri;
+    } else if (imageUri.startsWith("file://")) {
+      normalizedUri = imageUri;
+    } else {
+      normalizedUri = `file://${imageUri}`;
+    }
+
     const formData = new FormData();
+
+    const uriParts = imageUri.split(".");
+    const fileType = uriParts[uriParts.length - 1];
+
     formData.append("image", {
       uri: imageUri,
-      type: "image/jpeg",
-      name: "avatar.jpg",
+      type: `image/${fileType}`,
+      name: `avatar.${fileType}`,
     } as any);
+
     formData.append("userId", userId);
     const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
       method: "POST",
@@ -114,8 +130,13 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
       },
     });
 
+    if (!request.ok) {
+      const text = await request.text();
+      console.error("Server error:", text);
+      throw new Error(`Upload failed with status ${request.status}`);
+    }
+
     const response: QueryResponse = await request.json();
-    console.error("uplaod avatar error", response);
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {

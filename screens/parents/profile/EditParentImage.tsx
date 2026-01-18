@@ -1,16 +1,14 @@
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
 import { ChevronLeft } from "lucide-react-native";
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
-import useImagePicker from "../../../hooks/others/useImagePicker";
+import UploadAvatarModal from "../../../components/modals/UploadAvatarModal";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
 import defaultStyles from "../../../styles";
-import CustomModal from "../../../components/modals/CustomModal";
-import Icon from "../../../components/Icon";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -19,7 +17,6 @@ export default function EditParentImage() {
   const { isPending, mutate } = useUploadCustomAvatar({
     onSuccess: () => navigator.goBack(),
   });
-  console.log("image", image);
   return (
     <View className="flex-1 bg-[bg-light] ">
       <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
@@ -106,7 +103,7 @@ export default function EditParentImage() {
         </View>
       </View>
       <LoadingOverlay label="Uploading" visible={isPending} />
-      <ImagePickerModal
+      <UploadAvatarModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         setImage={setImage}
@@ -114,27 +111,3 @@ export default function EditParentImage() {
     </View>
   );
 }
-
-const ImagePickerModal = ({
-  isOpen,
-  onClose,
-  setImage,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-  setImage: Dispatch<SetStateAction<string | undefined>>;
-}) => {
-  const { pickImage, launchCamera } = useImagePicker({ onClose, setImage });
-  return (
-    <CustomModal isOpen={isOpen} onClose={onClose}>
-      <View className="flex flex-row gap-x-14 items-center">
-        <Pressable className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]">
-          <Icon name="Camera" onPress={launchCamera} />
-        </Pressable>
-        <Pressable className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]">
-          <Icon name="Folder" onPress={pickImage} />
-        </Pressable>
-      </View>
-    </CustomModal>
-  );
-};
