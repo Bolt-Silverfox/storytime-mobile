@@ -16,7 +16,7 @@ const SuccessScreen = ({
 }: PropTypes) => {
   if (!visible) return null;
   return (
-    <View className="gap-y-6 inset-0 absolute flex flex-col justify-center items-center bg-bgLight">
+    <View className="gap-y-6 inset-0 absolute flex flex-col justify-center p-5 items-center bg-bgLight">
       <Image
         source={require("../../assets/icons/successful-reset-illustration.png")}
       />
