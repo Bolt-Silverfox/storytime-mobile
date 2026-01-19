@@ -197,7 +197,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const authTryCatch = async <T,>(
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
   ): Promise<T | AuthErrorResponse> => {
     try {
       setIsLoading(true);
@@ -281,7 +281,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
     await AsyncStorage.setItem(
       "unverifiedUser",
-      JSON.stringify(signupData.data.user)
+      JSON.stringify(signupData.data.user),
     );
     onSuccess();
   };
@@ -293,7 +293,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
-      auth.verifyEmail(token)
+      auth.verifyEmail(token),
     );
     if (!verifyEmailData.success) {
       setErrorCb(verifyEmailData.message);
@@ -310,7 +310,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("invalid email, try again");
       }
       const resendData = await authTryCatch(() =>
-        auth.resendVerificationEmail(email)
+        auth.resendVerificationEmail(email),
       );
       if (!resendData.success) {
         setErrorCb(resendData.message);
@@ -330,7 +330,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.requestPasswordReset(email)
+      auth.requestPasswordReset(email),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -351,7 +351,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.vaildateResetToken(email, token)
+      auth.vaildateResetToken(email, token),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -369,7 +369,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.resetpassword(email, token, newPassword)
+      auth.resetpassword(email, token, newPassword),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -422,7 +422,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.setInAppPin(pin)
+      auth.setInAppPin(pin),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -438,7 +438,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.verifyInAppPin(pin)
+      auth.verifyInAppPin(pin),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -456,7 +456,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
+      auth.udpateInAppPin({ oldPin, newPin, confirmNewPin }),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -471,7 +471,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.requestPinReset()
+      auth.requestPinReset(),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -487,7 +487,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.validatePinResetOtp(otp)
+      auth.validatePinResetOtp(otp),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -505,7 +505,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.resetInAppPin({ otp, newPin, confirmNewPin })
+      auth.resetInAppPin({ otp, newPin, confirmNewPin }),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -522,7 +522,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.changePassword(oldPassword, newPassword)
+      auth.changePassword(oldPassword, newPassword),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -534,7 +534,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteAccount: AuthFnTypes["deleteAccount"] = async (setErrorCb) => {
     setErrorCb("");
     const request = await authTryCatch<AuthResponse>(() =>
-      auth.deleteAccount()
+      auth.deleteAccount(),
     );
     if (!request.success) {
       setErrorCb(request.message);
