@@ -27,7 +27,7 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const [selectedVoice, setSelectedVoice] = useState("MILO");
+  const [selectedVoice, setSelectedVoice] = useState("BELLA");
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
   if (isPending) return <LoadingOverlay visible />;
