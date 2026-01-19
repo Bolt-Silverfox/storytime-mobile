@@ -17,10 +17,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
-// import {
-//   GoogleSignin,
-//   isSuccessResponse,
-// } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from "@react-native-google-signin/google-signin";
 import { Alert } from "react-native";
 
 type AuthFnTypes = {
@@ -160,13 +160,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     string | string[] | undefined
   >(undefined);
 
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     iosClientId: IOS_CLIENT_ID,
-  //     webClientId: WEB_CLIENT_ID,
-  //     profileImageSize: 200,
-  //   });
-  // }, []);
+  useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: IOS_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
+      profileImageSize: 200,
+    });
+  }, []);
 
   useEffect(() => {
     async function getUserSession() {
@@ -197,7 +197,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const authTryCatch = async <T,>(
-    callback: () => Promise<T>
+    callback: () => Promise<T>,
   ): Promise<T | AuthErrorResponse> => {
     try {
       setIsLoading(true);
@@ -281,7 +281,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
     await AsyncStorage.setItem(
       "unverifiedUser",
-      JSON.stringify(signupData.data.user)
+      JSON.stringify(signupData.data.user),
     );
     onSuccess();
   };
@@ -293,7 +293,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const verifyEmailData = await authTryCatch<AuthResponse>(() =>
-      auth.verifyEmail(token)
+      auth.verifyEmail(token),
     );
     if (!verifyEmailData.success) {
       setErrorCb(verifyEmailData.message);
@@ -310,7 +310,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("invalid email, try again");
       }
       const resendData = await authTryCatch(() =>
-        auth.resendVerificationEmail(email)
+        auth.resendVerificationEmail(email),
       );
       if (!resendData.success) {
         setErrorCb(resendData.message);
@@ -330,7 +330,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.requestPasswordReset(email)
+      auth.requestPasswordReset(email),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -351,7 +351,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       return;
     }
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.vaildateResetToken(email, token)
+      auth.vaildateResetToken(email, token),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -369,7 +369,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.resetpassword(email, token, newPassword)
+      auth.resetpassword(email, token, newPassword),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -379,40 +379,40 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleGoogleAuth = async () => {
-    // try {
-    //   setIsLoading(true);
-    //   const googlePlayService = await GoogleSignin.hasPlayServices();
-    //   if (!googlePlayService)
-    //     throw new Error(
-    //       "You don't have google play services enabled, enable it and try again."
-    //     );
-    //   const googleResponse = await GoogleSignin.signIn();
-    //   if (!isSuccessResponse(googleResponse)) {
-    //     throw new Error("Authentication unsuccesful, try again");
-    //   }
-    //   const { idToken } = googleResponse.data;
-    //   const request = await fetch(`${BASE_URL}/auth/google`, {
-    //     headers: {
-    //       "Content-Type": "application/json",
-    //     },
-    //     body: JSON.stringify({ id_token: idToken }),
-    //     method: "POST",
-    //   });
-    //   const response = await request.json();
-    //   if (!response.success) {
-    //     throw new Error(response.message);
-    //   }
-    //   await AsyncStorage.setItem("accessToken", response.data.jwt);
-    //   await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
-    //   await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-    //   setUser(response.data.user);
-    // } catch (error) {
-    //   const message =
-    //     error instanceof Error ? error.message : "Unexpected error, try again";
-    //   Alert.alert(message);
-    // } finally {
-    //   setIsLoading(false);
-    // }
+    try {
+      setIsLoading(true);
+      const googlePlayService = await GoogleSignin.hasPlayServices();
+      if (!googlePlayService)
+        throw new Error(
+          "You don't have google play services enabled, enable it and try again.",
+        );
+      const googleResponse = await GoogleSignin.signIn();
+      if (!isSuccessResponse(googleResponse)) {
+        throw new Error("Authentication unsuccesful, try again");
+      }
+      const { idToken } = googleResponse.data;
+      const request = await fetch(`${BASE_URL}/auth/google`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id_token: idToken }),
+        method: "POST",
+      });
+      const response = await request.json();
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      await AsyncStorage.setItem("accessToken", response.data.jwt);
+      await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+      setUser(response.data.user);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unexpected error, try again";
+      Alert.alert(message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const setInAppPin: AuthFnTypes["setInAppPin"] = async ({
@@ -422,7 +422,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.setInAppPin(pin)
+      auth.setInAppPin(pin),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -438,7 +438,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.verifyInAppPin(pin)
+      auth.verifyInAppPin(pin),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -456,7 +456,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
+      auth.udpateInAppPin({ oldPin, newPin, confirmNewPin }),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -471,7 +471,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.requestPinReset()
+      auth.requestPinReset(),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -487,7 +487,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.validatePinResetOtp(otp)
+      auth.validatePinResetOtp(otp),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -505,7 +505,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.resetInAppPin({ otp, newPin, confirmNewPin })
+      auth.resetInAppPin({ otp, newPin, confirmNewPin }),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -522,7 +522,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   }) => {
     setErrorCb("");
     const requestData = await authTryCatch<AuthResponse>(() =>
-      auth.changePassword(oldPassword, newPassword)
+      auth.changePassword(oldPassword, newPassword),
     );
     if (!requestData.success) {
       setErrorCb(requestData.message);
@@ -534,7 +534,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const deleteAccount: AuthFnTypes["deleteAccount"] = async (setErrorCb) => {
     setErrorCb("");
     const request = await authTryCatch<AuthResponse>(() =>
-      auth.deleteAccount()
+      auth.deleteAccount(),
     );
     if (!request.success) {
       setErrorCb(request.message);
