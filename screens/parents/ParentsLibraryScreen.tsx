@@ -12,7 +12,7 @@ import { secondsToMinutes } from "../../utils/utils";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] =
-    useState<LibraryFilterType>("completed");
+    useState<LibraryFilterType>("ongoing");
   const { data, isPending, error, refetch } = useQuery(
     queryRecommendedStories()
   );
