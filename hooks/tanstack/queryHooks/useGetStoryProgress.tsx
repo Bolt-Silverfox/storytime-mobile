@@ -4,11 +4,12 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
 export type StoryProgress = {
-  kidId: string;
+  id: string;
   storyId: string;
   progress: number;
   completed: boolean;
-  sessionTime: number;
+  lastAccessed: string;
+  totalTimeSpent: number;
 };
 
 type Response = {
@@ -18,15 +19,15 @@ type Response = {
   success: boolean;
 };
 
-const useGetStoryProgress = (kidId: string, storyId: string) => {
+const useGetStoryProgress = (storyId: string) => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["storyProgress", kidId, storyId],
+    queryKey: ["storyProgress", storyId],
     queryFn: async () => {
       try {
         if (!user) return null;
-        const url = `${BASE_URL}/stories/progress/${kidId}/${storyId}`;
+        const url = `${BASE_URL}/stories/user/progress/${storyId}`;
         const response = await apiFetch(url, {
           method: "GET",
         });
@@ -39,7 +40,7 @@ const useGetStoryProgress = (kidId: string, storyId: string) => {
         }
 
         const progress: Response = await response.json();
-        // console.log("stories:", progress);
+        console.log("story progress:", progress);
         return progress; // replace `any` with your Story type if available
       } catch (err) {
         const message =
@@ -48,7 +49,7 @@ const useGetStoryProgress = (kidId: string, storyId: string) => {
       }
     },
     select: (data) => data?.data,
-    enabled: !!user,
+    enabled: !!user  && !!storyId,
   });
 };
 
