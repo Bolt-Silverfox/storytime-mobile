@@ -41,15 +41,6 @@ const useSetStoryProgress = ({
         Alert.alert(response.message ?? "Unexpected error, try again");
         return;
       }
-      console.log("SET_PROGRESS_PAYLOAD", {
-        storyId,
-        progress,
-        completed,
-        sessionTime,
-      });
-
-      console.log(response);
-
       return response;
     },
     onSuccess: () => {

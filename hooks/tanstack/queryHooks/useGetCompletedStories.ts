@@ -26,7 +26,6 @@ const useGetCompletedStories = () => {
         }
 
         const completedStories: Response = await response.json();
-        console.log("completed stories:", completedStories);
         return completedStories;
       } catch (err) {
         const message =

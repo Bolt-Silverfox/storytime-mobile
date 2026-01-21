@@ -66,7 +66,6 @@ const useGetOngoingStories = () => {
         }
 
         const ongoingStories: Response = await response.json();
-        console.log("ongoing stories:", ongoingStories);
         return ongoingStories;
       } catch (err) {
         const message =
