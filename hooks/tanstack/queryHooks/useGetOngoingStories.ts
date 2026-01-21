@@ -48,7 +48,7 @@ const useGetOngoingStories = () => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["library", "continueReading"],
+    queryKey: ["library", "ongoingStories"],
     queryFn: async () => {
       try {
         if (!user) return null;
@@ -66,7 +66,7 @@ const useGetOngoingStories = () => {
         }
 
         const ongoingStories: Response = await response.json();
-        console.log("ongoing stories:", ongoingStories);        
+        console.log("ongoing stories:", ongoingStories);
         return ongoingStories;
       } catch (err) {
         const message =
