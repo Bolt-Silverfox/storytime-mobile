@@ -15,23 +15,17 @@ import {
 import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingStories";
 import ProgressBar from "../../components/parents/ProgressBar";
 import queryGetStory from "../../hooks/tanstack/queryHooks/useGetStory";
+import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
-  // const { data, isPending, error, refetch } = useQuery(
-  //   queryRecommendedStories()
-  // );
   const ongoingQuery = useGetOngoingStories();
-  // const completedQuery = useGetCompletedStories();
-  const data = ongoingQuery.data;
-  const isPending = ongoingQuery.isPending;
-  // const data =
-  //   storyFilter === "ongoing"
-  //     ? ongoingQuery.data
-  //     : completedQuery.data;
+  const completedQuery = useGetCompletedStories();
 
-  // const isPending =
-  //   ongoingQuery.isPending || completedQuery.isPending;
+  const data =
+    storyFilter === "ongoing" ? ongoingQuery.data : completedQuery.data;
+
+  const isPending = ongoingQuery.isPending || completedQuery.isPending;
 
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible />;
@@ -44,7 +38,6 @@ const ParentsLibraryScreen = () => {
         {libraryFilters.map((filter) => (
           <Pressable
             key={filter}
-            disabled={filter === "completed"}
             onPress={() => setStoryFilter(filter)}
             className={`${filter === storyFilter ? "bg-blue" : "bg-white border"} h-10 flex justify-center rounded-full items-center flex-1`}
           >
