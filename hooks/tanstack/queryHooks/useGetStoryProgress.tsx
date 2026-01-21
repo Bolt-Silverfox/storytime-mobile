@@ -40,8 +40,7 @@ const useGetStoryProgress = (storyId: string) => {
         }
 
         const progress: Response = await response.json();
-        console.log("story progress:", progress);
-        return progress; // replace `any` with your Story type if available
+        return progress;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "unexpected error, try again";

@@ -5,8 +5,6 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
-// import ProgressBar from "../../components/UI/ProgressBar";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import {
   secondsToMinutes,
