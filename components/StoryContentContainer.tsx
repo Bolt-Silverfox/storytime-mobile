@@ -15,6 +15,7 @@ type PropTypes = {
   paragraphs: string[];
   activeParagraph: number;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
+  onProgress: (progress: number, completed: boolean) => void;
 };
 
 type DisplayOptions =
@@ -29,12 +30,13 @@ const StoryContentContainer = ({
   setActiveParagraph,
   activeParagraph,
   paragraphs,
+  onProgress,
 }: PropTypes) => {
   const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array().fill(story.questions.length),
+    new Array().fill(story.questions.length)
   );
 
   const isSubscribed = true;
@@ -54,7 +56,11 @@ const StoryContentContainer = ({
       return;
     }
     if (isSubscribed) {
-      setActiveParagraph((a) => a + 1);
+      setActiveParagraph((a) => {
+        const next = a + 1;
+        onProgress(next + 1, false);
+        return next;
+      });
       return;
     }
     setIsSubscriptionModalOpen(true);
@@ -92,7 +98,10 @@ const StoryContentContainer = ({
                 <CustomButton
                   text="Finish story"
                   bgColor="#4807EC"
-                  onPress={() => setCurrentlyDisplayed("endOfStoryMessage")}
+                  onPress={() => {
+                    setCurrentlyDisplayed("endOfStoryMessage");
+                    onProgress(paragraphs.length, true);
+                  }}
                 />
               )}
             </Pressable>

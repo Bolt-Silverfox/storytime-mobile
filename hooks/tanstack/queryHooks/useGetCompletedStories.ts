@@ -2,45 +2,31 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import type { OngoingStory, Response } from "./useGetOngoingStories";
 
-export type StoryProgress = {
-  id: string;
-  storyId: string;
-  progress: number;
-  completed: boolean;
-  lastAccessed: string;
-  totalTimeSpent: number;
-};
-
-type Response = {
-  data: StoryProgress;
-  message: string;
-  statusCode: number;
-  success: boolean;
-};
-
-const useGetStoryProgress = (storyId: string) => {
+const useGetCompletedStories = () => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["storyProgress", storyId],
+    queryKey: ["library", "completedStories"],
     queryFn: async () => {
       try {
         if (!user) return null;
-        const url = `${BASE_URL}/stories/user/progress/${storyId}`;
+
+        const url = `${BASE_URL}/stories/user/library/completed`;
         const response = await apiFetch(url, {
           method: "GET",
         });
 
         if (!response.ok) {
           const errJson = await response.json().catch(() => null);
-          const msg =
-            errJson?.message || `Failed with status ${response.status}`;
-          throw new Error(msg);
+          throw new Error(
+            errJson?.message || `Failed with status ${response.status}`
+          );
         }
 
-        const progress: Response = await response.json();
-        return progress;
+        const completedStories: Response = await response.json();
+        return completedStories;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "unexpected error, try again";
@@ -48,8 +34,8 @@ const useGetStoryProgress = (storyId: string) => {
       }
     },
     select: (data) => data?.data,
-    enabled: !!user  && !!storyId,
+    enabled: !!user,
   });
 };
 
-export default useGetStoryProgress;
+export default useGetCompletedStories;

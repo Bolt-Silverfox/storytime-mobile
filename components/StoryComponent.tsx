@@ -1,7 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
@@ -15,6 +15,7 @@ import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import { StoryModes } from "../types";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
+import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 
 const StoryComponent = ({
   storyId,
@@ -28,13 +29,26 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState("BELLA");
+  const sessionStartTime = useRef(Date.now());
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+  const { mutate: setStoryProgress } = useSetStoryProgress({
+    storyId,
+  });
+
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
+
+  const handleProgress = (progress: number, completed: boolean) => {
+    setStoryProgress({
+      progress,
+      completed,
+      time: sessionStartTime.current,
+    });
+  };
 
   return (
     <ScrollView contentContainerClassName="flex min-h-full">
@@ -71,6 +85,7 @@ const StoryComponent = ({
             paragraphs={paragraphs}
             activeParagraph={activeParagraph}
             setActiveParagraph={setActiveParagraph}
+            onProgress={handleProgress}
           />
           <View className="bg-white p-4 rounded-2xl">
             <ProgressBar
