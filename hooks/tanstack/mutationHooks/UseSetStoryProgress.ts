@@ -4,12 +4,10 @@ import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
 
 const useSetStoryProgress = ({
-  kidId,
   storyId,
   onSuccess,
   id,
 }: {
-  kidId: string;
   storyId: string;
   onSuccess?: () => void;
   id?: string;
@@ -26,13 +24,12 @@ const useSetStoryProgress = ({
       completed?: boolean;
       time: number;
     }) => {
-      const url = `${BASE_URL}/stories/progress`;
+      const url = `${BASE_URL}/stories/user/progress`;
       const sessionTime = Math.floor((Date.now() - time) / 1000);
 
       const request = await apiFetch(url, {
         method: "POST",
         body: JSON.stringify({
-          kidId: kidId,
           storyId: storyId,
           progress: progress,
           completed: completed,
@@ -48,11 +45,10 @@ const useSetStoryProgress = ({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["storyProgress", kidId, storyId],
+        queryKey: ["storyProgress", storyId],
       });
-      queryClient.invalidateQueries({
-        queryKey: ["ContinueReading", kidId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["library", "ongoingStories"] });
+      queryClient.invalidateQueries({ queryKey: ["library", "completedStories"] });
       onSuccess?.();
     },
   });
