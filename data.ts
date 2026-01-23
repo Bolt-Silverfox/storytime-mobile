@@ -43,7 +43,7 @@ const privacyPolicyData: {
   },
   {
     title: "Contact Us",
-    paragraph: "mail : support@storytimekids.com",
+    paragraph: "mail : team@storytimeapp.me",
     number: "VII",
   },
 ];

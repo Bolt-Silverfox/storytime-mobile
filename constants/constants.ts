@@ -104,27 +104,57 @@ export const privacy = [
   },
   {
     title: "VII. Contact Us",
-    description: "mail: support@storytimekids.com",
+    description: "mail: team@storytimeapp.me",
   },
 ];
 
 export const FAQ = {
-  parentAcountManagement: [
+  parentAccountManagement: [
+    {
+      q: "What is this app and how does it help my child?",
+      a: "The app helps children improve reading and comprehension through stories, short quizzes, and daily challenges. Kids read or listen to stories, answer simple questions, and build skills through consistent practice.",
+    },
+    {
+      q: "What age range is the app designed for?",
+      a: "The app is built for children aged 1-12 with stories, quizzes automatically adjusted to match each child's reading level.",
+    },
     {
       q: "Do I need a parent account to use the app?",
-      a: "Yes. A parent account is required to create child profiles, manage safety settings, and access subscription features",
+      a: "Yes. A parent account is required to create child profiles, manage safety settings, and access subscription features.",
     },
     {
       q: "Can I add more than one child?",
-      a: "Yes! You can add multiple child profiles and personalize each child’s reading level and interests.",
+      a: "Yes! You can add multiple child profiles and personalize each child's reading level and interests.",
     },
     {
-      q: "How do I edit or delete my child’s profile?",
+      q: "How do I edit or delete my child's profile?",
       a: "Go to Parent Dashboard → Child Profile → Edit / Delete.",
     },
     {
-      q: "Can I monitor my child’s activity?",
-      a: "Yes. You can see their recent stories, listening time, and reading progress.",
+      q: "Can I monitor my child's activity?",
+      a: "Yes. Parents can view reading activity, quiz completion, and engagement patterns through a simple Parent Dashboard.",
+    },
+  ],
+  usingTheApp: [
+    {
+      q: "How does my child use the app?",
+      a: "Your child selects a story, reads or listens, completes a short quiz afterward, and can also try the daily challenge.",
+    },
+    {
+      q: "Can my child use the app without help?",
+      a: "Yes. The app is designed to be child-friendly and easy to navigate independently.",
+    },
+    {
+      q: "Can the app be used on more than one device?",
+      a: "Yes. Progress syncs across devices so your child can continue where they left off.",
+    },
+    {
+      q: "How long does a typical session take?",
+      a: "Most sessions last 5–15 minutes, making it ideal for daily reading habits.",
+    },
+    {
+      q: "What happens if my child skips a day?",
+      a: "Nothing bad happens. Daily challenges reset, and children can continue at their own pace.",
     },
   ],
   safety: [
@@ -151,30 +181,34 @@ export const FAQ = {
   ],
   storiesAndAudio: [
     {
-      q: "Will stories always match my child’s age?",
-      a: "Yes. Stories are tagged by age and difficulty, and your child’s onboarding quiz helps us recommend the right content.",
-    },
-    {
-      q: "Can my child listen to stories instead of reading?",
-      a: "Yes. Every story has narration your child can listen to at their own pace",
-    },
-    {
       q: "Are new stories added?",
       a: "We add new stories and illustrations regularly, so the library stays fresh and exciting.",
+    },
+    {
+      q: "What kinds of stories are available?",
+      a: "The app includes age-appropriate stories across different themes, as well as AI-generated stories tailored to your child's level.",
+    },
+    {
+      q: "What is AI story generation?",
+      a: "AI story generation creates new, original stories based on your child's age and reading level, so content never feels repetitive.",
+    },
+    {
+      q: "Can my child listen instead of reading?",
+      a: "Yes. Stories can be read aloud using built-in AI voices, making it accessible for early readers.",
+    },
+    {
+      q: "Can parents record their own voice for stories?",
+      a: "Yes. Parents can record their voice so children can listen to familiar, comforting narration anytime.",
+    },
+    {
+      q: "Are quizzes included after every story?",
+      a: "Yes. Each story includes a short quiz to help reinforce understanding and comprehension.",
     },
   ],
   subscription: [
     {
-      q: "Do I need a subscription?",
-      a: "You can enjoy free stories, but premium stories and full library features require a subscription.",
-    },
-    {
       q: "How does the 14-day free trial work?",
-      a: "You get full access for 14 days. If you don’t cancel before the end of the trial, your plan will renew automatically.",
-    },
-    {
-      q: "What’s included in the family plan?",
-      a: "One subscription covers all child profiles under your account",
+      a: "You get full access for 14 days. If you don't cancel before the end of the trial, your plan will renew automatically.",
     },
     {
       q: "How do I cancel my subscription?",
@@ -182,25 +216,52 @@ export const FAQ = {
     },
     {
       q: "Will I lose saved stories if I cancel?",
-      a: "No. You’ll still see your saved stories, but premium ones will be locked until you resubscribe.",
+      a: "No. You'll still see your saved stories, but premium ones will be locked until you resubscribe.",
+    },
+    {
+      q: "Is the app free to use?",
+      a: "The app offers free access with optional premium features for expanded content and personalization.",
+    },
+    {
+      q: "What does the premium subscription include?",
+      a: "Premium unlocks more stories, AI-generated content, voice features, and enhanced progress insights.",
+    },
+    {
+      q: "Can multiple children use one subscription?",
+      a: "Yes. One subscription supports multiple child profiles within the same family.",
     },
   ],
   privacy: [
     {
-      q: "What information do you collect about my child?",
-      a: `Only what’s needed for personalization — age, interests, reading level We never collect unnecessary personal details`,
+      q: "Is the content safe for children?",
+      a: "Yes. All stories and audio are filtered to ensure they are age-appropriate and safe for children.",
     },
     {
-      q: "Do you share or sell my data?",
-      a: "No. Your family’s data is never sold or shared with third parties.",
+      q: "What data does the app collect?",
+      a: "Only minimal usage data is collected to personalize content and track progress. No unnecessary personal data is required.",
     },
     {
-      q: "Is my child’s data used for AI training?",
-      a: "No. Child data is not used to train external AI models.",
+      q: "Is my child's data secure?",
+      a: "Yes. All data is encrypted and stored securely.",
     },
     {
-      q: "Can I delete my child’s data?",
+      q: "Does the app follow child privacy laws?",
+      a: "Yes. The app complies with COPPA and GDPR to protect children's privacy.",
+    },
+    {
+      q: "Can I delete my child's data?",
       a: "Yes. When you delete a child profile, all related data is permanently removed.",
     },
   ],
+  troubleshooting: [
+    {
+      q: "The app won't load for my child — what do I do?",
+      a: "Try restarting the app or reconnecting to the internet. If you're offline, make sure the story was downloaded.",
+    },
+    {
+      q: "Audio isn't playing. How do I fix it?",
+      a: "Check your device sound settings and the app's internal volume toggle.",
+    },
+  ],
 };
+

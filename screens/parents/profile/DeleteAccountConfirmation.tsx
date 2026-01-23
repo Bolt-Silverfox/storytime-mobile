@@ -62,11 +62,11 @@ export default function DeleteAccount() {
             style={[defaultStyles.defaultText, { fontSize: 16 }]}
             className="text-center mt-4 max-w-[311px]"
           >
-            Help us improve by telling us how we can make Storytime better{" "}
+            Enter your email to confirm account deletion
           </Text>
         </View>
         <View style={styles.formItem} className="mt-8">
-          <Text style={defaultStyles.label}>Enter email address</Text>
+          {/* <Text style={defaultStyles.label}>Enter email address</Text> */}
           <TextInput
             onChangeText={setEmail}
             value={email}
@@ -86,7 +86,7 @@ export default function DeleteAccount() {
             style={[defaultStyles.defaultText, { color: "white" }]}
             className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${true ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
           >
-            Delete Acount
+            Delete Account
           </Text>
         </Pressable>
 
