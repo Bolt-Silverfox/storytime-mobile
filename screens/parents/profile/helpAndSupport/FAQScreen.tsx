@@ -47,13 +47,34 @@ export default function FaQScreen() {
             style={[defaultStyles.heading, { fontSize: 19 }]}
             className="mt-6"
           >
-            Parent and Account management
+            Parent Account & Management
           </Text>
           <View
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
-            {FAQ.parentAcountManagement.map((faq, i) => (
+            {FAQ.parentAccountManagement.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
+            ))}
+          </View>
+        </View>
+        <View>
+          <Text
+            style={[defaultStyles.heading, { fontSize: 19 }]}
+            className="mt-6"
+          >
+            Using the App
+          </Text>
+          <View
+            style={styles.menuList}
+            className="px-[16]   border rounded-[20px] border-border-lighter"
+          >
+            {FAQ.usingTheApp.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}
@@ -141,6 +162,28 @@ export default function FaQScreen() {
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
             {FAQ.privacy.map((faq, i) => (
+              <MenuItem
+                key={i}
+                label={faq.q}
+                isTablet={isTablet}
+                description={faq.a}
+              />
+            ))}
+          </View>
+        </View>
+
+        <View>
+          <Text
+            style={[defaultStyles.heading, { fontSize: 19 }]}
+            className="mt-6"
+          >
+            Troubleshooting
+          </Text>
+          <View
+            style={styles.menuList}
+            className="px-[16]   border rounded-[20px] border-border-lighter"
+          >
+            {FAQ.troubleshooting.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}
