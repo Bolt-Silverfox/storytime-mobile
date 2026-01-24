@@ -9,7 +9,7 @@ import {
   View,
 } from "react-native";
 import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
-import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import ErrorComponent from "../../../components/ErrorComponent";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import CustomButton from "../../../components/UI/CustomButton";
@@ -21,9 +21,9 @@ type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
 const StoriesByAgeScreen = () => {
   const [isImageLoading, setIsImageLoading] = useState(false);
   const { params } = useRoute<RoutePropTypes>();
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories()
+    queryRecommendedStories(),
   );
 
   if (isPending) return <LoadingOverlay visible />;
@@ -76,7 +76,7 @@ const StoriesByAgeScreen = () => {
               index={index}
               key={story.id}
               onNavigate={() => {
-                navigator.navigate("story", {
+                navigator.navigate("stories", {
                   screen: "childStoryDetails",
                   params: { storyId: story.id },
                 });

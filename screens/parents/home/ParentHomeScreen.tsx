@@ -2,24 +2,25 @@ import { lazy } from "react";
 import { ScrollView, View } from "react-native";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
+import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
 
 const StoryCategoriesList = lazy(
-  () => import("../../../components/parents/StoryCategoriesList")
+  () => import("../../../components/parents/StoryCategoriesList"),
 );
 const ParentsTopRecommendations = lazy(
-  () => import("../../../components/parents/ParentTopRecommendations")
+  () => import("../../../components/parents/ParentTopRecommendations"),
 );
 const ParentsTopPicksComponent = lazy(
-  () => import("../../../components/parents/ParentTopPicsComponent")
+  () => import("../../../components/parents/ParentTopPicsComponent"),
 );
 const SeasonalStoriesComponent = lazy(
-  () => import("../../../components/parents/SeasonalStoriesComponent")
+  () => import("../../../components/parents/SeasonalStoriesComponent"),
 );
 const FunAndAdventuresComponent = lazy(
-  () => import("../../../components/parents/FunAndAdventuresComponent")
+  () => import("../../../components/parents/FunAndAdventuresComponent"),
 );
 const StoriesByAgeComponent = lazy(
-  () => import("../../../components/parents/StoriesByAgeComponent")
+  () => import("../../../components/parents/StoriesByAgeComponent"),
 );
 
 const ParentHomeScreen = () => {
@@ -30,22 +31,22 @@ const ParentHomeScreen = () => {
         showsVerticalScrollIndicator={false}
         contentContainerClassName=" flex min-h-full flex-col gap-y-8"
       >
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <StoriesByAgeComponent />
         </SuspenseWrapper>
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <ParentsTopRecommendations />
         </SuspenseWrapper>
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <ParentsTopPicksComponent />
         </SuspenseWrapper>
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <SeasonalStoriesComponent />
         </SuspenseWrapper>
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <FunAndAdventuresComponent />
         </SuspenseWrapper>
-        <SuspenseWrapper>
+        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
           <StoryCategoriesList />
         </SuspenseWrapper>
       </ScrollView>

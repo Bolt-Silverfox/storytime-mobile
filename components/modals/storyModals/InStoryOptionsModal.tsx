@@ -39,12 +39,12 @@ const InStoryOptionsModal = ({
               Change voice
             </Text>
           </View>
-          <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
+          {/* <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
             <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">
               <Icon name="Play" />
             </Pressable>
             <Text className="text-xs text-text font-[abeezee]">Autoplay</Text>
-          </View>
+          </View> */}
           <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
             <Pressable
               onPress={() => setIsStoryModeModalOpen(true)}

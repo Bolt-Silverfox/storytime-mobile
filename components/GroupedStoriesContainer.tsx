@@ -8,7 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
-import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
+import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType, Story } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
@@ -36,7 +36,7 @@ const GroupedStoriesContainer = ({
   refetch,
 }: PropTypes) => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isImageLoading, setIsImageLoading] = useState(false);
 
   if (isPending) return <LoadingOverlay visible />;
@@ -95,7 +95,7 @@ const GroupedStoriesContainer = ({
               index={index}
               key={story.id}
               onNavigate={() => {
-                navigator.navigate("story", {
+                navigator.navigate("stories", {
                   screen: "childStoryDetails",
                   params: { storyId: story.id },
                 });

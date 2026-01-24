@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { ParentsNavigatorProp } from "../../Navigation/ParentsNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { getGreeting } from "../../utils/utils";
@@ -10,7 +9,7 @@ import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const parentsNav = useNavigation<ParentsNavigatorProp>();
+  const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
   const isUserSubscribed = false;
 
   const { data, isPending } = useGetUserProfile();
@@ -42,7 +41,7 @@ const ParentsHomeScreenHeader = () => {
         {!isUserSubscribed && (
           <Pressable
             className="rounded-full overflow-hidden"
-            onPress={() => parentsNav.navigate("getPremium")}
+            onPress={() => protectedNav.navigate("getPremium")}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
@@ -57,7 +56,7 @@ const ParentsHomeScreenHeader = () => {
         )}
         <Pressable
           onPress={() =>
-            parentsNav.navigate("notifications", { screen: "index" })
+            protectedNav.navigate("notification", { screen: "index" })
           }
           className="rounded-full flex justify-center items-center size-11 bg-white border border-border-lighter "
         >
