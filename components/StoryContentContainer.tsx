@@ -15,6 +15,7 @@ type PropTypes = {
   paragraphs: string[];
   activeParagraph: number;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
+  onProgress: (progress: number, completed: boolean) => void;
 };
 
 type DisplayOptions =
@@ -29,6 +30,7 @@ const StoryContentContainer = ({
   setActiveParagraph,
   activeParagraph,
   paragraphs,
+  onProgress,
 }: PropTypes) => {
   const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -54,7 +56,11 @@ const StoryContentContainer = ({
       return;
     }
     if (isSubscribed) {
-      setActiveParagraph((a) => a + 1);
+      setActiveParagraph((a) => {
+        const next = a + 1;
+        onProgress(next + 1, false);
+        return next;
+      });
       return;
     }
     setIsSubscriptionModalOpen(true);
@@ -72,14 +78,16 @@ const StoryContentContainer = ({
             {paragraphs[activeParagraph]}
           </Text>
           <View className="flex flex-row mt-4 justify-between items-center">
-            {
-              <Pressable
-                onPress={() => setActiveParagraph((a) => a - 1)}
-                className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
-              >
-                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
-              </Pressable>
-            }
+            <Pressable
+              onPress={
+                !isFirstParagraph
+                  ? () => setActiveParagraph((a) => a - 1)
+                  : null
+              }
+              className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+            >
+              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+            </Pressable>
             <Pressable
               onPress={handleNextParagraph}
               className={`justify-center flex items-center ${isLastParagraph ? "rounded-xl" : "rounded-full bg-blue size-12"}`}
@@ -90,7 +98,10 @@ const StoryContentContainer = ({
                 <CustomButton
                   text="Finish story"
                   bgColor="#4807EC"
-                  onPress={() => setCurrentlyDisplayed("endOfStoryMessage")}
+                  onPress={() => {
+                    setCurrentlyDisplayed("endOfStoryMessage");
+                    onProgress(paragraphs.length, true);
+                  }}
                 />
               )}
             </Pressable>
@@ -102,7 +113,7 @@ const StoryContentContainer = ({
         isOpen={currentlyDisplayed === "endOfStoryMessage"}
         onTestKnowledge={() => setCurrentlyDisplayed("quiz")}
         readAgain={readAgain}
-        storyTitle="The bear nad his friends in the forest"
+        storyTitle={story.title}
       />
       <StoryQuiz
         isOpen={currentlyDisplayed === "quiz"}
@@ -114,7 +125,7 @@ const StoryContentContainer = ({
         results={quizResults}
         isOpen={currentlyDisplayed === "endOfQuizMessage"}
         readAgain={readAgain}
-        storyTitle="The bear and his fiends in the forest"
+        storyTitle={story.title}
       />
       <SubscriptionModal
         isOpen={isSubsriptionModalOpen}

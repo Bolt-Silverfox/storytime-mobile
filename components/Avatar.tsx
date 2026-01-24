@@ -56,32 +56,33 @@ const Avatar: React.FC<AvatarProps> = ({
       onPress={onPress}
       style={[
         styles.addPhotoButton,
-        { backgroundColor: "#EC4007", borderWidth: 0, marginBottom: 5 },
+        {
+          backgroundColor: "#EC4007",
+          borderWidth: 0,
+          marginBottom: 5,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        },
         imageStyle,
         style,
       ]}
     >
       {Content}
-      <Ionicons
-        size={size}
-        style={{ position: "absolute" }}
-        name="person-outline"
-        color="white"
-      />
-
+      {!showImage && (
+        <Ionicons size={0.7 * size} name="person-outline" color="white" />
+      )}
       {edit && (
         <View
           className="absolute bottom-0 right-0 bg-white p-2 rounded-full"
           style={{ zIndex: 11 }}
         >
-          {/* <Image source={require("../assets/icons/pen.png")} /> */}
           <FontAwesome5 name="edit" size={15} color="black" />
         </View>
       )}
     </TouchableOpacity>
   );
-
-  // return <View>{Content}</View>;
 };
 
 const styles = StyleSheet.create({

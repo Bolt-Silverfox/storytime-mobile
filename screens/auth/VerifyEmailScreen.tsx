@@ -74,7 +74,7 @@ const VerifyEmailScreen = () => {
           </Text>
         </View>
         <ErrorMessageDisplay errorMessage={error} />
-        <View style={styles.container}>
+        <View>
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setOtp(text)}
@@ -155,11 +155,6 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-
-  container: {
-    paddingHorizontal: 20,
-    paddingTop: 10,
   },
   box: {
     borderWidth: 1,

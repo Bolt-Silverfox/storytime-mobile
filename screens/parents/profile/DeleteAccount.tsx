@@ -96,7 +96,7 @@ export default function DeleteAccount() {
                 maxHeight: 140,
                 textAlignVertical: "top",
               }}
-              placeholder="Please Let us know"
+              placeholder="Please let us know about your experience and how to improve"
               onChangeText={setMessage}
               value={message}
               className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message ? "border-red-600" : "border-border"}`}
@@ -145,7 +145,7 @@ type DeleteAcountChecklist = {
 const deleteReasons: DeleteAcountChecklist[] = [
   {
     id: 1,
-    reason: "I am concerned about the privacy ",
+    reason: "I am concerned about the privacy policy",
     checked: false,
   },
   {
@@ -165,16 +165,11 @@ const deleteReasons: DeleteAcountChecklist[] = [
   },
   {
     id: 5,
-    reason: "I want to use another story app",
-    checked: false,
-  },
-  {
-    id: 6,
     reason: "I didn’t love the story content",
     checked: false,
   },
   {
-    id: 7,
+    id: 6,
     reason: "Others",
     checked: false,
   },

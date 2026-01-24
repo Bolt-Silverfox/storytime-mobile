@@ -2,7 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction } from "react";
 import { Image, Pressable, Text, View } from "react-native";
-import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
+import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { FavouriteStory } from "../types";
 
 const FavouriteStoryItem = ({
@@ -12,10 +12,10 @@ const FavouriteStoryItem = ({
   story: FavouriteStory;
   setActiveStory: Dispatch<SetStateAction<null | FavouriteStory>>;
 }) => {
-  const navigator = useNavigation<ParentsNavigatorProp>();
+  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
 
   const onNavigate = () => {
-    navigator.navigate("story", {
+    protectedNavigator.navigate("stories", {
       screen: "childStoryDetails",
       params: { storyId: story.storyId },
     });

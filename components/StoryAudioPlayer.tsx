@@ -1,9 +1,43 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAudioPlayer } from "expo-audio";
-import { Pressable, Switch, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
+import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
-const StoryAudioPlayer = ({ audioUrl }: { audioUrl: string }) => {
-  const player = useAudioPlayer(audioUrl);
+const StoryAudioPlayer = ({
+  audioUrl,
+  textContent,
+  selectedVoice,
+}: {
+  audioUrl: string;
+  textContent: string;
+  selectedVoice: string;
+}) => {
+  const [generatedAudio, setGeneratedAudio] = useState<string | undefined>(
+    undefined,
+  );
+  const { data, isPending } = useTextToAudio({
+    content: textContent,
+    voiceType: selectedVoice,
+  });
+  const player = useAudioPlayer(data?.audioUrl ?? audioUrl);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  useEffect(() => {
+    player.pause();
+    setIsPlaying(false);
+  }, [selectedVoice]);
+
+  const playAudio = () => {
+    if (isPlaying) {
+      setIsPlaying(false);
+      player.pause();
+      return;
+    }
+    setIsPlaying(true);
+    player.play();
+  };
+
   return (
     <View className="bg-white rounded-full h-20 flex flex-row justify-between items-center px-2">
       <View className="flex flex-row gap-x-2 items-center">
@@ -12,9 +46,11 @@ const StoryAudioPlayer = ({ audioUrl }: { audioUrl: string }) => {
         </Pressable>
         <Text className="font-[quilka] text-xl">Mute Voice</Text>
       </View>
-      <Pressable onPress={() => player.play()}>
-        <Switch value={true} />
-      </Pressable>
+      {isPending ? (
+        <ActivityIndicator size={"large"} />
+      ) : (
+        <Switch value={isPlaying} onValueChange={playAudio} />
+      )}
     </View>
   );
 };

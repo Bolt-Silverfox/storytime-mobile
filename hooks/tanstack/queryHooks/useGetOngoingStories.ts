@@ -3,14 +3,17 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
-export type ContinueReading = {
+export type OngoingStory = {
+  id: string;
   title: string;
   description: string;
   language: string;
   themeIds: string[];
   categoryIds: string[];
+  seasonIds: string[];
   coverImageUrl: string;
   audioUrl: string;
+  textContent: string;
   isInteractive: boolean;
   ageMin: number;
   ageMax: number;
@@ -25,39 +28,45 @@ export type ContinueReading = {
     nextA: string;
     nextB: string;
   }[];
-
+  durationSeconds: number;
+  createdAt: string;
+  updatedAt: string;
   progress: number;
+  totalTimeSpent: number;
+  lastAccessed: string;
 };
 
-type Response = {
-  data: ContinueReading[];
+export type Response = {
+  data: OngoingStory[];
   message: string;
   statusCode: number;
   success: boolean;
 };
 
-const useGetContinueReading = (kidId: string) => {
+
+const useGetOngoingStories = () => {
   const { user } = useAuth();
 
   return useQuery({
-    queryKey: ["ContinueReading", kidId],
+    queryKey: ["library", "ongoingStories"],
     queryFn: async () => {
       try {
         if (!user) return null;
-        const url = `${BASE_URL}/stories/library/${kidId}/continue-reading`;
+
+        const url = `${BASE_URL}/stories/user/library/continue-reading`;
         const response = await apiFetch(url, {
           method: "GET",
         });
 
         if (!response.ok) {
           const errJson = await response.json().catch(() => null);
-          const msg =
-            errJson?.message || `Failed with status ${response.status}`;
-          throw new Error(msg);
+          throw new Error(
+            errJson?.message || `Failed with status ${response.status}`
+          );
         }
 
-        const stories: Response = await response.json();
-        return stories; // replace `any` with your Story type if available
+        const ongoingStories: Response = await response.json();
+        return ongoingStories;
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "unexpected error, try again";
@@ -69,4 +78,4 @@ const useGetContinueReading = (kidId: string) => {
   });
 };
 
-export default useGetContinueReading;
+export default useGetOngoingStories;
