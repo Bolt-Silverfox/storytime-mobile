@@ -14,9 +14,12 @@ import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingS
 import ProgressBar from "../../components/parents/ProgressBar";
 import queryGetStory from "../../hooks/tanstack/queryHooks/useGetStory";
 import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
+  const [removeId, setRemoveId] = useState<string | null>(null);
+
   const ongoingQuery = useGetOngoingStories();
   const completedQuery = useGetCompletedStories();
 
@@ -52,7 +55,7 @@ const ParentsLibraryScreen = () => {
           data?.map((story) => {
             const paragraphs = splitByWordCountPreservingSentences(
               story.textContent,
-              30
+              30,
             );
 
             const totalSteps = paragraphs.length;
@@ -96,9 +99,18 @@ const ParentsLibraryScreen = () => {
                   <Text className="text-xs mb-4 text-text font-[abeezee]">
                     {story.ageMin} - {story.ageMax} years
                   </Text>
-                  {story.progress > 0 && (
-                    <ProgressBar progress={progressRatio} color="#4807EC" />
-                  )}
+                  <View className="flex-row items-center gap-6">
+                      <View className="flex-1">
+                        <ProgressBar progress={progressRatio} color="#4807EC" />
+                      </View>
+
+                    <Pressable
+                      onPress={() => setRemoveId(story.id)}
+                      className="p-2 bg-[#EC0707] rounded-full"
+                    >
+                      <Icon name="Trash" color="#fff" size={24} />
+                    </Pressable>
+                  </View>
                 </View>
               </Pressable>
             );
@@ -111,6 +123,13 @@ const ParentsLibraryScreen = () => {
           />
         )}
       </ScrollView>
+      {removeId && (
+        <RemoveStoryModal
+          isOpen={!!removeId}
+          storyId={removeId}
+          onClose={() => setRemoveId(null)}
+        />
+      )}
     </View>
   );
 };
