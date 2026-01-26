@@ -3,21 +3,25 @@ import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 
-interface RemoveStoryModalProps
-  extends Omit<CustomModalProps, "children"> {
+interface RemoveStoryModalProps extends Omit<CustomModalProps, "children"> {
   storyId: string;
+  storyTitle: string;
+  onRemoveSuccess: (title: string) => void;
 }
 
 const RemoveStoryModal = ({
   isOpen,
   onClose,
   storyId,
+  storyTitle,
+  onRemoveSuccess
 }: RemoveStoryModalProps) => {
   const { mutate: removeStory, isPending } = useRemoveStoryFromLibrary();
 
   const handleRemove = () => {
     removeStory(storyId, {
       onSuccess: () => {
+        onRemoveSuccess(storyTitle);
         onClose();
       },
     });
@@ -51,9 +55,7 @@ const RemoveStoryModal = ({
             onPress={onClose}
             className="border max-w-sm flex w-full flex-row justify-center items-center h-10 rounded-full"
           >
-            <Text className="font-[abeezee] text-black text-base">
-              Cancel
-            </Text>
+            <Text className="font-[abeezee] text-black text-base">Cancel</Text>
           </Pressable>
         </View>
       </View>
