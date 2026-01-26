@@ -9,11 +9,16 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import PageTitle from "../../components/PageTitle";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatTime } from "../../utils/utils";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
   "confirmResetPasswordToken"
 >;
+
+const OTP_DURATION = 60;
+const RESET_EXPIRY_KEY = "reset_password_otp_expiry";
 
 const ConfirmResetPasswordTokenScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
@@ -23,7 +28,7 @@ const ConfirmResetPasswordTokenScreen = () => {
   const [successMessage, setSuccesMessage] = useState("");
   const { isLoading, validatePasswordReset, resendVerificationEmail } =
     useAuth();
-  const [countDown, setCountdown] = useState(59);
+  const [countDown, setCountdown] = useState(OTP_DURATION);
 
   const handleResendEmail = async () => {
     setSuccesMessage("");
@@ -32,17 +37,44 @@ const ConfirmResetPasswordTokenScreen = () => {
       setErrorCb: setError,
     });
     if (data.success) {
-      setCountdown(60);
+      const expiry = Date.now() + OTP_DURATION * 1000;
+      await AsyncStorage.setItem(RESET_EXPIRY_KEY, String(expiry));
+      setCountdown(OTP_DURATION);
       setSuccesMessage("Otp resent successfully");
     }
   };
 
   useEffect(() => {
-    if (countDown < 1) return;
-    setTimeout(() => {
-      setCountdown((c) => c - 1);
-    }, 1000);
-  }, [countDown]);
+    let interval: NodeJS.Timeout;
+
+    const init = async () => {
+      let expiry = await AsyncStorage.getItem(RESET_EXPIRY_KEY);
+
+      if (!expiry || Number(expiry) <= Date.now()) {
+        expiry = String(Date.now() + OTP_DURATION * 1000);
+        await AsyncStorage.setItem(RESET_EXPIRY_KEY, expiry);
+      }
+
+      const update = async () => {
+        const stored = await AsyncStorage.getItem(RESET_EXPIRY_KEY);
+        if (!stored) return;
+
+        const remaining = Math.max(
+          0,
+          Math.floor((Number(stored) - Date.now()) / 1000),
+        );
+
+        setCountdown(remaining);
+      };
+
+      await update();
+      interval = setInterval(update, 1000);
+    };
+
+    init();
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <View className="flex flex-1">
@@ -74,7 +106,7 @@ const ConfirmResetPasswordTokenScreen = () => {
             focusColor="blue"
           />
           <Text style={styles.countDown}>
-            00:{countDown > 0 ? countDown : "00"}
+             {formatTime(countDown)}
           </Text>
           <Text
             onPress={handleResendEmail}
@@ -141,7 +173,8 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    paddingHorizontal: 20,
+    width: "100%",
+    alignItems: "center",
   },
   box: {
     borderWidth: 1,
