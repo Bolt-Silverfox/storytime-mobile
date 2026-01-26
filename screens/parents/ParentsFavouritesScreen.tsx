@@ -9,7 +9,6 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { AgeGroupType, FavouriteStory } from "../../types";
-import AgeSelectionComponent from "../../components/UI/AgeSelectionComponent";
 
 type AgeFilter = AgeGroupType | "ALL";
 type AgeRangeFilter =
