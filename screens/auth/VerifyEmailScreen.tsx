@@ -11,6 +11,7 @@ import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatTime } from "../../utils/utils";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
@@ -21,7 +22,8 @@ const successMessages = [
 
 type SuccessMessageType = (typeof successMessages)[number];
 
-const EXPIRY_KEY = "otp_expiry_time";
+const EXPIRY_KEY = "verify-email-otp_expiry";
+const OTP_DURATION = 60;
 
 const VerifyEmailScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
@@ -41,9 +43,9 @@ const VerifyEmailScreen = () => {
       setErrorCb: setError,
     });
     if (data.success) {
-      const expiryTime = Date.now() + 60 * 1000;
+      const expiryTime = Date.now() + OTP_DURATION * 1000;
       await AsyncStorage.setItem(EXPIRY_KEY, expiryTime.toString());
-      setCountdown(60);
+      setCountdown(OTP_DURATION);
       setSuccesMessage("Otp resent successfully");
     }
   };
@@ -68,7 +70,7 @@ const VerifyEmailScreen = () => {
     let expiry = await AsyncStorage.getItem(EXPIRY_KEY);
 
     if (!expiry || Number(expiry) <= Date.now()) {
-      expiry = String(Date.now() + 60 * 1000);
+      expiry = String(Date.now() + OTP_DURATION * 1000);
       await AsyncStorage.setItem(EXPIRY_KEY, expiry);
     }
 
@@ -93,13 +95,6 @@ const VerifyEmailScreen = () => {
   return () => clearInterval(interval);
 }, []);
 
-
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-
-    return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
-  };
 
   return (
     <View className="flex flex-1">
