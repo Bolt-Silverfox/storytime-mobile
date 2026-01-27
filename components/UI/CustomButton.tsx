@@ -26,7 +26,7 @@ const CustomButton = ({
       <Pressable
         aria-labelledby={ariaLabel}
         onPress={onPress}
-        className="border max-w-sm flex w-full flex-row justify-center items-center h-[46px] rounded-full"
+        className="border flex w-full flex-row justify-center items-center h-[46px] rounded-full"
       >
         <Text className="font-[abeezee] text-black text-base">{text}</Text>
       </Pressable>
@@ -43,7 +43,7 @@ const CustomButton = ({
         borderWidth ? { borderWidth } : null,
         disabled && { opacity: 0.5 },
       ]}
-      className="self-center mx-5 max-w-sm w-full flex justify-center items-center h-[46px] rounded-full mt-4  sm:mx-auto bg-primary"
+      className="self-center mx-5 w-full flex justify-center items-center h-[46px] rounded-full mt-4  sm:mx-auto bg-primary"
     >
       <Text
         className="text-center font-[abeezee]"
