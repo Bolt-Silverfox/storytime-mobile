@@ -5,16 +5,16 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-const useTextToAudio = (params: { content: string; voiceType: string }) => {
+const useTextToAudio = (params: { content: string; voiceId: string }) => {
   return useQuery({
-    queryKey: ["textToSpeech", params.content, params.voiceType],
+    queryKey: ["textToSpeech", params.content, params.voiceId],
     queryFn: async () => {
       try {
         const request = await apiFetch(`${BASE_URL}/voice/story/audio`, {
           method: "POST",
           body: JSON.stringify(params),
         });
-        const response: QueryResponse<{ audioUrl: string; voiceType: string }> =
+        const response: QueryResponse<{ audioUrl: string; voiceId: string }> =
           await request.json();
         if (!response.success) throw new Error(response.message);
         return response;
