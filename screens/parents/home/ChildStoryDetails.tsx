@@ -168,7 +168,7 @@ const ChildStoryDetails = () => {
             </View>
           </View>
         </View>
-        <StoryDetailsCTA setShowShareModal={setShowAboutModal} story={data} />
+        <StoryDetailsCTA setShowShareModal={setShowShareModal} story={data} />
       </ScrollView>
       <View className="border-t px-4 bg-bgLight border-t-border-light">
         <CustomButton

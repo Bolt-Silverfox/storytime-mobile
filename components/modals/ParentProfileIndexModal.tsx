@@ -51,7 +51,7 @@ const ParentProfileModal = ({
           </Text>
           <Pressable
             onPress={() => setOpen(false)}
-            className="bg-primary py-4 w-full max-w-96 rounded-full mx-auto"
+            className="bg-primary py-4 w-full rounded-full"
           >
             <Text className="text-white font-[abeezee] text-center text-base">
               Cancel
@@ -68,7 +68,7 @@ const ParentProfileModal = ({
                 }
               }, 500);
             }}
-            className="bg-transparent border border-primary py-4 w-full max-w-96 rounded-full mx-auto"
+            className="bg-transparent border border-primary py-4 w-full rounded-full"
           >
             <Text className="text-black font-[abeezee] text-center text-base">
               {modalData?.confirm}
