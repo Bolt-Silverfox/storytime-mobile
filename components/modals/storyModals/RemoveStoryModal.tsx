@@ -14,7 +14,7 @@ const RemoveStoryModal = ({
   onClose,
   storyId,
   storyTitle,
-  onRemoveSuccess
+  onRemoveSuccess,
 }: RemoveStoryModalProps) => {
   const { mutate: removeStory, isPending } = useRemoveStoryFromLibrary();
 
@@ -50,13 +50,12 @@ const RemoveStoryModal = ({
             text="Yes, remove"
             disabled={isPending}
           />
-
-          <Pressable
+          <CustomButton
             onPress={onClose}
-            className="border max-w-sm flex w-full flex-row justify-center items-center h-10 rounded-full"
-          >
-            <Text className="font-[abeezee] text-black text-base">Cancel</Text>
-          </Pressable>
+            text="Cancel"
+            disabled={isPending}
+            transparent
+          />
         </View>
       </View>
     </CustomModal>

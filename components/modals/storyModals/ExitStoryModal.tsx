@@ -20,7 +20,7 @@ const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="bg-white flex flex-col gap-y-6">
         <Image
-          source={require("../../../assets/images/angry_emoji.png")}
+          source={require("../../../assets/exit-story.png")}
           className="size-40 self-center"
         />
         <View className="flex flex-col gap-y-3">
@@ -33,12 +33,7 @@ const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
         </View>
         <View className="flex flex-col items-center gap-y-3 mt-4">
           <CustomButton onPress={onExitStory} text="Yes, exit" />
-          <Pressable
-            onPress={onClose}
-            className="border max-w-sm flex w-full flex-row justify-center items-center h-10 rounded-full"
-          >
-            <Text className="font-[abeezee] text-black text-base">Cancel</Text>
-          </Pressable>
+          <CustomButton transparent onPress={onClose} text="Cancel" />
         </View>
       </View>
     </CustomModal>

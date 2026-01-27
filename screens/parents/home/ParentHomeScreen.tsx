@@ -1,8 +1,8 @@
 import { lazy } from "react";
 import { ScrollView, View } from "react-native";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
-import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
 import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
+import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
 
 const StoryCategoriesList = lazy(
   () => import("../../../components/parents/StoryCategoriesList"),

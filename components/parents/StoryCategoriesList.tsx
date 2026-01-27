@@ -22,7 +22,7 @@ const StoryCategoriesList = () => {
         </Text>
       </View>
       <View className="max-w-screen-md mx-auto w-full flex-1">
-        <View className="flex  flex-row gap-x-2.5 items-center flex-wrap gap-y-4">
+        <View className="flex flex-row justify-center gap-x-2.5 items-center flex-wrap gap-y-4">
           {data.map((category) => (
             <Item category={category.name} id={category.id} key={category.id} />
           ))}
@@ -46,7 +46,7 @@ const Item = ({ category, id }: { category: string; id: string }) => {
   return (
     <Pressable
       onPress={() => navigator.navigate("storiesByCategory", { category, id })}
-      className="h-16 px-5 flex justify-center items-center rounded-md"
+      className="h-16 px-5 w-[47%] flex justify-center items-center rounded-md"
       style={{
         backgroundColor: `${colour}66`,
         borderBottomColor: colour,
