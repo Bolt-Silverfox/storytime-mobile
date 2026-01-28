@@ -1,7 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Image, Pressable, Text, View } from "react-native";
-import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
+import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
 import Icon from "../Icon";
@@ -21,7 +21,7 @@ const StoryItem = ({
   isPremium = false,
 }: Proptypes) => {
   const { data } = useSuspenseQuery(queryParentsFavourites());
-  const { mutate: onToggle } = useToggleFavourites({
+  const { mutate: onToggle, isPending } = useToggleFavourites({
     story: {
       id: story.id,
       storyId: story.id,
@@ -61,6 +61,7 @@ const StoryItem = ({
           height={150}
         />
         <Pressable
+          disabled={isPending}
           onPress={() => onToggle()}
           className="absolute size-11 justify-center items-center flex bg-black/40 right-2 top-2 rounded-full"
         >
