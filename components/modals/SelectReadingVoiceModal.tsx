@@ -1,9 +1,10 @@
 import { Dispatch, lazy, SetStateAction } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import Icon from "../Icon";
 import SuspenseWrapper from "../supsense/SuspenseWrapper";
-import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
+import CustomButton from "../UI/CustomButton";
+
 const AvailableVoices = lazy(() => import("../AvailableVoices"));
 
 type PropTypes = {

@@ -17,7 +17,7 @@ const EndOfStoryMessage = ({
 }: Props) => {
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col p-4 gap-y-5 rounded-3xl bg-white">
+    <View className="flex flex-col p-4 gap-y-5 mb-3 rounded-3xl bg-white">
       <Image
         source={require("../../../assets/images/congratulations_image.png")}
         className="size-[105px]"
