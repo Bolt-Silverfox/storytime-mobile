@@ -1,5 +1,5 @@
 import { Text, View } from "react-native";
-import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useParentFavourites";
+import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import { FavouriteStory } from "../../types";
 import CustomButton from "../UI/CustomButton";
 import CustomModal from "./CustomModal";
