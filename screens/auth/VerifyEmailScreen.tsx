@@ -12,6 +12,7 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
@@ -63,102 +64,105 @@ const VerifyEmailScreen = () => {
     }
   };
 
- useEffect(() => {
-  let interval: NodeJS.Timeout;
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
 
-  const init = async () => {
-    let expiry = await AsyncStorage.getItem(EXPIRY_KEY);
+    const init = async () => {
+      let expiry = await AsyncStorage.getItem(EXPIRY_KEY);
 
-    if (!expiry || Number(expiry) <= Date.now()) {
-      expiry = String(Date.now() + OTP_DURATION * 1000);
-      await AsyncStorage.setItem(EXPIRY_KEY, expiry);
-    }
+      if (!expiry || Number(expiry) <= Date.now()) {
+        expiry = String(Date.now() + OTP_DURATION * 1000);
+        await AsyncStorage.setItem(EXPIRY_KEY, expiry);
+      }
 
-    const update = async () => {
-      const stored = await AsyncStorage.getItem(EXPIRY_KEY);
-      if (!stored) return;
+      const update = async () => {
+        const stored = await AsyncStorage.getItem(EXPIRY_KEY);
+        if (!stored) return;
 
-      const remaining = Math.max(
-        0,
-        Math.floor((Number(stored) - Date.now()) / 1000)
-      );
+        const remaining = Math.max(
+          0,
+          Math.floor((Number(stored) - Date.now()) / 1000),
+        );
 
-      setCountdown(remaining);
+        setCountdown(remaining);
+      };
+
+      await update();
+      interval = setInterval(update, 1000);
     };
 
-    await update();
-    interval = setInterval(update, 1000);
-  };
+    init();
 
-  init();
-
-  return () => clearInterval(interval);
-}, []);
-
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <View className="flex flex-1">
-      <PageTitle goBack={() => navigator.goBack()} title="" />
-      <View style={defaultStyles.screen}>
-        <View style={styles.textContainer}>
-          <Text style={defaultStyles.heading}>Verify your Email</Text>
-          <Text style={styles.text}>
-            Enter the verification code sent to your email {route.params.email}
-          </Text>
-        </View>
-        <ErrorMessageDisplay errorMessage={error} />
-        <View style={styles.otpWrapper}>
-          <OtpInput
-            numberOfDigits={6}
-            onTextChange={(text) => setOtp(text)}
-            theme={{
-              containerStyle: styles.otpContainer,
-              pinCodeContainerStyle: styles.box,
-              pinCodeTextStyle: styles.text,
-              focusedPinCodeContainerStyle: styles.boxFocused,
-            }}
-            focusColor="blue"
-          />
-          <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-          <Text
-            onPress={handleResendEmail}
-            disabled={countDown > 0}
-            className={`font-[abeezee] text-base my-11 text-center  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-          >
-            Resend OTP
-          </Text>
-        </View>
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1">
+        <PageTitle goBack={() => navigator.goBack()} title="" />
+        <View style={defaultStyles.screen}>
+          <View style={styles.textContainer}>
+            <Text style={defaultStyles.heading}>Verify your Email</Text>
+            <Text style={styles.text}>
+              Enter the verification code sent to your email{" "}
+              {route.params.email}
+            </Text>
+          </View>
+          <ErrorMessageDisplay errorMessage={error} />
+          <View style={styles.otpWrapper}>
+            <OtpInput
+              numberOfDigits={6}
+              onTextChange={(text) => setOtp(text)}
+              theme={{
+                containerStyle: styles.otpContainer,
+                pinCodeContainerStyle: styles.box,
+                pinCodeTextStyle: styles.text,
+                focusedPinCodeContainerStyle: styles.boxFocused,
+              }}
+              focusColor="blue"
+            />
+            <Text style={styles.countDown}>{formatTime(countDown)}</Text>
+            <Text
+              onPress={handleResendEmail}
+              disabled={countDown > 0}
+              className={`font-[abeezee] text-base my-11 text-center  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+            >
+              Resend OTP
+            </Text>
+          </View>
 
-        <Pressable
-          onPress={() => {
-            Keyboard.dismiss();
-            verifyEmail({
-              token: otp,
-              setErrorCb: setError,
-              onSuccess: () =>
-                setSuccesMessage(
-                  "Start enjoying amazing Storytime with your kids.",
-                ),
-            });
-          }}
-          style={
-            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
+          <Pressable
+            onPress={() => {
+              Keyboard.dismiss();
+              verifyEmail({
+                token: otp,
+                setErrorCb: setError,
+                onSuccess: () =>
+                  setSuccesMessage(
+                    "Start enjoying amazing Storytime with your kids.",
+                  ),
+              });
+            }}
+            style={
+              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
+            }
+          >
+            <Text style={{ ...styles.text, color: "white" }}>
+              {isLoading ? "Loading..." : "Verify Email"}
+            </Text>
+          </Pressable>
+        </View>
+        <SuccessScreen
+          message="Congratulations, your account has been created succesfully!"
+          secondaryMessage={successMessage!}
+          visible={
+            successMessage ===
+            "Start enjoying amazing Storytime with your kids."
           }
-        >
-          <Text style={{ ...styles.text, color: "white" }}>
-            {isLoading ? "Loading..." : "Verify Email"}
-          </Text>
-        </Pressable>
+          onProceed={onSuccessCb}
+        />
       </View>
-      <SuccessScreen
-        message="Congratulations, your account has been created succesfully!"
-        secondaryMessage={successMessage!}
-        visible={
-          successMessage === "Start enjoying amazing Storytime with your kids."
-        }
-        onProceed={onSuccessCb}
-      />
-    </View>
+    </SafeAreaWrapper>
   );
 };
 

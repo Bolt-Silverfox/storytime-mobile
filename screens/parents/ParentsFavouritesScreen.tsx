@@ -7,6 +7,7 @@ import FavouriteStoryItem from "../../components/FavouriteStoryItem";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { AgeGroupType, FavouriteStory } from "../../types";
 
@@ -63,115 +64,117 @@ const ParentsFavouritesScreen = () => {
   const showNoMatches = favourites.length > 0 && filteredStories.length === 0;
 
   return (
-    <View className="flex-1 bg-bgLight">
-      <View className="bg-white px-4 border-b border-b-border-lighter py-5 flex flex-row items-center justify-between">
-        <Text className="text-xl text-black font-[abeezee] flex-1">
-          Favourites
-        </Text>
-        <View className="flex flex-row gap-x-5 items-center">
-          <Icon
-            name="Funnel"
-            onPress={() => {
-              setShowFilter((s) => !s);
-              setShowSearch(false);
-            }}
-          />
-          <Icon
-            name="Search"
-            onPress={() => {
-              setShowSearch((s) => !s);
-              setShowFilter(false);
-              setSelectedAge("ALL");
-              if (showSearch) setSearchQuery("");
-            }}
-          />
-        </View>
-      </View>
-      {showFilter && (
-        <View className="py-3">
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerClassName="flex-row gap-x-2 px-4"
-          >
-            {AGE_FILTERS.map((age) => {
-              const active = age.key === selectedAge;
-
-              return (
-                <Pressable
-                  key={age.key}
-                  onPress={() => setSelectedAge(age.key)}
-                  className={`h-10 px-6 rounded-full justify-center items-center ${
-                    active ? "bg-blue" : "bg-white border border-border"
-                  }`}
-                >
-                  <Text
-                    className={`font-[abeezee] text-base ${
-                      active ? "text-white" : "text-text"
-                    }`}
-                  >
-                    {age.label}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </ScrollView>
-        </View>
-      )}
-      {showSearch && (
-        <View className=" px-4 py-3 ">
-          <View className="flex-row items-center rounded-full border px-4 py-1">
-            <Icon name="Search" />
-            <TextInput
-              value={searchQuery}
-              onChangeText={setSearchQuery}
-              placeholder="Search favourites..."
-              placeholderTextColor="#666"
-              className="flex-1 text-base font-[abeezee]"
-              returnKeyType="search"
+    <SafeAreaWrapper variant="solid">
+      <View className="flex-1 bg-bgLight">
+        <View className="bg-white px-4 border-b border-b-border-lighter py-5 flex flex-row items-center justify-between">
+          <Text className="text-xl text-black font-[abeezee] flex-1">
+            Favourites
+          </Text>
+          <View className="flex flex-row gap-x-5 items-center">
+            <Icon
+              name="Funnel"
+              onPress={() => {
+                setShowFilter((s) => !s);
+                setShowSearch(false);
+              }}
             />
-
-            {searchQuery.length > 0 && (
-              <Pressable onPress={() => setSearchQuery("")}>
-                <Text className="text-lg px-2">✕</Text>
-              </Pressable>
-            )}
+            <Icon
+              name="Search"
+              onPress={() => {
+                setShowSearch((s) => !s);
+                setShowFilter(false);
+                setSelectedAge("ALL");
+                if (showSearch) setSearchQuery("");
+              }}
+            />
           </View>
         </View>
-      )}
+        {showFilter && (
+          <View className="py-3">
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerClassName="flex-row gap-x-2 px-4"
+            >
+              {AGE_FILTERS.map((age) => {
+                const active = age.key === selectedAge;
 
-      {/* BODY */}
-      {showNoData ? (
-        <CustomEmptyState
-          url={require("../../assets/images/favourites-empty-state.png")}
-          message="No Favourites added yet"
-          secondaryMessage="You do not have any favourite stories added yet"
-        />
-      ) : showNoMatches ? (
-        <CustomEmptyState
-          url={require("../../assets/images/favourites-empty-state.png")}
-          message="No matching favourites"
-          secondaryMessage="Try changing filters or search"
-        />
-      ) : (
-        <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
-          {filteredStories.map((story) => (
-            <FavouriteStoryItem
-              key={story.id}
-              story={story}
-              setActiveStory={setActiveItem}
-            />
-          ))}
-        </ScrollView>
-      )}
-      {activeItem && (
-        <FavouriteStoriesModal
-          isOpen={activeItem !== null}
-          onClose={() => setActiveItem(null)}
-          story={activeItem}
-        />
-      )}
-    </View>
+                return (
+                  <Pressable
+                    key={age.key}
+                    onPress={() => setSelectedAge(age.key)}
+                    className={`h-10 px-6 rounded-full justify-center items-center ${
+                      active ? "bg-blue" : "bg-white border border-border"
+                    }`}
+                  >
+                    <Text
+                      className={`font-[abeezee] text-base ${
+                        active ? "text-white" : "text-text"
+                      }`}
+                    >
+                      {age.label}
+                    </Text>
+                  </Pressable>
+                );
+              })}
+            </ScrollView>
+          </View>
+        )}
+        {showSearch && (
+          <View className=" px-4 py-3 ">
+            <View className="flex-row items-center rounded-full border px-4 py-1">
+              <Icon name="Search" />
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                placeholder="Search favourites..."
+                placeholderTextColor="#666"
+                className="flex-1 text-base font-[abeezee]"
+                returnKeyType="search"
+              />
+
+              {searchQuery.length > 0 && (
+                <Pressable onPress={() => setSearchQuery("")}>
+                  <Text className="text-lg px-2">✕</Text>
+                </Pressable>
+              )}
+            </View>
+          </View>
+        )}
+
+        {/* BODY */}
+        {showNoData ? (
+          <CustomEmptyState
+            url={require("../../assets/images/favourites-empty-state.png")}
+            message="No Favourites added yet"
+            secondaryMessage="You do not have any favourite stories added yet"
+          />
+        ) : showNoMatches ? (
+          <CustomEmptyState
+            url={require("../../assets/images/favourites-empty-state.png")}
+            message="No matching favourites"
+            secondaryMessage="Try changing filters or search"
+          />
+        ) : (
+          <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
+            {filteredStories.map((story) => (
+              <FavouriteStoryItem
+                key={story.id}
+                story={story}
+                setActiveStory={setActiveItem}
+              />
+            ))}
+          </ScrollView>
+        )}
+        {activeItem && (
+          <FavouriteStoriesModal
+            isOpen={activeItem !== null}
+            onClose={() => setActiveItem(null)}
+            story={activeItem}
+          />
+        )}
+      </View>
+    </SafeAreaWrapper>
   );
 };
 

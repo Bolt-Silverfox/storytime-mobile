@@ -9,6 +9,7 @@ import defaultStyles from "../../../../styles";
 import SuccessScreen from "../../../../components/UI/SuccessScreen";
 import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
 import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
+import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 
 const feedBack = z.object({
   fullName: z.string().trim().min(1, "Name is required"),
@@ -61,98 +62,100 @@ export default function SuggestionsScreen() {
   };
 
   return (
-    <View className="bg-[#FFFCFBFB] flex-1">
-      <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
-        <Pressable className="absolute left-0 p-4">
-          <ChevronLeft onPress={() => navigator.goBack()} />
-        </Pressable>
-        <Text
-          style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
-          className="self-center text-center  "
-        >
-          Suggestions & Feedback
-        </Text>
-      </View>
-      <View className="mt-9 mb-8 items-center">
-        <Text
-          style={[defaultStyles.defaultText, { fontSize: 16 }]}
-          className="text-center max-w-[311px]"
-        >
-          Share your ideas, suggestions or issues to help us improve your
-          experience
-        </Text>
-      </View>
-      <View className="mx-4 gap-4">
-        <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Name:</Text>
-          <TextInput
-            className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
-            placeholderTextColor={errors.fullName ? "red" : colours.text}
-            onChangeText={setFullName}
-            value={fullName}
-          />
-          {errors.fullName && (
-            <Text className="text-red-600 text-sm">{errors.fullName}</Text>
-          )}
-        </View>
-        <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Email:</Text>
-          <TextInput
-            onChangeText={setEmail}
-            value={email}
-            className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
-            placeholderTextColor={errors.email ? "red" : colours.text}
-          />
-          {errors.email && (
-            <Text className="text-red-600 text-sm">{errors.email}</Text>
-          )}
-        </View>
-        <View style={styles.formItem}>
-          <Text style={defaultStyles.label}>Message:</Text>
-          <TextInput
-            style={{
-              height: 150,
-              maxHeight: 140,
-              textAlignVertical: "top",
-            }}
-            onChangeText={setMessage}
-            value={message}
-            className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message ? "border-red-600" : "border-border"}`}
-            placeholderTextColor={errors.message ? "red" : colours.text}
-            multiline
-          />
-          {errors.message && (
-            <Text className="text-red-600 text-sm">{errors.message}</Text>
-          )}
-          {apiError ? (
-            <ErrorMessageDisplay errorMessage={apiError} />
-          ) : null}
-        </View>
-      </View>
-      <View className="flex-1 justify-end  px-4 gap-6">
-        <Pressable
-          className="pb-10"
-          onPress={handleSubmit}
-          disabled={isPending}
-        >
+    <SafeAreaWrapper variant="solid">
+      <View className="bg-[#FFFCFBFB] flex-1">
+        <View className="flex-row border-b-[0.5px] border-[#EAE8E8] p-4 relative gap-[10px] bg-white justify-center ">
+          <Pressable className="absolute left-0 p-4">
+            <ChevronLeft onPress={() => navigator.goBack()} />
+          </Pressable>
           <Text
-            style={[defaultStyles.defaultText, { color: "white" }]}
-            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${Object.keys(errors).length === 0 && !isPending
-                ? "bg-[#EC4007]"
-                : "bg-[#FF8771]"
-              }`}
+            style={[defaultStyles.defaultText, { color: "black", fontSize: 18 }]}
+            className="self-center text-center  "
           >
-            {isPending ? "Sending…" : "Save"}
+            Suggestions & Feedback
           </Text>
-        </Pressable>
+        </View>
+        <View className="mt-9 mb-8 items-center">
+          <Text
+            style={[defaultStyles.defaultText, { fontSize: 16 }]}
+            className="text-center max-w-[311px]"
+          >
+            Share your ideas, suggestions or issues to help us improve your
+            experience
+          </Text>
+        </View>
+        <View className="mx-4 gap-4">
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Name:</Text>
+            <TextInput
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.fullName ? "red" : colours.text}
+              onChangeText={setFullName}
+              value={fullName}
+            />
+            {errors.fullName && (
+              <Text className="text-red-600 text-sm">{errors.fullName}</Text>
+            )}
+          </View>
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Email:</Text>
+            <TextInput
+              onChangeText={setEmail}
+              value={email}
+              className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.email ? "red" : colours.text}
+            />
+            {errors.email && (
+              <Text className="text-red-600 text-sm">{errors.email}</Text>
+            )}
+          </View>
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Message:</Text>
+            <TextInput
+              style={{
+                height: 150,
+                maxHeight: 140,
+                textAlignVertical: "top",
+              }}
+              onChangeText={setMessage}
+              value={message}
+              className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.message ? "red" : colours.text}
+              multiline
+            />
+            {errors.message && (
+              <Text className="text-red-600 text-sm">{errors.message}</Text>
+            )}
+            {apiError ? (
+              <ErrorMessageDisplay errorMessage={apiError} />
+            ) : null}
+          </View>
+        </View>
+        <View className="flex-1 justify-end  px-4 gap-6">
+          <Pressable
+            className="pb-10"
+            onPress={handleSubmit}
+            disabled={isPending}
+          >
+            <Text
+              style={[defaultStyles.defaultText, { color: "white" }]}
+              className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${Object.keys(errors).length === 0 && !isPending
+                  ? "bg-[#EC4007]"
+                  : "bg-[#FF8771]"
+                }`}
+            >
+              {isPending ? "Sending…" : "Save"}
+            </Text>
+          </Pressable>
+        </View>
+        <SuccessScreen
+          message="Success!"
+          secondaryMessage="Your message has been sent successfully"
+          visible={success}
+          onProceed={() => navigator.goBack()}
+        />
       </View>
-      <SuccessScreen
-        message="Success!"
-        secondaryMessage="Your message has been sent successfully"
-        visible={success}
-        onProceed={() => navigator.goBack()}
-      />
-    </View>
+    </SafeAreaWrapper>
   );
 }
 
