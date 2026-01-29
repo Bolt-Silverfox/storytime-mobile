@@ -89,7 +89,7 @@ const GroupedStoriesContainer = ({
           selectedAgeGroup={selectedGroup}
           setSelectedAgeGroup={setSelectedGroup}
         />
-        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
+        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-between">
           {stories.map((story, index) => (
             <StoryItem
               index={index}

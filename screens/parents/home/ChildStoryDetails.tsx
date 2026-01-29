@@ -23,6 +23,7 @@ import {
 import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -34,7 +35,7 @@ const ChildStoryDetails = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPending, data, error, refetch } = useQuery(
-    queryGetStory(params.storyId)
+    queryGetStory(params.storyId),
   );
   const [isPremium, setIsPremium] = useState(false);
 
@@ -54,13 +55,19 @@ const ChildStoryDetails = () => {
 
   const duration = secondsToMinutes(data.durationSeconds);
   return (
-    <View className="flex flex-1 pb-5 bg-bgLight">
-      <ScrollView contentContainerClassName="flex min-h-full pb-10 bg-bgLight flex-col">
+    <View className="flex relative flex-1 pb-5 bg-bgLight">
+      <ScrollView contentContainerClassName="flex pb-10 bg-bgLight flex-col">
         <ImageBackground
           source={{ uri: data.coverImageUrl }}
           resizeMode="cover"
-          className="px-4 h-[50vh] flex flex-col justify-end pb-8 max-h-[500px]"
+          className="px-4 h-[50vh] relative flex flex-col justify-end pb-8 max-h-[500px]"
         >
+          <Pressable
+            onPress={() => navigator.goBack()}
+            className="size-10  left-2 top-2 absolute flex justify-center items-center bg-primary rounded-full"
+          >
+            <Entypo name="chevron-thin-left" size={24} color="white" />
+          </Pressable>
           <View className="bg-purple flex flex-row p-5 rounded-2xl gap-3 justify-around">
             <View className="flex flex-col gap-y-2">
               <Text className="font-[quilka] text-sm text-white text-center">
@@ -161,7 +168,7 @@ const ChildStoryDetails = () => {
             </View>
           </View>
         </View>
-        <StoryDetailsCTA setShowShareModal={setShowAboutModal} story={data} />
+        <StoryDetailsCTA setShowShareModal={setShowShareModal} story={data} />
       </ScrollView>
       <View className="border-t px-4 bg-bgLight border-t-border-light">
         <CustomButton

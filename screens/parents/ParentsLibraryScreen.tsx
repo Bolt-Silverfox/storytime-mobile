@@ -14,9 +14,16 @@ import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingS
 import ProgressBar from "../../components/parents/ProgressBar";
 import queryGetStory from "../../hooks/tanstack/queryHooks/useGetStory";
 import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
+import Toast from "../../components/UI/Toast";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
+  const [removeId, setRemoveId] = useState<string | null>(null);
+  const [selectedStoryTitle, setSelectedStoryTitle] = useState<string>("");
+  const [toastMsg, setToastMsg] = useState("");
+  const [showToast, setShowToast] = useState(false);
+
   const ongoingQuery = useGetOngoingStories();
   const completedQuery = useGetCompletedStories();
 
@@ -27,6 +34,13 @@ const ParentsLibraryScreen = () => {
 
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (isPending) return <LoadingOverlay visible />;
+
+  const handleRemoveSuccess = (title: string) => {
+    console.log("SHOW TOAST", title);
+    setToastMsg(`"${title}" removed from library`);
+    setShowToast(true);
+  };
+
   return (
     <View className="flex-1 bg-bgLight flex-col gap-y-8">
       <View className="flex flex-row border-b border-b-border-lighter bg-white py-5 px-4">
@@ -52,7 +66,7 @@ const ParentsLibraryScreen = () => {
           data?.map((story) => {
             const paragraphs = splitByWordCountPreservingSentences(
               story.textContent,
-              30
+              30,
             );
 
             const totalSteps = paragraphs.length;
@@ -96,9 +110,21 @@ const ParentsLibraryScreen = () => {
                   <Text className="text-xs mb-4 text-text font-[abeezee]">
                     {story.ageMin} - {story.ageMax} years
                   </Text>
-                  {story.progress > 0 && (
-                    <ProgressBar progress={progressRatio} color="#4807EC" />
-                  )}
+                  <View className="flex-row items-center gap-6">
+                    <View className="flex-1">
+                      <ProgressBar progress={progressRatio} color="#4807EC" />
+                    </View>
+
+                    <Pressable
+                      onPress={() => {
+                        setRemoveId(story.id);
+                        setSelectedStoryTitle(story.title);
+                      }}
+                      className="p-2 bg-[#EC0707] rounded-full"
+                    >
+                      <Icon name="Trash" color="#fff" size={24} />
+                    </Pressable>
+                  </View>
                 </View>
               </Pressable>
             );
@@ -111,6 +137,20 @@ const ParentsLibraryScreen = () => {
           />
         )}
       </ScrollView>
+      {removeId && (
+        <RemoveStoryModal
+          isOpen={!!removeId}
+          storyId={removeId}
+          onClose={() => setRemoveId(null)}
+          storyTitle={selectedStoryTitle}
+          onRemoveSuccess={handleRemoveSuccess}
+        />
+      )}
+      <Toast
+        visible={showToast}
+        message={toastMsg}
+        onHide={() => setShowToast(false)}
+      />
     </View>
   );
 };

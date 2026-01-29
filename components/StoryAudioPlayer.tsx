@@ -13,12 +13,9 @@ const StoryAudioPlayer = ({
   textContent: string;
   selectedVoice: string;
 }) => {
-  const [generatedAudio, setGeneratedAudio] = useState<string | undefined>(
-    undefined,
-  );
   const { data, isPending } = useTextToAudio({
     content: textContent,
-    voiceType: selectedVoice,
+    voiceId: selectedVoice,
   });
   const player = useAudioPlayer(data?.audioUrl ?? audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);

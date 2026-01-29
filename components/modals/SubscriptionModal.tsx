@@ -9,7 +9,7 @@ type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
 
 const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null
+    null,
   );
 
   return (
