@@ -3,7 +3,6 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
-import { ParentsNavigatorProp } from "../Navigation/ParentsNavigator";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
@@ -28,7 +27,7 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const [selectedVoice, setSelectedVoice] = useState("BELLA");
+  const [selectedVoice, setSelectedVoice] = useState("LILY");
   const sessionStartTime = useRef(Date.now());
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
@@ -73,30 +72,15 @@ const StoryComponent = ({
             <FontAwesome6 name="ellipsis" size={20} color="white" />
           </Pressable>
         </View>
-        <View className="flex justify-end flex-1 flex-col gap-y-3">
-          <StoryAudioPlayer
-            audioUrl={data.audioUrl}
-            textContent={data.textContent}
-            selectedVoice={selectedVoice}
-          />
-          <StoryContentContainer
-            isInteractive={storyMode === "interactive"}
-            story={data}
-            paragraphs={paragraphs}
-            activeParagraph={activeParagraph}
-            setActiveParagraph={setActiveParagraph}
-            onProgress={handleProgress}
-          />
-          <View className="bg-white p-4 rounded-2xl">
-            <ProgressBar
-              backgroundColor="#4807EC"
-              currentStep={activeParagraph + 1}
-              label="Page"
-              totalSteps={paragraphs.length}
-              height={11}
-            />
-          </View>
-        </View>
+        <StoryContentContainer
+          selectedVoice={selectedVoice}
+          isInteractive={storyMode === "interactive"}
+          story={data}
+          paragraphs={paragraphs}
+          activeParagraph={activeParagraph}
+          setActiveParagraph={setActiveParagraph}
+          onProgress={handleProgress}
+        />
       </ImageBackground>
       <SelectReadingVoiceModal
         isOpen={isVoiceModalOpen}

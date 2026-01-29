@@ -11,6 +11,7 @@ import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { formatTime } from "../../utils/utils";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
@@ -20,6 +21,9 @@ const successMessages = [
 ] as const;
 
 type SuccessMessageType = (typeof successMessages)[number];
+
+const EXPIRY_KEY = "verify-email-otp_expiry";
+const OTP_DURATION = 60;
 
 const VerifyEmailScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
@@ -39,12 +43,15 @@ const VerifyEmailScreen = () => {
       setErrorCb: setError,
     });
     if (data.success) {
-      setCountdown(59);
+      const expiryTime = Date.now() + OTP_DURATION * 1000;
+      await AsyncStorage.setItem(EXPIRY_KEY, expiryTime.toString());
+      setCountdown(OTP_DURATION);
       setSuccesMessage("Otp resent successfully");
     }
   };
 
   const onSuccessCb = async () => {
+    await AsyncStorage.removeItem(EXPIRY_KEY);
     const unverifiedUser = await AsyncStorage.getItem("unverifiedUser");
     if (unverifiedUser) {
       await AsyncStorage.setItem("user", unverifiedUser);
@@ -56,12 +63,38 @@ const VerifyEmailScreen = () => {
     }
   };
 
-  useEffect(() => {
-    if (countDown < 1) return;
-    setTimeout(() => {
-      setCountdown((c) => c - 1);
-    }, 1000);
-  }, [countDown]);
+ useEffect(() => {
+  let interval: NodeJS.Timeout;
+
+  const init = async () => {
+    let expiry = await AsyncStorage.getItem(EXPIRY_KEY);
+
+    if (!expiry || Number(expiry) <= Date.now()) {
+      expiry = String(Date.now() + OTP_DURATION * 1000);
+      await AsyncStorage.setItem(EXPIRY_KEY, expiry);
+    }
+
+    const update = async () => {
+      const stored = await AsyncStorage.getItem(EXPIRY_KEY);
+      if (!stored) return;
+
+      const remaining = Math.max(
+        0,
+        Math.floor((Number(stored) - Date.now()) / 1000)
+      );
+
+      setCountdown(remaining);
+    };
+
+    await update();
+    interval = setInterval(update, 1000);
+  };
+
+  init();
+
+  return () => clearInterval(interval);
+}, []);
+
 
   return (
     <View className="flex flex-1">
@@ -74,21 +107,19 @@ const VerifyEmailScreen = () => {
           </Text>
         </View>
         <ErrorMessageDisplay errorMessage={error} />
-        <View>
+        <View style={styles.otpWrapper}>
           <OtpInput
             numberOfDigits={6}
             onTextChange={(text) => setOtp(text)}
             theme={{
-              containerStyle: { width: "auto" },
+              containerStyle: styles.otpContainer,
               pinCodeContainerStyle: styles.box,
               pinCodeTextStyle: styles.text,
               focusedPinCodeContainerStyle: styles.boxFocused,
             }}
             focusColor="blue"
           />
-          <Text style={styles.countDown}>
-            00:{countDown > 0 ? countDown : "00"}
-          </Text>
+          <Text style={styles.countDown}>{formatTime(countDown)}</Text>
           <Text
             onPress={handleResendEmail}
             disabled={countDown > 0}
@@ -106,7 +137,7 @@ const VerifyEmailScreen = () => {
               setErrorCb: setError,
               onSuccess: () =>
                 setSuccesMessage(
-                  "Start enjoying amazing Storytime with your kids."
+                  "Start enjoying amazing Storytime with your kids.",
                 ),
             });
           }}
@@ -155,6 +186,13 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
+  },
+  otpWrapper: {
+    width: "100%",
+    alignItems: "center",
+  },
+  otpContainer: {
+    justifyContent: "center",
   },
   box: {
     borderWidth: 1,

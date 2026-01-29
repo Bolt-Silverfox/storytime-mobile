@@ -8,12 +8,15 @@ import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import SubscriptionModal from "./modals/SubscriptionModal";
+import ProgressBar from "./UI/ProgressBar";
+import StoryAudioPlayer from "./StoryAudioPlayer";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
   paragraphs: string[];
   activeParagraph: number;
+  selectedVoice: string;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
 };
@@ -31,12 +34,13 @@ const StoryContentContainer = ({
   activeParagraph,
   paragraphs,
   onProgress,
+  selectedVoice,
 }: PropTypes) => {
   const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array().fill(story.questions.length)
+    new Array().fill(story.questions.length),
   );
 
   const isSubscribed = true;
@@ -67,7 +71,14 @@ const StoryContentContainer = ({
   };
 
   return (
-    <View>
+    <View className="flex justify-end flex-1 flex-col gap-y-3">
+      {currentlyDisplayed === "story" && (
+        <StoryAudioPlayer
+          audioUrl={story.audioUrl}
+          textContent={story.textContent}
+          selectedVoice={selectedVoice}
+        />
+      )}
       {currentlyDisplayed === "story" && (
         <BlurView
           intensity={60}
@@ -107,6 +118,17 @@ const StoryContentContainer = ({
             </Pressable>
           </View>
         </BlurView>
+      )}
+      {currentlyDisplayed === "story" && (
+        <View className="bg-white p-4 rounded-2xl">
+          <ProgressBar
+            backgroundColor="#4807EC"
+            currentStep={activeParagraph + 1}
+            label="Page"
+            totalSteps={paragraphs.length}
+            height={11}
+          />
+        </View>
       )}
       <EndOfStoryMessage
         isInteractive={isInteractive}
