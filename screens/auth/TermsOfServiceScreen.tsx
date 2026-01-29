@@ -23,7 +23,15 @@ const TermsOfServiceScreen = () => {
             <Text className="font-[quilka] text-[18px]">
               {item.index}. {item.heading}
             </Text>
-            <Text className="text-base font-[abeezee]">{item.paragraph}</Text>
+            {Array.isArray(item.paragraph) ? (
+              item.paragraph.map((p, i) => (
+                <Text key={i} className="text-base font-[abeezee]">
+                  {p}
+                </Text>
+              ))
+            ) : (
+              <Text className="text-base font-[abeezee]">{item.paragraph}</Text>
+            )}
           </View>
         )}
       />
