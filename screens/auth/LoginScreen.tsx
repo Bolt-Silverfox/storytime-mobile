@@ -23,7 +23,7 @@ const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const { login, isLoading, handleGoogleAuth } = useAuth();
+  const { login, isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
 
   return (
     <View className="flex-1 flex">
