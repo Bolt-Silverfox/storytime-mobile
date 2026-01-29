@@ -42,3 +42,6 @@ todo.txt
 # generated native folders
 /ios
 /android
+
+.idea/
+.vscode/
