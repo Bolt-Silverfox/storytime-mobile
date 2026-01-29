@@ -16,6 +16,7 @@ import CustomButton from "../../../components/UI/CustomButton";
 import StoryItem from "../../../components/parents/StoryItem";
 import { storiesByAgeImages } from "../../../data";
 import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
 const StoriesByAgeScreen = () => {
@@ -41,52 +42,54 @@ const StoriesByAgeScreen = () => {
     );
   }
   return (
-    <View className="flex flex-1 bg-bgLight">
-      <ImageBackground
-        onLoadStart={() => {
-          setIsImageLoading(true);
-        }}
-        onLoadEnd={() => setIsImageLoading(false)}
-        source={{ uri: storiesByAgeImages[params.ageGroup] }}
-        resizeMode="stretch"
-        className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
-      >
-        {isImageLoading && (
-          <View className="absolute inset-0 bg-black/40 items-center justify-center">
-            <ActivityIndicator size="large" color="EC4007" />
+    <SafeAreaWrapper variant="transparent">
+      <View className="flex flex-1 bg-bgLight">
+        <ImageBackground
+          onLoadStart={() => {
+            setIsImageLoading(true);
+          }}
+          onLoadEnd={() => setIsImageLoading(false)}
+          source={{ uri: storiesByAgeImages[params.ageGroup] }}
+          resizeMode="stretch"
+          className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
+        >
+          {isImageLoading && (
+            <View className="absolute inset-0 bg-black/40 items-center justify-center">
+              <ActivityIndicator size="large" color="EC4007" />
+            </View>
+          )}
+          <View className="flex flex-col gap-y-1.5">
+            <Text className="font-[quilka] text-3xl capitalize text-white">
+              Age {params.ageGroup}
+            </Text>
+            <Text className="font-[abeezee] text-base text-white">
+              Access all stories from ages {params.ageGroup}
+            </Text>
           </View>
-        )}
-        <View className="flex flex-col gap-y-1.5">
-          <Text className="font-[quilka] text-3xl capitalize text-white">
-            Age {params.ageGroup}
-          </Text>
-          <Text className="font-[abeezee] text-base text-white">
-            Access all stories from ages {params.ageGroup}
-          </Text>
-        </View>
-      </ImageBackground>
-      <ScrollView
-        className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col"
-        showsVerticalScrollIndicator={false}
-      >
-        <View className="flex flex-row flex-wrap py-6  gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
-          {data.map((story, index) => (
-            <StoryItem
-              index={index}
-              key={story.id}
-              onNavigate={() => {
-                navigator.navigate("stories", {
-                  screen: "childStoryDetails",
-                  params: { storyId: story.id },
-                });
-              }}
-              story={story}
-            />
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+        </ImageBackground>
+        <ScrollView
+          className="bg-white pt-5 rounded-t-3xl -mt-4"
+          contentContainerClassName="flex flex-col px-4 pb-5"
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="flex flex-row flex-wrap py-6  gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-between">
+            {data.map((story, index) => (
+              <StoryItem
+                index={index}
+                key={story.id}
+                onNavigate={() => {
+                  navigator.navigate("stories", {
+                    screen: "childStoryDetails",
+                    params: { storyId: story.id },
+                  });
+                }}
+                story={story}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 

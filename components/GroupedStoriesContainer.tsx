@@ -15,6 +15,7 @@ import LoadingOverlay from "./LoadingOverlay";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
 import StoryItem from "./parents/StoryItem";
+import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 
 type PropTypes = {
   stories: Story[] | undefined;
@@ -45,7 +46,7 @@ const GroupedStoriesContainer = ({
 
   if (!stories?.length) {
     return (
-      <View className="flex-1 flex flex-col gap-y-3 bg-bgLight justify-center items-center">
+      <View className="flex-1 flex flex-col gap-y-3 px-5 bg-bgLight justify-center items-center">
         <Text className="text-xl font-[abeezee] text-black">
           No stories in this category yet
         </Text>
@@ -55,57 +56,59 @@ const GroupedStoriesContainer = ({
   }
 
   return (
-    <View className="flex flex-1 bg-bgLight">
-      <ImageBackground
-        onLoadStart={() => {
-          setIsImageLoading(true);
-        }}
-        onLoadEnd={() => setIsImageLoading(false)}
-        source={imageSource ?? { uri: stories[0].coverImageUrl }}
-        resizeMode="cover"
-        className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
-      >
-        {isImageLoading && (
-          <View className="absolute inset-0 bg-black/40 items-center justify-center">
-            <ActivityIndicator size="large" color="EC4007" />
-          </View>
-        )}
+    <SafeAreaWrapper variant="transparent">
+      <View className="flex flex-1 bg-bgLight">
+        <ImageBackground
+          onLoadStart={() => {
+            setIsImageLoading(true);
+          }}
+          onLoadEnd={() => setIsImageLoading(false)}
+          source={imageSource ?? { uri: stories[0].coverImageUrl }}
+          resizeMode="cover"
+          className="px-4 h-[30vh] w-full flex flex-col justify-end pb-8 max-h-[500px]"
+        >
+          {isImageLoading && (
+            <View className="absolute inset-0 bg-black/40 items-center justify-center">
+              <ActivityIndicator size="large" color="EC4007" />
+            </View>
+          )}
 
-        <View className="flex flex-col gap-y-1.5">
-          <Text className="font-[quilka] text-3xl capitalize text-white">
-            {title}
-          </Text>
-          <Text className="font-[abeezee] text-base text-white">
-            {description}
-          </Text>
-        </View>
-      </ImageBackground>
-      <ScrollView
-        className="bg-white pt-5 rounded-t-3xl -mt-4"
-        contentContainerClassName="flex flex-col px-4 pb-5"
-        showsVerticalScrollIndicator={false}
-      >
-        <AgeSelectionComponent
-          selectedAgeGroup={selectedGroup}
-          setSelectedAgeGroup={setSelectedGroup}
-        />
-        <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-between">
-          {stories.map((story, index) => (
-            <StoryItem
-              index={index}
-              key={story.id}
-              onNavigate={() => {
-                navigator.navigate("stories", {
-                  screen: "childStoryDetails",
-                  params: { storyId: story.id },
-                });
-              }}
-              story={story}
-            />
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+          <View className="flex flex-col gap-y-1.5">
+            <Text className="font-[quilka] text-3xl capitalize text-white">
+              {title}
+            </Text>
+            <Text className="font-[abeezee] text-base text-white">
+              {description}
+            </Text>
+          </View>
+        </ImageBackground>
+        <ScrollView
+          className="bg-white pt-5 rounded-t-3xl -mt-4"
+          contentContainerClassName="flex flex-col px-4 pb-5"
+          showsVerticalScrollIndicator={false}
+        >
+          <AgeSelectionComponent
+            selectedAgeGroup={selectedGroup}
+            setSelectedAgeGroup={setSelectedGroup}
+          />
+          <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-between">
+            {stories.map((story, index) => (
+              <StoryItem
+                index={index}
+                key={story.id}
+                onNavigate={() => {
+                  navigator.navigate("stories", {
+                    screen: "childStoryDetails",
+                    params: { storyId: story.id },
+                  });
+                }}
+                story={story}
+              />
+            ))}
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 
