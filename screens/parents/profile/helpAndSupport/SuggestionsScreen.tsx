@@ -7,6 +7,8 @@ import colours from "../../../../colours";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../../styles";
 import SuccessScreen from "../../../../components/UI/SuccessScreen";
+import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
+import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
 
 const feedBack = z.object({
   fullName: z.string().trim().min(1, "Name is required"),
@@ -23,31 +25,39 @@ export default function SuggestionsScreen() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [succcess, setSuccess] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [apiError, setApiError] = useState("");
 
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleSubmit = async () => {
+  const { mutate: submitFeedback, isPending } = useSubmitFeedback({
+    onSuccess: () => setSuccess(true),
+    onError: (msg) => setApiError(msg),
+  });
+
+  const handleSubmit = () => {
     setErrors({});
+    setApiError("");
     const result = feedBack.safeParse({
       fullName,
       email,
       message,
     });
     if (!result.success) {
-      const formatted: any = {};
-
+      const formatted: Record<string, string> = {};
       result.error.issues.forEach((err) => {
-        const field = err.path[0];
+        const field = err.path[0] as keyof FeedBackSchema;
         formatted[field] = err.message;
       });
-
       setErrors(formatted);
       return;
     }
-    // await signUp(email, password, fullName.trim(), title);
-    setSuccess(true);
+    submitFeedback({
+      fullname: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      message: message.trim(),
+    });
   };
 
   return (
@@ -114,24 +124,32 @@ export default function SuggestionsScreen() {
           {errors.message && (
             <Text className="text-red-600 text-sm">{errors.message}</Text>
           )}
+          {apiError ? (
+            <ErrorMessageDisplay errorMessage={apiError} />
+          ) : null}
         </View>
       </View>
       <View className="flex-1 justify-end  px-4 gap-6">
-        <Pressable className="pb-10" onPress={handleSubmit}>
+        <Pressable
+          className="pb-10"
+          onPress={handleSubmit}
+          disabled={isPending}
+        >
           <Text
             style={[defaultStyles.defaultText, { color: "white" }]}
-            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${
-              Object.keys(errors).length === 0 ? "bg-[#EC4007]" : "bg-[#FF8771]"
-            }`}
+            className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${Object.keys(errors).length === 0 && !isPending
+                ? "bg-[#EC4007]"
+                : "bg-[#FF8771]"
+              }`}
           >
-            Save
+            {isPending ? "Sending…" : "Save"}
           </Text>
         </Pressable>
       </View>
       <SuccessScreen
         message="Success!"
-        secondaryMessage="Your message has been sent sucessfully"
-        visible={succcess}
+        secondaryMessage="Your message has been sent successfully"
+        visible={success}
         onProceed={() => navigator.goBack()}
       />
     </View>
