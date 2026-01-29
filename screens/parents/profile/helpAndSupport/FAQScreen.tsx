@@ -47,13 +47,13 @@ export default function FaQScreen() {
             style={[defaultStyles.heading, { fontSize: 19 }]}
             className="mt-6"
           >
-            Parent Account & Management
+            Getting Started
           </Text>
           <View
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
-            {FAQ.parentAccountManagement.map((faq, i) => (
+            {FAQ.gettingStarted.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}
@@ -68,13 +68,13 @@ export default function FaQScreen() {
             style={[defaultStyles.heading, { fontSize: 19 }]}
             className="mt-6"
           >
-            Using the App
+            Safety & Privacy
           </Text>
           <View
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
-            {FAQ.usingTheApp.map((faq, i) => (
+            {FAQ.safetyAndPrivacy.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}
@@ -89,13 +89,13 @@ export default function FaQScreen() {
             style={[defaultStyles.heading, { fontSize: 19 }]}
             className="mt-6"
           >
-            Safety & Controls
+            Stories & Subscription
           </Text>
           <View
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
-            {FAQ.safety.map((faq, i) => (
+            {FAQ.storiesAndSubscription.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}
@@ -105,85 +105,18 @@ export default function FaQScreen() {
             ))}
           </View>
         </View>
-
         <View>
           <Text
             style={[defaultStyles.heading, { fontSize: 19 }]}
             className="mt-6"
           >
-            Stories & Audio
+            Help & Support
           </Text>
           <View
             style={styles.menuList}
             className="px-[16]   border rounded-[20px] border-border-lighter"
           >
-            {FAQ.storiesAndAudio.map((faq, i) => (
-              <MenuItem
-                key={i}
-                label={faq.q}
-                isTablet={isTablet}
-                description={faq.a}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View>
-          <Text
-            style={[defaultStyles.heading, { fontSize: 19 }]}
-            className="mt-6"
-          >
-            Subscription & Billing
-          </Text>
-          <View
-            style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-border-lighter"
-          >
-            {FAQ.subscription.map((faq, i) => (
-              <MenuItem
-                key={i}
-                label={faq.q}
-                isTablet={isTablet}
-                description={faq.a}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View>
-          <Text
-            style={[defaultStyles.heading, { fontSize: 19 }]}
-            className="mt-6"
-          >
-            Privacy & Data
-          </Text>
-          <View
-            style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-border-lighter"
-          >
-            {FAQ.privacy.map((faq, i) => (
-              <MenuItem
-                key={i}
-                label={faq.q}
-                isTablet={isTablet}
-                description={faq.a}
-              />
-            ))}
-          </View>
-        </View>
-
-        <View>
-          <Text
-            style={[defaultStyles.heading, { fontSize: 19 }]}
-            className="mt-6"
-          >
-            Troubleshooting
-          </Text>
-          <View
-            style={styles.menuList}
-            className="px-[16]   border rounded-[20px] border-border-lighter"
-          >
-            {FAQ.troubleshooting.map((faq, i) => (
+            {FAQ.helpAndSupport.map((faq, i) => (
               <MenuItem
                 key={i}
                 label={faq.q}

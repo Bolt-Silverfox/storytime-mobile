@@ -30,20 +30,23 @@ export default function DeleteAccount() {
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<Errors>({});
 
-  const handleSubmit = async () => {
+  const isOthersChecked = deleteCheckList.find((r) => r.id === 6)?.checked;
+
+  const handleNext = () => {
     setErrors({});
-    const result = feedBack.safeParse({
-      message,
-    });
-    if (!result.success) {
-      const formatted: any = {};
-      result.error.issues.forEach((err) => {
-        const field = err.path[0];
-        formatted[field] = err.message;
-      });
-      setErrors(formatted);
-      return;
+    if (isOthersChecked) {
+      const result = feedBack.safeParse({ message });
+      if (!result.success) {
+        const formatted: Record<string, string> = {};
+        result.error.issues.forEach((err) => {
+          const field = err.path[0] as keyof FeedBackSchema;
+          formatted[field] = err.message;
+        });
+        setErrors(formatted);
+        return;
+      }
     }
+    navigator.navigate("deleteAccountConfirmation");
   };
 
   const handleToggle = (id: number) => {
@@ -88,7 +91,7 @@ export default function DeleteAccount() {
             </View>
           ))}
         </View>
-        {deleteCheckList.find((r) => r.id == 7)?.checked && (
+        {isOthersChecked && (
           <View style={styles.formItem} className="mt-8">
             <TextInput
               style={{
@@ -103,12 +106,13 @@ export default function DeleteAccount() {
               placeholderTextColor={errors.message ? "red" : colours.text}
               multiline
             />
+            {errors.message && (
+              <Text className="text-red-600 text-sm mt-1">{errors.message}</Text>
+            )}
           </View>
         )}
         <View className="flex-1 justify-center  gap-6 mt-8 ">
-          <Pressable
-            onPress={() => navigator.navigate("deleteAccountConfirmation")}
-          >
+          <Pressable onPress={handleNext}>
             <Text
               style={[defaultStyles.defaultText, { color: "white" }]}
               className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${true ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
