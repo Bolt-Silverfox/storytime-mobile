@@ -6,7 +6,7 @@ workflows:
     environment:
       groups:
         - expo_credentials
-      node: 18
+      node: 20
       vars:
         EXPO_NO_TELEMETRY: "1"
     triggering:
@@ -43,6 +43,7 @@ workflows:
           - billmal071@gmail.com 
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
+          - ndianguimichelle@gmail.com 
         notify:
           success: true
           failure: true
@@ -55,7 +56,7 @@ workflows:
       groups:
         - expo_credentials
         - ios_credentials
-      node: 18
+      node: 20
       xcode: latest
       vars:
         EXPO_NO_TELEMETRY: "1"
@@ -88,6 +89,7 @@ workflows:
           - billmal071@gmail.com 
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
+          - ndianguimichelle@gmail.com 
         notify:
           success: true
           failure: true
@@ -99,7 +101,7 @@ workflows:
     environment:
       groups:
         - expo_credentials
-      node: 18
+      node: 20
       vars:
         EXPO_NO_TELEMETRY: "1"
     triggering:
@@ -131,6 +133,7 @@ workflows:
           - billmal071@gmail.com
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
+          - ndianguimichelle@gmail.com 
         notify:
           success: true
           failure: true
