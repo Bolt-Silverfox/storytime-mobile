@@ -12,6 +12,7 @@ type Proptypes = {
   story: Story;
   isPremium?: boolean;
   index: number;
+  isGrouped?: boolean;
 };
 
 const StoryItem = ({
@@ -19,6 +20,7 @@ const StoryItem = ({
   story,
   index,
   isPremium = false,
+  isGrouped = false,
 }: Proptypes) => {
   const { data } = useSuspenseQuery(queryParentsFavourites());
   const { mutate: onToggle, isPending } = useToggleFavourites({
@@ -50,7 +52,7 @@ const StoryItem = ({
     <Pressable
       onPress={navigate}
       key={story.id}
-      className={`flex flex-col w-48 max-w-52 gap-y-1.5 border-border-light  p-1 rounded-2xl border bg-white`}
+      className={`flex flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-48 max-w-52"} gap-y-1.5 border-border-light  p-1 rounded-2xl border bg-white`}
     >
       <View
         className={`flex-1 w-full h-full rounded-2xl relative ${isLocked ? "bg-[#4807EC66]" : null}`}
