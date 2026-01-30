@@ -59,9 +59,6 @@ const useToggleFavourites = ({
       onSuccess?.();
     },
     onError: (err, _, mutationResult) => {
-      console.log("mutation result", mutationResult?.previousData?.data);
-      console.error("mutation error", err);
-
       if (mutationResult?.previousData) {
         queryClient.setQueryData(queryKey, mutationResult.previousData);
       }

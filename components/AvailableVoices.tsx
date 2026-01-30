@@ -18,7 +18,7 @@ const AvailableVoices = ({
   const [currentlyViewing, setCurrentlyViewing] = useState(selectedVoice);
   const player = useAudioPlayer();
 
-  const handlePreview = async (audioUrl: string) => {
+  const handlePreview = (audioUrl: string) => {
     setCurrentlyViewing(audioUrl);
     player.replace(audioUrl);
     player.play();
