@@ -25,6 +25,7 @@ type PropTypes = {
   description: string;
   isPending: boolean;
   refetch: () => void;
+  showAges?: boolean;
 };
 
 const GroupedStoriesContainer = ({
@@ -35,6 +36,7 @@ const GroupedStoriesContainer = ({
   description,
   isPending,
   refetch,
+  showAges = true,
 }: PropTypes) => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
@@ -87,11 +89,13 @@ const GroupedStoriesContainer = ({
           contentContainerClassName="flex flex-col px-4 pb-5"
           showsVerticalScrollIndicator={false}
         >
-          <AgeSelectionComponent
-            selectedAgeGroup={selectedGroup}
-            setSelectedAgeGroup={setSelectedGroup}
-          />
-          <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-between">
+          {showAges && (
+            <AgeSelectionComponent
+              selectedAgeGroup={selectedGroup}
+              setSelectedAgeGroup={setSelectedGroup}
+            />
+          )}
+          <View className="flex flex-row flex-wrap py-6 gap-x-3 gap-y-6 -mt-4 rounded-t-3xl justify-center">
             {stories.map((story, index) => (
               <StoryItem
                 index={index}
@@ -103,6 +107,7 @@ const GroupedStoriesContainer = ({
                   });
                 }}
                 story={story}
+                isGrouped
               />
             ))}
           </View>

@@ -1,9 +1,8 @@
-import { Image, Pressable, Text } from "react-native";
-import { View } from "react-native";
-import CustomButton from "../../UI/CustomButton";
 import { useNavigation } from "@react-navigation/native";
-import { ParntHomeNavigatorProp } from "../../../Navigation/ParentHomeNavigator";
+import { Image, Pressable, Text, View } from "react-native";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import Icon from "../../Icon";
+import CustomButton from "../../UI/CustomButton";
 
 type PropTypes = {
   isOpen: boolean;
@@ -17,7 +16,7 @@ const EndOfQuizMessage = ({
   storyTitle,
   results,
 }: PropTypes) => {
-  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (!isOpen) return null;
   return (
     <View className="flex flex-col p-4 gap-y-5 rounded-3xl bg-white">
@@ -63,7 +62,12 @@ const EndOfQuizMessage = ({
       <View className="flex flex-col gap-y-3">
         <CustomButton
           text="Go home"
-          onPress={() => navigator.replace("homePage")}
+          onPress={() =>
+            navigator.replace("parents", {
+              screen: "home",
+              params: { screen: "homePage" },
+            })
+          }
         />
         <CustomButton text="Read story again" transparent onPress={readAgain} />
       </View>

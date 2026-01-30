@@ -13,7 +13,7 @@ const AvailableVoices = ({
   selectedVoice: string;
   setSelectedVoice: Dispatch<SetStateAction<string>>;
 }) => {
-  const { data, error } = useSuspenseQuery(queryAvailableVoices);
+  const { data } = useSuspenseQuery(queryAvailableVoices);
   const { data: user } = useGetUserProfile();
   const [currentlyViewing, setCurrentlyViewing] = useState(selectedVoice);
   const player = useAudioPlayer();
@@ -27,8 +27,12 @@ const AvailableVoices = ({
   const isPremium = user?.subscriptionStatus !== "free";
   return (
     <View className="border-t border-t-border-lighter gap-x-4 flex-wrap justify-center gap-y-6 py-6 flex flex-row">
-      {data.map((voice, index) => (
-        <View
+      {data.map((voice) => (
+        <Pressable
+          onPress={() => {
+            setCurrentlyViewing(voice.previewUrl);
+            player.replace(voice.previewUrl);
+          }}
           key={voice.name}
           className={` rounded-3xl min-w-48 py-6 flex flex-col px-4 ${currentlyViewing === voice.previewUrl ? "border-primary border-2" : "border-border-light border"}`}
         >
@@ -62,7 +66,7 @@ const AvailableVoices = ({
               value={voice.name === selectedVoice}
             />
           </View>
-        </View>
+        </Pressable>
       ))}
     </View>
   );

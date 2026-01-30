@@ -3,19 +3,17 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
-import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
-import ErrorComponent from "./ErrorComponent";
-import LoadingOverlay from "./LoadingOverlay";
-import StoryAudioPlayer from "./StoryAudioPlayer";
-import StoryContentContainer from "./StoryContentContainer";
-import ProgressBar from "./UI/ProgressBar";
-import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
-import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
-import { StoryModes } from "../types";
-import { splitByWordCountPreservingSentences } from "../utils/utils";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
+import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import { StoryModes } from "../types";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
+import ErrorComponent from "./ErrorComponent";
+import LoadingOverlay from "./LoadingOverlay";
+import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
+import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
+import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 
 const StoryComponent = ({
   storyId,
