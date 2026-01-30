@@ -17,7 +17,7 @@ import PageTitle from "../../components/PageTitle";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
-  const { isLoading, handleGoogleAuth } = useAuth();
+  const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
     <View className="flex flex-1">
       <PageTitle title="" goBack={() => navigator.goBack()} />
@@ -46,7 +46,10 @@ const SignupScreen = () => {
             >
               <Image source={require("../../assets/icons/google-icon.png")} />
             </Pressable>
-            <Pressable className="bg-white size-20 rounded-full flex justify-center items-center">
+            <Pressable
+              onPress={handleAppleAuth}
+              className="bg-white size-20 rounded-full flex justify-center items-center"
+            >
               <Image source={require("../../assets/icons/apple-icon.png")} />
             </Pressable>
           </View>

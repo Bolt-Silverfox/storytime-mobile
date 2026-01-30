@@ -17,11 +17,12 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
-// import {
-//   GoogleSignin,
-//   isSuccessResponse,
-// } from "@react-native-google-signin/google-signin";
-import { Alert } from "react-native";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from "@react-native-google-signin/google-signin";
+import { Alert, Platform } from "react-native";
+import { appleAuth, appleAuthAndroid } from '@invertase/react-native-apple-authentication';
 
 type AuthFnTypes = {
   login: (data: {
@@ -64,6 +65,7 @@ type AuthFnTypes = {
     onSuccess: () => void;
   }) => void;
   handleGoogleAuth: () => void;
+  handleAppleAuth: () => void;
   setInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
@@ -120,6 +122,7 @@ type AuthContextType = {
   validatePasswordReset: AuthFnTypes["validatePasswordReset"];
   resetPassword: AuthFnTypes["resetPassword"];
   handleGoogleAuth: AuthFnTypes["handleGoogleAuth"];
+  handleAppleAuth: AuthFnTypes["handleAppleAuth"];
   changePassword: AuthFnTypes["changePassword"];
   setInAppPin: AuthFnTypes["setInAppPin"];
   verifyInAppPin: AuthFnTypes["verifyInAppPin"];
@@ -160,13 +163,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     string | string[] | undefined
   >(undefined);
 
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     iosClientId: IOS_CLIENT_ID,
-  //     webClientId: WEB_CLIENT_ID,
-  //     profileImageSize: 200,
-  //   });
-  // }, []);
+  useEffect(() => {
+    GoogleSignin.configure({
+      iosClientId: IOS_CLIENT_ID,
+      webClientId: WEB_CLIENT_ID,
+      profileImageSize: 200,
+    });
+  }, []);
 
   useEffect(() => {
     async function getUserSession() {
@@ -378,42 +381,127 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
-  // const handleGoogleAuth = async () => {
-  //   try {
-  //     setIsLoading(true);
-  //     const googlePlayService = await GoogleSignin.hasPlayServices();
-  //     if (!googlePlayService)
-  //       throw new Error(
-  //         "You don't have google play services enabled, enable it and try again.",
-  //       );
-  //     const googleResponse = await GoogleSignin.signIn();
-  //     if (!isSuccessResponse(googleResponse)) {
-  //       throw new Error("Authentication unsuccesful, try again");
-  //     }
-  //     const { idToken } = googleResponse.data;
-  //     const request = await fetch(`${BASE_URL}/auth/google`, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({ id_token: idToken }),
-  //       method: "POST",
-  //     });
-  //     const response = await request.json();
-  //     if (!response.success) {
-  //       throw new Error(response.message);
-  //     }
-  //     await AsyncStorage.setItem("accessToken", response.data.jwt);
-  //     await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
-  //     await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-  //     setUser(response.data.user);
-  //   } catch (error) {
-  //     const message =
-  //       error instanceof Error ? error.message : "Unexpected error, try again";
-  //     Alert.alert(message);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
+  const handleGoogleAuth = async () => {
+    try {
+      setIsLoading(true);
+      const googlePlayService = await GoogleSignin.hasPlayServices();
+      if (!googlePlayService)
+        throw new Error(
+          "You don't have google play services enabled, enable it and try again.",
+        );
+      const googleResponse = await GoogleSignin.signIn();
+      if (!isSuccessResponse(googleResponse)) {
+        throw new Error("Authentication unsuccesful, try again");
+      }
+      const { idToken } = googleResponse.data;
+      const request = await fetch(`${BASE_URL}/auth/google`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id_token: idToken }),
+        method: "POST",
+      });
+      const response = await request.json();
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+      await AsyncStorage.setItem("accessToken", response.data.jwt);
+      await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+      setUser(response.data.user);
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unexpected error, try again";
+      Alert.alert(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleAppleAuth = async () => {
+    try {
+      setIsLoading(true);
+
+      let idToken, firstName, lastName;
+
+      if (Platform.OS === 'ios') {
+        const appleAuthRequestResponse = await appleAuth.performRequest({
+          requestedOperation: appleAuth.Operation.LOGIN,
+          requestedScopes: [appleAuth.Scope.EMAIL, appleAuth.Scope.FULL_NAME],
+        });
+
+        const credentialState = await appleAuth.getCredentialStateForUser(appleAuthRequestResponse.user);
+
+        if (credentialState === appleAuth.State.AUTHORIZED) {
+          idToken = appleAuthRequestResponse.identityToken;
+          firstName = appleAuthRequestResponse.fullName?.givenName;
+          lastName = appleAuthRequestResponse.fullName?.familyName;
+        } else {
+          throw new Error('Apple Auth Failed');
+        }
+      } else {
+        // Android
+        // Configure for Android
+        const rawNonce = Math.random().toString(36).substring(2, 15);
+        const state = Math.random().toString(36).substring(2, 15);
+
+        appleAuthAndroid.configure({
+          clientId: process.env.EXPO_PUBLIC_APPLE_CLIENT_ID,
+          redirectUri: process.env.EXPO_PUBLIC_APPLE_REDIRECT_URI,
+          responseType: appleAuthAndroid.ResponseType.ALL,
+          scope: appleAuthAndroid.Scope.ALL,
+          nonce: rawNonce,
+          state: state,
+        });
+
+        const response = await appleAuthAndroid.signIn();
+        if (response) {
+          idToken = response.id_token;
+        }
+      }
+
+      if (!idToken) {
+        throw new Error('No identity token returned');
+      }
+
+      const request = await fetch(`${BASE_URL}/auth/apple`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          id_token: idToken,
+          firstName: firstName || undefined,
+          lastName: lastName || undefined
+        }),
+        method: "POST",
+      });
+
+      const response = await request.json();
+      if (!response.success) {
+        throw new Error(response.message);
+      }
+
+      // Store tokens and user
+      if (response.data && response.data.jwt) {
+        await AsyncStorage.setItem("accessToken", response.data.jwt);
+        await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+        setUser(response.data.user);
+      } else if (response.jwt) {
+        await AsyncStorage.setItem("accessToken", response.jwt);
+        await AsyncStorage.setItem("refreshToken", response.refreshToken);
+        await AsyncStorage.setItem("user", JSON.stringify(response.user));
+        setUser(response.user);
+      }
+
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unexpected error, try again";
+      Alert.alert(message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const setInAppPin: AuthFnTypes["setInAppPin"] = async ({
     pin,
@@ -558,7 +646,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     resendVerificationEmail,
     validatePasswordReset,
     resetPassword,
-    // handleGoogleAuth,
+    handleGoogleAuth,
+    handleAppleAuth,
     setInAppPin,
     updateInAppPin,
     verifyInAppPin,

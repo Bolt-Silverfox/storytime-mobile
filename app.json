@@ -4,30 +4,42 @@
     "slug": "storytime-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icons/new-logo.png",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/icons/new-logo.png",
+      "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
       "backgroundColor": "#fbf8f7"
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.moluno.storytimemobile"
+      "bundleIdentifier": "net.emerj.storytime",
+      "icon": "./assets/icon.png",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icons/new-logo.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbf8f7"
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "permissions": ["android.permission.RECORD_AUDIO"],
-      "package": "com.moluno.storytimemobile"
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "net.emerj.storytime"
     },
     "web": {
-      "favicon": "./assets/icons/new-logo.png"
+      "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "expo-font",
@@ -46,10 +58,21 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "iosUrlScheme": "com.googleusercontent.apps.974734791862-8epj0p0bokvin0fgiv4fs8rdn5mbonv4"
+          "iosUrlScheme": "com.googleusercontent.apps.368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba"
         }
       ],
       "expo-asset"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b117024d-5005-477f-8eae-03dce4fd8e45"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b117024d-5005-477f-8eae-03dce4fd8e45"
+    }
   }
 }

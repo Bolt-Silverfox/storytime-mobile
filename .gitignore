@@ -25,8 +25,8 @@ my-upload-key.keystore
 npm-debug.*
 yarn-debug.*
 yarn-error.*
-eas.json
-app.json
+# eas.json
+# app.json
 # macOS
 .DS_Store
 *.pem
@@ -42,3 +42,6 @@ todo.txt
 # generated native folders
 /ios
 /android
+
+.idea/
+.vscode/
