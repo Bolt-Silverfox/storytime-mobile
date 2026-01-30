@@ -126,9 +126,7 @@ export default function SuggestionsScreen() {
             {errors.message && (
               <Text className="text-red-600 text-sm">{errors.message}</Text>
             )}
-            {apiError ? (
-              <ErrorMessageDisplay errorMessage={apiError} />
-            ) : null}
+            {apiError ? <ErrorMessageDisplay errorMessage={apiError} /> : null}
           </View>
         </View>
         <View className="flex-1 justify-end  px-4 gap-6">
@@ -139,7 +137,8 @@ export default function SuggestionsScreen() {
           >
             <Text
               style={[defaultStyles.defaultText, { color: "white" }]}
-              className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${Object.keys(errors).length === 0 && !isPending
+              className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full  ${
+                Object.keys(errors).length === 0 && !isPending
                   ? "bg-[#EC4007]"
                   : "bg-[#FF8771]"
                 }`}
