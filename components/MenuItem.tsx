@@ -12,9 +12,9 @@ import defaultStyles from "../styles";
 
 type PropTypes = {
   label: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   textColor?: string;
-  onPress: () => void;
+  onPress?: () => void;
   isTablet: boolean;
   description?: string;
   isLastItem?: boolean;
