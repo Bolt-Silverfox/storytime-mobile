@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   ImageBackground,
   ImageSourcePropType,
+  Pressable,
   ScrollView,
   Text,
   View,
@@ -16,6 +17,7 @@ import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
 import StoryItem from "./parents/StoryItem";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
+import Entypo from "@expo/vector-icons/Entypo";
 
 type PropTypes = {
   stories: Story[] | undefined;
@@ -59,7 +61,7 @@ const GroupedStoriesContainer = ({
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="flex flex-1 bg-bgLight">
+      <View className="flex flex-1 bg-bgLight relative">
         <ImageBackground
           onLoadStart={() => {
             setIsImageLoading(true);
@@ -112,6 +114,12 @@ const GroupedStoriesContainer = ({
             ))}
           </View>
         </ScrollView>
+        <Pressable
+          onPress={() => navigator.goBack()}
+          className="size-10 left-4 top-10  absolute flex justify-center items-center bg-blue rounded-full"
+        >
+          <Entypo name="chevron-thin-left" size={24} color="white" />
+        </Pressable>
       </View>
     </SafeAreaWrapper>
   );

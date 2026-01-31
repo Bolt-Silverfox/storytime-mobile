@@ -10,6 +10,7 @@ import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import SubscriptionModal from "./modals/SubscriptionModal";
 import ProgressBar from "./UI/ProgressBar";
 import StoryAudioPlayer from "./StoryAudioPlayer";
+import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type PropTypes = {
   story: Story;
@@ -42,8 +43,9 @@ const StoryContentContainer = ({
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array().fill(story.questions.length),
   );
+  const { data } = useGetUserProfile();
 
-  const isSubscribed = true;
+  const isSubscribed = data?.subscriptionStatus === "premium";
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -77,6 +79,8 @@ const StoryContentContainer = ({
           audioUrl={story.audioUrl}
           textContent={story.textContent}
           selectedVoice={selectedVoice}
+          isSubscribed={isSubscribed}
+          setIsSubscriptionModalOpen={setIsSubscriptionModalOpen}
         />
       )}
       {currentlyDisplayed === "story" && (
@@ -101,7 +105,7 @@ const StoryContentContainer = ({
             </Pressable>
             <Pressable
               onPress={handleNextParagraph}
-              className={`justify-center flex items-center ${isLastParagraph ? "rounded-xl" : "rounded-full bg-blue size-12"}`}
+              className={`justify-center flex items-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "rounded-full bg-blue size-12" : "rounded-full bg-blue/50 size-12"}`}
             >
               {!isLastParagraph ? (
                 <Icon name="SkipForward" color="white" />

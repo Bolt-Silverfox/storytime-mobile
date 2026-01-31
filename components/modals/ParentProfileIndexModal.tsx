@@ -68,7 +68,7 @@ const ParentProfileModal = ({
                 }
               }, 500);
             }}
-            className="bg-transparent border border-primary py-4 w-full rounded-full"
+            className="bg-transparent border  py-4 w-full rounded-full"
           >
             <Text className="text-black font-[abeezee] text-center text-base">
               {modalData?.confirm}

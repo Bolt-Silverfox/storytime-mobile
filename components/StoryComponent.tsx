@@ -54,7 +54,7 @@ const StoryComponent = ({
         <ImageBackground
           source={{ uri: data.coverImageUrl }}
           resizeMode="cover"
-          className="p-4 flex-1 pt-10 flex flex-col "
+          className="p-4 flex-1 pt-12 flex flex-col "
         >
           <View className="flex flex-row justify-between items-center">
             <Pressable

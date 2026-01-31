@@ -104,7 +104,7 @@ type UserProfile = {
   biometricsEnabled: boolean;
   createdAt: string;
   updatedAt: string;
-  subscriptionStatus: string;
+  subscriptionStatus: "free" | "premium";
 };
 
 type KidReport = {
