@@ -27,6 +27,7 @@ const SubscriptionScreen = ({ goBack }: PropTypes) => {
         </View>
         <ScrollView
           showsVerticalScrollIndicator={false}
+          className="flex flex-1"
           contentContainerClassName="flex flex-col gap-y-8"
         >
           <View className="flex flex-col justify-center items-center">

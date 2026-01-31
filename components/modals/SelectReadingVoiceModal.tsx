@@ -1,9 +1,8 @@
 import { Dispatch, lazy, SetStateAction } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import Icon from "../Icon";
 import SuspenseWrapper from "../supsense/SuspenseWrapper";
 import CustomModal, { CustomModalProps } from "./CustomModal";
-import CustomButton from "../UI/CustomButton";
 
 const AvailableVoices = lazy(() => import("../AvailableVoices"));
 
@@ -36,7 +35,9 @@ const SelectReadingVoiceModal = ({
               <Text className="font-[abeezee] text-text">
                 Selected Story Voice
               </Text>
-              <Text className="font-[quilka] text-2xl text-black">Fanice</Text>
+              <Text className="font-[quilka] text-2xl text-black">
+                {selectedVoice}
+              </Text>
             </View>
             <Icon name="CircleCheck" color="green" />
           </View>

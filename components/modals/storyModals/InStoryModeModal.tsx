@@ -10,6 +10,7 @@ import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 import SubscriptionModal from "../SubscriptionModal";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 interface Props extends Omit<CustomModalProps, "children"> {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -21,10 +22,11 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
   const { params } = useRoute<RoutePropTypes>();
   const [newMode, setNewMode] = useState<StoryModes>(params.mode);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const { data } = useGetUserProfile();
 
   const navigator = useNavigation<StoryNavigatorProp>();
 
-  const isPremium = false;
+  const isPremium = data?.subscriptionStatus === "premium";
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {

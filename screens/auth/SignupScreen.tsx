@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -50,12 +51,16 @@ const SignupScreen = () => {
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
-              <Pressable
-                onPress={handleAppleAuth}
-                className="bg-white size-20 rounded-full flex justify-center items-center"
-              >
-                <Image source={require("../../assets/icons/apple-icon.png")} />
-              </Pressable>
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={handleAppleAuth}
+                  className="bg-white size-20 rounded-full flex justify-center items-center"
+                >
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
+                </Pressable>
+              )}
             </View>
             <Text style={{ ...styles.text, marginTop: 16 }}>
               If you already have an account{" "}

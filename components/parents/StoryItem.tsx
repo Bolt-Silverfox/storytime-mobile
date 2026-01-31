@@ -6,6 +6,7 @@ import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentF
 import { Story } from "../../types";
 import Icon from "../Icon";
 import { secondsToMinutes } from "../../utils/utils";
+import CustomImage from "../UI/CustomImage";
 
 type Proptypes = {
   onNavigate: () => void;
@@ -57,7 +58,7 @@ const StoryItem = ({
       <View
         className={`flex-1 w-full h-full rounded-2xl relative ${isLocked ? "bg-[#4807EC66]" : null}`}
       >
-        <Image
+        <CustomImage
           className=" h-[150px] w-full -z-10 rounded-xl bg-cover"
           source={{ uri: story.coverImageUrl }}
           height={150}

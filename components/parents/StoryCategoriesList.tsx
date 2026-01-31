@@ -46,9 +46,9 @@ const Item = ({ category, id }: { category: string; id: string }) => {
   return (
     <Pressable
       onPress={() => navigator.navigate("storiesByCategory", { category, id })}
-      className="h-16 px-5 w-[47%] flex justify-center items-center rounded-md"
+      className="h-16 br px-5 w-[47%] flex justify-center items-center rounded-xl"
       style={{
-        backgroundColor: `${colour}66`,
+        backgroundColor: `${colour}33`,
         borderBottomColor: colour,
         borderBottomWidth: 2,
       }}

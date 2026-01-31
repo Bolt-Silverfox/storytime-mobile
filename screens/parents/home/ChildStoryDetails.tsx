@@ -67,7 +67,7 @@ const ChildStoryDetails = () => {
           >
             <Pressable
               onPress={() => navigator.goBack()}
-              className="size-10 left-2 top-10 absolute flex justify-center items-center bg-primary rounded-full"
+              className="size-10 left-4 top-10 absolute flex justify-center items-center bg-primary rounded-full"
             >
               <Entypo name="chevron-thin-left" size={24} color="white" />
             </Pressable>
