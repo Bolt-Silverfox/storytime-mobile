@@ -18,10 +18,7 @@ export default function ImageWithFallback({
     <Image
       {...rest}
       source={source}
-      onError={() => {
-        console.warn("Image failed to load, using fallback:", sourceUri);
-        setError(true);
-      }}
+      onError={() => setError(true)}
       style={style}
     />
   );

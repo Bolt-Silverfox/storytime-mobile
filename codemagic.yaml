@@ -40,10 +40,10 @@ workflows:
     publishing:
       email:
         recipients:
-          - billmal071@gmail.com 
+          - billmal071@gmail.com
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
-          - ndianguimichelle@gmail.com 
+          - ndianguimichelle@gmail.com
         notify:
           success: true
           failure: true
@@ -86,10 +86,10 @@ workflows:
     publishing:
       email:
         recipients:
-          - billmal071@gmail.com 
+          - billmal071@gmail.com
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
-          - ndianguimichelle@gmail.com 
+          - ndianguimichelle@gmail.com
         notify:
           success: true
           failure: true
@@ -133,7 +133,7 @@ workflows:
           - billmal071@gmail.com
           - chinedu.design@gmail.com
           - xenon.nemrod@gmail.com
-          - ndianguimichelle@gmail.com 
+          - ndianguimichelle@gmail.com
         notify:
           success: true
           failure: true

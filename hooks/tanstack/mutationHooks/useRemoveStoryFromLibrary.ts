@@ -24,9 +24,12 @@ const useRemoveStoryFromLibrary = () => {
       return response.json();
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["library", "ongoingStories"] });
-      queryClient.invalidateQueries({ queryKey: ["library", "completedStories"] });
-
+      queryClient.invalidateQueries({
+        queryKey: ["library", "ongoingStories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["library", "completedStories"],
+      });
     },
     onError: (error: Error) => {
       Alert.alert(error.message || "Failed to remove story from library");

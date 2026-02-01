@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text } from "react-native";
+import { View, Text } from "react-native";
 
 const ErrorMessageDisplay = ({
   errorMessage,
@@ -9,19 +9,15 @@ const ErrorMessageDisplay = ({
     <View className="">
       {Array.isArray(errorMessage) && errorMessage.length ? (
         errorMessage.map((message) => (
-          <Text key={message} className="text-red-600 text-sm">
+          <Text key={message} className="text-sm text-red-600">
             {message}
           </Text>
         ))
       ) : (
-        <Text className="text-red-600 text-sm">{errorMessage}</Text>
+        <Text className="text-sm text-red-600">{errorMessage}</Text>
       )}
     </View>
   );
 };
 
 export default ErrorMessageDisplay;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});

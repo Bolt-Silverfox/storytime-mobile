@@ -10,7 +10,6 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import SuccessScreen from "../../components/UI/SuccessScreen";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const resetPasswordSchema = z
   .object({
@@ -50,10 +49,10 @@ const InputNewPassword = () => {
     });
 
     if (!result.success) {
-      const formatted: any = {};
+      const formatted: Errors = {};
 
       result.error.issues.forEach((err) => {
-        const field = err.path[0];
+        const field = err.path[0] as keyof ResetSchema;
         formatted[field] = err.message;
       });
 
@@ -70,57 +69,52 @@ const InputNewPassword = () => {
   };
 
   return (
-    <SafeAreaWrapper variant="solid">
-      <View className="flex flex-col mx-5 max-w-screen-md sm:mx-auto sm:w-full">
-        <Text className="font-[quilka] text-2xl text-center my-10">
-          Input your New Password
-        </Text>
-        <View style={styles.form}>
-          <ErrorMessageDisplay errorMessage={apiError} />
+    <View className="mx-5 flex max-w-screen-md flex-col sm:mx-auto sm:w-full">
+      <Text className="my-10 text-center font-[quilka] text-2xl">
+        Input your New Password
+      </Text>
+      <View style={styles.form}>
+        <ErrorMessageDisplay errorMessage={apiError} />
 
-          <PasswordInput
-            label="Password:"
-            setPassword={setPassword}
-            password={password}
-            placeholder="Enter your password"
-            errorMessage={errors.password}
-          />
-          <PasswordInput
-            label="Confirm Password:"
-            setPassword={setConfirmPassword}
-            password={confirmPassword}
-            placeholder="Confirm your password"
-            errorMessage={errors.confirmPassword}
-          />
-        </View>
-        <Pressable
-          onPress={onRegister}
-          style={[{ marginTop: 44 }, defaultStyles.button]}
-        >
-          <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
-        </Pressable>
-        <LoadingOverlay visible={isLoading} />
-        <SuccessScreen
-          visible={success}
-          message="Successful!"
-          secondaryMessage="Your password has been reset"
-          onProceed={() => navigator.navigate("auth", { screen: "login" })}
+        <PasswordInput
+          label="Password:"
+          setPassword={setPassword}
+          password={password}
+          placeholder="Enter your password"
+          errorMessage={errors.password}
+        />
+        <PasswordInput
+          label="Confirm Password:"
+          setPassword={setConfirmPassword}
+          password={confirmPassword}
+          placeholder="Confirm your password"
+          errorMessage={errors.confirmPassword}
         />
       </View>
-    </SafeAreaWrapper>
+      <Pressable
+        onPress={onRegister}
+        style={[styles.buttonMargin, defaultStyles.button]}
+      >
+        <Text style={styles.textWhite}>Proceed</Text>
+      </Pressable>
+      <LoadingOverlay visible={isLoading} />
+      <SuccessScreen
+        visible={success}
+        message="Successful!"
+        secondaryMessage="Your password has been reset"
+        onProceed={() => navigator.navigate("auth", { screen: "login" })}
+      />
+    </View>
   );
 };
 
 export default InputNewPassword;
 
 const styles = StyleSheet.create({
-  image: {
-    height: 20,
-    width: 20,
-  },
-  text: {
+  textWhite: {
     ...defaultStyles.defaultText,
     textAlign: "center",
+    color: "white",
   },
   form: {
     gap: 20,
@@ -128,12 +122,7 @@ const styles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: "center",
   },
-  formItem: {
-    gap: 4,
-  },
-  eyeImage: {
-    top: 37,
-    right: 16,
-    position: "absolute",
+  buttonMargin: {
+    marginTop: 44,
   },
 });

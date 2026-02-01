@@ -40,7 +40,9 @@ const useGenerateStoryAudio = ({
         try {
           const err = await request.json();
           errMsg = err.message ?? errMsg;
-        } catch {}
+        } catch {
+          // Ignore JSON parse errors, use default message
+        }
         throw new Error(errMsg);
       }
 
@@ -50,8 +52,8 @@ const useGenerateStoryAudio = ({
       return audio;
     },
 
-    onError: (err: any) => {
-      Alert.alert(err?.message ?? "Failed to generate audio");
+    onError: (err: Error) => {
+      Alert.alert(err.message ?? "Failed to generate audio");
     },
 
     onSuccess: (data) => {

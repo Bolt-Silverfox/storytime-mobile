@@ -1,11 +1,13 @@
 # Pull Request
 
 ## Description
+
 Please include a summary of the change and relevant context. List any dependencies that are required for this change.
 
 Fixes #(issue)
 
 ## Type of change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
@@ -13,12 +15,14 @@ Fixes #(issue)
 - [ ] Other (please describe):
 
 ## How Has This Been Tested?
+
 - [ ] Local development
 - [ ] Unit tests
 - [ ] E2E tests
 - [ ] Other (describe):
 
 ## Checklist
+
 - [ ] My code follows the style guidelines of this project
 - [ ] I have performed a self-review of my code
 - [ ] I have commented my code, particularly in hard-to-understand areas
@@ -30,4 +34,4 @@ Fixes #(issue)
 
 ## Screenshots (if applicable)
 
-## Additional context 
+## Additional context

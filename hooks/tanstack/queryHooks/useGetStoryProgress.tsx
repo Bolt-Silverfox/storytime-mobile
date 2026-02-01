@@ -48,7 +48,7 @@ const useGetStoryProgress = (storyId: string) => {
       }
     },
     select: (data) => data?.data,
-    enabled: !!user  && !!storyId,
+    enabled: !!user && !!storyId,
   });
 };
 

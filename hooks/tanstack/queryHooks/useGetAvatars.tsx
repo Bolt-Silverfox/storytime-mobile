@@ -4,7 +4,6 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { SystemAvatar } from "../../../types";
 
-
 type Response = {
   data: { data: SystemAvatar[] };
   success: boolean;

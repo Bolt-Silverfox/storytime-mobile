@@ -19,35 +19,35 @@ const EndOfQuizMessage = ({
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col p-4 gap-y-5 rounded-3xl bg-white">
+    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
       <Image
         source={require("../../../assets/images/medal_emoji.png")}
         className="size-[105px] self-center"
         alt="Congratulations emoji"
       />
-      <Text className="font-[quilka] text-xl text-center">
+      <Text className="text-center font-[quilka] text-xl">
         Congratulations on successfully completing a story
       </Text>
-      <Text className="font-[abeezee] text-center text-text text-base">
+      <Text className="text-center font-[abeezee] text-base text-text">
         You have walked through the eye of the needle and successfully completed
         "{storyTitle}" and answered the questions.
       </Text>
-      <View className="py-5 border-y border-y-border-light">
-        <View className="bg-blue rounded-3xl p-5 flex flex-col gap-y-4">
-          <Text className="font-[abeezee] text-white text-base">
+      <View className="border-y border-y-border-light py-5">
+        <View className="flex flex-col gap-y-4 rounded-3xl bg-blue p-5">
+          <Text className="font-[abeezee] text-base text-white">
             Your test result
           </Text>
-          <View className="flex flex-row justify-center gap-4 flex-wrap">
+          <View className="flex flex-row flex-wrap justify-center gap-4">
             {results.map((result, idx) => (
-              <View key={idx} className="flex items-center flex-col gap-y-2">
-                <Text className="font-[abeezee] text-center text-[#B89DFD] text-base">
+              <View key={idx} className="flex flex-col items-center gap-y-2">
+                <Text className="text-center font-[abeezee] text-base text-[#B89DFD]">
                   Question
                 </Text>
-                <Text className="font-[abeezee] text-center text-[#B89DFD] text-base">
+                <Text className="text-center font-[abeezee] text-base text-[#B89DFD]">
                   {idx + 1}
                 </Text>
                 <Pressable
-                  className={`size-10 rounded-full flex justify-center items-center ${result ? "bg-white" : "bg-red-600"}`}
+                  className={`flex size-10 items-center justify-center rounded-full ${result ? "bg-white" : "bg-red-600"}`}
                 >
                   <Icon
                     name={result ? "Check" : "X"}

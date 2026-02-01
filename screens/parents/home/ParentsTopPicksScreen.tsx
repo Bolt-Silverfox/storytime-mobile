@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { useQueryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const ParentsTopPicksScreen = () => {
   const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories()
+    useQueryRecommendedStories()
   );
 
   return (

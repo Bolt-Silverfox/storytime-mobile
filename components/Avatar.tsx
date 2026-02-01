@@ -23,7 +23,6 @@ export type AvatarProps = {
 const Avatar: React.FC<AvatarProps> = ({
   size = 110,
   edit,
-  initials,
   onPress,
   style,
 }) => {
@@ -54,20 +53,7 @@ const Avatar: React.FC<AvatarProps> = ({
   return (
     <Pressable
       onPress={onPress}
-      style={[
-        styles.addPhotoButton,
-        {
-          backgroundColor: "#EC4007",
-          borderWidth: 0,
-          marginBottom: 5,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        },
-        imageStyle,
-        style,
-      ]}
+      style={[styles.addPhotoButton, styles.avatarContainer, imageStyle, style]}
     >
       {Content}
       {!showImage && (
@@ -75,8 +61,8 @@ const Avatar: React.FC<AvatarProps> = ({
       )}
       {edit && (
         <View
-          className="absolute bottom-0 right-0 bg-white p-2 rounded-full"
-          style={{ zIndex: 11 }}
+          className="absolute bottom-0 right-0 rounded-full bg-white p-2"
+          style={styles.editIcon}
         >
           <FontAwesome5 name="edit" size={15} color="black" />
         </View>
@@ -86,12 +72,6 @@ const Avatar: React.FC<AvatarProps> = ({
 };
 
 const styles = StyleSheet.create({
-  container: {
-    overflow: "hidden",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
   addPhotoButton: {
     borderRadius: 56,
     shadowColor: "#000",
@@ -99,6 +79,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
     elevation: 5,
+  },
+  avatarContainer: {
+    backgroundColor: "#EC4007",
+    borderWidth: 0,
+    marginBottom: 5,
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  editIcon: {
+    zIndex: 11,
   },
 });
 

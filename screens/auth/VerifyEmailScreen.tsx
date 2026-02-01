@@ -12,16 +12,12 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
-const successMessages = [
-  "Otp resent successfully",
-  "Start enjoying amazing Storytime with your kids.",
-] as const;
-
-type SuccessMessageType = (typeof successMessages)[number];
+type SuccessMessageType =
+  | "Otp resent successfully"
+  | "Start enjoying amazing Storytime with your kids.";
 
 const EXPIRY_KEY = "verify-email-otp_expiry";
 const OTP_DURATION = 60;
@@ -81,7 +77,7 @@ const VerifyEmailScreen = () => {
 
         const remaining = Math.max(
           0,
-          Math.floor((Number(stored) - Date.now()) / 1000),
+          Math.floor((Number(stored) - Date.now()) / 1000)
         );
 
         setCountdown(remaining);
@@ -97,99 +93,86 @@ const VerifyEmailScreen = () => {
   }, []);
 
   return (
-    <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1">
-        <PageTitle goBack={() => navigator.goBack()} title="" />
-        <View style={defaultStyles.screen}>
-          <View style={styles.textContainer}>
-            <Text style={defaultStyles.heading}>Verify your Email</Text>
-            <Text style={styles.text}>
-              Enter the verification code sent to your email{" "}
-              {route.params.email}
-            </Text>
-          </View>
-          <ErrorMessageDisplay errorMessage={error} />
-          <View style={styles.otpWrapper}>
-            <OtpInput
-              numberOfDigits={6}
-              onTextChange={(text) => setOtp(text)}
-              theme={{
-                containerStyle: styles.otpContainer,
-                pinCodeContainerStyle: styles.box,
-                pinCodeTextStyle: styles.text,
-                focusedPinCodeContainerStyle: styles.boxFocused,
-              }}
-              focusColor="blue"
-            />
-            <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Text
-              onPress={handleResendEmail}
-              disabled={countDown > 0}
-              className={`font-[abeezee] text-base my-11 text-center  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-            >
-              Resend OTP
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() => {
-              Keyboard.dismiss();
-              verifyEmail({
-                token: otp,
-                setErrorCb: setError,
-                onSuccess: () =>
-                  setSuccesMessage(
-                    "Start enjoying amazing Storytime with your kids.",
-                  ),
-              });
-            }}
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={{ ...styles.text, color: "white" }}>
-              {isLoading ? "Loading..." : "Verify Email"}
-            </Text>
-          </Pressable>
+    <View className="flex flex-1">
+      <PageTitle goBack={() => navigator.goBack()} title="" />
+      <View style={defaultStyles.screen}>
+        <View style={styles.textContainer}>
+          <Text style={defaultStyles.heading}>Verify your Email</Text>
+          <Text style={styles.text}>
+            Enter the verification code sent to your email {route.params.email}
+          </Text>
         </View>
-        <SuccessScreen
-          message="Congratulations, your account has been created succesfully!"
-          secondaryMessage={successMessage!}
-          visible={
-            successMessage ===
-            "Start enjoying amazing Storytime with your kids."
+        <ErrorMessageDisplay errorMessage={error} />
+        <View style={styles.otpWrapper}>
+          <OtpInput
+            numberOfDigits={6}
+            onTextChange={(text) => setOtp(text)}
+            theme={{
+              containerStyle: styles.otpContainer,
+              pinCodeContainerStyle: styles.box,
+              pinCodeTextStyle: styles.text,
+              focusedPinCodeContainerStyle: styles.boxFocused,
+            }}
+            focusColor="blue"
+          />
+          <Text style={styles.countDown}>{formatTime(countDown)}</Text>
+          <Text
+            onPress={handleResendEmail}
+            disabled={countDown > 0}
+            className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+          >
+            Resend OTP
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() => {
+            Keyboard.dismiss();
+            verifyEmail({
+              token: otp,
+              setErrorCb: setError,
+              onSuccess: () =>
+                setSuccesMessage(
+                  "Start enjoying amazing Storytime with your kids."
+                ),
+            });
+          }}
+          style={
+            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
           }
-          onProceed={onSuccessCb}
-        />
+        >
+          <Text style={styles.textWhite}>
+            {isLoading ? "Loading..." : "Verify Email"}
+          </Text>
+        </Pressable>
       </View>
-    </SafeAreaWrapper>
+      <SuccessScreen
+        message="Congratulations, your account has been created succesfully!"
+        secondaryMessage={successMessage!}
+        visible={
+          successMessage === "Start enjoying amazing Storytime with your kids."
+        }
+        onProceed={onSuccessCb}
+      />
+    </View>
   );
 };
 
 export default VerifyEmailScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    height: 20,
-    width: 20,
-  },
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
   },
+  textWhite: {
+    ...defaultStyles.defaultText,
+    textAlign: "center",
+    color: "white",
+  },
   textContainer: {
     gap: 8,
     marginBottom: 56,
-  },
-  form: {
-    gap: 20,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-    marginBottom: 32,
-  },
-  formItem: {
-    gap: 4,
   },
   otpWrapper: {
     width: "100%",

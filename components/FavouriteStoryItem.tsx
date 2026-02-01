@@ -23,7 +23,7 @@ const FavouriteStoryItem = ({
   return (
     <Pressable
       onPress={onNavigate}
-      className="flex flex-row p-2 gap-x-2 bg-white border border-border-lighter rounded-3xl"
+      className="flex flex-row gap-x-2 rounded-3xl border border-border-lighter bg-white p-2"
     >
       <Image
         source={{ uri: story.coverImageUrl }}
@@ -31,19 +31,17 @@ const FavouriteStoryItem = ({
         width={186}
         className="rounded-3xl"
       />
-      <View className="flex flex-col gap-y-2 flex-1">
-        <Text className="font-[abeezee] text-black text-sm">{story.title}</Text>
-        <Text className="font-[abeezee] text-text text-sm">
+      <View className="flex flex-1 flex-col gap-y-2">
+        <Text className="font-[abeezee] text-sm text-black">{story.title}</Text>
+        <Text className="font-[abeezee] text-sm text-text">
           {story.description}
         </Text>
-        <Text className="font-[abeezee] text-text text-sm">
+        <Text className="font-[abeezee] text-sm text-text">
           {story.ageRange} years
         </Text>
-        <Pressable
-          onPress={() => setActiveStory(story)}
-          className="size-11 self-end bg-black/5 flex justify-center items-center rounded-full"
-        >
+        <Pressable className="flex size-11 items-center justify-center self-end rounded-full bg-black/5">
           <FontAwesome
+            onPress={() => setActiveStory(story)}
             name="heart"
             size={24}
             color="red"
