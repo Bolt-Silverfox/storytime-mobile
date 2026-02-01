@@ -73,7 +73,7 @@ const GroupedStoriesContainer = ({
         >
           {isImageLoading && (
             <View className="absolute inset-0 bg-black/40 items-center justify-center">
-              <ActivityIndicator size="large" color="EC4007" />
+              <ActivityIndicator size="large" color="#EC4007" />
             </View>
           )}
 

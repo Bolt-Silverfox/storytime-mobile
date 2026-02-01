@@ -3,7 +3,6 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import CustomText from "./CustomText";
@@ -71,7 +70,7 @@ const MenuItem: FC<PropTypes> = ({
     );
   }
   return (
-    <TouchableOpacity onPress={onPress}>
+    <Pressable onPress={onPress}>
       <View
         style={[
           styles.menuItem,
@@ -98,7 +97,7 @@ const MenuItem: FC<PropTypes> = ({
           <ChevronRight strokeWidth={1.5} />
         </CustomText>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

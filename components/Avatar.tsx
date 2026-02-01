@@ -4,9 +4,9 @@ import React from "react";
 import {
   Image,
   ImageStyle,
+  Pressable,
   StyleProp,
   StyleSheet,
-  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
@@ -52,7 +52,7 @@ const Avatar: React.FC<AvatarProps> = ({
   );
 
   return (
-    <TouchableOpacity
+    <Pressable
       onPress={onPress}
       style={[
         styles.addPhotoButton,
@@ -81,7 +81,7 @@ const Avatar: React.FC<AvatarProps> = ({
           <FontAwesome5 name="edit" size={15} color="black" />
         </View>
       )}
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 

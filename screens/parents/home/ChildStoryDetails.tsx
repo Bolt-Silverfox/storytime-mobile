@@ -1,3 +1,4 @@
+import Entypo from "@expo/vector-icons/Entypo";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -13,8 +14,12 @@ import Icon from "../../../components/Icon";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../../constants/ui";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import {
   StoryNavigatorParamList,
@@ -22,10 +27,6 @@ import {
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
-import SubscriptionModal from "../../../components/modals/SubscriptionModal";
-import Entypo from "@expo/vector-icons/Entypo";
-import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
-import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -46,7 +47,7 @@ const ChildStoryDetails = () => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   const isPremium =
-    user?.subscriptionStatus === "active" || user?.role === "admin";
+    user?.subscriptionStatus === SUBSCRIPTION_STATUS.active || user?.role === USER_ROLES.admin;
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
@@ -96,7 +97,7 @@ const ChildStoryDetails = () => {
                   Category
                 </Text>
                 <Text className="font-[abeezee] capitalize text-xs text-purple-light text-center">
-                  {data.categories[0].name}
+                  {data.categories[0]?.name ?? "Uncategorized"}
                 </Text>
               </View>
             </View>
@@ -189,11 +190,13 @@ const ChildStoryDetails = () => {
             text="Start Reading"
             disabled={!storyMode}
           />
-          <CustomButton
-            onPress={() => setStoryMode("interactive")}
-            text="Override premium (TEST ONLY)"
-            bgColor="#4807EC"
-          />
+          {__DEV__ && (
+            <CustomButton
+              onPress={() => setStoryMode("interactive")}
+              text="Override premium (TEST ONLY)"
+              bgColor="#4807EC"
+            />
+          )}
         </View>
         <AboutStoryModesModal
           isOpen={showAboutModal}

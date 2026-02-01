@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { ERROR_MESSAGES, QUERY_KEYS } from "../../../constants/ui";
 import { FavouriteStory, QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
-import { Alert } from "react-native";
 
 const useToggleFavourites = ({
   story,
@@ -15,15 +16,15 @@ const useToggleFavourites = ({
 }) => {
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
-  const queryKey = ["parentsFavourites", data?.id] as const;
-  const previousData: QueryResponse<FavouriteStory[]> | undefined =
-    queryClient.getQueryData(queryKey);
+  const queryKey = [QUERY_KEYS.parentsFavourites, data?.id] as const;
 
   return useMutation({
     mutationFn: async () => {
       await queryClient.cancelQueries({ queryKey });
 
-      const cachedData = previousData?.data ?? [];
+      const currentData =
+        queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
+      const cachedData = currentData?.data ?? [];
       const isLiked = cachedData.some(
         (stories) => stories.storyId === story.storyId,
       );
@@ -36,6 +37,9 @@ const useToggleFavourites = ({
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
+
+      const previousData =
+        queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
 
       if (!previousData?.data) return { previousData };
 
@@ -58,33 +62,31 @@ const useToggleFavourites = ({
     onSuccess: () => {
       onSuccess?.();
     },
-    onError: (err, _, mutationResult) => {
-      if (mutationResult?.previousData) {
-        queryClient.setQueryData(queryKey, mutationResult.previousData);
+    onError: (err, _, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(queryKey, context.previousData);
       }
       Alert.alert(
         getErrorMessage(err),
-        "Failed to add/remove story from favourites",
+        ERROR_MESSAGES.favourites.toggleFailed,
       );
     },
   });
 };
 
 const deleteFromFavourites = async (storyId: string) => {
-  {
-    try {
-      const request = await apiFetch(
-        `${BASE_URL}/parent-favorites/${storyId}`,
-        {
-          method: "DELETE",
-        },
-      );
-      const response: QueryResponse = await request.json();
-      if (!response.success) throw new Error(response.message);
-      return response;
-    } catch (err) {
-      throw new Error(getErrorMessage(err));
-    }
+  try {
+    const request = await apiFetch(
+      `${BASE_URL}/parent-favorites/${storyId}`,
+      {
+        method: "DELETE",
+      },
+    );
+    const response: QueryResponse = await request.json();
+    if (!response.success) throw new Error(response.message);
+    return response;
+  } catch (err) {
+    throw new Error(getErrorMessage(err));
   }
 };
 

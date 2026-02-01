@@ -85,10 +85,11 @@ const StoryItem = ({
                 color: categoryColour,
               }}
             >
-              {story.categories[0].name.length > 15
-                ? story.categories[0].name.split("").slice(0, 14).join("") +
-                  "..."
-                : story.categories[0].name}
+              {story.categories?.[0]?.name
+                ? story.categories[0].name.length > 15
+                  ? story.categories[0].name.slice(0, 14) + "..."
+                  : story.categories[0].name
+                : "Uncategorized"}
             </Text>
           </View>
           <View className="flex flex-row gap-x-1 items-center">
