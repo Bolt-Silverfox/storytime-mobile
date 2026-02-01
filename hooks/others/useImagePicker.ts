@@ -56,12 +56,6 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      console.log("Camera asset info:", {
-        fileSize: result.assets[0].fileSize,
-        uri: result.assets[0].uri,
-        width: result.assets[0].width,
-        height: result.assets[0].height,
-      });
       if (result.assets[0].fileSize && result.assets[0].fileSize > 3000000) {
         Alert.alert("Size Exceeded", "Maximum image size is 3MB");
         onClose();

@@ -7,7 +7,6 @@ import {
   StyleSheet,
 } from "react-native";
 import React, { useState } from "react";
-import { ChevronLeft } from "lucide-react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { useNavigation } from "@react-navigation/native";
 import defaultStyles from "../../../styles";
@@ -61,25 +60,22 @@ export default function DeleteAccount() {
       <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
       <ScrollView className="mx-4" showsVerticalScrollIndicator={false}>
         <View className="mt-12  items-center">
-          <Text style={[defaultStyles.heading, { fontSize: 20 }]}>
+          <Text style={[defaultStyles.heading, styles.headingFontSize]}>
             We are sorry to see you go
           </Text>
           <Text
-            style={[defaultStyles.defaultText, { fontSize: 16 }]}
-            className="text-center mt-4 max-w-[311px]"
+            style={[defaultStyles.defaultText, styles.textFontSize]}
+            className="mt-4 max-w-[311px] text-center"
           >
             Help us improve by telling us how we can make Storytime better{" "}
           </Text>
         </View>
-        <View className="gap-8 mt-8  ">
-          {deleteCheckList.map((reason, i) => (
+        <View className="mt-8 gap-8  ">
+          {deleteCheckList.map((reason) => (
             <View key={reason.id} className="flex-row justify-between ">
               <Text
                 className=" "
-                style={[
-                  defaultStyles.defaultText,
-                  { color: "#333333", fontSize: 16 },
-                ]}
+                style={[defaultStyles.defaultText, styles.textColor]}
               >
                 {reason.reason}
               </Text>
@@ -94,28 +90,26 @@ export default function DeleteAccount() {
         {isOthersChecked && (
           <View style={styles.formItem} className="mt-8">
             <TextInput
-              style={{
-                height: 150,
-                maxHeight: 140,
-                textAlignVertical: "top",
-              }}
+              style={styles.textArea}
               placeholder="Please let us know about your experience and how to improve"
               onChangeText={setMessage}
               value={message}
-              className={`border rounded-[20px]  font-[abeezee] justify-center min-h-[40] text-base text-black relative px-4 ${errors.message ? "border-red-600" : "border-border"}`}
+              className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
               placeholderTextColor={errors.message ? "red" : colours.text}
               multiline
             />
             {errors.message && (
-              <Text className="text-red-600 text-sm mt-1">{errors.message}</Text>
+              <Text className="mt-1 text-sm text-red-600">
+                {errors.message}
+              </Text>
             )}
           </View>
         )}
-        <View className="flex-1 justify-center  gap-6 mt-8 ">
+        <View className="mt-8 flex-1 justify-center gap-6">
           <Pressable onPress={handleNext}>
             <Text
-              style={[defaultStyles.defaultText, { color: "white" }]}
-              className={` rounded-[99px] py-3 px-2 text-center mx-auto w-full ${true ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
+              style={[defaultStyles.defaultText, styles.whiteText]}
+              className="mx-auto w-full rounded-[99px] bg-[#EC4007] px-2 py-3 text-center"
             >
               Next
             </Text>
@@ -128,8 +122,8 @@ export default function DeleteAccount() {
             }}
           >
             <Text
-              style={[defaultStyles.defaultText, { color: "black" }]}
-              className="border-[#212121] border-[0.5px]  rounded-[99px] py-3 px-2 text-center mx-auto w-full"
+              style={[defaultStyles.defaultText, styles.blackText]}
+              className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
             >
               Cancel
             </Text>
@@ -180,21 +174,28 @@ const deleteReasons: DeleteAcountChecklist[] = [
 ];
 
 const styles = StyleSheet.create({
-  text: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-  },
-  textContainer: {
-    gap: 8,
-    marginBottom: 56,
-  },
-  form: {
-    gap: 20,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-  },
   formItem: {
     gap: 4,
+  },
+  headingFontSize: {
+    fontSize: 20,
+  },
+  textFontSize: {
+    fontSize: 16,
+  },
+  textColor: {
+    color: "#333333",
+    fontSize: 16,
+  },
+  textArea: {
+    height: 150,
+    maxHeight: 140,
+    textAlignVertical: "top",
+  },
+  whiteText: {
+    color: "white",
+  },
+  blackText: {
+    color: "black",
   },
 });

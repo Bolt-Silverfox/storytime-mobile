@@ -16,7 +16,7 @@ const useUploadVoice = (onSuccess?: () => void) => {
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error, try again");
       }
-      console.log("upload voice data", response);
+      return response;
     },
     onSuccess: () => {
       onSuccess?.();

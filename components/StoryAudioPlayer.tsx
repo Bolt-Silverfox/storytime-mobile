@@ -23,7 +23,9 @@ const StoryAudioPlayer = ({
     voiceId: selectedVoice || "",
     enabled: !!selectedVoice,
   });
-  const player = useAudioPlayer(selectedVoice ? (data?.audioUrl ?? audioUrl) : audioUrl);
+  const player = useAudioPlayer(
+    selectedVoice ? (data?.audioUrl ?? audioUrl) : audioUrl
+  );
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
@@ -53,11 +55,11 @@ const StoryAudioPlayer = ({
     <Pressable
       disabled={isPending}
       onPress={playAudio}
-      className={`${isPending || !isSubscribed ? "bg-white/50" : " bg-white"} rounded-full h-20 flex flex-row justify-between items-center px-2`}
+      className={`${isPending || !isSubscribed ? "bg-white/50" : " bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
     >
-      <View className="flex flex-row gap-x-2 items-center">
+      <View className="flex flex-row items-center gap-x-2">
         <View
-          className={`size-12 rounded-full flex flex-col justify-center items-center ${isSubscribed ? "bg-blue" : "bg-blue/70"}`}
+          className={`flex size-12 flex-col items-center justify-center rounded-full ${isSubscribed ? "bg-blue" : "bg-blue/70"}`}
         >
           <Ionicons name="volume-medium-outline" size={24} color="white" />
         </View>
@@ -71,12 +73,12 @@ const StoryAudioPlayer = ({
               : VOICE_LABELS.play}
         </Text>
       </View>
-      <View className="flex flex-row gap-x-3 items-center">
+      <View className="flex flex-row items-center gap-x-3">
         <View
           style={{ backgroundColor: COLORS.premiumBadge.background }}
-          className="h-6 px-3 flex justify-center items-center rounded-full"
+          className="flex h-6 items-center justify-center rounded-full px-3"
         >
-          <Text className="font-[abeezee] text-xs text-center text-black">
+          <Text className="text-center font-[abeezee] text-xs text-black">
             {BADGE_LABELS.premium}
           </Text>
         </View>

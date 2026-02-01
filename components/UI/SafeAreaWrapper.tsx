@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+import { StyleSheet } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 type SafeAreaWrapperProps = {
@@ -16,14 +17,17 @@ const SafeAreaWrapper = ({
 }: SafeAreaWrapperProps) => {
   return (
     <SafeAreaProvider
-      style={{
-        flex: 1,
-        backgroundColor: variant === "solid" ? backgroundColor : "transparent",
-      }}
+      style={[
+        styles.container,
+        {
+          backgroundColor:
+            variant === "solid" ? backgroundColor : "transparent",
+        },
+      ]}
     >
       <StatusBar style={statusBarStyle} />
       <SafeAreaView
-        style={{ flex: 1 }}
+        style={styles.container}
         edges={
           variant === "transparent" ? ["left", "right", "bottom"] : undefined
         }
@@ -35,3 +39,9 @@ const SafeAreaWrapper = ({
 };
 
 export default SafeAreaWrapper;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+});

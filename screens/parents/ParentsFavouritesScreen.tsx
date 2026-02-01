@@ -7,8 +7,7 @@ import FavouriteStoryItem from "../../components/FavouriteStoryItem";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { AgeGroupType, FavouriteStory } from "../../types";
 
 type AgeFilter = AgeGroupType | "ALL";
@@ -26,13 +25,12 @@ const AGE_FILTERS: readonly AgeRangeFilter[] = [
 
 const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
-    queryParentsFavourites(),
+    useQueryParentsFavourites()
   );
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
+  const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [activeFilterOption, setActiveFilterOption] = useState<
-    "search" | "age" | null
-  >(null);
+  const [showFilter, setShowFilter] = useState(false);
   const [selectedAge, setSelectedAge] = useState<AgeFilter>("ALL");
 
   if (error)
@@ -51,7 +49,7 @@ const ParentsFavouritesScreen = () => {
 
     const filter = AGE_FILTERS.find(
       (f): f is Extract<AgeRangeFilter, { min: number }> =>
-        f.key === selectedAge && "min" in f && "max" in f,
+        f.key === selectedAge && "min" in f && "max" in f
     );
 
     if (!filter) return true;
@@ -64,125 +62,116 @@ const ParentsFavouritesScreen = () => {
   const showNoData = favourites.length === 0;
   const showNoMatches = favourites.length > 0 && filteredStories.length === 0;
 
-  const resetFilters = () => {
-    setSelectedAge("ALL");
-    setSearchQuery("");
-  };
-
   return (
-    <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bgLight">
-        <View className="bg-white px-4 border-b border-b-border-lighter pt-2 pb-5 flex flex-row items-center justify-between">
-          <Text className="text-xl text-black font-[abeezee] flex-1">
-            Favourites
-          </Text>
-          <View className="flex flex-row gap-x-5 items-center">
-            <Icon
-              name={activeFilterOption === "age" ? "X" : "Funnel"}
-              onPress={() => {
-                setActiveFilterOption((a) => (a === "age" ? null : "age"));
-                resetFilters();
-              }}
-              color={activeFilterOption === "age" ? "red" : "black"}
-            />
-            <Icon
-              name={activeFilterOption === "search" ? "X" : "Search"}
-              onPress={() => {
-                setActiveFilterOption((a) =>
-                  a === "search" ? null : "search",
-                );
-                resetFilters();
-              }}
-              color={activeFilterOption === "search" ? "red" : "black"}
-            />
-          </View>
+    <View className="flex-1 bg-bgLight">
+      <View className="flex flex-row items-center justify-between border-b border-b-border-lighter bg-white px-4 py-5">
+        <Text className="flex-1 font-[abeezee] text-xl text-black">
+          Favourites
+        </Text>
+        <View className="flex flex-row items-center gap-x-5">
+          <Icon
+            name="Funnel"
+            onPress={() => {
+              setShowFilter((s) => !s);
+              setShowSearch(false);
+            }}
+          />
+          <Icon
+            name="Search"
+            onPress={() => {
+              setShowSearch((s) => !s);
+              setShowFilter(false);
+              setSelectedAge("ALL");
+              if (showSearch) setSearchQuery("");
+            }}
+          />
         </View>
-        {activeFilterOption === "age" && (
-          <View className="py-3">
-            <ScrollView
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              contentContainerClassName="flex-row gap-x-2 px-4"
-            >
-              {AGE_FILTERS.map((age) => {
-                const active = age.key === selectedAge;
+      </View>
+      {showFilter && (
+        <View className="py-3">
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerClassName="flex-row gap-x-2 px-4"
+          >
+            {AGE_FILTERS.map((age) => {
+              const active = age.key === selectedAge;
 
-                return (
-                  <Pressable
-                    key={age.key}
-                    onPress={() => setSelectedAge(age.key)}
-                    className={`h-10 px-6 rounded-full justify-center items-center ${
-                      active ? "bg-blue" : "bg-white border border-border"
+              return (
+                <Pressable
+                  key={age.key}
+                  onPress={() => setSelectedAge(age.key)}
+                  className={`h-10 items-center justify-center rounded-full px-6 ${
+                    active ? "bg-blue" : "border border-border bg-white"
+                  }`}
+                >
+                  <Text
+                    className={`font-[abeezee] text-base ${
+                      active ? "text-white" : "text-text"
                     }`}
                   >
-                    <Text
-                      className={`font-[abeezee] text-base ${
-                        active ? "text-white" : "text-text"
-                      }`}
-                    >
-                      {age.label}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </ScrollView>
-          </View>
-        )}
-        {activeFilterOption === "search" && (
-          <View className=" px-4 py-3 ">
-            <View className="flex-row items-center rounded-full border px-4 py-1">
-              <Icon name="Search" />
-              <TextInput
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="Search favourites..."
-                placeholderTextColor="#666"
-                className="flex-1 text-base font-[abeezee]"
-                returnKeyType="search"
-              />
-
-              {searchQuery.length > 0 && (
-                <Pressable onPress={() => setSearchQuery("")}>
-                  <Text className="text-lg px-2">✕</Text>
+                    {age.label}
+                  </Text>
                 </Pressable>
-              )}
-            </View>
-          </View>
-        )}
-
-        {/* BODY */}
-        {showNoData ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No Favourites added yet"
-            secondaryMessage="You do not have any favourite stories added yet"
-          />
-        ) : showNoMatches ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No matching favourites"
-            secondaryMessage="Try changing filters or search"
-          />
-        ) : (
-          <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
-            {filteredStories.map((story) => (
-              <FavouriteStoryItem
-                key={story.id}
-                story={story}
-                setActiveStory={setActiveItem}
-              />
-            ))}
+              );
+            })}
           </ScrollView>
-        )}
-        {activeItem && (
-          <FavouriteStoriesModal
-            isOpen={activeItem !== null}
-            onClose={() => setActiveItem(null)}
-            story={activeItem}
-          />
-        )}
-      </View>
-    </SafeAreaWrapper>
+        </View>
+      )}
+      {showSearch && (
+        <View className=" px-4 py-3 ">
+          <View className="flex-row items-center rounded-full border px-4 py-1">
+            <Icon name="Search" />
+            <TextInput
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              placeholder="Search favourites..."
+              placeholderTextColor="#666"
+              className="flex-1 font-[abeezee] text-base"
+              returnKeyType="search"
+            />
+
+            {searchQuery.length > 0 && (
+              <Pressable onPress={() => setSearchQuery("")}>
+                <Text className="px-2 text-lg">✕</Text>
+              </Pressable>
+            )}
+          </View>
+        </View>
+      )}
+
+      {/* BODY */}
+      {showNoData ? (
+        <CustomEmptyState
+          url={require("../../assets/images/favourites-empty-state.png")}
+          message="No Favourites added yet"
+          secondaryMessage="You do not have any favourite stories added yet"
+        />
+      ) : showNoMatches ? (
+        <CustomEmptyState
+          url={require("../../assets/images/favourites-empty-state.png")}
+          message="No matching favourites"
+          secondaryMessage="Try changing filters or search"
+        />
+      ) : (
+        <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
+          {filteredStories.map((story) => (
+            <FavouriteStoryItem
+              key={story.id}
+              story={story}
+              setActiveStory={setActiveItem}
+            />
+          ))}
+        </ScrollView>
+      )}
+      {activeItem && (
+        <FavouriteStoriesModal
+          isOpen={activeItem !== null}
+          onClose={() => setActiveItem(null)}
+          story={activeItem}
+        />
+      )}
+    </View>
   );
 };
 

@@ -45,7 +45,7 @@ const CountriesSelectionModal = ({
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <TextInput
-        className="rounded-full h-10 flex flex-col justify-center border mt-16"
+        className="mt-16 flex h-10 flex-col justify-center rounded-full border"
         onChangeText={setSearchValue}
         placeholder="Search country"
       />
@@ -58,16 +58,16 @@ const CountriesSelectionModal = ({
             <Pressable
               onPress={() => selectCountry(item.name.common)}
               key={item.name.common}
-              className="py-4 px-3"
+              className="px-3 py-4"
             >
               <Text>{item.name.common}</Text>
             </Pressable>
           )}
         />
       ) : (
-        <Text className="text-sm font-[abeezee] text-center mt-5">
+        <Text className="mt-5 text-center font-[abeezee] text-sm">
           No results found for{" "}
-          <Text className="text-xl font-[quilka] text-primary">
+          <Text className="font-[quilka] text-xl text-primary">
             {searchValue}
           </Text>
         </Text>

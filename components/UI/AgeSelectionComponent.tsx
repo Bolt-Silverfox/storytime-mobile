@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Pressable, ScrollView, StyleSheet, Text } from "react-native";
+import { Pressable, ScrollView, Text } from "react-native";
 import { ageGroups, AgeGroupType } from "../../types";
 
 type Props = {
@@ -21,7 +21,7 @@ const AgeSelectionComponent = ({
         <Pressable
           key={age}
           onPress={() => setSelectedAgeGroup(age)}
-          className={`h-10 w-[126px] flex flex-row justify-center items-center rounded-full ${age === selectedAgeGroup ? "bg-blue" : "bg-white border "}`}
+          className={`flex h-10 w-[126px] flex-row items-center justify-center rounded-full ${age === selectedAgeGroup ? "bg-blue" : "border bg-white "}`}
         >
           <Text
             className={`font-[abeezee] text-base ${age === selectedAgeGroup ? "text-white" : "text-text"}`}
@@ -35,7 +35,3 @@ const AgeSelectionComponent = ({
 };
 
 export default AgeSelectionComponent;
-
-const styles = StyleSheet.create({
-  screen: { flex: 1 },
-});

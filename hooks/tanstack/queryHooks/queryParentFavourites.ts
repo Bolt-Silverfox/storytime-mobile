@@ -1,11 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import { FavouriteStory, QueryResponse, Story } from "../../../types";
+import { FavouriteStory, QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "./useGetUserProfile";
 
-const queryParentsFavourites = () => {
+const useQueryParentsFavourites = () => {
   const { data } = useGetUserProfile();
   return queryOptions({
     queryKey: ["parentsFavourites", data?.id],
@@ -27,4 +27,4 @@ const queryParentsFavourites = () => {
   });
 };
 
-export default queryParentsFavourites;
+export default useQueryParentsFavourites;

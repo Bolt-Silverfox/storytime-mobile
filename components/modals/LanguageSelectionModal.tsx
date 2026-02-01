@@ -50,7 +50,7 @@ const LanguageSelectionModal = ({
           <Pressable
             onPress={() => selectLanguage(item)}
             key={item.code}
-            className="py-4 px-3"
+            className="px-3 py-4"
           >
             <Text className="font-[abeezee] capitalize">{item.name}</Text>
           </Pressable>

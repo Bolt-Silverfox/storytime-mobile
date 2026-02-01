@@ -54,20 +54,20 @@ const StoryComponent = ({
         <ImageBackground
           source={{ uri: data.coverImageUrl }}
           resizeMode="cover"
-          className="p-4 flex-1 pt-12 flex flex-col "
+          className="flex flex-1 flex-col p-4 pt-12 "
         >
-          <View className="flex flex-row justify-between items-center">
+          <View className="flex flex-row items-center justify-between">
             <Pressable
               onPress={() =>
                 navigator.reset({ index: 0, routes: [{ name: "parents" }] })
               }
-              className="bg-blue size-12 rounded-full flex flex-col justify-center items-center"
+              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
             >
               <FontAwesome6 name="house" size={20} color="white" />
             </Pressable>
             <Pressable
               onPress={() => setIsOptionsModalOpen(true)}
-              className="bg-blue size-12 rounded-full flex flex-col justify-center items-center"
+              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
             >
               <FontAwesome6 name="ellipsis" size={20} color="white" />
             </Pressable>

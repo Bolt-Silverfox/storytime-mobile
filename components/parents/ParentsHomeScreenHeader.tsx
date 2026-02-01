@@ -18,7 +18,7 @@ const ParentsHomeScreenHeader = () => {
   return (
     <View
       aria-labelledby="user avatar container"
-      className="flex flex-row bg-white pb-4 border-b border-b-border-lighter items-center gap-2 sticky top-0"
+      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-4"
     >
       <View>
         <Avatar
@@ -37,20 +37,20 @@ const ParentsHomeScreenHeader = () => {
           {getGreeting()}
         </Text>
       </View>
-      <View className="flex flex-row gap-x-3 items-center">
+      <View className="flex flex-row items-center gap-x-3">
         {!isUserSubscribed && (
           <Pressable
-            className="rounded-full overflow-hidden"
+            className="overflow-hidden rounded-full"
             onPress={() => protectedNav.navigate("getPremium")}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="flex flex-row items-center gap-x-1.5 py-3 px-4"
+              className="flex flex-row items-center gap-x-1.5 px-4 py-3"
             >
               <Icon name="Crown" color="white" />
-              <Text className="text-white font-[abeezee]">Get Premium</Text>
+              <Text className="font-[abeezee] text-white">Get Premium</Text>
             </LinearGradient>
           </Pressable>
         )}
@@ -58,7 +58,7 @@ const ParentsHomeScreenHeader = () => {
           onPress={() =>
             protectedNav.navigate("notification", { screen: "index" })
           }
-          className="rounded-full flex justify-center items-center size-11 bg-white border border-border-lighter "
+          className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
         >
           <Icon name="Bell" />
         </Pressable>

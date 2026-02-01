@@ -1,6 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
@@ -11,7 +11,6 @@ import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import PageTitle from "../../components/PageTitle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
@@ -62,7 +61,7 @@ const ConfirmResetPasswordTokenScreen = () => {
 
         const remaining = Math.max(
           0,
-          Math.floor((Number(stored) - Date.now()) / 1000),
+          Math.floor((Number(stored) - Date.now()) / 1000)
         );
 
         setCountdown(remaining);
@@ -78,102 +77,89 @@ const ConfirmResetPasswordTokenScreen = () => {
   }, []);
 
   return (
-    <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1">
-        <PageTitle goBack={() => navigator.goBack()} title="" />
-        <View style={defaultStyles.screen}>
-          <View style={styles.textContainer}>
-            {successMessage.length > 0 && (
-              <Text className="font-[abeezee] text-xl text-primary uppercase text-center">
-                {successMessage}
-              </Text>
-            )}
-            <Text style={defaultStyles.heading}>Reset your password</Text>
-            <Text style={styles.text}>
-              Enter the verification code sent to your emails{" "}
-              {route.params.email}
+    <View className="flex flex-1">
+      <PageTitle goBack={() => navigator.goBack()} title="" />
+      <View style={defaultStyles.screen}>
+        <View style={styles.textContainer}>
+          {successMessage.length > 0 && (
+            <Text className="text-center font-[abeezee] text-xl uppercase text-primary">
+              {successMessage}
             </Text>
-          </View>
-          <ErrorMessageDisplay errorMessage={error} />
-          <View style={styles.container}>
-            <OtpInput
-              numberOfDigits={6}
-              onTextChange={(text) => setOtp(text)}
-              onFilled={(text) => console.log("OTP:", text)}
-              theme={{
-                containerStyle: { width: "auto" },
-                pinCodeContainerStyle: styles.box,
-                pinCodeTextStyle: styles.text,
-                focusedPinCodeContainerStyle: styles.boxFocused,
-              }}
-              focusColor="blue"
-            />
-            <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Text
-              onPress={handleResendEmail}
-              disabled={countDown > 0}
-              className={`font-[abeezee] text-base my-11 text-center  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-            >
-              Resend OTP
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() =>
-              validatePasswordReset({
-                email: route.params.email.trim(),
-                token: otp,
-                setErrorCb: setError,
-                onSuccess: () =>
-                  navigator.navigate("auth", {
-                    screen: "inputNewPassword",
-                    params: {
-                      email: route.params.email.trim(),
-                      token: otp,
-                    },
-                  }),
-              })
-            }
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={{ ...styles.text, color: "white" }}>
-              {isLoading ? "Loading..." : "Verify Email"}
-            </Text>
-          </Pressable>
+          )}
+          <Text style={defaultStyles.heading}>Reset your password</Text>
+          <Text style={styles.text}>
+            Enter the verification code sent to your emails {route.params.email}
+          </Text>
         </View>
+        <ErrorMessageDisplay errorMessage={error} />
+        <View style={styles.container}>
+          <OtpInput
+            numberOfDigits={6}
+            onTextChange={(text) => setOtp(text)}
+            onFilled={() => {}}
+            theme={{
+              containerStyle: { width: "auto" },
+              pinCodeContainerStyle: styles.box,
+              pinCodeTextStyle: styles.text,
+              focusedPinCodeContainerStyle: styles.boxFocused,
+            }}
+            focusColor="blue"
+          />
+          <Text style={styles.countDown}>{formatTime(countDown)}</Text>
+          <Text
+            onPress={handleResendEmail}
+            disabled={countDown > 0}
+            className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+          >
+            Resend OTP
+          </Text>
+        </View>
+
+        <Pressable
+          onPress={() =>
+            validatePasswordReset({
+              email: route.params.email.trim(),
+              token: otp,
+              setErrorCb: setError,
+              onSuccess: () =>
+                navigator.navigate("auth", {
+                  screen: "inputNewPassword",
+                  params: {
+                    email: route.params.email.trim(),
+                    token: otp,
+                  },
+                }),
+            })
+          }
+          style={
+            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
+          }
+        >
+          <Text style={styles.textWhite}>
+            {isLoading ? "Loading..." : "Verify Email"}
+          </Text>
+        </Pressable>
       </View>
-    </SafeAreaWrapper>
+    </View>
   );
 };
 
 export default ConfirmResetPasswordTokenScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    height: 20,
-    width: 20,
-  },
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
+  },
+  textWhite: {
+    ...defaultStyles.defaultText,
+    textAlign: "center",
+    color: "white",
   },
   textContainer: {
     gap: 8,
     marginBottom: 56,
   },
-  form: {
-    gap: 20,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-    marginBottom: 32,
-  },
-  formItem: {
-    gap: 4,
-  },
-
   container: {
     width: "100%",
     alignItems: "center",

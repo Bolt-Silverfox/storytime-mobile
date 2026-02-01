@@ -1,11 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../ErrorComponent";
-import { getRandomNumber } from "../../utils/utils";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data } = useSuspenseQuery(queryStoryCategories());
@@ -14,16 +13,16 @@ const StoryCategoriesList = () => {
 
   return (
     <View className="flex flex-col gap-y-4 pb-5">
-      <View className="flex max-w-screen-md mx-auto w-full flex-col gap-y-1.5">
-        <Text className="font-[abeezee] text-black text-[18px]">
+      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5">
+        <Text className="font-[abeezee] text-[18px] text-black">
           All catgories
         </Text>
-        <Text className="font-[abeezee] text-text text-sm">
+        <Text className="font-[abeezee] text-sm text-text">
           Gain access to all our stories
         </Text>
       </View>
-      <View className="max-w-screen-md mx-auto w-full flex-1">
-        <View className="flex flex-row justify-center gap-x-2.5 items-center flex-wrap gap-y-4">
+      <View className="mx-auto w-full max-w-screen-md flex-1">
+        <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
           {data.map((category) => (
             <Item category={category.name} id={category.id} key={category.id} />
           ))}
@@ -35,6 +34,10 @@ const StoryCategoriesList = () => {
 
 export default StoryCategoriesList;
 
+const getRandomNumber = (): number => {
+  return Math.floor(Math.random() * 10 + 0);
+};
+
 const Item = ({ category, id }: { category: string; id: string }) => {
   const randomNum = getRandomNumber();
   const colour = storyCategoriesColours[randomNum];
@@ -43,22 +46,30 @@ const Item = ({ category, id }: { category: string; id: string }) => {
   return (
     <Pressable
       onPress={() => navigator.navigate("storiesByCategory", { category, id })}
-      className="h-16 br px-5 w-[47%] flex justify-center items-center rounded-xl"
-      style={{
-        backgroundColor: `${colour}33`,
-        borderBottomColor: colour,
-        borderBottomWidth: 2,
-      }}
+      className="flex h-16 w-[47%] items-center justify-center rounded-md px-5"
+      style={[
+        categoryStyles.item,
+        {
+          backgroundColor: `${colour}66`,
+          borderBottomColor: colour,
+        },
+      ]}
     >
       <Text
         key={category}
         style={{
           color: colour,
         }}
-        className="font-[abeezee]  text-sm rounded-lg"
+        className="rounded-lg  font-[abeezee] text-sm"
       >
         {category}
       </Text>
     </Pressable>
   );
 };
+
+const categoryStyles = StyleSheet.create({
+  item: {
+    borderBottomWidth: 2,
+  },
+});

@@ -35,10 +35,10 @@ const SignupForm = () => {
     });
 
     if (!result.success) {
-      const formatted: any = {};
+      const formatted: Errors = {};
 
       result.error.issues.forEach((err) => {
-        const field = err.path[0];
+        const field = err.path[0] as keyof RegisterSchema;
         formatted[field] = err.message;
       });
 
@@ -67,14 +67,14 @@ const SignupForm = () => {
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
-            className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.fullName ? "border-red-600" : "border-border"}`}
+            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.fullName ? "red" : colours.text}
             placeholder="Enter your name"
             onChangeText={setFullName}
             value={fullName}
           />
           {errors.fullName && (
-            <Text className="text-red-600 text-sm">{errors.fullName}</Text>
+            <Text className="text-sm text-red-600">{errors.fullName}</Text>
           )}
         </View>
         <View style={styles.formItem}>
@@ -83,11 +83,11 @@ const SignupForm = () => {
             placeholder="Enter your email address"
             onChangeText={setEmail}
             value={email}
-            className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base text-black relative px-4 ${errors.email ? "border-red-600" : "border-border"}`}
+            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
             placeholderTextColor={errors.email ? "red" : colours.text}
           />
           {errors.email && (
-            <Text className="text-red-600 text-sm">{errors.email}</Text>
+            <Text className="text-sm text-red-600">{errors.email}</Text>
           )}
         </View>
         <PasswordInput
@@ -107,9 +107,9 @@ const SignupForm = () => {
       </View>
       <Pressable
         onPress={onRegister}
-        style={[{ marginTop: 44 }, defaultStyles.button]}
+        style={[styles.buttonMargin, defaultStyles.button]}
       >
-        <Text style={{ ...styles.text, color: "white" }}>Proceed</Text>
+        <Text style={styles.textWhite}>Proceed</Text>
       </Pressable>
 
       <LoadingOverlay visible={isLoading} />
@@ -120,13 +120,10 @@ const SignupForm = () => {
 export default SignupForm;
 
 const styles = StyleSheet.create({
-  image: {
-    height: 20,
-    width: 20,
-  },
-  text: {
+  textWhite: {
     ...defaultStyles.defaultText,
     textAlign: "center",
+    color: "white",
   },
   form: {
     gap: 20,
@@ -137,9 +134,7 @@ const styles = StyleSheet.create({
   formItem: {
     gap: 4,
   },
-  eyeImage: {
-    top: 37,
-    right: 16,
-    position: "absolute",
+  buttonMargin: {
+    marginTop: 44,
   },
 });

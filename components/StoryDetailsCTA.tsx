@@ -4,7 +4,7 @@ import { Story } from "../types";
 import { Dispatch, SetStateAction } from "react";
 import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import queryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
+import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 type PropTypes = {
@@ -12,7 +12,7 @@ type PropTypes = {
   setShowShareModal: Dispatch<SetStateAction<boolean>>;
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
-  const { data } = useSuspenseQuery(queryParentsFavourites());
+  const { data } = useSuspenseQuery(useQueryParentsFavourites());
   const { mutate: onToggle } = useToggleFavourites({
     story: {
       id: story.id,
@@ -30,17 +30,17 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
   };
 
   return (
-    <View className="flex px-4 flex-row gap-x-3">
+    <View className="flex flex-row gap-x-3 px-4">
       <Pressable
         onPress={() => setShowShareModal(true)}
-        className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
+        className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
       >
         <Icon name="Share2" />
         <Text className="font-[abeezee] text-base text-black">Share</Text>
       </Pressable>
       <Pressable
         onPress={() => onToggle()}
-        className="rounded-full border flex-1 border-border-light flex justify-center flex-row gap-x-1.5 items-center h-11"
+        className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
       >
         {isStoryLiked(story.id) ? (
           <FontAwesome name="heart" size={24} color="red" />
