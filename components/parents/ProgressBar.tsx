@@ -17,7 +17,7 @@ const ProgressBar: React.FC<ProgressProps> = ({
       {/* Background wrapper */}
       <View
         style={styles.track}
-        className="w-full h-8 bg-[#B0BAFF] border-4 border-[#DAE1F1] rounded-full overflow-hidden"
+        className="h-8 w-full overflow-hidden rounded-full border-4 border-[#DAE1F1] bg-[#B0BAFF]"
       >
         {/* Filled bar */}
         <View
@@ -27,7 +27,7 @@ const ProgressBar: React.FC<ProgressProps> = ({
               backgroundColor: color, //dynamic color
             },
           ]}
-          className="w-full h-full rounded-full"
+          className="h-full w-full rounded-full"
         />
       </View>
     </View>

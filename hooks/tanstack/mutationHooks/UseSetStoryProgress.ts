@@ -45,8 +45,12 @@ const useSetStoryProgress = ({
       queryClient.invalidateQueries({
         queryKey: ["storyProgress", storyId],
       });
-      queryClient.invalidateQueries({ queryKey: ["library", "ongoingStories"] });
-      queryClient.invalidateQueries({ queryKey: ["library", "completedStories"] });
+      queryClient.invalidateQueries({
+        queryKey: ["library", "ongoingStories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["library", "completedStories"],
+      });
       onSuccess?.();
     },
   });

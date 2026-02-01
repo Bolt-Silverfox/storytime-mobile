@@ -17,7 +17,6 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -27,122 +26,123 @@ const LoginScreen = () => {
   const { login, isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
 
   return (
-    <SafeAreaWrapper variant="solid">
-      <View className="flex-1 flex">
-        <PageTitle title="" goBack={() => navigator.goBack()} />
-        <ScrollView
-          className="flex-1"
-          contentContainerClassName="min-h-full"
-          showsVerticalScrollIndicator={false}
-        >
-          <View style={defaultStyles.screen}>
-            <View style={styles.textContainer}>
-              <Text style={defaultStyles.heading}>Welcome back</Text>
-              <Text style={styles.text}>Glad to have you back</Text>
-            </View>
-            <View style={styles.form}>
-              <View style={styles.formItem}>
-                <Text style={defaultStyles.label}>Email:</Text>
-                <TextInput
-                  className={`border rounded-full h-[50px] font-[abeezee] justify-center text-base relative px-4 ${error ? "border-red-600" : "border-border"}`}
-                  placeholder="Enter your email"
-                  placeholderTextColor={error ? "red" : colours.text}
-                  onChangeText={setEmail}
-                  value={email}
-                />
-                <ErrorMessageDisplay errorMessage={error} />
-              </View>
-              <PasswordInput
-                label="Password:"
-                password={password}
-                setPassword={setPassword}
-                placeholder="Enter your password"
+    <View className="flex flex-1">
+      <PageTitle title="" goBack={() => navigator.goBack()} />
+      <ScrollView
+        className="flex-1"
+        contentContainerClassName="min-h-full"
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={defaultStyles.screen}>
+          <View style={styles.textContainer}>
+            <Text style={defaultStyles.heading}>Welcome back</Text>
+            <Text style={styles.text}>Glad to have you back</Text>
+          </View>
+          <View style={styles.form}>
+            <View style={styles.formItem}>
+              <Text style={defaultStyles.label}>Email:</Text>
+              <TextInput
+                className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
+                placeholder="Enter your email"
+                placeholderTextColor={error ? "red" : colours.text}
+                onChangeText={setEmail}
+                value={email}
               />
+              <ErrorMessageDisplay errorMessage={error} />
+            </View>
+            <PasswordInput
+              label="Password:"
+              password={password}
+              setPassword={setPassword}
+              placeholder="Enter your password"
+            />
+            <Text
+              onPress={() =>
+                navigator.navigate("auth", { screen: "resetPassword" })
+              }
+              style={styles.linkTextRight}
+            >
+              Forgot Password?
+            </Text>
+          </View>
+
+          <Pressable
+            onPress={() =>
+              login({
+                email: email.trim().toLowerCase(),
+                password,
+                setErrorCb: setError,
+              })
+            }
+            disabled={isLoading}
+            style={
+              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
+            }
+          >
+            <Text style={styles.textWhite}>Log in</Text>
+          </Pressable>
+          <View className="mb-5 mt-10 flex flex-row items-center  gap-x-4">
+            <View className="flex-1 border-b border-black" />
+            <Text className="text-center">Or Continue with</Text>
+            <View className="flex-1 border-b border-black" />
+          </View>
+          <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <Pressable
+              onPress={handleGoogleAuth}
+              className="flex size-20 items-center justify-center rounded-full bg-white"
+            >
+              <Image source={require("../../assets/icons/google-icon.png")} />
+            </Pressable>
+            <Pressable className="flex size-20 items-center justify-center rounded-full bg-white">
+              <Image source={require("../../assets/icons/apple-icon.png")} />
+            </Pressable>
+          </View>
+          <View className="mt-10 flex flex-col gap-y-4">
+            <Text style={{ ...styles.text }}>
+              Don't have an account?{" "}
+              <Text
+                onPress={() => navigator.navigate("auth", { screen: "signUp" })}
+                style={{ ...defaultStyles.defaultText, color: colours.link }}
+              >
+                Register
+              </Text>
+            </Text>
+            <Text style={{ ...styles.text }}>
+              Signed up but haven't verified?{" "}
               <Text
                 onPress={() =>
-                  navigator.navigate("auth", { screen: "resetPassword" })
+                  navigator.navigate("auth", {
+                    screen: "requestEmailVerification",
+                  })
                 }
-                style={{ ...defaultStyles.linkText, textAlign: "right" }}
+                style={{ ...defaultStyles.defaultText, color: colours.link }}
               >
-                Forgot Password?
+                Verify email
               </Text>
-            </View>
-
-            <Pressable
-              onPress={() =>
-                login({
-                  email: email.trim().toLowerCase(),
-                  password,
-                  setErrorCb: setError,
-                })
-              }
-              disabled={isLoading}
-              style={
-                isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-              }
-            >
-              <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
-            </Pressable>
-            <View className="flex flex-row gap-x-4 items-center mt-10  mb-5">
-              <View className="border-b border-black flex-1" />
-              <Text className="text-center">Or Continue with</Text>
-              <View className="border-b border-black flex-1" />
-            </View>
-            <View className="flex flex-row justify-center items-center gap-x-20 ">
-              <Pressable
-                onPress={handleGoogleAuth}
-                className="bg-white size-20 rounded-full flex justify-center items-center"
-              >
-                <Image source={require("../../assets/icons/google-icon.png")} />
-              </Pressable>
-              <Pressable className="bg-white size-20 rounded-full flex justify-center items-center">
-                <Image source={require("../../assets/icons/apple-icon.png")} />
-              </Pressable>
-            </View>
-            <View className="flex flex-col gap-y-4 mt-10">
-              <Text style={{ ...styles.text }}>
-                Don't have an account?{" "}
-                <Text
-                  onPress={() =>
-                    navigator.navigate("auth", { screen: "signUp" })
-                  }
-                  style={{ ...defaultStyles.defaultText, color: colours.link }}
-                >
-                  Register
-                </Text>
-              </Text>
-              <Text style={{ ...styles.text }}>
-                Signed up but haven't verified?{" "}
-                <Text
-                  onPress={() =>
-                    navigator.navigate("auth", {
-                      screen: "requestEmailVerification",
-                    })
-                  }
-                  style={{ ...defaultStyles.defaultText, color: colours.link }}
-                >
-                  Verify email
-                </Text>
-              </Text>
-            </View>
+            </Text>
           </View>
-          <LoadingOverlay visible={isLoading} />
-        </ScrollView>
-      </View>
-    </SafeAreaWrapper>
+        </View>
+        <LoadingOverlay visible={isLoading} />
+      </ScrollView>
+    </View>
   );
 };
 
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  image: {
-    height: 20,
-    width: 20,
-  },
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
+  },
+  textWhite: {
+    ...defaultStyles.defaultText,
+    textAlign: "center",
+    color: "white",
+  },
+  linkTextRight: {
+    ...defaultStyles.linkText,
+    textAlign: "right",
   },
   textContainer: {
     gap: 8,
@@ -157,17 +157,5 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-  eyeImage: {
-    top: 37,
-    right: 16,
-    position: "absolute",
-  },
-  link: {
-    ...defaultStyles.defaultText,
-    color: colours.link,
-    alignSelf: "flex-end",
-    marginTop: 8,
-    marginBottom: 44,
   },
 });

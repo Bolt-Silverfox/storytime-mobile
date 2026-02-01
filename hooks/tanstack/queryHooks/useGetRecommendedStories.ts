@@ -4,7 +4,7 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, Story } from "../../../types";
 
-const queryRecommendedStories = () => {
+const useQueryRecommendedStories = () => {
   const { user } = useAuth();
   return queryOptions({
     queryKey: ["recommendedStoriesForParents", user?.id],
@@ -28,4 +28,4 @@ const queryRecommendedStories = () => {
   });
 };
 
-export { queryRecommendedStories };
+export { useQueryRecommendedStories };

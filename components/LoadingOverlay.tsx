@@ -17,7 +17,7 @@ export default function LoadingOverlay({
 
   return (
     <Modal visible={visible} animationType="fade" transparent>
-      <View className="absolute inset-0 bg-black/50 items-center justify-center">
+      <View className="absolute inset-0 items-center justify-center bg-black/50">
         {/* Lottie animation */}
         <LottieView
           autoPlay
@@ -26,7 +26,7 @@ export default function LoadingOverlay({
           style={{ width: size, height: size }}
         />
 
-        <Text className="text-white font-[abeezee] text-2xl mt-4">{label}</Text>
+        <Text className="mt-4 font-[abeezee] text-2xl text-white">{label}</Text>
       </View>
     </Modal>
   );

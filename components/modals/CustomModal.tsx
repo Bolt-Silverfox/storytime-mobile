@@ -37,10 +37,10 @@ const CustomModal = ({
 
       <View
         style={{ maxHeight: Dimensions.get("window").height * 0.7 }}
-        className="bg-white flex-1 overflow-hidden rounded-t-3xl p-6 pb-12 absolute px-4 bottom-0 w-full"
+        className="absolute bottom-0 w-full flex-1 overflow-hidden rounded-t-3xl bg-white p-6 px-4 pb-12"
       >
         {isPending ? (
-          <View className="flex flex-1 justify-center items-center">
+          <View className="flex flex-1 items-center justify-center">
             <ActivityIndicator size={"large"} />
           </View>
         ) : error?.message ? (

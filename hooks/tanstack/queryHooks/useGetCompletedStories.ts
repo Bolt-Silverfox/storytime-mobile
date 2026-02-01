@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
-import type { OngoingStory, Response } from "./useGetOngoingStories";
+import type { Response } from "./useGetOngoingStories";
 
 const useGetCompletedStories = () => {
   const { user } = useAuth();

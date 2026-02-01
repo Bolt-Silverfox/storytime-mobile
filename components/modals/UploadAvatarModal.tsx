@@ -16,16 +16,16 @@ const UploadAvatarModal = ({
   const { pickImage, launchCamera } = useImagePicker({ onClose, setImage });
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
-      <View className="flex flex-row gap-x-14 items-center">
+      <View className="flex flex-row items-center gap-x-14">
         <Pressable
           onPress={launchCamera}
-          className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]"
+          className="flex size-[60px] items-center justify-center rounded-full border border-border-lighter bg-[#FFFCFBFB]"
         >
           <Icon name="Camera" />
         </Pressable>
         <Pressable
           onPress={pickImage}
-          className="rounded-full size-[60px] border border-border-lighter flex justify-center items-center bg-[#FFFCFBFB]"
+          className="flex size-[60px] items-center justify-center rounded-full border border-border-lighter bg-[#FFFCFBFB]"
         >
           <Icon name="Folder" />
         </Pressable>

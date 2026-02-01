@@ -20,13 +20,14 @@ const SelectReadingVoiceModal = ({
   setSelectedVoice,
 }: PropTypes) => {
   const { data: voices } = useSuspenseQuery(queryAvailableVoices);
-  const selectedVoiceName = voices.find((v) => v.id === selectedVoice)?.name ?? "No voice selected";
+  const selectedVoiceName =
+    voices.find((v) => v.id === selectedVoice)?.name ?? "No voice selected";
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="flex flex-1 flex-col gap-y-6">
-        <View className="flex flex-row justify-between border-b pb-6 border-b-border-lighter items-center">
-          <Text className="text-base font-[abeezee] text-black">
+        <View className="flex flex-row items-center justify-between border-b border-b-border-lighter pb-6">
+          <Text className="font-[abeezee] text-base text-black">
             Try new voice
           </Text>
           <Icon name="SquareX" onPress={onClose} />
@@ -35,12 +36,12 @@ const SelectReadingVoiceModal = ({
           contentContainerClassName="flex flex-col min-h-full"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex flex-row items-center p-4 rounded-xl border border-border-lighter justify-between">
+          <View className="flex flex-row items-center justify-between rounded-xl border border-border-lighter p-4">
             <View className="flex flex-col">
               <Text className="font-[abeezee] text-text">
                 Selected Story Voice
               </Text>
-              <Text className="font-[quilka] text-2xl text-black capitalize">
+              <Text className="font-[quilka] text-2xl capitalize text-black">
                 {selectedVoiceName.toLowerCase()}
               </Text>
             </View>

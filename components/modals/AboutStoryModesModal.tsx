@@ -8,8 +8,8 @@ const AboutStoryModesModal = ({
 }: Omit<CustomModalProps, "children">) => {
   return (
     <CustomModal onClose={onClose} isOpen={isOpen}>
-      <View className="flex flex-col max-w-screen-md w-full mx-auto gap-y-4">
-        <View className="flex flex-row justify-between items-center">
+      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4">
+        <View className="flex flex-row items-center justify-between">
           <Text className="font-[quilka] text-xl">
             About preferred story mode
           </Text>
@@ -21,14 +21,14 @@ const AboutStoryModesModal = ({
         </Text>
         <View className="flex flex-col gap-y-8 ">
           <View className="flex flex-row gap-x-3">
-            <Pressable className="size-14 border border-border-lighter flex justify-center items-center rounded-full">
+            <Pressable className="flex size-14 items-center justify-center rounded-full border border-border-lighter">
               <Icon name="BookOpenText" />
             </Pressable>
             <View className="flex flex-1 flex-col gap-y-1">
               <Text className="font-[abeezee] text-base text-black">
                 Plain Story Mode
               </Text>
-              <Text className="font-[abeezee] text-wrap text-text text-sm">
+              <Text className="text-wrap font-[abeezee] text-sm text-text">
                 Sit back and enjoy the story. In this mode, children can read
                 along or listen as the story is narrated from start to
                 finish—perfect for relaxed reading, bedtime, or quiet time.
@@ -36,14 +36,14 @@ const AboutStoryModesModal = ({
             </View>
           </View>
           <View className="flex flex-row gap-x-3">
-            <Pressable className="size-14 border border-border-lighter flex justify-center items-center rounded-full">
+            <Pressable className="flex size-14 items-center justify-center rounded-full border border-border-lighter">
               <Icon name="Gamepad2" />
             </Pressable>
             <View className="flex flex-1 flex-col gap-y-1">
               <Text className="font-[abeezee] text-base text-black">
                 Interactive Story Mode
               </Text>
-              <Text className="font-[abeezee] text-wrap text-text text-sm">
+              <Text className="text-wrap font-[abeezee] text-sm text-text">
                 Turn storytelling into a fun learning experience. After the
                 story is read, children are asked simple, engaging questions to
                 test understanding, spark curiosity, and encourage critical
@@ -52,13 +52,13 @@ const AboutStoryModesModal = ({
             </View>
           </View>
         </View>
-        <View className="bg-yellow mt-4 flex flex-row gap-x-3 items-center p-4 rounded-2xl">
-          <Pressable className="size-14 flex justify-center items-center bg-[#F8D62B] rounded-full">
+        <View className="mt-4 flex flex-row items-center gap-x-3 rounded-2xl bg-yellow p-4">
+          <Pressable className="flex size-14 items-center justify-center rounded-full bg-[#F8D62B]">
             <Icon name="CircleAlert" />
           </Pressable>
           <View className="flex flex-1 flex-col gap-y-1">
-            <Text className="text-sm text-black font-[abeezee]">Tips</Text>
-            <Text className="text-sm text-wrap text-black font-[abeezee]">
+            <Text className="font-[abeezee] text-sm text-black">Tips</Text>
+            <Text className="text-wrap font-[abeezee] text-sm text-black">
               Plain mode is great for calm listening, while Interactive mode
               helps boost comprehension and engagement.
             </Text>

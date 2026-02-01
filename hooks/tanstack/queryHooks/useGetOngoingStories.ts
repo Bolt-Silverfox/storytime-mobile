@@ -43,7 +43,6 @@ export type Response = {
   success: boolean;
 };
 
-
 const useGetOngoingStories = () => {
   const { user } = useAuth();
 

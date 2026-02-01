@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Animated,
   Pressable,
+  StyleSheet,
   ViewStyle,
   AccessibilityProps,
   StyleProp,
@@ -48,9 +49,7 @@ export default function Toggle({
 
   // sync localValue when parent prop changes
   useEffect(() => {
-    if (value !== localValue) {
-      setLocalValue(Boolean(value));
-    }
+    setLocalValue(Boolean(value));
   }, [value]);
 
   const padding = (height - thumbSize) / 2;
@@ -68,11 +67,7 @@ export default function Toggle({
     const next = !localValue;
     setLocalValue(next);
 
-    try {
-      onValueChange(next);
-    } catch (err) {
-      console.warn("Toggle onValueChange error:", err);
-    }
+    onValueChange(next);
   };
 
   return (
@@ -86,31 +81,42 @@ export default function Toggle({
     >
       <Animated.View
         style={[
+          toggleStyles.track,
           {
             width,
             height,
             borderRadius: height / 2,
             padding,
-            justifyContent: "center",
             backgroundColor,
           },
           style,
         ]}
       >
         <Animated.View
-          style={{
-            width: thumbSize,
-            height: thumbSize,
-            borderRadius: thumbSize / 2,
-            backgroundColor: "#fff",
-            transform: [{ translateX }],
-            shadowColor: "#000",
-            shadowOpacity: 0.12,
-            shadowRadius: 4,
-            elevation: 3,
-          }}
+          style={[
+            toggleStyles.thumb,
+            {
+              width: thumbSize,
+              height: thumbSize,
+              borderRadius: thumbSize / 2,
+              transform: [{ translateX }],
+            },
+          ]}
         />
       </Animated.View>
     </Pressable>
   );
 }
+
+const toggleStyles = StyleSheet.create({
+  track: {
+    justifyContent: "center",
+  },
+  thumb: {
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOpacity: 0.12,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+});

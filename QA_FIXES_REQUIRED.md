@@ -1,6 +1,7 @@
 # QA Review - Required Fixes
 
 ## Status Key
+
 - ✅ **FIXED** - Issue has been resolved
 - ❌ **PENDING** - Issue still needs to be fixed
 - ⚠️ **CRITICAL** - High priority issue
@@ -84,13 +85,15 @@ There is a debug/test button that should NOT be in production code:
 **Fix:** Remove this button entirely or wrap it in a `__DEV__` check:
 
 ```tsx
-{__DEV__ && (
-  <CustomButton
-    onPress={() => setStoryMode("interactive")}
-    text="Override premium (TEST ONLY)"
-    bgColor="#4807EC"
-  />
-)}
+{
+  __DEV__ && (
+    <CustomButton
+      onPress={() => setStoryMode("interactive")}
+      text="Override premium (TEST ONLY)"
+      bgColor="#4807EC"
+    />
+  );
+}
 ```
 
 ---
@@ -105,12 +108,12 @@ The quiz results array is initialized incorrectly:
 ```tsx
 // Current (WRONG - creates empty array):
 const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-  new Array().fill(story.questions.length),
+  new Array().fill(story.questions.length)
 );
 
 // Should be (creates array of correct length filled with null):
 const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-  new Array(story.questions.length).fill(null),
+  new Array(story.questions.length).fill(null)
 );
 ```
 
@@ -121,6 +124,7 @@ const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
 ### 7. ✅ FIXED - Typo in state variable name
 
 **Files:**
+
 - `components/AvailableVoices.tsx` Line 21
 - `components/StoryContentContainer.tsx` Line 41
 
@@ -174,10 +178,14 @@ Accessing `data.categories[0].name` without checking if categories exist will cr
 
 ```tsx
 // Current (unsafe):
-{data.categories[0].name}
+{
+  data.categories[0].name;
+}
 
 // Should be (safe):
-{data.categories[0]?.name ?? "Uncategorized"}
+{
+  data.categories[0]?.name ?? "Uncategorized";
+}
 ```
 
 ---
@@ -320,16 +328,20 @@ Accessing `story.categories[0].name` without checking if categories array exists
 
 ```tsx
 // Current (unsafe):
-{story.categories[0].name.length > 15
-  ? story.categories[0].name.split("").slice(0, 14).join("") + "..."
-  : story.categories[0].name}
+{
+  story.categories[0].name.length > 15
+    ? story.categories[0].name.split("").slice(0, 14).join("") + "..."
+    : story.categories[0].name;
+}
 
 // Should be (safe + more efficient):
-{story.categories?.[0]?.name
-  ? (story.categories[0].name.length > 15
+{
+  story.categories?.[0]?.name
+    ? story.categories[0].name.length > 15
       ? story.categories[0].name.slice(0, 14) + "..."
-      : story.categories[0].name)
-  : "Uncategorized"}
+      : story.categories[0].name
+    : "Uncategorized";
+}
 ```
 
 Also note: Using `.split("").slice(0, 14).join("")` is inefficient - use `.slice(0, 14)` directly on the string.
@@ -348,7 +360,7 @@ The Subscribe button has an empty `onPress` handler that does nothing:
 <CustomButton
   ariaLabel="Subscribe button"
   text="Subscribe"
-  onPress={() => {}}  // <-- empty handler
+  onPress={() => {}} // <-- empty handler
   disabled={!selectedPlan}
 />
 ```
@@ -447,7 +459,7 @@ if (transparent) {
       aria-labelledby={ariaLabel}
       onPress={onPress}
       // Missing: disabled={disabled}
-      className="border flex w-full flex-row justify-center items-center h-[46px] rounded-full"
+      className="flex h-[46px] w-full flex-row items-center justify-center rounded-full border"
     >
       ...
     </Pressable>
@@ -477,7 +489,7 @@ Consider adding a useEffect to reset state when `isOpen` changes from false to t
 
 ---
 
-### 23. ✅ FIXED - Test button wrapped in __DEV__ check in ChildStoryDetails
+### 23. ✅ FIXED - Test button wrapped in **DEV** check in ChildStoryDetails
 
 **File:** `screens/parents/home/ChildStoryDetails.tsx`
 **Lines:** 193-197
@@ -499,13 +511,16 @@ This was marked as fixed but the button is still present in the code. Needs to b
 ## Priority Order
 
 ### Critical (Fix Immediately)
+
 1. **⚠️ CRITICAL:** Fix #12 (Rules of Hooks violation - EndOfStoryMessage)
 2. **⚠️ CRITICAL:** Fix #23 (Test button still in production - ChildStoryDetails)
 
 ### High Priority
+
 3. **High:** Fix #16 (Categories null check - StoryItem potential crash)
 
 ### Medium Priority
+
 4. **Medium:** Fix #13 (Remove console.log)
 5. **Medium:** Fix #14 (Type definition typo)
 6. **Medium:** Fix #17 (Empty Subscribe button handler)
@@ -514,6 +529,7 @@ This was marked as fixed but the button is still present in the code. Needs to b
 9. **Medium:** Fix #21 (CustomButton disabled for transparent)
 
 ### Low Priority
+
 10. **Low:** Fix #15 (Redundant nested View)
 11. **Low:** Fix #18 (Unused parameter)
 12. **Low:** Fix #22 (StoryQuiz state reset)
@@ -525,6 +541,7 @@ This was marked as fixed but the button is still present in the code. Needs to b
 ### 24. ⚠️ HIGH - Using react-native Image instead of expo-image
 
 **Files:** Multiple files (21+ occurrences)
+
 - `components/parents/StoryItem.tsx`
 - `components/FavouriteStoryItem.tsx`
 - `components/AvailableVoices.tsx`
@@ -533,6 +550,7 @@ This was marked as fixed but the button is still present in the code. Needs to b
 - And many more...
 
 **Issue:** The app uses `Image` from `react-native` instead of `expo-image`. According to React Native best practices, `expo-image` provides:
+
 - Memory-efficient caching
 - Blurhash placeholders
 - Progressive loading
@@ -551,6 +569,7 @@ import { Image } from "expo-image";
 ### 25. ⚠️ HIGH - ScrollView with .map() instead of FlatList/FlashList
 
 **Files:**
+
 - `components/StoryCarousel.tsx` (Lines 14-32)
 - `components/GroupedStoriesContainer.tsx` (Lines 89-116)
 - `screens/parents/ParentsLibraryScreen.tsx` (Lines 66-133)
@@ -579,6 +598,7 @@ import { Image } from "expo-image";
 ### 26. ✅ FIXED - TouchableOpacity used instead of Pressable
 
 **Files:**
+
 - `components/MenuItem.tsx` (Lines 6, 74, 101)
 - `components/Avatar.tsx` (Lines 9, 55, 84)
 - `components/ErrorComponent.tsx` (Lines 1, 17, 22)
@@ -667,6 +687,7 @@ Same issue in `components/GroupedStoriesContainer.tsx` (Lines 105-110).
 **Issue:** Inline style objects like `style={{ marginTop: 16 }}` create new objects on every render. While this is often unavoidable for dynamic styles, static styles should use `StyleSheet.create()` or be hoisted to module scope.
 
 Common occurrences in:
+
 - `screens/auth/LoginScreen.tsx`
 - `screens/auth/SignupScreen.tsx`
 - `components/modals/SuccessModal.tsx`
@@ -676,31 +697,36 @@ Common occurrences in:
 ## Updated Priority Order
 
 ### High Priority (Performance) - Still Pending
+
 1. **High:** Fix #24 (Use expo-image instead of react-native Image)
 2. **High:** Fix #25 (Use FlatList/FlashList instead of ScrollView with map)
 
 ### Medium Priority - Still Pending
+
 3. **Medium:** Fix #27 (Inline callbacks in list items)
 
 ### Low Priority - Still Pending
+
 4. **Low:** Fix #29 (contentInsetAdjustmentBehavior)
 5. **Low:** Fix #30 (Inline style objects)
 
 ### All Other Issues - FIXED
+
 All critical, high (crash-related), and medium priority issues have been resolved.
 
 ---
 
 ## Summary
 
-| Status | Count |
-|--------|-------|
-| ✅ Fixed | 25 |
-| ⚠️ High (Perf) | 2 |
-| ❌ Pending | 3 |
-| **Total** | **30** |
+| Status         | Count  |
+| -------------- | ------ |
+| ✅ Fixed       | 25     |
+| ⚠️ High (Perf) | 2      |
+| ❌ Pending     | 3      |
+| **Total**      | **30** |
 
 ### Recently Fixed Issues (This Session)
+
 - #12: Hook called conditionally in EndOfStoryMessage.tsx
 - #13: Console.log removed from ParentsLibraryScreen.tsx
 - #14: Typo in types.ts (imae -> image)
@@ -712,6 +738,6 @@ All critical, high (crash-related), and medium priority issues have been resolve
 - #20: SelectReadingVoiceModal voice name display
 - #21: CustomButton transparent variant disabled prop
 - #22: StoryQuiz state reset on reopen
-- #23: Test button wrapped in __DEV__ check
+- #23: Test button wrapped in **DEV** check
 - #26: TouchableOpacity replaced with Pressable
 - #28: Invalid color format in ActivityIndicator
