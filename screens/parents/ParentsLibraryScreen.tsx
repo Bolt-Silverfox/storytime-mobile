@@ -45,7 +45,7 @@ const ParentsLibraryScreen = () => {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bgLight flex-col gap-y-8">
-        <View className="flex flex-row border-b border-b-border-lighter bg-white py-5 px-4">
+        <View className="flex flex-row border-b border-b-border-lighter bg-white pt-2 pb-5 px-4">
           <Text className="flex-1  text-[18px] font-[abeezee]">Library</Text>
         </View>
         <View className="flex flex-row gap-x-2 mx-4 justify-between items-center">

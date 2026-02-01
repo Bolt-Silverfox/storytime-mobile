@@ -45,9 +45,12 @@ const ChildStoryDetails = () => {
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
+  const isPremium =
+    user?.subscriptionStatus === "active" || user?.role === "admin";
+
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
-      user?.subscriptionStatus !== "free"
+      isPremium
         ? setStoryMode("interactive")
         : setIsSubscriptionModalOpen(true);
       return;
@@ -162,7 +165,7 @@ const ChildStoryDetails = () => {
                   >
                     Listen, enjoy and answer questions to the stories.
                   </Text>
-                  {user?.subscriptionStatus == "free" && (
+                  {!isPremium && (
                     <View className="bg-[#FFF8D2] self-end rounded-full h-6 flex justify-center items-center px-2">
                       <Text className="font-[abeezee] text-black text-xs">
                         Premium

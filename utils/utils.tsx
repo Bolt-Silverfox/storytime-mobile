@@ -204,6 +204,10 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
+const getRandomNumber = (max: number = 10): number => {
+  return Math.floor(Math.random() * max + 0);
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -217,5 +221,6 @@ export {
   secondsToMinutes,
   splitByWordCount,
   splitByWordCountPreservingSentences,
-  formatTime
+  formatTime,
+  getRandomNumber,
 };

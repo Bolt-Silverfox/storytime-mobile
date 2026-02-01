@@ -20,7 +20,8 @@ const AvailableVoices = ({
   const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const player = useAudioPlayer();
 
-  const isPremium = user?.subscriptionStatus === "premium";
+  const isPremium =
+    user?.subscriptionStatus === "active" || user?.role === "admin";
 
   const handlePreview = (audioUrl: string, name: string) => {
     if (!isPremium) {

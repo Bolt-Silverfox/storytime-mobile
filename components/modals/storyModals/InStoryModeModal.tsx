@@ -26,7 +26,8 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
 
   const navigator = useNavigation<StoryNavigatorProp>();
 
-  const isPremium = data?.subscriptionStatus === "premium";
+  const isPremium =
+    data?.subscriptionStatus === "active" || data?.role === "admin";
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {

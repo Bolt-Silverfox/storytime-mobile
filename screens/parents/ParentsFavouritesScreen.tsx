@@ -29,9 +29,10 @@ const ParentsFavouritesScreen = () => {
     queryParentsFavourites(),
   );
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
+  const [activeFilterOption, setActiveFilterOption] = useState<
+    "search" | "age" | null
+  >(null);
   const [selectedAge, setSelectedAge] = useState<AgeFilter>("ALL");
 
   if (error)
@@ -63,33 +64,40 @@ const ParentsFavouritesScreen = () => {
   const showNoData = favourites.length === 0;
   const showNoMatches = favourites.length > 0 && filteredStories.length === 0;
 
+  const resetFilters = () => {
+    setSelectedAge("ALL");
+    setSearchQuery("");
+  };
+
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bgLight">
-        <View className="bg-white px-4 border-b border-b-border-lighter py-5 flex flex-row items-center justify-between">
+        <View className="bg-white px-4 border-b border-b-border-lighter pt-2 pb-5 flex flex-row items-center justify-between">
           <Text className="text-xl text-black font-[abeezee] flex-1">
             Favourites
           </Text>
           <View className="flex flex-row gap-x-5 items-center">
             <Icon
-              name="Funnel"
+              name={activeFilterOption === "age" ? "X" : "Funnel"}
               onPress={() => {
-                setShowFilter((s) => !s);
-                setShowSearch(false);
+                setActiveFilterOption((a) => (a === "age" ? null : "age"));
+                resetFilters();
               }}
+              color={activeFilterOption === "age" ? "red" : "black"}
             />
             <Icon
-              name="Search"
+              name={activeFilterOption === "search" ? "X" : "Search"}
               onPress={() => {
-                setShowSearch((s) => !s);
-                setShowFilter(false);
-                setSelectedAge("ALL");
-                if (showSearch) setSearchQuery("");
+                setActiveFilterOption((a) =>
+                  a === "search" ? null : "search",
+                );
+                resetFilters();
               }}
+              color={activeFilterOption === "search" ? "red" : "black"}
             />
           </View>
         </View>
-        {showFilter && (
+        {activeFilterOption === "age" && (
           <View className="py-3">
             <ScrollView
               horizontal
@@ -120,7 +128,7 @@ const ParentsFavouritesScreen = () => {
             </ScrollView>
           </View>
         )}
-        {showSearch && (
+        {activeFilterOption === "search" && (
           <View className=" px-4 py-3 ">
             <View className="flex-row items-center rounded-full border px-4 py-1">
               <Icon name="Search" />

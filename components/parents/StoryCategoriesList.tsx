@@ -5,6 +5,7 @@ import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../ErrorComponent";
+import { getRandomNumber } from "../../utils/utils";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data } = useSuspenseQuery(queryStoryCategories());
@@ -33,10 +34,6 @@ const StoryCategoriesList = () => {
 };
 
 export default StoryCategoriesList;
-
-const getRandomNumber = (): number => {
-  return Math.floor(Math.random() * 10 + 0);
-};
 
 const Item = ({ category, id }: { category: string; id: string }) => {
   const randomNum = getRandomNumber();
