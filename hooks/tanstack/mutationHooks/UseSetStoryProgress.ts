@@ -6,11 +6,9 @@ import { Alert } from "react-native";
 const useSetStoryProgress = ({
   storyId,
   onSuccess,
-  id,
 }: {
   storyId: string;
   onSuccess?: () => void;
-  id?: string;
 }) => {
   const queryClient = useQueryClient();
 

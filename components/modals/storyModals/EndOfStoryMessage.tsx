@@ -17,8 +17,8 @@ const EndOfStoryMessage = ({
   readAgain,
   isInteractive,
 }: Props) => {
-  if (!isOpen) return null;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  if (!isOpen) return null;
   return (
     <View className="flex flex-col p-4 gap-y-5 mb-3 rounded-3xl bg-white">
       <Image

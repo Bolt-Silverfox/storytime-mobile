@@ -26,6 +26,8 @@ const CustomButton = ({
       <Pressable
         aria-labelledby={ariaLabel}
         onPress={onPress}
+        disabled={disabled}
+        style={disabled ? { opacity: 0.5 } : undefined}
         className="border flex w-full flex-row justify-center items-center h-[46px] rounded-full"
       >
         <Text className="font-[abeezee] text-black text-base">{text}</Text>

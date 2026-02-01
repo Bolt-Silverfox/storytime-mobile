@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
+import { BADGE_LABELS, COLORS, VOICE_LABELS } from "../constants/ui";
 import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
 const StoryAudioPlayer = ({
@@ -13,21 +14,26 @@ const StoryAudioPlayer = ({
 }: {
   audioUrl: string;
   textContent: string;
-  selectedVoice: string;
+  selectedVoice: string | null;
   isSubscribed: boolean;
   setIsSubscriptionModalOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const { data, isPending } = useTextToAudio({
     content: textContent,
-    voiceId: selectedVoice,
+    voiceId: selectedVoice || "",
+    enabled: !!selectedVoice,
   });
-  const player = useAudioPlayer(data?.audioUrl ?? audioUrl);
+  const player = useAudioPlayer(selectedVoice ? (data?.audioUrl ?? audioUrl) : audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);
 
   useEffect(() => {
     player.pause();
     setIsPlaying(false);
-  }, [selectedVoice]);
+
+    return () => {
+      player.pause(); // Cleanup on unmount
+    };
+  }, [selectedVoice, player]);
 
   const playAudio = () => {
     if (!isSubscribed) {
@@ -59,16 +65,19 @@ const StoryAudioPlayer = ({
           className={`font-[quilka] text-xl ${!isSubscribed ? "text-black/60" : "text-black"}`}
         >
           {isPending
-            ? "Loading voice"
+            ? VOICE_LABELS.loading
             : isPlaying
-              ? "Mute Voice"
-              : "Play Voice"}
+              ? VOICE_LABELS.mute
+              : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row gap-x-3 items-center">
-        <View className="bg-[#FFF8D2] h-6 px-3 flex justify-center items-center rounded-full">
+        <View
+          style={{ backgroundColor: COLORS.premiumBadge.background }}
+          className="h-6 px-3 flex justify-center items-center rounded-full"
+        >
           <Text className="font-[abeezee] text-xs text-center text-black">
-            Premium
+            {BADGE_LABELS.premium}
           </Text>
         </View>
         {isPending ? (

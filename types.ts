@@ -179,7 +179,7 @@ type Story = {
   themes: {
     id: string;
     name: string;
-    imae: string | null;
+    image: string | null;
     description: string;
     isDeleted: boolean;
     deletedAt: string | null;

@@ -1,23 +1,24 @@
 import { BlurView } from "expo-blur";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
+import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { Story } from "../types";
 import Icon from "./Icon";
+import StoryAudioPlayer from "./StoryAudioPlayer";
 import CustomButton from "./UI/CustomButton";
+import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import SubscriptionModal from "./modals/SubscriptionModal";
-import ProgressBar from "./UI/ProgressBar";
-import StoryAudioPlayer from "./StoryAudioPlayer";
-import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
   paragraphs: string[];
   activeParagraph: number;
-  selectedVoice: string;
+  selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
 };
@@ -37,16 +38,16 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
 }: PropTypes) => {
-  const [isSubsriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array().fill(story.questions.length),
+    new Array(story.questions.length).fill(null),
   );
   const { data } = useGetUserProfile();
 
   const isSubscribed =
-    data?.subscriptionStatus === "active" || data?.role === "admin";
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active || data?.role === USER_ROLES.admin;
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -155,7 +156,7 @@ const StoryContentContainer = ({
         storyTitle={story.title}
       />
       <SubscriptionModal
-        isOpen={isSubsriptionModalOpen}
+        isOpen={isSubscriptionModalOpen}
         onClose={() => setIsSubscriptionModalOpen(false)}
       />
     </View>

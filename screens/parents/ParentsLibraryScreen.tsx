@@ -37,7 +37,6 @@ const ParentsLibraryScreen = () => {
   if (isPending) return <LoadingOverlay visible />;
 
   const handleRemoveSuccess = (title: string) => {
-    console.log("SHOW TOAST", title);
     setToastMsg(`"${title}" removed from library`);
     setShowToast(true);
   };

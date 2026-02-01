@@ -1,6 +1,8 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../../constants/ui";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
@@ -10,7 +12,6 @@ import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 import SubscriptionModal from "../SubscriptionModal";
-import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 interface Props extends Omit<CustomModalProps, "children"> {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -27,7 +28,7 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
   const navigator = useNavigation<StoryNavigatorProp>();
 
   const isPremium =
-    data?.subscriptionStatus === "active" || data?.role === "admin";
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active || data?.role === USER_ROLES.admin;
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
