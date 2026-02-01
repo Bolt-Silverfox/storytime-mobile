@@ -42,12 +42,13 @@ const StoryContentContainer = ({
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array(story.questions.length).fill(null),
+    new Array(story.questions.length).fill(null)
   );
   const { data } = useGetUserProfile();
 
   const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active || data?.role === USER_ROLES.admin;
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    data?.role === USER_ROLES.admin;
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -75,7 +76,7 @@ const StoryContentContainer = ({
   };
 
   return (
-    <View className="flex justify-end flex-1 flex-col gap-y-3">
+    <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
         <StoryAudioPlayer
           audioUrl={story.audioUrl}
@@ -89,25 +90,25 @@ const StoryContentContainer = ({
         <BlurView
           intensity={60}
           tint="systemMaterialDark"
-          className="rounded-lg overflow-hidden backdrop-blur-md py-8 px-4"
+          className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
         >
-          <Text className="text-xl font-[quilka] text-white">
+          <Text className="font-[quilka] text-xl text-white">
             {paragraphs[activeParagraph]}
           </Text>
-          <View className="flex flex-row mt-4 justify-between items-center">
+          <View className="mt-4 flex flex-row items-center justify-between">
             <Pressable
               onPress={
                 !isFirstParagraph
                   ? () => setActiveParagraph((a) => a - 1)
                   : null
               }
-              className={`size-12 rounded-full justify-center flex items-center ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
             >
               {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
             </Pressable>
             <Pressable
               onPress={handleNextParagraph}
-              className={`justify-center flex items-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "rounded-full bg-blue size-12" : "rounded-full bg-blue/50 size-12"}`}
+              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "size-12 rounded-full bg-blue" : "size-12 rounded-full bg-blue/50"}`}
             >
               {!isLastParagraph ? (
                 <Icon name="SkipForward" color="white" />
@@ -126,7 +127,7 @@ const StoryContentContainer = ({
         </BlurView>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="bg-white p-4 rounded-2xl">
+        <View className="rounded-2xl bg-white p-4">
           <ProgressBar
             backgroundColor="#4807EC"
             currentStep={activeParagraph + 1}

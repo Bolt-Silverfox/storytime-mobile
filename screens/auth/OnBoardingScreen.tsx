@@ -6,6 +6,7 @@ import {
   ImageSourcePropType,
   ImageBackground,
   Pressable,
+  StyleSheet,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import defaultStyles from "../../styles";
@@ -13,7 +14,6 @@ import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 type SlideItems = {
   id: string;
@@ -24,54 +24,50 @@ type SlideItems = {
 };
 
 export default function OnBoardingScreen() {
-  const [currentindex, setCurrentIndex] = useState(0);
+  const [_currentindex, _setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<SlideItems> | null>(null);
   const { width } = useWindowDimensions();
   const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
-  const onScroll = () => {
-    if (currentindex < onBoardingSlide.length - 1) {
-      flatListRef.current?.scrollToIndex({ index: currentindex + 1 });
-      console.log("clicked");
-    } else {
-      console.log("Last item");
-    }
-  };
 
   return (
-    <SafeAreaWrapper variant="transparent">
-      <View
-        style={{ flex: 1, width }}
-        onLayout={(e) => setLayoutWidth(e.nativeEvent.layout.width)}
-      >
-        <StatusBar style="light" />
-        {layoutWidth && (
-          <View style={{ flex: 1, width }}>
-            <FlatList
-              ref={flatListRef}
-              data={onBoardingSlide}
-              renderItem={({ item }) => <OnboardingItem item={item} />}
-              bounces={false}
-              horizontal
-              showsHorizontalScrollIndicator={false}
-              pagingEnabled
-              keyExtractor={(item) => item.id}
-              initialNumToRender={3}
-              windowSize={3}
-              removeClippedSubviews={false}
-              getItemLayout={(_, index) => ({
-                length: layoutWidth,
-                offset: layoutWidth * index,
-                index,
-              })}
-              onScrollToIndexFailed={(info) => {
-                const offset = info.index * layoutWidth;
-                flatListRef.current?.scrollToOffset({ offset, animated: true });
-              }}
-            />
-          </View>
-        )}
-      </View>
-    </SafeAreaWrapper>
+    <View
+      style={[styles.flexOne, { width }]}
+      onLayout={(e) => setLayoutWidth(e.nativeEvent.layout.width)}
+    >
+      <StatusBar style="light" />
+      {layoutWidth && (
+        <View style={[styles.flexOne, { width }]}>
+          <FlatList
+            ref={flatListRef}
+            data={onBoardingSlide}
+            renderItem={({ item }) => <OnboardingItem item={item} />}
+            bounces={false}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            pagingEnabled
+            keyExtractor={(item) => item.id}
+            initialNumToRender={3}
+            windowSize={3}
+            removeClippedSubviews={false}
+            getItemLayout={(_, index) => ({
+              length: layoutWidth,
+              offset: layoutWidth * index,
+              index,
+            })}
+            // initialScrollIndex={2}
+            onScrollToIndexFailed={(info) => {
+              const offset = info.index * layoutWidth;
+              flatListRef.current?.scrollToOffset({ offset, animated: true });
+            }}
+          />
+        </View>
+      )}
+      {/* i used this botton to test the scrollToIndex*/}
+      {/* 
+      <Pressable className="p-10 bg-red-700" onPress={onScroll}>
+        <Text>SCROLL</Text>
+      </Pressable> */}
+    </View>
   );
 }
 
@@ -86,29 +82,26 @@ function OnboardingItem({ item }: { item: SlideItems }) {
       style={{ width: width }}
     >
       <View className=" flex-1 justify-end">
-        <View className="bg-white rounded-[32px] w-[95%] mx-auto mb-10 px-7 py-8  ">
+        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
           <Pagination data={item} />
           <View>
-            <Text
-              style={[{ fontFamily: "quilka" }]}
-              className="text-[28px] text-center"
-            >
+            <Text style={styles.titleText} className="text-center text-[28px]">
               {item.title}
             </Text>
             <Text
-              style={[{ fontFamily: "abeezee" }]}
-              className="text-[18px] mt-4 mb-8 text-center text-text"
+              style={styles.descriptionText}
+              className="mb-8 mt-4 text-center text-[18px] text-text"
             >
               {item.description}
             </Text>
 
-            <View className="gap-4 flex">
+            <View className="flex gap-4">
               <Pressable
                 onPress={() => navigate.navigate("auth", { screen: "signUp" })}
-                style={[defaultStyles.button]}
+                style={defaultStyles.button}
               >
                 <Text
-                  style={[defaultStyles.defaultText, { color: "white" }]}
+                  style={styles.textWhite}
                   className="text-center text-white"
                 >
                   Sign up
@@ -116,13 +109,10 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               </Pressable>
               <Pressable
                 onPress={() => navigate.navigate("auth", { screen: "login" })}
-                style={[defaultStyles.button, { backgroundColor: "white" }]}
-                className="border-[#4A413F] border-[0.5px]"
+                style={styles.buttonWhite}
+                className="border-[0.5px] border-[#4A413F]"
               >
-                <Text
-                  style={[defaultStyles.defaultText, { color: "#212121" }]}
-                  className="text-center"
-                >
+                <Text style={styles.textDark} className="text-center">
                   Log in
                 </Text>
               </Pressable>
@@ -136,19 +126,15 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 
 function Pagination({ data }: { data: SlideItems }) {
   return (
-    <View className="flex-row justify-center gap-[6px] mb-6  ">
+    <View className="mb-6 flex-row justify-center gap-[6px]  ">
       {data.dot.map((item, i) => {
         return (
           <View
             key={i.toString()}
             style={[
-              {
-                width: item,
-
-                backgroundColor: item == 5 ? "#00000033" : "#EC2907",
-                borderRadius: 5,
-                height: 5,
-              },
+              styles.paginationDot,
+              { width: item },
+              item === 5 && styles.paginationDotInactive,
             ]}
           />
         );
@@ -156,3 +142,35 @@ function Pagination({ data }: { data: SlideItems }) {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  flexOne: {
+    flex: 1,
+  },
+  titleText: {
+    fontFamily: "quilka",
+  },
+  descriptionText: {
+    fontFamily: "abeezee",
+  },
+  textWhite: {
+    ...defaultStyles.defaultText,
+    color: "white",
+  },
+  textDark: {
+    ...defaultStyles.defaultText,
+    color: "#212121",
+  },
+  buttonWhite: {
+    ...defaultStyles.button,
+    backgroundColor: "white",
+  },
+  paginationDot: {
+    backgroundColor: "#EC2907",
+    borderRadius: 5,
+    height: 5,
+  },
+  paginationDotInactive: {
+    backgroundColor: "#00000033",
+  },
+});

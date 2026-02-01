@@ -26,7 +26,7 @@ const useToggleFavourites = ({
         queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
       const cachedData = currentData?.data ?? [];
       const isLiked = cachedData.some(
-        (stories) => stories.storyId === story.storyId,
+        (stories) => stories.storyId === story.storyId
       );
 
       if (isLiked) {
@@ -45,7 +45,7 @@ const useToggleFavourites = ({
 
       const cachedData: FavouriteStory[] = previousData.data;
       const isLiked = cachedData.some(
-        (stories) => stories.storyId === story.storyId,
+        (stories) => stories.storyId === story.storyId
       );
 
       const newFavourites = isLiked
@@ -66,22 +66,16 @@ const useToggleFavourites = ({
       if (context?.previousData) {
         queryClient.setQueryData(queryKey, context.previousData);
       }
-      Alert.alert(
-        getErrorMessage(err),
-        ERROR_MESSAGES.favourites.toggleFailed,
-      );
+      Alert.alert(getErrorMessage(err), ERROR_MESSAGES.favourites.toggleFailed);
     },
   });
 };
 
 const deleteFromFavourites = async (storyId: string) => {
   try {
-    const request = await apiFetch(
-      `${BASE_URL}/parent-favorites/${storyId}`,
-      {
-        method: "DELETE",
-      },
-    );
+    const request = await apiFetch(`${BASE_URL}/parent-favorites/${storyId}`, {
+      method: "DELETE",
+    });
     const response: QueryResponse = await request.json();
     if (!response.success) throw new Error(response.message);
     return response;

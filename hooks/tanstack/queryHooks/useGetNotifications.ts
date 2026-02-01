@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import useAuth from "../../../contexts/AuthContext";
 
-const getNotificationsQuery = () => {
+const useGetNotificationsQuery = () => {
   const { user } = useAuth();
   return queryOptions({
     queryKey: ["notifications", user?.id],
@@ -10,4 +10,4 @@ const getNotificationsQuery = () => {
   });
 };
 
-export default getNotificationsQuery;
+export default useGetNotificationsQuery;

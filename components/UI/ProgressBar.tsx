@@ -31,19 +31,21 @@ const ProgressBar = ({
         ]}
       >
         <View
-          style={{
-            height,
-            borderRadius: height / 2,
-            backgroundColor,
-            width: calculateWidth(),
-            overflow: "hidden",
-          }}
+          style={[
+            styles.progress,
+            {
+              height,
+              borderRadius: height / 2,
+              backgroundColor,
+              width: calculateWidth(),
+            },
+          ]}
         />
       </View>
 
-      <View className="flex flex-row justify-between items-center">
-        <Text className="text-xs text-text font-[abeezee]">{label}:</Text>
-        <Text className="text-xs text-text font-[abeezee]">
+      <View className="flex flex-row items-center justify-between">
+        <Text className="font-[abeezee] text-xs text-text">{label}:</Text>
+        <Text className="font-[abeezee] text-xs text-text">
           {currentStep} / {totalSteps}
         </Text>
       </View>
@@ -59,15 +61,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0,0,0,0.2)",
     overflow: "hidden",
   },
-
-  fill: {
-    position: "absolute",
-    left: 0,
-    top: 0,
-    width: "100%",
-    shadowColor: "#000",
-    shadowOpacity: 0.15,
-    shadowRadius: 4,
-    elevation: 2,
+  progress: {
+    overflow: "hidden",
   },
 });

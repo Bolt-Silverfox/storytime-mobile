@@ -1,4 +1,4 @@
-import { Alert, Modal, Pressable, Text, View } from "react-native";
+import { Modal, Pressable, Text, View } from "react-native";
 
 type Props = {
   open: "delete" | "logout" | boolean;
@@ -39,21 +39,21 @@ const ParentProfileModal = ({
         className="flex-1 bg-black/40"
       />
 
-      <View className="bg-white rounded-t-3xl p-6 pb-12 absolute px-3 bottom-0 w-full">
-        <View className="h-[6px] w-[68px] bg-[#C5C5C5] mx-auto rounded-[32px] mb-[28px]" />
+      <View className="absolute bottom-0 w-full rounded-t-3xl bg-white p-6 px-3 pb-12">
+        <View className="mx-auto mb-[28px] h-[6px] w-[68px] rounded-[32px] bg-[#C5C5C5]" />
 
-        <View className="flex flex-col gap-y-3 mt-5">
-          <Text className="text-2xl font-[quilka] mb-4 text-center px-5">
+        <View className="mt-5 flex flex-col gap-y-3">
+          <Text className="mb-4 px-5 text-center font-[quilka] text-2xl">
             {modalData?.prompt}
           </Text>
-          <Text className="text-lg text-[#616161] font-[abeezee] mb-4 text-center px-5">
+          <Text className="mb-4 px-5 text-center font-[abeezee] text-lg text-[#616161]">
             {modalData?.info}
           </Text>
           <Pressable
             onPress={() => setOpen(false)}
-            className="bg-primary py-4 w-full rounded-full"
+            className="w-full rounded-full bg-primary py-4"
           >
-            <Text className="text-white font-[abeezee] text-center text-base">
+            <Text className="text-center font-[abeezee] text-base text-white">
               Cancel
             </Text>
           </Pressable>
@@ -68,9 +68,9 @@ const ParentProfileModal = ({
                 }
               }, 500);
             }}
-            className="bg-transparent border  py-4 w-full rounded-full"
+            className="w-full rounded-full border border-primary bg-transparent py-4"
           >
-            <Text className="text-black font-[abeezee] text-center text-base">
+            <Text className="text-center font-[abeezee] text-base text-black">
               {modalData?.confirm}
             </Text>
           </Pressable>

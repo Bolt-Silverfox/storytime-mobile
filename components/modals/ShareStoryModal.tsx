@@ -9,13 +9,13 @@ const ShareStoryModal = ({
 }: Omit<CustomModalProps, "children">) => {
   return (
     <CustomModal onClose={onClose} isOpen={isOpen}>
-      <View className="flex flex-col max-w-screen-md w-full mx-auto gap-y-4">
-        <View className="flex flex-row justify-between items-center">
+      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4">
+        <View className="flex flex-row items-center justify-between">
           <Text className="font-[abeezee] text-xl">Share story</Text>
           <Icon name="SquareX" onPress={onClose} />
         </View>
-        <View className="flex flex-row justify-between gap-x-5 rounded-2xl  items-center p-4 bg-[#FFF8D7]">
-          <Text className="font-[abeezee] text-wrap text-base text-black flex-1">
+        <View className="flex flex-row items-center justify-between gap-x-5  rounded-2xl bg-[#FFF8D7] p-4">
+          <Text className="flex-1 text-wrap font-[abeezee] text-base text-black">
             https://www.storytimeapp.me/ejehreiuewewjew/wdwejdejwfe
           </Text>
           <Icon

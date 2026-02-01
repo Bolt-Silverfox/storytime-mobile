@@ -16,13 +16,13 @@ const CustomEmptyState = ({
   secondaryMessage,
 }: PropTypes) => {
   return (
-    <View className="flex flex-1 justify-center items-center gap-y-4">
+    <View className="flex flex-1 items-center justify-center gap-y-4">
       {url && <Image source={url} className="h-[156px] w-[156px]" />}
-      <Text className="font-[abeezee] text-xl text-center text-black">
+      <Text className="text-center font-[abeezee] text-xl text-black">
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="font-[abeezee] text-text text-sm">
+        <Text className="font-[abeezee] text-sm text-text">
           {secondaryMessage}
         </Text>
       )}

@@ -7,8 +7,13 @@ type RadioButton = {
   onSelect: React.Dispatch<React.SetStateAction<string>>;
 };
 
-export const RadioButton = ({ value, label, selected, onSelect }: RadioButton) => (
-  <Pressable style={styles.radioContainer}  onPress={() => onSelect(value)}>
+export const RadioButton = ({
+  value,
+  label,
+  selected,
+  onSelect,
+}: RadioButton) => (
+  <Pressable style={styles.radioContainer} onPress={() => onSelect(value)}>
     <View style={styles.radioCircle}>
       {selected === value && <View style={styles.selectedRb} />}
     </View>
@@ -16,11 +21,7 @@ export const RadioButton = ({ value, label, selected, onSelect }: RadioButton) =
   </Pressable>
 );
 
-
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-  },
   radioContainer: {
     // flexDirection: "row",
     // alignItems: "center",

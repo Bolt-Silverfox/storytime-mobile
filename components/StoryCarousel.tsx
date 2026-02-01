@@ -10,7 +10,7 @@ type PropTypes = {
 const StoryCarousel = ({ stories }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   return (
-    <View className=" max-w-screen-md mx-auto w-full">
+    <View className=" mx-auto w-full max-w-screen-md">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

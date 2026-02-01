@@ -21,12 +21,7 @@ const PasswordInput = ({
 }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
   return (
-    <View
-      style={{
-        ...styles.formItem,
-        position: "relative",
-      }}
-    >
+    <View style={styles.formItemRelative}>
       <Text style={defaultStyles.label}>{label}</Text>
       <TextInput
         placeholder={placeholder}
@@ -34,10 +29,10 @@ const PasswordInput = ({
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
         placeholderTextColor={errorMessage ? "red" : colours.text}
-        className={`border rounded-full h-[50px] font-[abeezee] text-base text-black relative px-4 ${errorMessage ? "border-red-600" : "border-border"}`}
+        className={`relative h-[50px] rounded-full border px-4 font-[abeezee] text-base text-black ${errorMessage ? "border-red-600" : "border-border"}`}
       />
       {errorMessage && (
-        <Text className="text-red-600 text-sm">{errorMessage}</Text>
+        <Text className="text-sm text-red-600">{errorMessage}</Text>
       )}
       {!showPassword && (
         <Pressable
@@ -62,8 +57,9 @@ const PasswordInput = ({
 export default PasswordInput;
 
 const styles = StyleSheet.create({
-  formItem: {
+  formItemRelative: {
     gap: 4,
+    position: "relative",
   },
   eyeImage: {
     top: 37,

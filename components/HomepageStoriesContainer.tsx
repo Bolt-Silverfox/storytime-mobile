@@ -11,13 +11,13 @@ type PropTypes = {
 const HomepageStoriesContainer = ({ title, stories, onViewAll }: PropTypes) => {
   return (
     <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
-      <View className="flex flex-row max-w-screen-md mx-auto w-full justify-between items-center">
-        <Text className="font-[abeezee]  text-base text-black leading-5">
+      <View className="mx-auto flex w-full max-w-screen-md flex-row items-center justify-between">
+        <Text className="font-[abeezee]  text-base leading-5 text-black">
           {title}
         </Text>
         <Text
           onPress={onViewAll}
-          className="font-[abeezee]  text-base text-[#0731EC] leading-5"
+          className="font-[abeezee]  text-base leading-5 text-[#0731EC]"
         >
           View all
         </Text>

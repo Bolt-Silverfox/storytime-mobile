@@ -1,7 +1,5 @@
 import { Image, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
-import { useNavigation } from "@react-navigation/native";
-import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 type Props = {
   storyTitle: string;
@@ -17,10 +15,9 @@ const EndOfStoryMessage = ({
   readAgain,
   isInteractive,
 }: Props) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col p-4 gap-y-5 mb-3 rounded-3xl bg-white">
+    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
       <Image
         source={require("../../../assets/images/congratulations_image.png")}
         className="size-[105px]"
@@ -30,23 +27,13 @@ const EndOfStoryMessage = ({
         Congratulations! You have successfully completed "{storyTitle}".
       </Text>
       {isInteractive && (
-        <Text className="font-[abeezee] text-text text-base">
+        <Text className="font-[abeezee] text-base text-text">
           Test your knowledge on the story you just completed and see how well
           you did.
         </Text>
       )}
       <View className="flex flex-col gap-y-3">
-        {!isInteractive ? (
-          <CustomButton
-            text="Take me home"
-            onPress={() =>
-              navigator.replace("parents", {
-                screen: "home",
-                params: { screen: "homePage" },
-              })
-            }
-          />
-        ) : (
+        {isInteractive && (
           <CustomButton text="Test knowledge" onPress={onTestKnowledge} />
         )}
         <CustomButton text="Read story again" transparent onPress={readAgain} />

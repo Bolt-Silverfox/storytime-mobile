@@ -1,10 +1,13 @@
-import { Alert, Platform, Share } from "react-native";
+import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../constants";
 import { QueryResponse } from "../types";
 
-const filterStoriesByTitle = (stories: any[], searchQuery: string) => {
+const filterStoriesByTitle = (
+  stories: { title?: string }[],
+  searchQuery: string
+) => {
   if (!searchQuery.trim()) return stories;
 
   const query = searchQuery.toLowerCase().trim();
@@ -34,7 +37,7 @@ const getCategoryColour = (category: string) => {
 };
 
 const getNotificationIcon = (
-  category: "security" | "achievement" | "limit",
+  category: "security" | "achievement" | "limit"
 ) => {
   if (category === "security") {
     return <Icon name="ShieldAlert" color="#866EFF" />;
@@ -61,9 +64,9 @@ const shareContent = async ({
       title,
     });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unexpected error";
-    console.error("error occured while trying to share content", message);
-    Alert.alert("Failed to share", message);
+    const errorMessage =
+      err instanceof Error ? err.message : "Unexpected error";
+    Alert.alert("Failed to share", errorMessage);
   }
 };
 
@@ -100,16 +103,6 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
     const token = await AsyncStorage.getItem("accessToken");
 
-    let normalizedUri = imageUri;
-
-    if (Platform.OS === "android" && imageUri.startsWith("content://")) {
-      normalizedUri = imageUri;
-    } else if (imageUri.startsWith("file://")) {
-      normalizedUri = imageUri;
-    } else {
-      normalizedUri = `file://${imageUri}`;
-    }
-
     const formData = new FormData();
 
     const uriParts = imageUri.split(".");
@@ -119,7 +112,7 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
       uri: imageUri,
       type: `image/${fileType}`,
       name: `avatar.${fileType}`,
-    } as any);
+    } as unknown as Blob);
 
     formData.append("userId", userId);
     const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
@@ -131,7 +124,6 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     });
 
     if (!request.ok) {
-      const text = await request.text();
       throw new Error(`Upload failed with status ${request.status}`);
     }
 
@@ -166,7 +158,7 @@ const splitByWordCount = (text: string, wordsPerChunk: number): string[] => {
 
 const splitByWordCountPreservingSentences = (
   text: string,
-  wordsPerChunk: number,
+  wordsPerChunk: number
 ): string[] => {
   const cleanedText = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
   const sentences = cleanedText.split(/([.!?]+\s+)/).filter((s) => s.trim());
@@ -204,10 +196,6 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
-const getRandomNumber = (max: number = 10): number => {
-  return Math.floor(Math.random() * max + 0);
-};
-
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -222,5 +210,4 @@ export {
   splitByWordCount,
   splitByWordCountPreservingSentences,
   formatTime,
-  getRandomNumber,
 };

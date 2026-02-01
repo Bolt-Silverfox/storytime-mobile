@@ -28,7 +28,8 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
   const navigator = useNavigation<StoryNavigatorProp>();
 
   const isPremium =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active || data?.role === USER_ROLES.admin;
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    data?.role === USER_ROLES.admin;
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
@@ -49,15 +50,15 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
   };
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
-      <View className="bg-white flex flex-col gap-y-6">
-        <View className="flex border-b border-b-border-light pb-6 flex-row justify-between items-center">
+      <View className="flex flex-col gap-y-6 bg-white">
+        <View className="flex flex-row items-center justify-between border-b border-b-border-light pb-6">
           <Text className="font-[abeezee] text-base">Change story mode</Text>
           <Icon name="SquareX" onPress={onClose} />
         </View>
-        <View className="flex flex-col gap-y-6 pb-6 border-b border-b-border-light">
+        <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
           <Pressable
             onPress={() => handleStoryMode("plain")}
-            className={`rounded-3xl p-6 flex flex-col gap-y-2 ${newMode === "plain" ? "border-2 bg-primary border-[#EC400740]" : "border border-border-light bg-white"}`}
+            className={`flex flex-col gap-y-2 rounded-3xl p-6 ${newMode === "plain" ? "border-2 border-[#EC400740] bg-primary" : "border border-border-light bg-white"}`}
           >
             <Text
               className={`font-[quilka] text-xl ${newMode === "plain" ? "text-white" : "text-black"}`}
@@ -72,11 +73,11 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
           </Pressable>
           <Pressable
             onPress={() => handleStoryMode("interactive")}
-            className={`rounded-3xl p-6 flex flex-col gap-y-2 ${newMode === "interactive" ? "border-2 border-primary/25 bg-primary" : "border border-border-light bg-white"}`}
+            className={`flex flex-col gap-y-2 rounded-3xl p-6 ${newMode === "interactive" ? "border-2 border-primary/25 bg-primary" : "border border-border-light bg-white"}`}
           >
             {!isPremium && (
-              <View className="bg-[#FFF8D2] self-start rounded-full h-6 flex justify-center items-center px-2">
-                <Text className="font-[abeezee] text-black text-xs">
+              <View className="flex h-6 items-center justify-center self-start rounded-full bg-[#FFF8D2] px-2">
+                <Text className="font-[abeezee] text-xs text-black">
                   Premium
                 </Text>
               </View>

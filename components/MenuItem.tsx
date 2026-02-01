@@ -3,50 +3,49 @@ import {
   Pressable,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 import CustomText from "./CustomText";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import defaultStyles from "../styles";
 
-type PropTypes = {
+interface MenuItemProps {
   label: string;
   icon?: ReactNode;
   textColor?: string;
   onPress?: () => void;
-  isTablet: boolean;
+  isTablet?: boolean;
   description?: string;
-  isLastItem?: boolean;
-};
+}
 
-const MenuItem: FC<PropTypes> = ({
+const MenuItem: FC<MenuItemProps> = ({
   label,
   icon,
   textColor = "#000",
   onPress,
   isTablet,
   description,
-  isLastItem = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   if (description) {
     return (
       <Pressable onPress={() => setIsOpen((n) => !n)}>
-        <View style={[styles.menuItem, isOpen && { borderBottomWidth: 0 }]}>
+        <View style={[styles.menuItem, isOpen && styles.menuItemNoBorder]}>
           <View style={styles.menuItemLeft} className="w-[85%]">
             {icon}
             <CustomText
               style={[
-                styles.menuItemLabel,
-                { color: textColor, fontSize: isTablet ? 18 : 16 },
+                isTablet ? styles.menuItemLabelTablet : styles.menuItemLabel,
+                { color: textColor },
               ]}
             >
               {label}
             </CustomText>
           </View>
           <CustomText
-            style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
+            style={isTablet ? styles.menuItemArrowTablet : styles.menuItemArrow}
           >
             {isOpen ? (
               <ChevronDown strokeWidth={1.5} />
@@ -57,12 +56,7 @@ const MenuItem: FC<PropTypes> = ({
         </View>
 
         {isOpen && (
-          <View
-            style={[
-              isOpen && { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
-            ]}
-            className="px-4 pb-4 "
-          >
+          <View style={styles.descriptionBorder} className="px-4 pb-4 ">
             <Text style={[defaultStyles.defaultText]}>{description}</Text>
           </View>
         )}
@@ -70,34 +64,26 @@ const MenuItem: FC<PropTypes> = ({
     );
   }
   return (
-    <Pressable onPress={onPress}>
-      <View
-        style={[
-          styles.menuItem,
-          {
-            borderBottomWidth: isLastItem ? 0 : 1,
-            borderBottomColor: "#E5E7EB",
-          },
-        ]}
-      >
+    <TouchableOpacity onPress={onPress}>
+      <View style={styles.menuItem}>
         <View style={styles.menuItemLeft} className="w-[85%]">
           {icon}
           <CustomText
             style={[
-              styles.menuItemLabel,
-              { color: textColor, fontSize: isTablet ? 18 : 16 },
+              isTablet ? styles.menuItemLabelTablet : styles.menuItemLabel,
+              { color: textColor },
             ]}
           >
             {label}
           </CustomText>
         </View>
         <CustomText
-          style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
+          style={isTablet ? styles.menuItemArrowTablet : styles.menuItemArrow}
         >
           <ChevronRight strokeWidth={1.5} />
         </CustomText>
       </View>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
@@ -107,9 +93,20 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
+  menuItemNoBorder: {
+    borderBottomWidth: 0,
   },
   menuItemLeft: { flexDirection: "row", alignItems: "center" },
   menuItemLabel: { fontSize: 16, marginLeft: 12 },
+  menuItemLabelTablet: { fontSize: 18, marginLeft: 12 },
   menuItemArrow: { fontSize: 20, color: "#FB923C" },
+  menuItemArrowTablet: { fontSize: 24, color: "#FB923C" },
+  descriptionBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#E5E7EB",
+  },
 });
 export default MenuItem;

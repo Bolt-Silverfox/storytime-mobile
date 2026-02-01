@@ -9,7 +9,7 @@ type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
 
 const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null,
+    null
   );
 
   return (
@@ -22,19 +22,19 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
           className="flex flex-col items-center gap-y-6"
           aria-labelledby="Subscription modal header"
         >
-          <View className="size-[100px] rounded-full border-2 border-[#866EFF] flex justify-center items-center bg-white">
+          <View className="flex size-[100px] items-center justify-center rounded-full border-2 border-[#866EFF] bg-white">
             <FontAwesome5 name="crown" size={50} color="#866EFF" />
           </View>
           <View className="flex flex-col gap-y-2">
-            <Text className="font-[quilka] text-center text-2xl text-black">
+            <Text className="text-center font-[quilka] text-2xl text-black">
               Unlock Magical Adventure
             </Text>
-            <Text className="font-[abeezee] text-text text-sm text-center">
+            <Text className="text-center font-[abeezee] text-sm text-text">
               Select a plan that best suits you
             </Text>
           </View>
         </View>
-        <View className="flex flex-row gap-x-2 max-w-screen-md mx-auto w-full">
+        <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
           {subscriptionOptions.map((subscription) => {
             const isSelected = selectedPlan === subscription.name;
 
@@ -42,20 +42,20 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
               <Pressable
                 key={subscription.name}
                 onPress={() => setSelectedPlan(subscription.name)}
-                className={`  flex-1 rounded-[20px] py-10 justify-center items-center flex flex-col ${isSelected ? "border-purple border-2" : "border-border-light border"}`}
+                className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
               >
                 <View
                   className={`
-                    w-6 h-6 rounded-full border-2 
-                    flex items-center justify-center
+                    flex h-6 w-6 items-center 
+                    justify-center rounded-full border-2
                     ${isSelected ? "border-blue" : "border-gray-300"}
                   `}
                 >
                   {isSelected && (
-                    <View className="w-3 h-3 rounded-full bg-blue" />
+                    <View className="h-3 w-3 rounded-full bg-blue" />
                   )}
                 </View>
-                <Text className="font-[quilka] text-2xl text-black mt-4 mb-1">
+                <Text className="mb-1 mt-4 font-[quilka] text-2xl text-black">
                   $ {subscription.price}
                 </Text>
                 <Text className="font-[abeezee] text-[18px] leading-6 text-black">
@@ -68,7 +68,7 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
 
         <View
           aria-labelledby="subscription plans"
-          className="flex flex-col gap-y-4 max-w-screen-md mx-auto w-full"
+          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4"
         >
           <Text className="font-[quilka] text-[18px] text-black ">
             What you'll enjoy
@@ -77,7 +77,7 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
             {subscriptionBenefits.map((benefit) => (
               <View
                 key={benefit}
-                className="flex flex-row gap-x-1.5 items-center"
+                className="flex flex-row items-center gap-x-1.5"
               >
                 <Image
                   source={require("../../assets/icons/tick.png")}
@@ -91,13 +91,13 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
 
         <View
           aria-labelledby="subscription disclaimer"
-          className="flex flex-row px-4 py-5 max-w-screen-md mx-auto w-full gap-x-4 bg-yellow rounded-2xl"
+          className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5"
         >
           <Image
             className="size-6"
             source={require("../../assets/icons/caution.png")}
           />
-          <Text className="font-[abeezee] text-xs flex-1 text-wrap">
+          <Text className="flex-1 text-wrap font-[abeezee] text-xs">
             Your plan will automatically renew unless you cancel your
             subscription.
           </Text>

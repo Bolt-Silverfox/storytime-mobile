@@ -15,7 +15,8 @@ const useTextToAudio = (params: {
   const { data } = useGetUserProfile();
 
   const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active || data?.role === USER_ROLES.admin;
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    data?.role === USER_ROLES.admin;
   return useQuery({
     queryKey: ["textToSpeech", params.content, params.voiceId, isSubscribed],
     enabled: params.enabled !== false && isSubscribed && !!params.voiceId,

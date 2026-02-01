@@ -6,7 +6,11 @@ const setLogoutCallBack = (callback: () => void) => {
   logoutCallback = callback;
 };
 
-const apiFetch = async (url: string, options: any = {}) => {
+interface FetchOptions extends RequestInit {
+  headers?: Record<string, string>;
+}
+
+const apiFetch = async (url: string, options: FetchOptions = {}) => {
   const token = await AsyncStorage.getItem("accessToken");
   const headers = {
     ...options.headers,
@@ -57,7 +61,7 @@ const refreshTokens = async () => {
     if (!data.success) return false;
     await AsyncStorage.setItem("accessToken", data.data.jwt);
     return true;
-  } catch (err) {
+  } catch {
     return false;
   }
 };
