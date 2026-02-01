@@ -5,6 +5,7 @@ import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../ErrorComponent";
+import { getRandomNumber } from "../../utils/utils";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data } = useSuspenseQuery(queryStoryCategories());
@@ -34,10 +35,6 @@ const StoryCategoriesList = () => {
 
 export default StoryCategoriesList;
 
-const getRandomNumber = (): number => {
-  return Math.floor(Math.random() * 10 + 0);
-};
-
 const Item = ({ category, id }: { category: string; id: string }) => {
   const randomNum = getRandomNumber();
   const colour = storyCategoriesColours[randomNum];
@@ -46,9 +43,9 @@ const Item = ({ category, id }: { category: string; id: string }) => {
   return (
     <Pressable
       onPress={() => navigator.navigate("storiesByCategory", { category, id })}
-      className="h-16 px-5 w-[47%] flex justify-center items-center rounded-md"
+      className="h-16 br px-5 w-[47%] flex justify-center items-center rounded-xl"
       style={{
-        backgroundColor: `${colour}66`,
+        backgroundColor: `${colour}33`,
         borderBottomColor: colour,
         borderBottomWidth: 2,
       }}

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
 import { Story } from "../../../types";
@@ -20,6 +20,15 @@ const StoryQuiz = ({
   const [results, setResults] = useState<Array<boolean | null>>(
     new Array(questions.length).fill(null)
   );
+
+  // Reset state when quiz is reopened
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(0);
+      setSelectedOption(null);
+      setResults(new Array(questions.length).fill(null));
+    }
+  }, [isOpen, questions.length]);
 
   const isLastQuestion = activeTab === questions.length - 1;
   const currentQuestion = questions[activeTab];
@@ -63,36 +72,34 @@ const StoryQuiz = ({
         {currentQuestion.options.map((option, index) => {
           const isSelected = index === selectedOption;
           return (
-            <View className="flex flex-col gap-y-4" key={option}>
-              <Pressable
-                key={option}
-                onPress={() => {
-                  setSelectedOption(index);
-                  setResults((result) =>
-                    result.map((r, idx) => {
-                      if (idx !== activeTab) return r;
-                      return index === currentQuestion.correctOption
-                        ? true
-                        : false;
-                    })
-                  );
-                }}
-                className="flex-row items-center gap-x-5 py-1 px-4 rounded-2xl"
+            <Pressable
+              key={option}
+              onPress={() => {
+                setSelectedOption(index);
+                setResults((result) =>
+                  result.map((r, idx) => {
+                    if (idx !== activeTab) return r;
+                    return index === currentQuestion.correctOption
+                      ? true
+                      : false;
+                  })
+                );
+              }}
+              className="flex-row items-center gap-x-5 py-1 px-4 rounded-2xl"
+            >
+              <View
+                className={`w-6 h-6 rounded-full p-[1px] border-2 flex items-center justify-center ${isSelected ? "border-yellow" : "border-gray-300"}`}
               >
-                <View
-                  className={`w-6 h-6 rounded-full p-[1px] border-2 flex items-center justify-center ${isSelected ? "border-yellow" : "border-gray-300"}`}
-                >
-                  {isSelected && (
-                    <View className="w-full h-full rounded-full bg-yellow" />
-                  )}
-                </View>
-                <View className="flex-row flex w-full items-center gap-x-3">
-                  <Text className="text-base text-text capitalize flex-1 font-[abeezee]">
-                    {option}
-                  </Text>
-                </View>
-              </Pressable>
-            </View>
+                {isSelected && (
+                  <View className="w-full h-full rounded-full bg-yellow" />
+                )}
+              </View>
+              <View className="flex-row flex w-full items-center gap-x-3">
+                <Text className="text-base text-text capitalize flex-1 font-[abeezee]">
+                  {option}
+                </Text>
+              </View>
+            </Pressable>
           );
         })}
       </View>

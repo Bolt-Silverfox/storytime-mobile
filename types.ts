@@ -87,23 +87,24 @@ type SystemAvatar = {
 };
 
 type UserProfile = {
-  avatar: Avatar | null;
-  createdAt: string;
-  email: string;
-  enableBiometrics: boolean;
   id: string;
+  email: string;
+  title: string;
   name: string;
-  numberOfKids: number;
-  pinSet: boolean;
+  avatar: Avatar | null;
   profile: {
     country: string;
     explicitContent: boolean;
     language: string;
     maxScreenTimeMins: null | string | number;
   };
-  role: string;
-  title: string;
+  role: "admin" | "parent";
+  numberOfKids: number;
+  pinSet: boolean;
+  biometricsEnabled: boolean;
+  createdAt: string;
   updatedAt: string;
+  subscriptionStatus: "free" | "active";
 };
 
 type KidReport = {
@@ -178,7 +179,7 @@ type Story = {
   themes: {
     id: string;
     name: string;
-    imae: string | null;
+    image: string | null;
     description: string;
     isDeleted: boolean;
     deletedAt: string | null;
@@ -225,8 +226,12 @@ type FavouriteStory = {
 };
 
 type AvailableVoices = {
-  voice_id: string;
+  id: string;
   name: string;
+  type: string;
+  previewUrl: string;
+  voiceAvatar: string;
+  elevenLabsVoiceId: string;
 };
 
 const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;

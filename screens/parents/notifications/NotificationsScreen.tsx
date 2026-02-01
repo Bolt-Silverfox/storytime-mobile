@@ -5,6 +5,7 @@ import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import PageTitle from "../../../components/PageTitle";
 import NotificationDetailsModal from "../../../components/modals/NotificationDetailsModal";
 import { getNotificationIcon } from "../../../utils/utils";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
@@ -13,73 +14,75 @@ const NotificationsScreen = () => {
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
   const [activeNotification, setActiveNotification] = useState<string | null>(
-    null
+    null,
   );
 
   return (
-    <View className="flex flex-1 bg-bgLight">
-      <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
-      <ScrollView
-        showsHorizontalScrollIndicator={false}
-        className="max-h-20"
-        horizontal
-        contentContainerClassName="flex flex-row items-center  gap-x-2 p-5 justify-center"
-      >
-        {notificationsLabel.map((notification) => (
-          <Text
-            onPress={() => setActiveLabel(notification)}
-            key={notification}
-            className={`font-[abeezee] capitalize text-center rounded-full py-2 w-32 text-base ${notification === activeLabel ? "text-white bg-blue" : "text-text border border-border"}`}
-          >
-            {notification}
-          </Text>
-        ))}
-      </ScrollView>
-      <View className="flex-1 max-w-screen-md mx-auto w-full">
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1 bg-bgLight">
+        <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
         <ScrollView
-          showsVerticalScrollIndicator={false}
-          contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
+          showsHorizontalScrollIndicator={false}
+          className="max-h-20"
+          horizontal
+          contentContainerClassName="flex flex-row items-center  gap-x-2 p-5 justify-center"
         >
-          <View className="flex flex-col gap-y-6">
-            {notificationsDummyData.map((notification) => (
-              <View className="flex flex-col gap-y-2.5" key={notification.id}>
-                <Text className="font-[abeezee] text-[18px] text-black">
-                  {notification.date}
-                </Text>
-                <Pressable
-                  onPress={() => setActiveNotification(notification.id)}
-                  className="bg-white border border-border-lighter flex flex-col gap-y-6 p-5 rounded-xl"
-                >
-                  {notification.notifications.map((noti) => (
-                    <View className="flex-row gap-x-4" key={noti.text}>
-                      {getNotificationIcon(noti.type)}
-                      <View className="flex flex-1 flex-col gap-y-1.5">
-                        <Text className="font-[abeezee] w-full text-wrap text-black text-base leading-6">
-                          {noti.text}
-                        </Text>
-                        <Text className="font-[abeezee] text-text text-xs leading-6">
-                          {noti.time} ago
-                        </Text>
-                      </View>
-                      {noti.status === "unread" && (
-                        <Image
-                          className="size-8"
-                          source={require("../../../assets/icons/middot.png")}
-                        />
-                      )}
-                    </View>
-                  ))}
-                </Pressable>
-                <NotificationDetailsModal
-                  isOpen={activeNotification === notification.id}
-                  closeModal={() => setActiveNotification(null)}
-                />
-              </View>
-            ))}
-          </View>
+          {notificationsLabel.map((notification) => (
+            <Text
+              onPress={() => setActiveLabel(notification)}
+              key={notification}
+              className={`font-[abeezee] capitalize text-center rounded-full py-2 w-32 text-base ${notification === activeLabel ? "text-white bg-blue" : "text-text border border-border"}`}
+            >
+              {notification}
+            </Text>
+          ))}
         </ScrollView>
+        <View className="flex-1 max-w-screen-md mx-auto w-full">
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
+          >
+            <View className="flex flex-col gap-y-6">
+              {notificationsDummyData.map((notification) => (
+                <View className="flex flex-col gap-y-2.5" key={notification.id}>
+                  <Text className="font-[abeezee] text-[18px] text-black">
+                    {notification.date}
+                  </Text>
+                  <Pressable
+                    onPress={() => setActiveNotification(notification.id)}
+                    className="bg-white border border-border-lighter flex flex-col gap-y-6 p-5 rounded-xl"
+                  >
+                    {notification.notifications.map((noti) => (
+                      <View className="flex-row gap-x-4" key={noti.text}>
+                        {getNotificationIcon(noti.type)}
+                        <View className="flex flex-1 flex-col gap-y-1.5">
+                          <Text className="font-[abeezee] w-full text-wrap text-black text-base leading-6">
+                            {noti.text}
+                          </Text>
+                          <Text className="font-[abeezee] text-text text-xs leading-6">
+                            {noti.time} ago
+                          </Text>
+                        </View>
+                        {noti.status === "unread" && (
+                          <Image
+                            className="size-8"
+                            source={require("../../../assets/icons/middot.png")}
+                          />
+                        )}
+                      </View>
+                    ))}
+                  </Pressable>
+                  <NotificationDetailsModal
+                    isOpen={activeNotification === notification.id}
+                    closeModal={() => setActiveNotification(null)}
+                  />
+                </View>
+              ))}
+            </View>
+          </ScrollView>
+        </View>
       </View>
-    </View>
+    </SafeAreaWrapper>
   );
 };
 

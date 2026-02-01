@@ -5,6 +5,7 @@ import Icon from "../../Icon";
 import TopModal from "../TopModal";
 import ExitStoryModal from "./ExitStoryModal";
 import InStoryModeModal from "./InStoryModeModal";
+import SafeAreaWrapper from "../../UI/SafeAreaWrapper";
 
 type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -26,7 +27,7 @@ const InStoryOptionsModal = ({
       isOpen={isOptionsModalOpen}
       onClose={() => setIsOptionsModalOpen(false)}
     >
-      <View className="flex flex-col gap-y-4">
+      <View className="flex flex-col gap-y-4 pt-10">
         <View className="flex flex-row flex-wrap gap-6 justify-center gap-x-3">
           <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
             <Pressable
