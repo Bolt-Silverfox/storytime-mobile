@@ -98,13 +98,13 @@ type UserProfile = {
     language: string;
     maxScreenTimeMins: null | string | number;
   };
-  role: string;
+  role: "admin" | "parent";
   numberOfKids: number;
   pinSet: boolean;
   biometricsEnabled: boolean;
   createdAt: string;
   updatedAt: string;
-  subscriptionStatus: "free" | "premium";
+  subscriptionStatus: "free" | "active";
 };
 
 type KidReport = {

@@ -1,11 +1,12 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { Image, Pressable, Text, View } from "react-native";
+import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
+import { getRandomNumber, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
-import { secondsToMinutes } from "../../utils/utils";
 import CustomImage from "../UI/CustomImage";
 
 type Proptypes = {
@@ -49,6 +50,7 @@ const StoryItem = ({
 
   const duration = secondsToMinutes(story.durationSeconds);
 
+  const categoryColour = storyCategoriesColours[getRandomNumber()];
   return (
     <Pressable
       onPress={navigate}
@@ -76,14 +78,17 @@ const StoryItem = ({
         </Pressable>
         <View className="flex gap-x-2 px-0.5 flex-row justify-between items-center">
           <View className="flex flex-1 flex-row items-center">
-            <Icon name="Dot" color={"#EC0794"} />
+            <Icon name="Dot" color={categoryColour} />
             <Text
               className="font-[abeezee] text-wrap flex-1 capitalize text-xs"
               style={{
-                color: "#EC0794",
+                color: categoryColour,
               }}
             >
-              {story.categories[0].name}
+              {story.categories[0].name.length > 15
+                ? story.categories[0].name.split("").slice(0, 14).join("") +
+                  "..."
+                : story.categories[0].name}
             </Text>
           </View>
           <View className="flex flex-row gap-x-1 items-center">

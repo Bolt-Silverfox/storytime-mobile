@@ -9,7 +9,8 @@ import useGetUserProfile from "../queryHooks/useGetUserProfile";
 const useTextToAudio = (params: { content: string; voiceId: string }) => {
   const { data } = useGetUserProfile();
 
-  const isSubscribed = data?.subscriptionStatus === "premium";
+  const isSubscribed =
+    data?.subscriptionStatus === "active" || data?.role === "admin";
   return useQuery({
     queryKey: ["textToSpeech", params.content, params.voiceId, isSubscribed],
     queryFn: async () => {

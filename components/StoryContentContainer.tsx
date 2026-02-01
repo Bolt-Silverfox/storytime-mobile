@@ -45,7 +45,8 @@ const StoryContentContainer = ({
   );
   const { data } = useGetUserProfile();
 
-  const isSubscribed = data?.subscriptionStatus === "premium";
+  const isSubscribed =
+    data?.subscriptionStatus === "active" || data?.role === "admin";
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
