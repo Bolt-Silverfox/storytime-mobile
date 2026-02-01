@@ -1,22 +1,32 @@
-import { FC, useState } from "react";
+import { FC, ReactNode, useState } from "react";
 import {
   Pressable,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import CustomText from "./CustomText";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import defaultStyles from "../styles";
 
-const MenuItem: FC<any> = ({
+type PropTypes = {
+  label: string;
+  icon?: ReactNode;
+  textColor?: string;
+  onPress?: () => void;
+  isTablet: boolean;
+  description?: string;
+  isLastItem?: boolean;
+};
+
+const MenuItem: FC<PropTypes> = ({
   label,
   icon,
   textColor = "#000",
   onPress,
   isTablet,
   description,
+  isLastItem = false,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -60,8 +70,16 @@ const MenuItem: FC<any> = ({
     );
   }
   return (
-    <TouchableOpacity onPress={onPress}>
-      <View style={styles.menuItem}>
+    <Pressable onPress={onPress}>
+      <View
+        style={[
+          styles.menuItem,
+          {
+            borderBottomWidth: isLastItem ? 0 : 1,
+            borderBottomColor: "#E5E7EB",
+          },
+        ]}
+      >
         <View style={styles.menuItemLeft} className="w-[85%]">
           {icon}
           <CustomText
@@ -79,7 +97,7 @@ const MenuItem: FC<any> = ({
           <ChevronRight strokeWidth={1.5} />
         </CustomText>
       </View>
-    </TouchableOpacity>
+    </Pressable>
   );
 };
 
@@ -89,8 +107,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
   },
   menuItemLeft: { flexDirection: "row", alignItems: "center" },
   menuItemLabel: { fontSize: 16, marginLeft: 12 },

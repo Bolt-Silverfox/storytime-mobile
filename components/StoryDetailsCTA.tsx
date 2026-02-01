@@ -2,7 +2,7 @@ import { Pressable, Text, View } from "react-native";
 import Icon from "./Icon";
 import { Story } from "../types";
 import { Dispatch, SetStateAction } from "react";
-import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useParentFavourites";
+import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import queryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
 import FontAwesome from "@expo/vector-icons/FontAwesome";

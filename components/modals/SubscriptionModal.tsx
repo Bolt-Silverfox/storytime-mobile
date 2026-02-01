@@ -1,6 +1,6 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
 import { subscriptionBenefits, subscriptionOptions } from "../../data";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
@@ -109,7 +109,12 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
           <CustomButton
             ariaLabel="Subscribe button"
             text="Subscribe"
-            onPress={() => {}}
+            onPress={() => {
+              Alert.alert(
+                "Coming Soon",
+                "Subscription functionality will be available soon."
+              );
+            }}
             disabled={!selectedPlan}
           />
           <CustomButton

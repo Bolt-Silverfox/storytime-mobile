@@ -39,9 +39,11 @@ const FavouriteStoryItem = ({
         <Text className="font-[abeezee] text-text text-sm">
           {story.ageRange} years
         </Text>
-        <Pressable className="size-11 self-end bg-black/5 flex justify-center items-center rounded-full">
+        <Pressable
+          onPress={() => setActiveStory(story)}
+          className="size-11 self-end bg-black/5 flex justify-center items-center rounded-full"
+        >
           <FontAwesome
-            onPress={() => setActiveStory(story)}
             name="heart"
             size={24}
             color="red"
