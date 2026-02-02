@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { secureTokenStorage } from "../utils/secureTokenStorage";
 import {
   createContext,
   Dispatch,
@@ -116,7 +117,7 @@ type AuthContextType = {
   errorMessage: string | undefined | string[];
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
-  logout: () => void;
+  logout: () => Promise<void>;
   login: AuthFnTypes["login"];
   signUp: AuthFnTypes["signUp"];
   verifyEmail: AuthFnTypes["verifyEmail"];
@@ -180,12 +181,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(true);
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
-        const storedToken = await AsyncStorage.getItem("accessToken");
-        if (!localStoredSession || !storedToken) {
+        const hasToken = await secureTokenStorage.hasAccessToken();
+        if (!localStoredSession || !hasToken) {
           setUser(null);
           return;
         }
-        setUser(JSON.parse(localStoredSession));
+        try {
+          setUser(JSON.parse(localStoredSession));
+        } catch {
+          // Corrupted user data - clear it and reset
+          await AsyncStorage.removeItem("user");
+          setUser(null);
+          return;
+        }
       } catch (err) {
         const errMessage =
           err instanceof Error
@@ -225,12 +233,21 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const logout = useCallback(() => {
-    (async () => {
-      await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+  const logout = useCallback(async () => {
+    try {
+      await Promise.all([
+        secureTokenStorage.clearTokens(),
+        AsyncStorage.removeItem("user"),
+      ]);
+    } catch (error) {
+      if (__DEV__) {
+        console.error("Logout storage clear failed:", error);
+      }
+    } finally {
+      // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
-    })();
+    }
   }, []);
 
   const login: AuthFnTypes["login"] = async ({
@@ -255,8 +272,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(loginData.message);
       return;
     }
-    await AsyncStorage.setItem("accessToken", loginData.data.jwt);
-    await AsyncStorage.setItem("refreshToken", loginData.data.refreshToken);
+    await secureTokenStorage.setTokens(
+      loginData.data.jwt,
+      loginData.data.refreshToken
+    );
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
     setUser(loginData.data.user);
   };
@@ -280,8 +299,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(signupData.message);
       return;
     }
-    await AsyncStorage.setItem("accessToken", signupData.data.jwt);
-    await AsyncStorage.setItem("refreshToken", signupData.data.refreshToken);
+    await secureTokenStorage.setTokens(
+      signupData.data.jwt,
+      signupData.data.refreshToken
+    );
     await AsyncStorage.setItem(
       "unverifiedUser",
       JSON.stringify(signupData.data.user)
@@ -405,8 +426,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response.success) {
         throw new Error(response.message);
       }
-      await AsyncStorage.setItem("accessToken", response.data.jwt);
-      await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+      await secureTokenStorage.setTokens(
+        response.data.jwt,
+        response.data.refreshToken
+      );
       await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
       setUser(response.data.user);
     } catch (error) {
@@ -485,13 +508,14 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       // Store tokens and user
       if (response.data && response.data.jwt) {
-        await AsyncStorage.setItem("accessToken", response.data.jwt);
-        await AsyncStorage.setItem("refreshToken", response.data.refreshToken);
+        await secureTokenStorage.setTokens(
+          response.data.jwt,
+          response.data.refreshToken
+        );
         await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
         setUser(response.data.user);
       } else if (response.jwt) {
-        await AsyncStorage.setItem("accessToken", response.jwt);
-        await AsyncStorage.setItem("refreshToken", response.refreshToken);
+        await secureTokenStorage.setTokens(response.jwt, response.refreshToken);
         await AsyncStorage.setItem("user", JSON.stringify(response.user));
         setUser(response.user);
       }
@@ -629,7 +653,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(request.message);
       return;
     }
-    await AsyncStorage.multiRemove(["accessToken", "refreshToken", "user"]);
+    await Promise.all([
+      secureTokenStorage.clearTokens(),
+      AsyncStorage.removeItem("user"),
+    ]);
     setUser(null);
     setErrorMessage(undefined);
   };
