@@ -35,10 +35,10 @@ const SignupForm = () => {
     });
 
     if (!result.success) {
-      const formatted: Errors = {};
+      const formatted: any = {};
 
       result.error.issues.forEach((err) => {
-        const field = err.path[0] as keyof RegisterSchema;
+        const field = err.path[0];
         formatted[field] = err.message;
       });
 
@@ -63,7 +63,7 @@ const SignupForm = () => {
   return (
     <View>
       <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={apiError} />
+        {apiError && <ErrorMessageDisplay errorMessage={apiError} />}
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
@@ -107,9 +107,9 @@ const SignupForm = () => {
       </View>
       <Pressable
         onPress={onRegister}
-        style={[styles.buttonMargin, defaultStyles.button]}
+        style={[{ marginTop: 44 }, defaultStyles.button]}
       >
-        <Text style={styles.textWhite}>Proceed</Text>
+        <Text style={{ ...styles.text, color: "white" }}>Create Account</Text>
       </Pressable>
 
       <LoadingOverlay visible={isLoading} />
@@ -120,10 +120,9 @@ const SignupForm = () => {
 export default SignupForm;
 
 const styles = StyleSheet.create({
-  textWhite: {
+  text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
-    color: "white",
   },
   form: {
     gap: 20,
@@ -133,8 +132,5 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-  buttonMargin: {
-    marginTop: 44,
   },
 });

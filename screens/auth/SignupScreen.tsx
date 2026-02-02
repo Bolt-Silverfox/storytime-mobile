@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,80 +15,91 @@ import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useAuth from "../../contexts/AuthContext";
 import PageTitle from "../../components/PageTitle";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const SignupScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
-    <View className="flex flex-1">
-      <PageTitle title="" goBack={() => navigator.goBack()} />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        className="flex-1"
-        contentContainerClassName="min-h-full"
-      >
-        <View style={defaultStyles.screen}>
-          <View style={styles.textContainer}>
-            <Text style={defaultStyles.heading}>Welcome to Storytime4Kids</Text>
-            <Text style={styles.text}>
-              The world's first kids story library
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1 bg-bg-light">
+        <PageTitle title="" goBack={() => navigator.goBack()} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className=""
+          contentContainerClassName=""
+        >
+          <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
+            <View style={styles.textContainer}>
+              <Text style={defaultStyles.heading}>
+                Welcome to Storytime4Kids
+              </Text>
+              <Text style={styles.text}>
+                The world's first kids story library
+              </Text>
+            </View>
+            <SignupForm />
+            <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
+              <View className="flex-1 border-b border-black" />
+              <Text className="text-center font-[abeezee]">
+                Or sign up with
+              </Text>
+              <View className="flex-1 border-b border-black" />
+            </View>
+            <View className="flex flex-row items-center justify-center gap-x-20 ">
+              <Pressable
+                onPress={handleGoogleAuth}
+                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+              >
+                <Image source={require("../../assets/icons/google-icon.png")} />
+              </Pressable>
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={handleAppleAuth}
+                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                >
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
+                </Pressable>
+              )}
+            </View>
+            <Text style={{ ...styles.text }}>
+              If you already have an account{" "}
+              <Text
+                onPress={() => navigator.navigate("auth", { screen: "login" })}
+                style={{ ...defaultStyles.defaultText, color: colours.link }}
+              >
+                Log in
+              </Text>
             </Text>
           </View>
-          <SignupForm />
-          <View className="mb-14 mt-10 flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
-            <View className="flex-1 border-b border-black" />
-            <Text className="text-center">Or sign up with</Text>
-            <View className="flex-1 border-b border-black" />
-          </View>
-          <View className="mb-14 flex flex-row items-center justify-center gap-x-20 ">
-            <Pressable
-              onPress={handleGoogleAuth}
-              className="flex size-20 items-center justify-center rounded-full bg-white"
-            >
-              <Image source={require("../../assets/icons/google-icon.png")} />
-            </Pressable>
-            <Pressable
-              onPress={handleAppleAuth}
-              className="flex size-20 items-center justify-center rounded-full bg-white"
-            >
-              <Image source={require("../../assets/icons/apple-icon.png")} />
-            </Pressable>
-          </View>
-          <Text style={styles.textMarginTop}>
-            If you already have an account{" "}
-            <Text
-              onPress={() => navigator.navigate("auth", { screen: "login" })}
-              style={{ ...defaultStyles.defaultText, color: colours.link }}
-            >
-              Log in
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By accepting to continue, you agree to Storytime's{" "}
+              <Text
+                onPress={() =>
+                  navigator.navigate("auth", { screen: "termsOfService" })
+                }
+                style={styles.footerLinkText}
+              >
+                Terms and conditions
+              </Text>{" "}
+              and{" "}
+              <Text
+                onPress={() =>
+                  navigator.navigate("auth", { screen: "privacyScreen" })
+                }
+                style={styles.footerLinkText}
+              >
+                Privacy Policy
+              </Text>
             </Text>
-          </Text>
-        </View>
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            By accepting to continue, you agree to storytime's{" "}
-            <Text
-              onPress={() =>
-                navigator.navigate("auth", { screen: "termsOfService" })
-              }
-              style={styles.footerLinkText}
-            >
-              Terms and conditions
-            </Text>{" "}
-            and{" "}
-            <Text
-              onPress={() =>
-                navigator.navigate("auth", { screen: "privacyScreen" })
-              }
-              style={styles.footerLinkText}
-            >
-              Privacy Policy
-            </Text>
-          </Text>
-        </View>
-        <LoadingOverlay visible={isLoading} />
-      </ScrollView>
-    </View>
+          </View>
+          <LoadingOverlay visible={isLoading} />
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 
@@ -98,14 +110,8 @@ const styles = StyleSheet.create({
     ...defaultStyles.defaultText,
     textAlign: "center",
   },
-  textMarginTop: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    marginTop: 16,
-  },
   textContainer: {
     gap: 8,
-    marginBottom: 56,
   },
   footer: {
     paddingTop: 54,
@@ -119,6 +125,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 600,
     alignSelf: "center",
+    fontSize: 14,
   },
   footerLinkText: {
     ...defaultStyles.linkText,
