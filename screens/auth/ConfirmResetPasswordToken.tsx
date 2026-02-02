@@ -45,7 +45,8 @@ const ConfirmResetPasswordTokenScreen = () => {
   };
 
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: NodeJS.Timeout | undefined;
+    let mounted = true;
 
     const init = async () => {
       let expiry = await AsyncStorage.getItem(RESET_EXPIRY_KEY);
@@ -57,23 +58,32 @@ const ConfirmResetPasswordTokenScreen = () => {
 
       const update = async () => {
         const stored = await AsyncStorage.getItem(RESET_EXPIRY_KEY);
-        if (!stored) return;
+        if (!stored || !mounted) return;
 
         const remaining = Math.max(
           0,
           Math.floor((Number(stored) - Date.now()) / 1000)
         );
 
-        setCountdown(remaining);
+        if (mounted) {
+          setCountdown(remaining);
+        }
       };
 
       await update();
-      interval = setInterval(update, 1000);
+      if (mounted) {
+        interval = setInterval(update, 1000);
+      }
     };
 
     init();
 
-    return () => clearInterval(interval);
+    return () => {
+      mounted = false;
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
   }, []);
 
   return (

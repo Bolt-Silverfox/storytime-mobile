@@ -87,7 +87,9 @@ const AvailableVoices = ({
       await player.replace(audioUrl);
       player.play();
     } catch (error) {
-      console.error("Failed to load audio preview:", error);
+      if (__DEV__) {
+        console.error("Failed to load audio preview:", error);
+      }
       setPreviewingId(null);
     }
   };

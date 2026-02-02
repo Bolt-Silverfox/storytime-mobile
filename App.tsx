@@ -14,6 +14,7 @@ import { AppState, AppStateStatus, Platform } from "react-native";
 import { StyleSheet } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CustomSplashScreen from "./components/CustomSplashScreen";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
 import RootNavigator from "./Navigation/RootNavigator";
@@ -54,18 +55,20 @@ export default function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer>
-              <RootNavigator />
-            </NavigationContainer>
-          </QueryClientProvider>
-        </AuthProvider>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <ErrorBoundary>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <StatusBar style="auto" />
+          <AuthProvider>
+            <QueryClientProvider client={queryClient}>
+              <NavigationContainer>
+                <RootNavigator />
+              </NavigationContainer>
+            </QueryClientProvider>
+          </AuthProvider>
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </ErrorBoundary>
   );
 }
 
