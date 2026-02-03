@@ -1,17 +1,37 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import { secureTokenStorage } from "./utils/secureTokenStorage";
 
-let logoutCallback: () => void = () => {};
+// Token refresh lock mechanism to prevent race conditions
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
+// Logout callback - stored at module level for API layer access
+let logoutCallback: (() => void) | null = null;
 
 const setLogoutCallBack = (callback: () => void) => {
   logoutCallback = callback;
+};
+
+const triggerLogout = () => {
+  if (logoutCallback) {
+    logoutCallback();
+  }
 };
 
 interface FetchOptions extends RequestInit {
   headers?: Record<string, string>;
 }
 
+class ApiError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+  }
+}
+
 const apiFetch = async (url: string, options: FetchOptions = {}) => {
-  const token = await AsyncStorage.getItem("accessToken");
+  const token = await secureTokenStorage.getAccessToken();
   const headers = {
     ...options.headers,
     "Content-Type": "application/json",
@@ -20,18 +40,26 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   let response = await fetch(url, { ...options, headers });
 
+  // Handle non-401 errors with proper validation
   if (response.status !== 401) {
+    if (!response.ok) {
+      throw new ApiError(
+        `Request failed with status ${response.status}`,
+        response.status
+      );
+    }
     return response;
   }
 
-  const refreshed = await refreshTokens();
+  // Handle 401 with token refresh (using lock to prevent race conditions)
+  const refreshed = await refreshTokensWithLock();
 
   if (!refreshed) {
-    logoutCallback();
-    throw new Error("Session expired");
+    triggerLogout();
+    throw new ApiError("Session expired", 401);
   }
 
-  const newToken = await AsyncStorage.getItem("accessToken");
+  const newToken = await secureTokenStorage.getAccessToken();
 
   const retryHeaders = {
     ...options.headers,
@@ -39,11 +67,36 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     Authorization: `Bearer ${newToken}`,
   };
 
-  return await fetch(url, { ...options, headers: retryHeaders });
+  const retryResponse = await fetch(url, { ...options, headers: retryHeaders });
+
+  if (!retryResponse.ok) {
+    throw new ApiError(
+      `Request failed with status ${retryResponse.status}`,
+      retryResponse.status
+    );
+  }
+
+  return retryResponse;
 };
 
-const refreshTokens = async () => {
-  const token = await AsyncStorage.getItem("refreshToken");
+// Token refresh with lock mechanism to prevent multiple simultaneous refresh attempts
+const refreshTokensWithLock = async (): Promise<boolean> => {
+  // If already refreshing, wait for the existing promise
+  if (isRefreshing && refreshPromise) {
+    return refreshPromise;
+  }
+
+  isRefreshing = true;
+  refreshPromise = refreshTokens().finally(() => {
+    isRefreshing = false;
+    refreshPromise = null;
+  });
+
+  return refreshPromise;
+};
+
+const refreshTokens = async (): Promise<boolean> => {
+  const token = await secureTokenStorage.getRefreshToken();
   try {
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
@@ -55,16 +108,23 @@ const refreshTokens = async () => {
         body: JSON.stringify({ token }),
       }
     );
+
     if (!response.ok) return false;
 
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      return false;
+    }
+
     if (!data.success) return false;
-    await AsyncStorage.setItem("accessToken", data.data.jwt);
+    await secureTokenStorage.setAccessToken(data.data.jwt);
     return true;
   } catch {
     return false;
   }
 };
 
-export { setLogoutCallBack };
+export { setLogoutCallBack, ApiError };
 export default apiFetch;
