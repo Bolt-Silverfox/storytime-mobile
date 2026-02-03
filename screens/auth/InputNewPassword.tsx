@@ -10,6 +10,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import SuccessScreen from "../../components/UI/SuccessScreen";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const resetPasswordSchema = z
   .object({
@@ -69,42 +70,44 @@ const InputNewPassword = () => {
   };
 
   return (
-    <View className="mx-5 flex max-w-screen-md flex-col sm:mx-auto sm:w-full">
-      <Text className="my-10 text-center font-[quilka] text-2xl">
-        Input your New Password
-      </Text>
-      <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={apiError} />
+    <SafeAreaWrapper variant="solid">
+      <View className="mx-5 flex max-w-screen-md flex-col sm:mx-auto sm:w-full">
+        <Text className="my-10 text-center font-[quilka] text-2xl">
+          Input your New Password
+        </Text>
+        <View style={styles.form}>
+          <ErrorMessageDisplay errorMessage={apiError} />
 
-        <PasswordInput
-          label="Password:"
-          setPassword={setPassword}
-          password={password}
-          placeholder="Enter your password"
-          errorMessage={errors.password}
-        />
-        <PasswordInput
-          label="Confirm Password:"
-          setPassword={setConfirmPassword}
-          password={confirmPassword}
-          placeholder="Confirm your password"
-          errorMessage={errors.confirmPassword}
+          <PasswordInput
+            label="Password:"
+            setPassword={setPassword}
+            password={password}
+            placeholder="Enter your password"
+            errorMessage={errors.password}
+          />
+          <PasswordInput
+            label="Confirm Password:"
+            setPassword={setConfirmPassword}
+            password={confirmPassword}
+            placeholder="Confirm your password"
+            errorMessage={errors.confirmPassword}
+          />
+        </View>
+        <Pressable
+          onPress={onRegister}
+          style={[styles.buttonMargin, defaultStyles.button]}
+        >
+          <Text style={styles.textWhite}>Proceed</Text>
+        </Pressable>
+        <LoadingOverlay visible={isLoading} />
+        <SuccessScreen
+          visible={success}
+          message="Successful!"
+          secondaryMessage="Your password has been reset"
+          onProceed={() => navigator.navigate("auth", { screen: "login" })}
         />
       </View>
-      <Pressable
-        onPress={onRegister}
-        style={[styles.buttonMargin, defaultStyles.button]}
-      >
-        <Text style={styles.textWhite}>Proceed</Text>
-      </Pressable>
-      <LoadingOverlay visible={isLoading} />
-      <SuccessScreen
-        visible={success}
-        message="Successful!"
-        secondaryMessage="Your password has been reset"
-        onProceed={() => navigator.navigate("auth", { screen: "login" })}
-      />
-    </View>
+    </SafeAreaWrapper>
   );
 };
 
