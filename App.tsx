@@ -11,6 +11,7 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import CustomSplashScreen from "./components/CustomSplashScreen";
+import ErrorBoundary from "./components/ErrorBoundary";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
 import RootNavigator from "./Navigation/RootNavigator";
@@ -51,12 +52,14 @@ export default function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <NavigationContainer>
-          <RootNavigator />
-        </NavigationContainer>
-      </QueryClientProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <NavigationContainer>
+            <RootNavigator />
+          </NavigationContainer>
+        </QueryClientProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

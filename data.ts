@@ -73,9 +73,9 @@ const termsAndConditionsData: {
     heading: "Subscriptions, Payments, and Free Trials",
     index: "III",
     paragraph: [
-      "3.1 Subscription Plans: We offer various subscription plans, including monthly and annual options. Plan details and pricing are displayed at the time of purchase.",
-      "3.2 Automatic Renewal: All paid subscriptions automatically renew at the applicable rate unless cancelled before the end of the current billing period.",
-      "3.3 Billing and Cancellation: Subscription management and cancellations are handled through your App Store or Google Play account.",
+      "1. Subscription Plans: We offer various subscription plans, including monthly and annual options. Plan details and pricing are displayed at the time of purchase.",
+      "2. Automatic Renewal: All paid subscriptions automatically renew at the applicable rate unless cancelled before the end of the current billing period.",
+      "3. Billing and Cancellation: Subscription management and cancellations are handled through your App Store or Google Play account.",
     ],
   },
   {

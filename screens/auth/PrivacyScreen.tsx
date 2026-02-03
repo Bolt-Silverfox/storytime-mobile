@@ -21,11 +21,11 @@ const PrivacyScreen = () => {
           data={privacyPolicyData}
           showsVerticalScrollIndicator={false}
           keyExtractor={(data) => data.number}
-          contentContainerClassName="px-4 flex flex-col gap-y-8 pt-14 mx-auto max-w-[600px]"
+          contentContainerClassName="px-4 flex flex-col gap-y-8 pt-8 mx-auto max-w-[600px]"
           ListFooterComponent={<View style={styles.listFooter} />}
           renderItem={({ item }) => (
             <View className="flex flex-col gap-y-3 ">
-              <Text className="font-[quilka] text-[18px]">
+              <Text className="font-[abeezee] text-[18px]">
                 {item.number}. {item.title}
               </Text>
               <Text className="font-[abeezee] text-base">{item.paragraph}</Text>
