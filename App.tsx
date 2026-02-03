@@ -8,11 +8,8 @@ import {
 } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
-import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
-import { StyleSheet } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
@@ -54,23 +51,12 @@ export default function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
-        <AuthProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer>
-              <RootNavigator />
-            </NavigationContainer>
-          </QueryClientProvider>
-        </AuthProvider>
-      </SafeAreaView>
-    </SafeAreaProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <NavigationContainer>
+          <RootNavigator />
+        </NavigationContainer>
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});

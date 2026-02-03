@@ -77,6 +77,8 @@ const SignupScreen = () => {
           <View style={styles.footer}>
             <Text style={styles.footerText}>
               By accepting to continue, you agree to Storytime's{" "}
+            </Text>
+            <Text style={styles.footerText}>
               <Text
                 onPress={() =>
                   navigator.navigate("auth", { screen: "termsOfService" })
@@ -114,10 +116,12 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   footer: {
-    paddingTop: 54,
-    paddingBottom: 82,
+    paddingTop: 48,
+    paddingBottom: 36,
     backgroundColor: colours["bg-light"],
     paddingHorizontal: 16,
+    display: "flex",
+    gap: 6,
   },
   footerText: {
     ...defaultStyles.defaultText,
