@@ -17,18 +17,18 @@ const TermsOfServiceScreen = () => {
     <SafeAreaWrapper variant="solid">
       <View className="flex flex-col">
         <PageTitle
-          title="Terms and Conditions"
+          title="Terms & Conditions"
           goBack={() => navigator.goBack()}
         />
         <FlatList
           data={termsAndConditionsData}
           showsVerticalScrollIndicator={false}
           keyExtractor={(data) => data.index}
-          contentContainerClassName="px-4 flex flex-col gap-y-8 pt-14 mx-auto max-w-[600px]"
+          contentContainerClassName="px-4 flex flex-col gap-y-8 pt-8 mx-auto max-w-[600px]"
           ListFooterComponent={<View style={styles.listFooter} />}
           renderItem={({ item }) => (
             <View className="flex flex-col gap-y-3 ">
-              <Text className="font-[quilka] text-[18px]">
+              <Text className="font-[abeezee] text-[18px]">
                 {item.index}. {item.heading}
               </Text>
               {Array.isArray(item.paragraph) ? (
