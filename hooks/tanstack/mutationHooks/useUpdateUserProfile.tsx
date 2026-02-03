@@ -29,7 +29,10 @@ const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
       onSuccess?.();
     },
     onError: (err) => {
-      Alert.alert(err.message);
+      Alert.alert("Error", "Failed to update profile. Please try again.");
+      if (__DEV__) {
+        console.error("Profile update failed:", err);
+      }
     },
   });
 };
