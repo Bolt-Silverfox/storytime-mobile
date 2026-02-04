@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import { useQueryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import useAuth from "../../../contexts/AuthContext";
 
 const ParentsTopRecommendationsScreen = () => {
+  const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
-    useQueryRecommendedStories()
+    queryRecommendedStories(user?.id!)
   );
 
   return (

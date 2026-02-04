@@ -3,6 +3,7 @@ import { ScrollView, View } from "react-native";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
 import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 const StoryCategoriesList = lazy(
   () => import("../../../components/parents/StoryCategoriesList")
@@ -25,32 +26,34 @@ const StoriesByAgeComponent = lazy(
 
 const ParentHomeScreen = () => {
   return (
-    <View className="flex flex-1 bg-bgLight px-4">
-      <ParentsHomeScreenHeader />
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerClassName=" flex min-h-full flex-col gap-y-8"
-      >
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <StoriesByAgeComponent />
-        </SuspenseWrapper>
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <ParentsTopRecommendations />
-        </SuspenseWrapper>
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <ParentsTopPicksComponent />
-        </SuspenseWrapper>
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <SeasonalStoriesComponent />
-        </SuspenseWrapper>
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <FunAndAdventuresComponent />
-        </SuspenseWrapper>
-        <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
-          <StoryCategoriesList />
-        </SuspenseWrapper>
-      </ScrollView>
-    </View>
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1 bg-bgLight px-4">
+        <ParentsHomeScreenHeader />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerClassName=" flex min-h-full flex-col gap-y-8"
+        >
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <StoriesByAgeComponent />
+          </SuspenseWrapper>
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <ParentsTopRecommendations />
+          </SuspenseWrapper>
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <ParentsTopPicksComponent />
+          </SuspenseWrapper>
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <SeasonalStoriesComponent />
+          </SuspenseWrapper>
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <FunAndAdventuresComponent />
+          </SuspenseWrapper>
+          <SuspenseWrapper fallbackUI={<StoryCarouselSkeleton />}>
+            <StoryCategoriesList />
+          </SuspenseWrapper>
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 

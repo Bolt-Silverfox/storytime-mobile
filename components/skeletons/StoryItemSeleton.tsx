@@ -1,11 +1,15 @@
 import React from "react";
+import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
 
 const StoryItemSkeleton = () => {
   return (
-    <View className="flex h-[240px] w-48 max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1 ">
+    <View className="flex h-[240px] w-48 max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1">
       <View className="h-full w-full flex-1 rounded-2xl">
-        <View className="h-[150px] w-full rounded-xl bg-gray-200" />
+        <View className="h-[150px] w-full items-center justify-center rounded-xl bg-gray-200">
+          <ActivityIndicator size="large" color="#9CA3AF" />
+        </View>
+
         <View className="mt-2 flex flex-row items-center justify-between px-0.5">
           <View className="flex flex-1 flex-row items-center gap-x-2">
             <View className="h-2 w-2 rounded-full bg-gray-300" />
