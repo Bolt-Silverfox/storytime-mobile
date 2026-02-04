@@ -12,6 +12,7 @@ import PageTitle from "../../components/PageTitle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import CustomButton from "../../components/UI/CustomButton";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
@@ -129,8 +130,9 @@ const ConfirmResetPasswordTokenScreen = () => {
               </Text>
             </Pressable>
           </View>
-
-          <Pressable
+          <CustomButton
+            disabled={isLoading}
+            text={isLoading ? "Loading..." : "Verify Email"}
             onPress={() =>
               validatePasswordReset({
                 email: route.params.email.trim(),
@@ -146,14 +148,7 @@ const ConfirmResetPasswordTokenScreen = () => {
                   }),
               })
             }
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={styles.textWhite}>
-              {isLoading ? "Loading..." : "Verify Email"}
-            </Text>
-          </Pressable>
+          />
         </View>
       </View>
     </SafeAreaWrapper>
@@ -166,11 +161,6 @@ const styles = StyleSheet.create({
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
-  },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
   },
   textContainer: {
     gap: 8,
