@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import defaultStyles from "../../styles";
@@ -70,14 +71,23 @@ export default function OnBoardingScreen() {
 
 function OnboardingItem({ item }: { item: SlideItems }) {
   const navigate = useNavigation<RootNavigatorProp>();
-
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const { width } = useWindowDimensions();
   return (
     <ImageBackground
+      onLoadStart={() => {
+        setIsImageLoading(true);
+      }}
+      onLoadEnd={() => setIsImageLoading(false)}
       source={item.image}
       resizeMode="cover"
-      style={{ width: width }}
+      style={{ width }}
     >
+      {isImageLoading && (
+        <View className="absolute inset-0 items-center justify-center bg-black/40">
+          <ActivityIndicator size="large" color="EC4007" />
+        </View>
+      )}
       <View className=" flex-1 justify-end">
         <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
           <Pagination data={item} />
