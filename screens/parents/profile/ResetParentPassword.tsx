@@ -10,6 +10,7 @@ import PasswordInput from "../../../components/PasswordInput";
 import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import SuccessScreen from "../../../components/UI/SuccessScreen";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 const resetPasswordSchema = z
   .object({
@@ -70,47 +71,49 @@ export default function ResetParentPassword() {
   };
 
   return (
-    <View className="flex-1 bg-bgLight">
-      <PageTitle
-        title="Reset your password"
-        goBack={() => navigator.goBack()}
-      />
-      <View className="mx-[17] max-w-screen-md md:mx-auto md:w-full">
-        <View className="mt-[60] gap-[16px]">
-          {error && <ErrorMessageDisplay errorMessage={error} />}
-          <PasswordInput
-            label="Enter old password:"
-            setPassword={setOldPassword}
-            password={oldPassword}
-            placeholder="Enter old password"
-            errorMessage={errors.oldPassword}
-          />
-          <PasswordInput
-            label="Enter new password:"
-            setPassword={setNewPassword}
-            password={newPassword}
-            placeholder="Enter new password"
-            errorMessage={errors.newPassword}
-          />
-          <PasswordInput
-            label="Confirm new password:"
-            setPassword={setConfirmPassword}
-            password={confirmPassword}
-            placeholder="Confirm new password"
-            errorMessage={errors.confirmPassword}
-          />
+    <SafeAreaWrapper variant="solid">
+      <View className="flex-1 bg-bgLight">
+        <PageTitle
+          title="Reset your password"
+          goBack={() => navigator.goBack()}
+        />
+        <View className="mx-[17] max-w-screen-md md:mx-auto md:w-full">
+          <View className="mt-[60] gap-[16px]">
+            {error && <ErrorMessageDisplay errorMessage={error} />}
+            <PasswordInput
+              label="Enter old password:"
+              setPassword={setOldPassword}
+              password={oldPassword}
+              placeholder="Enter old password"
+              errorMessage={errors.oldPassword}
+            />
+            <PasswordInput
+              label="Enter new password:"
+              setPassword={setNewPassword}
+              password={newPassword}
+              placeholder="Enter new password"
+              errorMessage={errors.newPassword}
+            />
+            <PasswordInput
+              label="Confirm new password:"
+              setPassword={setConfirmPassword}
+              password={confirmPassword}
+              placeholder="Confirm new password"
+              errorMessage={errors.confirmPassword}
+            />
+          </View>
         </View>
+        <View className="mt-10 flex-1 gap-6 px-4">
+          <CustomButton onPress={onResetPassword} text="Reset Password" />
+        </View>
+        <SuccessScreen
+          visible={success}
+          message="Success!"
+          secondaryMessage="Password reset successful"
+          onProceed={() => navigator.goBack()}
+        />
+        <LoadingOverlay visible={isLoading} />
       </View>
-      <View className="mt-10 flex-1 gap-6 px-4">
-        <CustomButton onPress={onResetPassword} text="Reset Password" />
-      </View>
-      <SuccessScreen
-        visible={success}
-        message="Success!"
-        secondaryMessage="Password reset successful"
-        onProceed={() => navigator.goBack()}
-      />
-      <LoadingOverlay visible={isLoading} />
-    </View>
+    </SafeAreaWrapper>
   );
 }
