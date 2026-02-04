@@ -1,17 +1,20 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Image, Pressable, StyleSheet, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
+import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
-import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { Story } from "../../types";
+import { getRandomNumber, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
-import { secondsToMinutes } from "../../utils/utils";
+import CustomImage from "../UI/CustomImage";
 
 type Proptypes = {
   onNavigate: () => void;
   story: Story;
   isPremium?: boolean;
   index: number;
+  isGrouped?: boolean;
 };
 
 const StoryItem = ({
@@ -19,9 +22,10 @@ const StoryItem = ({
   story,
   index,
   isPremium = false,
+  isGrouped = false,
 }: Proptypes) => {
-  const { data } = useSuspenseQuery(useQueryParentsFavourites());
-  const { mutate: onToggle } = useToggleFavourites({
+  const { data } = useSuspenseQuery(queryParentsFavourites());
+  const { mutate: onToggle, isPending } = useToggleFavourites({
     story: {
       id: story.id,
       storyId: story.id,
@@ -46,21 +50,23 @@ const StoryItem = ({
 
   const duration = secondsToMinutes(story.durationSeconds);
 
+  const categoryColour = storyCategoriesColours[getRandomNumber()];
   return (
     <Pressable
       onPress={navigate}
       key={story.id}
-      className={`flex w-48 max-w-52 flex-col gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
+      className={`flex flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-48 max-w-52"} gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
     >
       <View
         className={`relative h-full w-full flex-1 rounded-2xl ${isLocked ? "bg-[#4807EC66]" : null}`}
       >
-        <Image
+        <CustomImage
           className=" -z-10 h-[150px] w-full rounded-xl bg-cover"
           source={{ uri: story.coverImageUrl }}
           height={150}
         />
         <Pressable
+          disabled={isPending}
           onPress={() => onToggle()}
           className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
@@ -72,18 +78,23 @@ const StoryItem = ({
         </Pressable>
         <View className="flex flex-row items-center justify-between gap-x-2 px-0.5">
           <View className="flex flex-1 flex-row items-center">
-            <Icon name="Dot" color={"#EC0794"} />
+            <Icon name="Dot" color={categoryColour} />
             <Text
               className="flex-1 text-wrap font-[abeezee] text-xs capitalize"
-              style={storyItemStyles.categoryText}
+              style={{
+                color: categoryColour,
+              }}
             >
-              {story.categories[0].name}
+              {story.categories[0].name.length > 15
+                ? story.categories[0].name.split("").slice(0, 14).join("") +
+                  "..."
+                : story.categories[0].name}
             </Text>
           </View>
           <View className="flex flex-row items-center gap-x-1">
             <Icon size={12} name="Clock" color="#616161" />
             <Text className="font-[abeezee] text-xs capitalize text-text">
-              {duration} {duration > 1 ? "mins" : "min"}
+              {duration > 0 ? duration : "<1"} {duration > 1 ? "mins" : "min"}
             </Text>
           </View>
         </View>
@@ -105,9 +116,3 @@ const StoryItem = ({
 };
 
 export default StoryItem;
-
-const storyItemStyles = StyleSheet.create({
-  categoryText: {
-    color: "#EC0794",
-  },
-});
