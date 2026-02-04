@@ -11,22 +11,19 @@ import StoryCarousel from "../StoryCarousel";
 import AgeSelectionComponent from "../UI/AgeSelectionComponent";
 
 const StoriesByAgeComponent = () => {
-  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
   const { user } = useAuth();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(
     queryRecommendedStories(user?.id!)
   );
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
 
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
     <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-6 border-b border-b-border-light py-8">
-      <AgeSelectionComponent
-        selectedAgeGroup={selectedGroup}
-        setSelectedAgeGroup={setSelectedGroup}
-      />
+      <AgeSelectionComponent setSelectedCallback={setSelectedGroup} />
       <StoryCarousel stories={data} />
       <Pressable
         onPress={() =>
