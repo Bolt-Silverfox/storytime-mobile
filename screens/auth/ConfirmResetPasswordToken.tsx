@@ -119,13 +119,15 @@ const ConfirmResetPasswordTokenScreen = () => {
               focusColor="blue"
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Text
-              onPress={handleResendEmail}
-              disabled={countDown > 0}
-              className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-            >
-              Resend OTP
-            </Text>
+            <Pressable disabled={isLoading}>
+              <Text
+                onPress={handleResendEmail}
+                disabled={countDown > 0}
+                className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+              >
+                Resend OTP
+              </Text>
+            </Pressable>
           </View>
 
           <Pressable
