@@ -13,6 +13,7 @@ import defaultStyles from "../../styles";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import CustomButton from "../../components/UI/CustomButton";
 
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
@@ -129,16 +130,19 @@ const VerifyEmailScreen = () => {
               focusColor="blue"
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Text
-              onPress={handleResendEmail}
-              disabled={countDown > 0}
-              className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-            >
-              Resend OTP
-            </Text>
+            <Pressable disabled={isLoading}>
+              <Text
+                onPress={handleResendEmail}
+                disabled={countDown > 0}
+                className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+              >
+                Resend OTP
+              </Text>
+            </Pressable>
           </View>
-
-          <Pressable
+          <CustomButton
+            disabled={isLoading}
+            text={isLoading ? "Loading..." : "Verify Email"}
             onPress={() => {
               Keyboard.dismiss();
               verifyEmail({
@@ -150,17 +154,10 @@ const VerifyEmailScreen = () => {
                   ),
               });
             }}
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={styles.textWhite}>
-              {isLoading ? "Loading..." : "Verify Email"}
-            </Text>
-          </Pressable>
+          />
         </View>
         <SuccessScreen
-          message="Congratulations, your account has been created succesfully!"
+          message="Congratulations, your account has been created successfully!"
           secondaryMessage={successMessage!}
           visible={
             successMessage ===
@@ -179,11 +176,6 @@ const styles = StyleSheet.create({
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
-  },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
   },
   textContainer: {
     gap: 8,

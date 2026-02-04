@@ -63,7 +63,7 @@ module.exports = [
 
       // React Native rules
       "react-native/no-unused-styles": "warn",
-      "react-native/no-inline-styles": "off",
+      "react-native/no-inline-styles": "warn",
       "react-native/no-color-literals": "off",
 
       // General rules
