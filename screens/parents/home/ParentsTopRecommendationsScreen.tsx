@@ -13,7 +13,9 @@ const ParentsTopRecommendationsScreen = () => {
       error={error}
       refetch={refetch}
       isPending={isPending}
-      imageSource={require("../../../assets/images/top-recommendations.jpg")}
+      imageSource={{
+        uri: "https://res.cloudinary.com/billmal/image/upload/v1769762826/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__5_1_b0bhz1.jpg",
+      }}
       description="Top recommendations"
       title="Stories recommended based on your preferred categories"
     />
