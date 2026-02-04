@@ -32,7 +32,7 @@ const FavouriteStoryItem = ({
         className="rounded-3xl"
       />
       <View className="flex flex-1 flex-col gap-y-2">
-        <Text className="font-[abeezee] text-sm text-black">{story.title}</Text>
+        <Text className="font-[abeezee] text-lg text-black">{story.title}</Text>
         <Text className="font-[abeezee] text-sm text-text">
           {story.description}
         </Text>
