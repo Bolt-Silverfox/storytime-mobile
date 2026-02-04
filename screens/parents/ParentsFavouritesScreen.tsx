@@ -7,9 +7,9 @@ import FavouriteStoryItem from "../../components/FavouriteStoryItem";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
-import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
-import { AgeGroupType, FavouriteStory } from "../../types";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import { AgeGroupType, FavouriteStory } from "../../types";
 
 type AgeFilter = AgeGroupType | "ALL";
 type AgeRangeFilter =
@@ -26,12 +26,13 @@ const AGE_FILTERS: readonly AgeRangeFilter[] = [
 
 const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
-    useQueryParentsFavourites()
+    queryParentsFavourites()
   );
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
-  const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showFilter, setShowFilter] = useState(false);
+  const [activeFilterOption, setActiveFilterOption] = useState<
+    "search" | "age" | null
+  >(null);
   const [selectedAge, setSelectedAge] = useState<AgeFilter>("ALL");
 
   if (error)
@@ -63,33 +64,40 @@ const ParentsFavouritesScreen = () => {
   const showNoData = favourites.length === 0;
   const showNoMatches = favourites.length > 0 && filteredStories.length === 0;
 
+  const resetFilters = () => {
+    setSelectedAge("ALL");
+    setSearchQuery("");
+  };
+
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bgLight">
-        <View className="flex flex-row items-center justify-between border-b border-b-border-lighter bg-white px-4 py-5">
+        <View className="flex flex-row items-center justify-between border-b border-b-border-lighter bg-white px-4 pb-5 pt-2">
           <Text className="flex-1 font-[abeezee] text-xl text-black">
             Favourites
           </Text>
           <View className="flex flex-row items-center gap-x-5">
             <Icon
-              name="Funnel"
+              name={activeFilterOption === "age" ? "X" : "Funnel"}
               onPress={() => {
-                setShowFilter((s) => !s);
-                setShowSearch(false);
+                setActiveFilterOption((a) => (a === "age" ? null : "age"));
+                resetFilters();
               }}
+              color={activeFilterOption === "age" ? "red" : "black"}
             />
             <Icon
-              name="Search"
+              name={activeFilterOption === "search" ? "X" : "Search"}
               onPress={() => {
-                setShowSearch((s) => !s);
-                setShowFilter(false);
-                setSelectedAge("ALL");
-                if (showSearch) setSearchQuery("");
+                setActiveFilterOption((a) =>
+                  a === "search" ? null : "search"
+                );
+                resetFilters();
               }}
+              color={activeFilterOption === "search" ? "red" : "black"}
             />
           </View>
         </View>
-        {showFilter && (
+        {activeFilterOption === "age" && (
           <View className="py-3">
             <ScrollView
               horizontal
@@ -120,7 +128,7 @@ const ParentsFavouritesScreen = () => {
             </ScrollView>
           </View>
         )}
-        {showSearch && (
+        {activeFilterOption === "search" && (
           <View className=" px-4 py-3 ">
             <View className="flex-row items-center rounded-full border px-4 py-1">
               <Icon name="Search" />
