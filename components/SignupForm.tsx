@@ -35,10 +35,10 @@ const SignupForm = () => {
     });
 
     if (!result.success) {
-      const formatted: any = {};
+      const formatted: Errors = {};
 
       result.error.issues.forEach((err) => {
-        const field = err.path[0];
+        const field = err.path[0] as keyof RegisterSchema;
         formatted[field] = err.message;
       });
 
