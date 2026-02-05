@@ -6,7 +6,7 @@ import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useG
 const SeasonalStoriesScreen = () => {
   const { user } = useAuth();
   const { data, error, refetch, isPending } = useSuspenseQuery(
-    queryRecommendedStories(user?.id!)
+    queryRecommendedStories(user!.id)
   );
 
   return (

@@ -10,7 +10,7 @@ const SeasonalStoriesComponent = () => {
   const { user } = useAuth();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(
-    queryRecommendedStories(user?.id!)
+    queryRecommendedStories(user!.id)
   );
 
   if (error)
