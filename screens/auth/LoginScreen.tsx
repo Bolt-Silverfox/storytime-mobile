@@ -63,7 +63,8 @@ const LoginScreen = () => {
                 onPress={() =>
                   navigator.navigate("auth", { screen: "resetPassword" })
                 }
-                style={{ ...defaultStyles.linkText, textAlign: "right" }}
+                className="text-right"
+                style={defaultStyles.linkText}
               >
                 Forgot Password?
               </Text>
@@ -82,7 +83,9 @@ const LoginScreen = () => {
                 isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
               }
             >
-              <Text style={{ ...styles.text, color: "white" }}>Log in</Text>
+              <Text className="text-white" style={styles.text}>
+                Log in
+              </Text>
             </Pressable>
             <View className="flex flex-row items-center gap-x-4">
               <View className="flex-1 border-b border-black" />
