@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -17,6 +18,7 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -26,105 +28,119 @@ const LoginScreen = () => {
   const { login, isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
 
   return (
-    <View className="flex flex-1">
-      <PageTitle title="" goBack={() => navigator.goBack()} />
-      <ScrollView
-        className="flex-1"
-        contentContainerClassName="min-h-full"
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={defaultStyles.screen}>
-          <View style={styles.textContainer}>
-            <Text style={defaultStyles.heading}>Welcome back</Text>
-            <Text style={styles.text}>Glad to have you back</Text>
-          </View>
-          <View style={styles.form}>
-            <View style={styles.formItem}>
-              <Text style={defaultStyles.label}>Email:</Text>
-              <TextInput
-                className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
-                placeholder="Enter your email"
-                placeholderTextColor={error ? "red" : colours.text}
-                onChangeText={setEmail}
-                value={email}
-              />
-              <ErrorMessageDisplay errorMessage={error} />
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1 bg-bg-light">
+        <PageTitle title="" goBack={() => navigator.goBack()} />
+        <ScrollView
+          className=""
+          contentContainerClassName=""
+          showsVerticalScrollIndicator={false}
+        >
+          <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
+            <View style={styles.textContainer}>
+              <Text style={defaultStyles.heading}>Welcome back</Text>
+              <Text style={styles.text}>Glad to have you back</Text>
             </View>
-            <PasswordInput
-              label="Password:"
-              password={password}
-              setPassword={setPassword}
-              placeholder="Enter your password"
-            />
-            <Text
-              onPress={() =>
-                navigator.navigate("auth", { screen: "resetPassword" })
-              }
-              style={styles.linkTextRight}
-            >
-              Forgot Password?
-            </Text>
-          </View>
-
-          <Pressable
-            onPress={() =>
-              login({
-                email: email.trim().toLowerCase(),
-                password,
-                setErrorCb: setError,
-              })
-            }
-            disabled={isLoading}
-            style={
-              isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-            }
-          >
-            <Text style={styles.textWhite}>Log in</Text>
-          </Pressable>
-          <View className="mb-5 mt-10 flex flex-row items-center  gap-x-4">
-            <View className="flex-1 border-b border-black" />
-            <Text className="text-center">Or Continue with</Text>
-            <View className="flex-1 border-b border-black" />
-          </View>
-          <View className="flex flex-row items-center justify-center gap-x-20 ">
-            <Pressable
-              onPress={handleGoogleAuth}
-              className="flex size-20 items-center justify-center rounded-full bg-white"
-            >
-              <Image source={require("../../assets/icons/google-icon.png")} />
-            </Pressable>
-            <Pressable className="flex size-20 items-center justify-center rounded-full bg-white">
-              <Image source={require("../../assets/icons/apple-icon.png")} />
-            </Pressable>
-          </View>
-          <View className="mt-10 flex flex-col gap-y-4">
-            <Text style={{ ...styles.text }}>
-              Don't have an account?{" "}
-              <Text
-                onPress={() => navigator.navigate("auth", { screen: "signUp" })}
-                style={{ ...defaultStyles.defaultText, color: colours.link }}
-              >
-                Register
-              </Text>
-            </Text>
-            <Text style={{ ...styles.text }}>
-              Signed up but haven't verified?{" "}
+            <View style={styles.form}>
+              <View style={styles.formItem}>
+                <Text style={defaultStyles.label}>Email:</Text>
+                <TextInput
+                  className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
+                  placeholder="Enter your email"
+                  placeholderTextColor={error ? "red" : colours.text}
+                  onChangeText={setEmail}
+                  value={email}
+                />
+                {error && <ErrorMessageDisplay errorMessage={error} />}
+              </View>
+              <PasswordInput
+                label="Password:"
+                password={password}
+                setPassword={setPassword}
+                placeholder="Enter your password"
+              />
               <Text
                 onPress={() =>
-                  navigator.navigate("auth", {
-                    screen: "requestEmailVerification",
-                  })
+                  navigator.navigate("auth", { screen: "resetPassword" })
                 }
-                style={{ ...defaultStyles.defaultText, color: colours.link }}
+                className="text-right"
+                style={defaultStyles.linkText}
               >
-                Verify email
+                Forgot Password?
               </Text>
-            </Text>
+            </View>
+
+            <Pressable
+              onPress={() =>
+                login({
+                  email: email.trim().toLowerCase(),
+                  password,
+                  setErrorCb: setError,
+                })
+              }
+              disabled={isLoading}
+              style={
+                isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
+              }
+            >
+              <Text className="text-white" style={styles.text}>
+                Log in
+              </Text>
+            </Pressable>
+            <View className="flex flex-row items-center gap-x-4">
+              <View className="flex-1 border-b border-black" />
+              <Text className="text-center font-[abeezee]">Or log in with</Text>
+              <View className="flex-1 border-b border-black" />
+            </View>
+            <View className="flex flex-row items-center justify-center gap-x-20 ">
+              <Pressable
+                onPress={handleGoogleAuth}
+                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+              >
+                <Image source={require("../../assets/icons/google-icon.png")} />
+              </Pressable>
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={handleAppleAuth}
+                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                >
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
+                </Pressable>
+              )}
+            </View>
+            <View className="mt-10 flex flex-col gap-y-4">
+              <Text style={{ ...styles.text }}>
+                Don't have an account?{" "}
+                <Text
+                  onPress={() =>
+                    navigator.navigate("auth", { screen: "signUp" })
+                  }
+                  style={{ ...defaultStyles.defaultText, color: colours.link }}
+                >
+                  Register
+                </Text>
+              </Text>
+              <Text style={{ ...styles.text }}>
+                Signed up but haven't verified?{" "}
+                <Text
+                  onPress={() =>
+                    navigator.navigate("auth", {
+                      screen: "requestEmailVerification",
+                    })
+                  }
+                  style={{ ...defaultStyles.defaultText, color: colours.link }}
+                >
+                  Verify email
+                </Text>
+              </Text>
+            </View>
           </View>
-        </View>
-        <LoadingOverlay visible={isLoading} />
-      </ScrollView>
-    </View>
+          <LoadingOverlay visible={isLoading} />
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 };
 
@@ -135,25 +151,15 @@ const styles = StyleSheet.create({
     ...defaultStyles.defaultText,
     textAlign: "center",
   },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
-  },
-  linkTextRight: {
-    ...defaultStyles.linkText,
-    textAlign: "right",
-  },
   textContainer: {
     gap: 8,
-    marginBottom: 56,
   },
   form: {
     gap: 20,
     width: "100%",
     maxWidth: 600,
     alignSelf: "center",
-    marginBottom: 44,
+    marginBottom: 26,
   },
   formItem: {
     gap: 4,

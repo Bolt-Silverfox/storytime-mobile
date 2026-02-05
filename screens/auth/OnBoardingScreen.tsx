@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Pressable,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import defaultStyles from "../../styles";
@@ -14,6 +15,7 @@ import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 type SlideItems = {
   id: string;
@@ -30,57 +32,62 @@ export default function OnBoardingScreen() {
   const [layoutWidth, setLayoutWidth] = useState<number | null>(null);
 
   return (
-    <View
-      style={[styles.flexOne, { width }]}
-      onLayout={(e) => setLayoutWidth(e.nativeEvent.layout.width)}
-    >
-      <StatusBar style="light" />
-      {layoutWidth && (
-        <View style={[styles.flexOne, { width }]}>
-          <FlatList
-            ref={flatListRef}
-            data={onBoardingSlide}
-            renderItem={({ item }) => <OnboardingItem item={item} />}
-            bounces={false}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            pagingEnabled
-            keyExtractor={(item) => item.id}
-            initialNumToRender={3}
-            windowSize={3}
-            removeClippedSubviews={false}
-            getItemLayout={(_, index) => ({
-              length: layoutWidth,
-              offset: layoutWidth * index,
-              index,
-            })}
-            // initialScrollIndex={2}
-            onScrollToIndexFailed={(info) => {
-              const offset = info.index * layoutWidth;
-              flatListRef.current?.scrollToOffset({ offset, animated: true });
-            }}
-          />
-        </View>
-      )}
-      {/* i used this botton to test the scrollToIndex*/}
-      {/* 
-      <Pressable className="p-10 bg-red-700" onPress={onScroll}>
-        <Text>SCROLL</Text>
-      </Pressable> */}
-    </View>
+    <SafeAreaWrapper variant="transparent">
+      <View
+        style={[styles.flexOne, { width }]}
+        onLayout={(e) => setLayoutWidth(e.nativeEvent.layout.width)}
+      >
+        <StatusBar style="light" />
+        {layoutWidth && (
+          <View style={[styles.flexOne, { width }]}>
+            <FlatList
+              ref={flatListRef}
+              data={onBoardingSlide}
+              renderItem={({ item }) => <OnboardingItem item={item} />}
+              bounces={false}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              pagingEnabled
+              keyExtractor={(item) => item.id}
+              initialNumToRender={3}
+              windowSize={3}
+              removeClippedSubviews={false}
+              getItemLayout={(_, index) => ({
+                length: layoutWidth,
+                offset: layoutWidth * index,
+                index,
+              })}
+              onScrollToIndexFailed={(info) => {
+                const offset = info.index * layoutWidth;
+                flatListRef.current?.scrollToOffset({ offset, animated: true });
+              }}
+            />
+          </View>
+        )}
+      </View>
+    </SafeAreaWrapper>
   );
 }
 
 function OnboardingItem({ item }: { item: SlideItems }) {
   const navigate = useNavigation<RootNavigatorProp>();
-
+  const [isImageLoading, setIsImageLoading] = useState(false);
   const { width } = useWindowDimensions();
   return (
     <ImageBackground
+      onLoadStart={() => {
+        setIsImageLoading(true);
+      }}
+      onLoadEnd={() => setIsImageLoading(false)}
       source={item.image}
       resizeMode="cover"
-      style={{ width: width }}
+      style={{ width }}
     >
+      {isImageLoading && (
+        <View className="absolute inset-0 items-center justify-center bg-black/40">
+          <ActivityIndicator size="large" color="#EC4007" />
+        </View>
+      )}
       <View className=" flex-1 justify-end">
         <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
           <Pagination data={item} />

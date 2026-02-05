@@ -1,7 +1,17 @@
-export const onBoardingSlide = [
+import { ImageSourcePropType } from "react-native";
+
+export const onBoardingSlide: {
+  id: string;
+  image: ImageSourcePropType;
+  title: string;
+  description: string;
+  dot: number[];
+}[] = [
   {
     id: "1",
-    image: require("../assets/images/onboarding/onBoarding1.jpg"),
+    image: {
+      uri: "https://res.cloudinary.com/billmal/image/upload/v1770186120/storytime/assets/Onboarding_4_1_s0neg4.jpg",
+    },
     title: "Welcome to StoryTime",
     description:
       "Listen, read, and explore stories made just for kids like you!",
@@ -9,7 +19,9 @@ export const onBoardingSlide = [
   },
   {
     id: "2",
-    image: require("../assets/images/onboarding/onBoarding2.jpg"),
+    image: {
+      uri: "https://res.cloudinary.com/billmal/image/upload/v1770186120/storytime/assets/Onboarding_5_1_c1nnax.jpg",
+    },
     title: "Discover Fun Stories",
     description:
       "From bedtime adventures to talking animals and fairytale dreams.",
@@ -17,7 +29,9 @@ export const onBoardingSlide = [
   },
   {
     id: "3",
-    image: require("../assets/images/onboarding/onBoarding3.jpg"),
+    image: {
+      uri: "https://res.cloudinary.com/billmal/image/upload/v1770186120/storytime/assets/Onboarding_6_1_zp43gi.jpg",
+    },
     title: "Listen / Read Your Way",
     description: "Read along with colorful pages or listen to friendly voices.",
     dot: [5, 5, 10],

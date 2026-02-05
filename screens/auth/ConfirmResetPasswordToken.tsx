@@ -11,6 +11,8 @@ import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import PageTitle from "../../components/PageTitle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import CustomButton from "../../components/UI/CustomButton";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
@@ -87,70 +89,69 @@ const ConfirmResetPasswordTokenScreen = () => {
   }, []);
 
   return (
-    <View className="flex flex-1">
-      <PageTitle goBack={() => navigator.goBack()} title="" />
-      <View style={defaultStyles.screen}>
-        <View style={styles.textContainer}>
-          {successMessage.length > 0 && (
-            <Text className="text-center font-[abeezee] text-xl uppercase text-primary">
-              {successMessage}
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1">
+        <PageTitle goBack={() => navigator.goBack()} title="" />
+        <View style={defaultStyles.screen}>
+          <View style={styles.textContainer}>
+            {successMessage.length > 0 && (
+              <Text className="text-center font-[abeezee] text-xl uppercase text-primary">
+                {successMessage}
+              </Text>
+            )}
+            <Text style={defaultStyles.heading}>Reset your password</Text>
+            <Text style={styles.text}>
+              Enter the verification code sent to your emails{" "}
+              {route.params.email}
             </Text>
-          )}
-          <Text style={defaultStyles.heading}>Reset your password</Text>
-          <Text style={styles.text}>
-            Enter the verification code sent to your emails {route.params.email}
-          </Text>
-        </View>
-        <ErrorMessageDisplay errorMessage={error} />
-        <View style={styles.container}>
-          <OtpInput
-            numberOfDigits={6}
-            onTextChange={(text) => setOtp(text)}
-            onFilled={() => {}}
-            theme={{
-              containerStyle: { width: "auto" },
-              pinCodeContainerStyle: styles.box,
-              pinCodeTextStyle: styles.text,
-              focusedPinCodeContainerStyle: styles.boxFocused,
-            }}
-            focusColor="blue"
+          </View>
+          <ErrorMessageDisplay errorMessage={error} />
+          <View style={styles.container}>
+            <OtpInput
+              numberOfDigits={6}
+              onTextChange={(text) => setOtp(text)}
+              onFilled={() => {}}
+              theme={{
+                containerStyle: { width: "auto" },
+                pinCodeContainerStyle: styles.box,
+                pinCodeTextStyle: styles.text,
+                focusedPinCodeContainerStyle: styles.boxFocused,
+              }}
+              focusColor="blue"
+            />
+            <Text style={styles.countDown}>{formatTime(countDown)}</Text>
+            <Pressable disabled={isLoading}>
+              <Text
+                onPress={handleResendEmail}
+                disabled={countDown > 0}
+                className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+              >
+                Resend OTP
+              </Text>
+            </Pressable>
+          </View>
+          <CustomButton
+            disabled={isLoading}
+            text={isLoading ? "Loading..." : "Verify Email"}
+            onPress={() =>
+              validatePasswordReset({
+                email: route.params.email.trim(),
+                token: otp,
+                setErrorCb: setError,
+                onSuccess: () =>
+                  navigator.navigate("auth", {
+                    screen: "inputNewPassword",
+                    params: {
+                      email: route.params.email.trim(),
+                      token: otp,
+                    },
+                  }),
+              })
+            }
           />
-          <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-          <Text
-            onPress={handleResendEmail}
-            disabled={countDown > 0}
-            className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
-          >
-            Resend OTP
-          </Text>
         </View>
-
-        <Pressable
-          onPress={() =>
-            validatePasswordReset({
-              email: route.params.email.trim(),
-              token: otp,
-              setErrorCb: setError,
-              onSuccess: () =>
-                navigator.navigate("auth", {
-                  screen: "inputNewPassword",
-                  params: {
-                    email: route.params.email.trim(),
-                    token: otp,
-                  },
-                }),
-            })
-          }
-          style={
-            isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-          }
-        >
-          <Text style={styles.textWhite}>
-            {isLoading ? "Loading..." : "Verify Email"}
-          </Text>
-        </Pressable>
       </View>
-    </View>
+    </SafeAreaWrapper>
   );
 };
 
@@ -160,11 +161,6 @@ const styles = StyleSheet.create({
   text: {
     ...defaultStyles.defaultText,
     textAlign: "center",
-  },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
   },
   textContainer: {
     gap: 8,

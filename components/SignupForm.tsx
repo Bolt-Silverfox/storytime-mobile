@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
@@ -10,6 +10,7 @@ import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
+import CustomButton from "./UI/CustomButton";
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
@@ -45,7 +46,7 @@ const SignupForm = () => {
       setErrors(formatted);
       return;
     }
-    await signUp({
+    signUp({
       email: email.trim().toLowerCase(),
       password,
       fullName: fullName.trim(),
@@ -63,7 +64,7 @@ const SignupForm = () => {
   return (
     <View>
       <View style={styles.form}>
-        <ErrorMessageDisplay errorMessage={apiError} />
+        {apiError && <ErrorMessageDisplay errorMessage={apiError} />}
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
@@ -105,12 +106,11 @@ const SignupForm = () => {
           errorMessage={errors.confirmPassword}
         />
       </View>
-      <Pressable
+      <CustomButton
         onPress={onRegister}
-        style={[styles.buttonMargin, defaultStyles.button]}
-      >
-        <Text style={styles.textWhite}>Proceed</Text>
-      </Pressable>
+        disabled={isLoading}
+        text="Create Account"
+      />
 
       <LoadingOverlay visible={isLoading} />
     </View>
@@ -120,11 +120,6 @@ const SignupForm = () => {
 export default SignupForm;
 
 const styles = StyleSheet.create({
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
-  },
   form: {
     gap: 20,
     width: "100%",
@@ -133,8 +128,5 @@ const styles = StyleSheet.create({
   },
   formItem: {
     gap: 4,
-  },
-  buttonMargin: {
-    marginTop: 44,
   },
 });
