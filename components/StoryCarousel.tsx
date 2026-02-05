@@ -3,11 +3,12 @@ import { ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { Story } from "../types";
 import StoryItem from "./parents/StoryItem";
+import { memo } from "react";
 
 type PropTypes = {
   stories: Story[];
 };
-const StoryCarousel = ({ stories }: PropTypes) => {
+const StoryCarousel = memo(({ stories }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   return (
     <View className=" mx-auto w-full max-w-screen-md">
@@ -32,6 +33,6 @@ const StoryCarousel = ({ stories }: PropTypes) => {
       </ScrollView>
     </View>
   );
-};
+});
 
 export default StoryCarousel;
