@@ -119,10 +119,6 @@ const styles = StyleSheet.create({
 });
 
 const helpStyles = StyleSheet.create({
-  headerTitle: {
-    color: "black",
-    fontSize: 18,
-  },
   scrollContent: {
     paddingBottom: 100,
   },
