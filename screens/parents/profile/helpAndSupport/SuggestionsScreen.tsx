@@ -1,15 +1,15 @@
 import { useNavigation } from "@react-navigation/native";
-import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
 import colours from "../../../../colours";
-import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../../styles";
+import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
+import PageTitle from "../../../../components/PageTitle";
+import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import SuccessScreen from "../../../../components/UI/SuccessScreen";
 import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
-import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
-import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
 
 const feedBack = z.object({
   fullName: z.string().trim().min(1, "Name is required"),
@@ -63,18 +63,12 @@ export default function SuggestionsScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
+      <PageTitle
+        goBack={() => navigator.goBack()}
+        title="            Suggestions & Feedback
+          "
+      />
       <View className="flex-1 bg-[#FFFCFBFB]">
-        <View className="relative flex-row justify-center gap-[10px] border-b-[0.5px] border-[#EAE8E8] bg-white p-4 ">
-          <Pressable className="absolute left-0 p-4">
-            <ChevronLeft onPress={() => navigator.goBack()} />
-          </Pressable>
-          <Text
-            style={[defaultStyles.defaultText, suggestStyles.headerTitle]}
-            className="self-center text-center  "
-          >
-            Suggestions & Feedback
-          </Text>
-        </View>
         <View className="mb-8 mt-9 items-center">
           <Text
             style={[defaultStyles.defaultText, suggestStyles.subtitle]}
@@ -161,10 +155,6 @@ const styles = StyleSheet.create({
 });
 
 const suggestStyles = StyleSheet.create({
-  headerTitle: {
-    color: "black",
-    fontSize: 18,
-  },
   subtitle: {
     fontSize: 16,
   },

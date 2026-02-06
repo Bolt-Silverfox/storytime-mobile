@@ -20,7 +20,7 @@ export default function EditParentImage() {
   });
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-[bg-light] ">
+      <View className="flex-1 bg-bg-light ">
         <View className="relative flex-row justify-center gap-[10px] border-b-[0.5px] border-[#EAE8E8] bg-white p-4 ">
           <Pressable className="absolute left-0 p-4">
             <ChevronLeft onPress={() => navigator.goBack()} />

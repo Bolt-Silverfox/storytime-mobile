@@ -104,11 +104,7 @@ const SubscriptionScreen = ({ goBack }: PropTypes) => {
                 subscription.
               </Text>
             </View>
-            <CustomButton
-              text="Subscribe"
-              onPress={() => {}}
-              disabled={!selectedPlan}
-            />
+            <CustomButton text="Subscribe" disabled={!selectedPlan} />
           </View>
         </ScrollView>
       </View>
