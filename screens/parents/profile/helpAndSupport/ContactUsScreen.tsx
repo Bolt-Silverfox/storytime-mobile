@@ -1,8 +1,7 @@
-import { useNavigation } from "@react-navigation/native";
-import Ionicons from "@expo/vector-icons/Ionicons";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { ChevronLeft } from "lucide-react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import {
   Image,
@@ -12,10 +11,10 @@ import {
   Text,
   View,
 } from "react-native";
+import PageTitle from "../../../../components/PageTitle";
+import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../../styles";
-import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
-import PageTitle from "../../../../components/PageTitle";
 
 export default function ContactUsScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -101,10 +100,6 @@ export default function ContactUsScreen() {
 }
 
 const contactStyles = StyleSheet.create({
-  headerTitle: {
-    color: "black",
-    fontSize: 18,
-  },
   subtitle: {
     fontSize: 16,
   },
