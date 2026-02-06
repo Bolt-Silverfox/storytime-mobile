@@ -2,15 +2,16 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { ParentHomeNavigatorParamList } from "../../../Navigation/ParentHomeNavigator";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import useAuth from "../../../contexts/AuthContext";
+import queryGetStories from "../../../hooks/tanstack/queryHooks/queryGetStories";
 
 type RoutePropTypes = RouteProp<ParentHomeNavigatorParamList, "storiesByAge">;
 const StoriesByAgeScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
-  const { user } = useAuth();
-  const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories(user?.id)
+  const { data, error, refetch, isPending } = useQuery(
+    queryGetStories({
+      minAge: params.ageGroup.split("-")[0],
+      maxAge: params.ageGroup.split("-")[1],
+    })
   );
 
   return (

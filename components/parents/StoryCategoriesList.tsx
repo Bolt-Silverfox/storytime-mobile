@@ -1,35 +1,48 @@
 import { useNavigation } from "@react-navigation/native";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Pressable, Text, View } from "react-native";
 import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import ErrorComponent from "../ErrorComponent";
 import { getRandomNumber } from "../../utils/utils";
+import ErrorComponent from "../ErrorComponent";
+import StoryCarouselSkeleton from "../skeletons/StoryCarouselSkeleton";
+import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const StoryCategoriesList = () => {
-  const { error, refetch, data } = useSuspenseQuery(queryStoryCategories());
+  const { error, refetch, data, isPending } = useQuery(queryStoryCategories());
+  if (isPending) return <StoryCarouselSkeleton />;
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
-    <View className="flex flex-col gap-y-4 pb-5">
-      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5">
-        <Text className="font-[abeezee] text-[18px] text-black">
-          All catgories
-        </Text>
-        <Text className="font-[abeezee] text-sm text-text">
-          Gain access to all our stories
-        </Text>
-      </View>
-      <View className="mx-auto w-full max-w-screen-md flex-1">
-        <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
-          {data.map((category) => (
-            <Item category={category.name} id={category.id} key={category.id} />
-          ))}
+    <HomeScreenCarouselComponent
+      isPending={isPending}
+      error={error}
+      refetch={refetch}
+    >
+      <View className="flex flex-col gap-y-4 pb-5">
+        <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5">
+          <Text className="font-[abeezee] text-[18px] text-black">
+            All catgories
+          </Text>
+          <Text className="font-[abeezee] text-sm text-text">
+            Gain access to all our stories
+          </Text>
+        </View>
+        <View className="mx-auto w-full max-w-screen-md flex-1">
+          <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
+            {data.map((category) => (
+              <Item
+                category={category.name}
+                id={category.id}
+                key={category.id}
+              />
+            ))}
+          </View>
         </View>
       </View>
-    </View>
+    </HomeScreenCarouselComponent>
   );
 };
 
