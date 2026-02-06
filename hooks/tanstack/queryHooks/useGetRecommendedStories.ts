@@ -1,13 +1,11 @@
 import { queryOptions } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, Story } from "../../../types";
 
-const useQueryRecommendedStories = () => {
-  const { user } = useAuth();
+const queryRecommendedStories = (userId: string | null | undefined) => {
   return queryOptions({
-    queryKey: ["recommendedStoriesForParents", user?.id],
+    queryKey: ["recommendedStoriesForParents", userId],
     queryFn: async () => {
       try {
         const request = await apiFetch(`${BASE_URL}/stories?recommended=true`, {
@@ -25,7 +23,8 @@ const useQueryRecommendedStories = () => {
     staleTime: Infinity,
     select: (res) => res.data.data,
     gcTime: 60 * 60 * 10,
+    enabled: !!userId,
   });
 };
 
-export { useQueryRecommendedStories };
+export { queryRecommendedStories };

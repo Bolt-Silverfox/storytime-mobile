@@ -1,10 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import { useQueryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import useAuth from "../../../contexts/AuthContext";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
-const FunAndADventureStoriesScreen = () => {
+const FunAndAdventureStoriesScreen = () => {
+  const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
-    useQueryRecommendedStories()
+    queryRecommendedStories(user?.id)
   );
 
   return (
@@ -13,11 +15,13 @@ const FunAndADventureStoriesScreen = () => {
       error={error}
       refetch={refetch}
       isPending={isPending}
-      imageSource={require("../../../assets/images/fun-and-adventure-stories.jpg")}
+      imageSource={{
+        uri: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__3_1_b57i6x.jpg",
+      }}
       description="Enjoy fun and adventurous stories."
       title="Fun and Adventurous stories."
     />
   );
 };
 
-export default FunAndADventureStoriesScreen;
+export default FunAndAdventureStoriesScreen;

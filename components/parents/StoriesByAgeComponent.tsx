@@ -3,7 +3,8 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Pressable, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import { useQueryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import useAuth from "../../contexts/AuthContext";
+import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 import { AgeGroupType } from "../../types";
 import ErrorComponent from "../ErrorComponent";
 import StoryCarousel from "../StoryCarousel";
@@ -11,9 +12,10 @@ import AgeSelectionComponent from "../UI/AgeSelectionComponent";
 
 const StoriesByAgeComponent = () => {
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
+  const { user } = useAuth();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(
-    useQueryRecommendedStories()
+    queryRecommendedStories(user?.id)
   );
 
   if (error)

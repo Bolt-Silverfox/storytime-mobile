@@ -71,7 +71,7 @@ const ParentsLibraryScreen = () => {
             const totalSteps = paragraphs.length;
             const progressRatio =
               totalSteps > 0 ? story.progress / totalSteps : 0;
-
+            const storyDuration = secondsToMinutes(story.durationSeconds);
             return (
               <Pressable
                 key={story.id}
@@ -96,10 +96,8 @@ const ParentsLibraryScreen = () => {
                     <View className="flex flex-1 flex-row items-center gap-x-2">
                       <Icon name="Clock" size={12} color="#616161" />
                       <Text className="font-[abeezee] text-xs text-text">
-                        {secondsToMinutes(story.durationSeconds)}{" "}
-                        {secondsToMinutes(story.durationSeconds) > 1
-                          ? "mins"
-                          : "min"}
+                        {storyDuration > 0 ? storyDuration : "<1"}{" "}
+                        {storyDuration > 1 ? "mins" : "min"}
                       </Text>
                     </View>
                   </View>
