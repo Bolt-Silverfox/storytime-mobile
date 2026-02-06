@@ -55,15 +55,6 @@ export default function ContactUsScreen() {
             </Text>
           </View>
         </View>
-        {/* <View className="flex-row py-[34] border-[0.5px] border-[#EAE8E8] gap-3 rounded-[20px] px-[16] bg-white">
-          <Ionicons name="call-outline" size={24} color="black" />
-          <View>
-            <Text style={[defaultStyles.defaultText, { color: "black" }]}>
-              Call us
-            </Text>
-            <Text>+1 (765) 765 7656</Text>
-          </View>
-        </View> */}
       </View>
       <View className="mx-auto   flex-1 items-center justify-center gap-6 px-4">
         <Text style={[defaultStyles.defaultText, contactStyles.blackText]}>
@@ -71,6 +62,9 @@ export default function ContactUsScreen() {
         </Text>
         <View className="flex-row gap-3">
           <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Storytime on Facebook"
+            hitSlop={8}
             onPress={() =>
               openURL("https://www.facebook.com/profile.php?id=61585584201713")
             }
@@ -78,6 +72,9 @@ export default function ContactUsScreen() {
             <FontAwesome5 name="facebook-square" size={50} color="#EC4007" />
           </Pressable>
           <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Storytime on Instagram"
+            hitSlop={8}
             onPress={() =>
               openURL("https://www.instagram.com/teamstorytimehq/")
             }
@@ -85,6 +82,9 @@ export default function ContactUsScreen() {
             <FontAwesome6 name="square-instagram" size={50} color="#EC4007" />
           </Pressable>
           <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Storytime on TikTok"
+            hitSlop={8}
             onPress={() => openURL("https://www.tiktok.com/@teamstorytimehq")}
           >
             <Image
@@ -93,13 +93,21 @@ export default function ContactUsScreen() {
             />
           </Pressable>
           <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Storytime on Linkedin"
+            hitSlop={8}
             onPress={() =>
               openURL("https://www.linkedin.com/company/storytimehq/")
             }
           >
             <FontAwesome5 name="linkedin" size={50} color="#EC4007" />
           </Pressable>
-          <Pressable onPress={() => openURL("https://x.com/storytimehq")}>
+          <Pressable
+            accessibilityRole="link"
+            accessibilityLabel="Storytime on X (FKA Twitter)"
+            hitSlop={8}
+            onPress={() => openURL("https://x.com/storytimehq")}
+          >
             <FontAwesome6 name="x-twitter" size={50} color="#EC4007" />
           </Pressable>
         </View>

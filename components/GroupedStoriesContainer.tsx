@@ -38,7 +38,6 @@ const GroupedStoriesContainer = ({
   refetch,
   showAges = true,
 }: PropTypes) => {
-  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isImageLoading, setIsImageLoading] = useState(false);
 
@@ -89,12 +88,7 @@ const GroupedStoriesContainer = ({
           contentContainerClassName="flex flex-col px-4 pb-5"
           showsVerticalScrollIndicator={false}
         >
-          {showAges && (
-            <AgeSelectionComponent
-              selectedAgeGroup={selectedGroup}
-              setSelectedAgeGroup={setSelectedGroup}
-            />
-          )}
+          {showAges && <AgeSelectionComponent />}
           <View className="-mt-4 flex flex-row flex-wrap justify-center gap-x-3 gap-y-6 rounded-t-3xl py-6">
             {stories.map((story, index) => (
               <StoryItem
