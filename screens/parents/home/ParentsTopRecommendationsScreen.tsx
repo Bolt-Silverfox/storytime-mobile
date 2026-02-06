@@ -6,7 +6,7 @@ import useAuth from "../../../contexts/AuthContext";
 const ParentsTopRecommendationsScreen = () => {
   const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories(user!.id)
+    queryRecommendedStories(user?.id)
   );
 
   return (
