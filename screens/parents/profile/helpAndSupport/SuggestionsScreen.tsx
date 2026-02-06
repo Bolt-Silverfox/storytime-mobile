@@ -65,8 +65,7 @@ export default function SuggestionsScreen() {
     <SafeAreaWrapper variant="solid">
       <PageTitle
         goBack={() => navigator.goBack()}
-        title="            Suggestions & Feedback
-          "
+        title="Suggestions & Feedback"
       />
       <View className="flex-1 bg-[#FFFCFBFB]">
         <View className="mb-8 mt-9 items-center">

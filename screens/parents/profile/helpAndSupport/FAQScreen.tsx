@@ -1,19 +1,18 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  useWindowDimensions,
-  Pressable,
-  ScrollView,
-} from "react-native";
-import React from "react";
-import MenuItem from "../../../../components/MenuItem";
-import { ChevronLeft } from "lucide-react-native";
-import defaultStyles from "../../../../styles";
 import { useNavigation } from "@react-navigation/native";
+import React from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import { FAQ } from "../../../../constants/constants";
+import MenuItem from "../../../../components/MenuItem";
+import PageTitle from "../../../../components/PageTitle";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
+import { FAQ } from "../../../../constants/constants";
+import defaultStyles from "../../../../styles";
 
 export default function FaQScreen() {
   const { width } = useWindowDimensions();
@@ -23,18 +22,7 @@ export default function FaQScreen() {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-[#FFFCFBFB]">
-        <View className="relative flex-row justify-center gap-[10px] border-b-[0.5px] border-[#EAE8E8] bg-white p-4 ">
-          <Pressable className="absolute left-0 p-4">
-            <ChevronLeft onPress={() => navigator.goBack()} />
-          </Pressable>
-          <Text
-            style={[defaultStyles.defaultText, faqStyles.headerTitle]}
-            className="self-center text-center  "
-          >
-            FAQs
-          </Text>
-        </View>
-
+        <PageTitle goBack={() => navigator.goBack()} title="FAQs" />
         <ScrollView contentContainerStyle={faqStyles.scrollContent}>
           <View className="mt-9  items-center">
             <Text
@@ -144,10 +132,6 @@ const styles = StyleSheet.create({
 });
 
 const faqStyles = StyleSheet.create({
-  headerTitle: {
-    color: "black",
-    fontSize: 18,
-  },
   scrollContent: {
     paddingBottom: 100,
   },

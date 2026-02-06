@@ -50,10 +50,7 @@ const ProfileScreen: FC = () => {
           <ImageBackground
             source={require("../../../assets/bg-adaptive-image.png")}
             style={styles.header}
-            imageStyle={{
-              borderBottomLeftRadius: 24,
-              borderBottomRightRadius: 24,
-            }}
+            imageStyle={styles.imageBackground}
           >
             <Text className="mx-4 mt-10 font-[abeezee] text-xl">Profile</Text>
             <Avatar
@@ -62,10 +59,7 @@ const ProfileScreen: FC = () => {
               }}
               edit={true}
               size={80}
-              style={{
-                bottom: -30,
-                margin: "auto",
-              }}
+              style={styles.avatar}
             />
           </ImageBackground>
 
@@ -175,4 +169,12 @@ const styles = StyleSheet.create({
     overflow: "visible",
   },
   nameContainer: { alignItems: "center", marginTop: 30 },
+  imageBackground: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  avatar: {
+    bottom: -60,
+    alignSelf: "center",
+  },
 });

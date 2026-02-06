@@ -67,6 +67,8 @@ const ChildStoryDetails = () => {
             className="relative flex h-[50vh] max-h-[500px] flex-col justify-end px-4 pb-8"
           >
             <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
               onPress={() => navigator.goBack()}
               className="absolute  left-4 top-10 flex size-10 items-center justify-center rounded-full bg-primary"
             >
