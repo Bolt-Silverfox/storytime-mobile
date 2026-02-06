@@ -94,7 +94,7 @@ const ChildStoryDetails = () => {
                   Category
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs capitalize text-purple-light">
-                  {data.categories[0].name}
+                  {data.categories?.[0]?.name ?? "Uncategorized"}
                 </Text>
               </View>
             </View>
@@ -102,13 +102,13 @@ const ChildStoryDetails = () => {
           <View className="-mt-4 flex flex-col rounded-t-3xl bg-white px-4 py-6">
             <View className="flex flex-col gap-y-3 border-b border-b-border-light pb-6">
               <Text
-                aria-labelledby="story title"
+                accessibilityLabel="story title"
                 className="font-[quilka] text-3xl text-black"
               >
                 {data.title}{" "}
               </Text>
               <Text
-                aria-labelledby="story description"
+                accessibilityLabel="story description"
                 className="font-[abeezee] text-base text-text"
               >
                 {data.description}
@@ -186,11 +186,6 @@ const ChildStoryDetails = () => {
             }
             text="Start Reading"
             disabled={!storyMode}
-          />
-          <CustomButton
-            onPress={() => setStoryMode("interactive")}
-            text="Override premium (TEST ONLY)"
-            bgColor="#4807EC"
           />
         </View>
         <AboutStoryModesModal
