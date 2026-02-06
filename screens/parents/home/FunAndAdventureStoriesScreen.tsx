@@ -24,4 +24,4 @@ const FunAndAdventureStoriesScreen = () => {
   );
 };
 
-export default FunAndADventureStoriesScreen;
+export default FunAndAdventureStoriesScreen;
