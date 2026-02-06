@@ -14,6 +14,7 @@ import { Checkbox } from "expo-checkbox";
 import z from "zod";
 import colours from "../../../colours";
 import PageTitle from "../../../components/PageTitle";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 const feedBack = z.object({
   message: z.string().min(1, "feedback should not be empty"),
@@ -56,81 +57,84 @@ export default function DeleteAccount() {
     );
   };
   return (
-    <View className="flex-1 ">
-      <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
-      <ScrollView className="mx-4" showsVerticalScrollIndicator={false}>
-        <View className="mt-12  items-center">
-          <Text style={[defaultStyles.heading, styles.headingFontSize]}>
-            We are sorry to see you go
-          </Text>
-          <Text
-            style={[defaultStyles.defaultText, styles.textFontSize]}
-            className="mt-4 max-w-[311px] text-center"
-          >
-            Help us improve by telling us how we can make Storytime better{" "}
-          </Text>
-        </View>
-        <View className="mt-8 gap-8  ">
-          {deleteCheckList.map((reason) => (
-            <View key={reason.id} className="flex-row justify-between ">
-              <Text
-                className=" "
-                style={[defaultStyles.defaultText, styles.textColor]}
-              >
-                {reason.reason}
-              </Text>
-              <Checkbox
-                value={reason.checked}
-                onValueChange={() => handleToggle(reason.id)}
-                color={reason.checked ? "#4630EB" : undefined}
-              />
-            </View>
-          ))}
-        </View>
-        {isOthersChecked && (
-          <View style={styles.formItem} className="mt-8">
-            <TextInput
-              style={styles.textArea}
-              placeholder="Please let us know about your experience and how to improve"
-              onChangeText={setMessage}
-              value={message}
-              className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
-              placeholderTextColor={errors.message ? "red" : colours.text}
-              multiline
-            />
-            {errors.message && (
-              <Text className="mt-1 text-sm text-red-600">
-                {errors.message}
-              </Text>
-            )}
+    <SafeAreaWrapper variant="solid">
+      <View className="flex-1 ">
+        <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
+        <ScrollView className="mx-4" showsVerticalScrollIndicator={false}>
+          <View className="mt-12  items-center">
+            <Text style={[defaultStyles.heading, styles.headingFontSize]}>
+              We are sorry to see you go
+            </Text>
+            <Text
+              style={[defaultStyles.defaultText, styles.textFontSize]}
+              className="mt-4 max-w-[311px] text-center"
+            >
+              Help us improve by telling us how we can make Storytime
+              better{" "}
+            </Text>
           </View>
-        )}
-        <View className="mt-8 flex-1 justify-center gap-6">
-          <Pressable onPress={handleNext}>
-            <Text
-              style={[defaultStyles.defaultText, styles.whiteText]}
-              className="mx-auto w-full rounded-[99px] bg-[#EC4007] px-2 py-3 text-center"
-            >
-              Next
-            </Text>
-          </Pressable>
+          <View className="mt-8 gap-8  ">
+            {deleteCheckList.map((reason) => (
+              <View key={reason.id} className="flex-row justify-between ">
+                <Text
+                  className=" "
+                  style={[defaultStyles.defaultText, styles.textColor]}
+                >
+                  {reason.reason}
+                </Text>
+                <Checkbox
+                  value={reason.checked}
+                  onValueChange={() => handleToggle(reason.id)}
+                  color={reason.checked ? "#4630EB" : undefined}
+                />
+              </View>
+            ))}
+          </View>
+          {isOthersChecked && (
+            <View style={styles.formItem} className="mt-8">
+              <TextInput
+                style={styles.textArea}
+                placeholder="Please let us know about your experience and how to improve"
+                onChangeText={setMessage}
+                value={message}
+                className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+                placeholderTextColor={errors.message ? "red" : colours.text}
+                multiline
+              />
+              {errors.message && (
+                <Text className="mt-1 text-sm text-red-600">
+                  {errors.message}
+                </Text>
+              )}
+            </View>
+          )}
+          <View className="mt-8 flex-1 justify-center gap-6">
+            <Pressable onPress={handleNext}>
+              <Text
+                style={[defaultStyles.defaultText, styles.whiteText]}
+                className="mx-auto w-full rounded-[99px] bg-[#EC4007] px-2 py-3 text-center"
+              >
+                Next
+              </Text>
+            </Pressable>
 
-          <Pressable
-            onPress={() => {
-              navigator.navigate("indexPage");
-              setDeleteAccountCheckList(deleteReasons);
-            }}
-          >
-            <Text
-              style={[defaultStyles.defaultText, styles.blackText]}
-              className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+            <Pressable
+              onPress={() => {
+                navigator.navigate("indexPage");
+                setDeleteAccountCheckList(deleteReasons);
+              }}
             >
-              Cancel
-            </Text>
-          </Pressable>
-        </View>
-      </ScrollView>
-    </View>
+              <Text
+                style={[defaultStyles.defaultText, styles.blackText]}
+                className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+              >
+                Cancel
+              </Text>
+            </Pressable>
+          </View>
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
   );
 }
 

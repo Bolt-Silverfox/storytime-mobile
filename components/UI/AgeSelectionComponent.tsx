@@ -1,16 +1,21 @@
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, ScrollView, Text } from "react-native";
 import { ageGroups, AgeGroupType } from "../../types";
 
-type Props = {
-  selectedAgeGroup: AgeGroupType;
-  setSelectedAgeGroup: Dispatch<SetStateAction<AgeGroupType>>;
-};
-
 const AgeSelectionComponent = ({
-  selectedAgeGroup,
-  setSelectedAgeGroup,
-}: Props) => {
+  setSelectedCallback,
+}: {
+  setSelectedCallback?: Dispatch<SetStateAction<AgeGroupType>>;
+}) => {
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
+
+  const handleSelectAgeGroup = (ageGroup: AgeGroupType) => {
+    if (setSelectedCallback) {
+      setSelectedCallback(ageGroup);
+    }
+    setSelectedGroup(ageGroup);
+  };
+
   return (
     <ScrollView
       horizontal
@@ -20,11 +25,11 @@ const AgeSelectionComponent = ({
       {ageGroups.map((age) => (
         <Pressable
           key={age}
-          onPress={() => setSelectedAgeGroup(age)}
-          className={`flex h-10 w-[126px] flex-row items-center justify-center rounded-full ${age === selectedAgeGroup ? "bg-blue" : "border bg-white "}`}
+          onPress={() => handleSelectAgeGroup(age)}
+          className={`flex h-10 w-[126px] flex-row items-center justify-center rounded-full ${age === selectedGroup ? "bg-blue" : "border bg-white "}`}
         >
           <Text
-            className={`font-[abeezee] text-base ${age === selectedAgeGroup ? "text-white" : "text-text"}`}
+            className={`font-[abeezee] text-base ${age === selectedGroup ? "text-white" : "text-text"}`}
           >
             {age}
           </Text>

@@ -1,4 +1,5 @@
 import { Modal, Pressable, Text, View } from "react-native";
+import CustomButton from "../UI/CustomButton";
 
 type Props = {
   open: "delete" | "logout" | boolean;
@@ -49,15 +50,9 @@ const ParentProfileModal = ({
           <Text className="mb-4 px-5 text-center font-[abeezee] text-lg text-[#616161]">
             {modalData?.info}
           </Text>
-          <Pressable
-            onPress={() => setOpen(false)}
-            className="w-full rounded-full bg-primary py-4"
-          >
-            <Text className="text-center font-[abeezee] text-base text-white">
-              Cancel
-            </Text>
-          </Pressable>
-          <Pressable
+          <CustomButton text="Cancel" onPress={() => setOpen(false)} />
+          <CustomButton
+            text={modalData?.confirm}
             onPress={() => {
               setOpen(false);
               setTimeout(() => {
@@ -68,12 +63,8 @@ const ParentProfileModal = ({
                 }
               }, 500);
             }}
-            className="w-full rounded-full border border-primary bg-transparent py-4"
-          >
-            <Text className="text-center font-[abeezee] text-base text-black">
-              {modalData?.confirm}
-            </Text>
-          </Pressable>
+            transparent
+          />
         </View>
       </View>
     </Modal>
