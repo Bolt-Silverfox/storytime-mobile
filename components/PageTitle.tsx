@@ -10,7 +10,11 @@ const PageTitle = ({
 }) => {
   return (
     <View className="flex flex-row items-center border-b border-b-black/10 bg-white px-4 pb-5 pt-2">
-      <Pressable onPress={goBack}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel="Go back"
+        onPress={goBack}
+      >
         <Icon name="ChevronLeft" color="#212121" />
       </Pressable>
       <Text className="flex-1 text-center  font-[abeezee] text-[18px]">

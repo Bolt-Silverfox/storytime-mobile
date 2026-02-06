@@ -1,15 +1,15 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
-import { ChevronLeft } from "lucide-react-native";
 import React, { useState } from "react";
 import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import PageTitle from "../../../components/PageTitle";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import UploadAvatarModal from "../../../components/modals/UploadAvatarModal";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
 import defaultStyles from "../../../styles";
-import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 
 export default function EditParentImage() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -21,17 +21,7 @@ export default function EditParentImage() {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bg-light ">
-        <View className="relative flex-row justify-center gap-[10px] border-b-[0.5px] border-[#EAE8E8] bg-white p-4 ">
-          <Pressable className="absolute left-0 p-4">
-            <ChevronLeft onPress={() => navigator.goBack()} />
-          </Pressable>
-          <Text
-            style={[defaultStyles.defaultText, editStyles.headerTitle]}
-            className="self-center text-center  "
-          >
-            Edit Image
-          </Text>
-        </View>
+        <PageTitle title="Edit Image" goBack={() => navigator.goBack()} />
 
         <View className="flex-1">
           <Text style={[defaultStyles.defaultText]} className="mx-auto mt-8">
@@ -118,10 +108,6 @@ export default function EditParentImage() {
 }
 
 const editStyles = StyleSheet.create({
-  headerTitle: {
-    color: "black",
-    fontSize: 18,
-  },
   uploadText: {
     fontSize: 14,
   },
