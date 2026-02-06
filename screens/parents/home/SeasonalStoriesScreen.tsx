@@ -1,10 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import { useQueryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import useAuth from "../../../contexts/AuthContext";
+import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
 const SeasonalStoriesScreen = () => {
-  const { isPending, error, refetch, data } = useQuery(
-    useQueryRecommendedStories()
+  const { user } = useAuth();
+  const { data, error, refetch, isPending } = useSuspenseQuery(
+    queryRecommendedStories(user?.id)
   );
 
   return (
@@ -13,7 +15,9 @@ const SeasonalStoriesScreen = () => {
       error={error}
       refetch={refetch}
       isPending={isPending}
-      imageSource={require("../../../assets/images/seasonal-stories.jpg")}
+      imageSource={{
+        uri: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__1_1_bczg3t.jpg",
+      }}
       description="These are seasonal stories from Christmas, to Easter, to Halloween and so much more"
       title="Seasonal stories"
     />

@@ -19,6 +19,7 @@ import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import CustomButton from "../../components/UI/CustomButton";
 
 const LoginScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
@@ -69,8 +70,7 @@ const LoginScreen = () => {
                 Forgot Password?
               </Text>
             </View>
-
-            <Pressable
+            <CustomButton
               onPress={() =>
                 login({
                   email: email.trim().toLowerCase(),
@@ -79,14 +79,8 @@ const LoginScreen = () => {
                 })
               }
               disabled={isLoading}
-              style={
-                isLoading ? defaultStyles.buttonDisabled : defaultStyles.button
-              }
-            >
-              <Text className="text-white" style={styles.text}>
-                Log in
-              </Text>
-            </Pressable>
+              text="Log in"
+            />
             <View className="flex flex-row items-center gap-x-4">
               <View className="flex-1 border-b border-black" />
               <Text className="text-center font-[abeezee]">Or log in with</Text>
@@ -137,8 +131,8 @@ const LoginScreen = () => {
               </Text>
             </View>
           </View>
-          <LoadingOverlay visible={isLoading} />
         </ScrollView>
+        <LoadingOverlay visible={isLoading} />
       </View>
     </SafeAreaWrapper>
   );

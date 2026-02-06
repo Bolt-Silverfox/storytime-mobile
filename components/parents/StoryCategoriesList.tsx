@@ -1,10 +1,11 @@
 import { useNavigation } from "@react-navigation/native";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import ErrorComponent from "../ErrorComponent";
+import { getRandomNumber } from "../../utils/utils";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data } = useSuspenseQuery(queryStoryCategories());
@@ -34,10 +35,6 @@ const StoryCategoriesList = () => {
 
 export default StoryCategoriesList;
 
-const getRandomNumber = (): number => {
-  return Math.floor(Math.random() * 10 + 0);
-};
-
 const Item = ({ category, id }: { category: string; id: string }) => {
   const randomNum = getRandomNumber();
   const colour = storyCategoriesColours[randomNum];
@@ -46,14 +43,12 @@ const Item = ({ category, id }: { category: string; id: string }) => {
   return (
     <Pressable
       onPress={() => navigator.navigate("storiesByCategory", { category, id })}
-      className="flex h-16 w-[47%] items-center justify-center rounded-md px-5"
-      style={[
-        categoryStyles.item,
-        {
-          backgroundColor: `${colour}66`,
-          borderBottomColor: colour,
-        },
-      ]}
+      className="br flex h-16 w-[47%] items-center justify-center rounded-xl px-5"
+      style={{
+        backgroundColor: `${colour}33`,
+        borderBottomColor: colour,
+        borderBottomWidth: 2,
+      }}
     >
       <Text
         key={category}
@@ -67,9 +62,3 @@ const Item = ({ category, id }: { category: string; id: string }) => {
     </Pressable>
   );
 };
-
-const categoryStyles = StyleSheet.create({
-  item: {
-    borderBottomWidth: 2,
-  },
-});
