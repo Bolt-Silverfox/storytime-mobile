@@ -188,6 +188,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         try {
           setUser(JSON.parse(localStoredSession));
+          const accessToken = await secureTokenStorage.getAccessToken();
+          console.log("access token", accessToken);
         } catch {
           // Corrupted user data - clear it and reset
           await AsyncStorage.removeItem("user");
