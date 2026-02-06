@@ -101,7 +101,7 @@ const ConfirmResetPasswordTokenScreen = () => {
             )}
             <Text style={defaultStyles.heading}>Reset your password</Text>
             <Text style={styles.text}>
-              Enter the verification code sent to your emails{" "}
+              Enter the verification code sent to your email{" "}
               {route.params.email}
             </Text>
           </View>
@@ -120,10 +120,9 @@ const ConfirmResetPasswordTokenScreen = () => {
               focusColor="blue"
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Pressable disabled={isLoading}>
+            <Pressable disabled={isLoading || countDown > 0}>
               <Text
                 onPress={handleResendEmail}
-                disabled={countDown > 0}
                 className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
               >
                 Resend OTP

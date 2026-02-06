@@ -28,15 +28,16 @@ const VerifyEmailScreen = () => {
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
   const [otp, setOtp] = useState("");
-  const [successMessage, setSuccesMessage] =
-    useState<SuccessMessageType | null>(null);
+  const [successMessage, setSuccesMessage] = useState<
+    SuccessMessageType | undefined
+  >(undefined);
   const [error, setError] = useState("");
   const { isLoading, verifyEmail, resendVerificationEmail, setUser } =
     useAuth();
   const [countDown, setCountdown] = useState(59);
 
   const handleResendEmail = async () => {
-    setSuccesMessage(null);
+    setSuccesMessage(undefined);
     const data = await resendVerificationEmail({
       email: route.params.email.trim(),
       setErrorCb: setError,
@@ -130,7 +131,7 @@ const VerifyEmailScreen = () => {
               focusColor="blue"
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
-            <Pressable disabled={isLoading}>
+            <Pressable disabled={isLoading || countDown > 0}>
               <Text
                 onPress={handleResendEmail}
                 disabled={countDown > 0}
@@ -158,7 +159,7 @@ const VerifyEmailScreen = () => {
         </View>
         <SuccessScreen
           message="Congratulations, your account has been created successfully!"
-          secondaryMessage={successMessage!}
+          secondaryMessage={successMessage}
           visible={
             successMessage ===
             "Start enjoying amazing Storytime with your kids."

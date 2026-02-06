@@ -3,7 +3,7 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse, Story } from "../../../types";
 
-const queryRecommendedStories = (userId: string) => {
+const queryRecommendedStories = (userId: string | null | undefined) => {
   return queryOptions({
     queryKey: ["recommendedStoriesForParents", userId],
     queryFn: async () => {
@@ -23,6 +23,7 @@ const queryRecommendedStories = (userId: string) => {
     staleTime: Infinity,
     select: (res) => res.data.data,
     gcTime: 60 * 60 * 10,
+    enabled: !!userId,
   });
 };
 
