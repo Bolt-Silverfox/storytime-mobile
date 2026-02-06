@@ -10,7 +10,7 @@ const StoriesByAgeScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
   const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories(user?.id!)
+    queryRecommendedStories(user?.id)
   );
 
   return (

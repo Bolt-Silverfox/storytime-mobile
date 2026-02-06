@@ -10,7 +10,7 @@ const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { user } = useAuth();
   const { data, error, refetch } = useSuspenseQuery(
-    queryRecommendedStories(user?.id!)
+    queryRecommendedStories(user?.id)
   );
   if (error)
     return <ErrorComponent refetch={refetch} message={error.message} />;

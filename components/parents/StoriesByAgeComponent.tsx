@@ -14,7 +14,7 @@ const StoriesByAgeComponent = () => {
   const { user } = useAuth();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch } = useSuspenseQuery(
-    queryRecommendedStories(user?.id!)
+    queryRecommendedStories(user?.id)
   );
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
 
