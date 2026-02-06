@@ -3,7 +3,7 @@ import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer
 import useAuth from "../../../contexts/AuthContext";
 import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
 
-const FunAndADventureStoriesScreen = () => {
+const FunAndAdventureStoriesScreen = () => {
   const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
     queryRecommendedStories(user!.id)
