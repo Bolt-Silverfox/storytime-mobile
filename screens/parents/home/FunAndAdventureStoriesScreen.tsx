@@ -6,7 +6,7 @@ import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useG
 const FunAndAdventureStoriesScreen = () => {
   const { user } = useAuth();
   const { isPending, error, refetch, data } = useQuery(
-    queryRecommendedStories(user!.id)
+    queryRecommendedStories(user?.id)
   );
 
   return (
