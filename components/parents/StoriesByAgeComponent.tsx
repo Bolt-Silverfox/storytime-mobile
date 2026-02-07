@@ -11,12 +11,10 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("1-3");
+  const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("All");
   const { data, error, refetch, isPending } = useQuery(
     queryGetStories({
-      minAge: selectedGroup.split("-")[0],
-      maxAge: selectedGroup.split("-")[1],
-      limit: 10,
+      ageGroup: selectedGroup,
     })
   );
   return (
@@ -38,7 +36,9 @@ const StoriesByAgeComponent = () => {
           className="mx-auto flex h-10 items-center justify-center rounded-full border border-border-light bg-white px-5"
         >
           <Text className="font-[abeezee] text-base text-black">
-            See all stories Age {selectedGroup}
+            {selectedGroup === "All"
+              ? "See all stories"
+              : `See all stories Aged ${selectedGroup}`}
           </Text>
         </Pressable>
       </View>

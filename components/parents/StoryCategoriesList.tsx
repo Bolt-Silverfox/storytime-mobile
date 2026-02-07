@@ -34,6 +34,10 @@ const StoryCategoriesList = () => {
           <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
             {data.map((category) => (
               <Item
+                imageUrl={
+                  category.image ??
+                  "https://images.unsplash.com/photo-1502082553048-f009c37129b9"
+                }
                 category={category.name}
                 id={category.id}
                 key={category.id}
@@ -48,14 +52,24 @@ const StoryCategoriesList = () => {
 
 export default StoryCategoriesList;
 
-const Item = ({ category, id }: { category: string; id: string }) => {
+const Item = ({
+  category,
+  id,
+  imageUrl,
+}: {
+  category: string;
+  id: string;
+  imageUrl: string;
+}) => {
   const randomNum = getRandomNumber();
   const colour = storyCategoriesColours[randomNum];
   const navigator = useNavigation<ParntHomeNavigatorProp>();
 
   return (
     <Pressable
-      onPress={() => navigator.navigate("storiesByCategory", { category, id })}
+      onPress={() =>
+        navigator.navigate("storiesByCategory", { category, id, imageUrl })
+      }
       className="br flex h-16 w-[47%] items-center justify-center rounded-xl px-5"
       style={{
         backgroundColor: `${colour}33`,

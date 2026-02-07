@@ -1,6 +1,10 @@
-import { Dispatch, SetStateAction } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { ImageSourcePropType, Text, View } from "react-native";
-import { AgeGroupType, Story } from "../types";
+import queryGetStories, {
+  GetStoriesParam,
+} from "../hooks/tanstack/queryHooks/queryGetStories";
+import { AgeGroupType } from "../types";
 import GroupedStoriesStoryCarousel from "./GroupedStoriesStoryCarousel";
 import { CustomImageBackground } from "./UI/CustomImage";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
@@ -10,31 +14,25 @@ type PropTypes = {
   title: string;
   description: string;
   showAges?: boolean;
-  setSelectedAgeGroup?: Dispatch<SetStateAction<AgeGroupType>>;
-  selectedAgeGroup?: AgeGroupType;
-  stories: Story[] | undefined;
-  isPending: boolean;
-  error: Error | null;
-  refetch: () => void;
+  params: GetStoriesParam;
 };
 
 const GroupedStoriesContainer = ({
   imageSource,
   title,
   description,
-  selectedAgeGroup,
-  setSelectedAgeGroup,
-  stories,
-  isPending,
-  error,
-  refetch,
+  params,
   showAges = true,
 }: PropTypes) => {
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroupType>("All");
+  const { data: stories } = useQuery(
+    queryGetStories({ ...params, ageGroup: selectedAgeGroup })
+  );
+
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="flex flex-1 bg-bgLight">
         <CustomImageBackground
-          isPending={isPending}
           source={
             imageSource ?? {
               uri:
@@ -55,11 +53,8 @@ const GroupedStoriesContainer = ({
         </CustomImageBackground>
 
         <GroupedStoriesStoryCarousel
-          isPending={isPending}
-          refetch={refetch}
-          error={error}
-          stories={stories}
           showAges={showAges}
+          params={params}
           selectedAgeGroup={selectedAgeGroup}
           setSelectedAgeGroup={setSelectedAgeGroup}
         />
