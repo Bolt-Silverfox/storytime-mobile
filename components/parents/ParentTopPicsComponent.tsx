@@ -19,8 +19,8 @@ const ParentsTopPicksComponent = () => {
       refetch={refetch}
     >
       <HomepageStoriesContainer
-        title="Fun and adventures"
-        onViewAll={() => navigator.navigate("funAndAdventureStories")}
+        title="Top picks from parents"
+        onViewAll={() => navigator.navigate("parentsTopPicks")}
         stories={data!}
       />
     </HomeScreenCarouselComponent>

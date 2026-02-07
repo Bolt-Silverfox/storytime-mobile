@@ -4,7 +4,7 @@ import { View } from "react-native";
 
 const StoryItemSkeleton = () => {
   return (
-    <View className="flex h-[240px] w-48 max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1">
+    <View className="flex h-[240px] w-[200px] max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1">
       <View className="h-full w-full flex-1 rounded-2xl">
         <View className="h-[150px] w-full items-center justify-center rounded-xl bg-gray-200">
           <ActivityIndicator size="large" color="#9CA3AF" />

@@ -19,8 +19,8 @@ const SeasonalStoriesComponent = () => {
       refetch={refetch}
     >
       <HomepageStoriesContainer
-        title="Fun and adventures"
-        onViewAll={() => navigator.navigate("funAndAdventureStories")}
+        title="Seasonal stories"
+        onViewAll={() => navigator.navigate("seasonalStories")}
         stories={data!}
       />
     </HomeScreenCarouselComponent>

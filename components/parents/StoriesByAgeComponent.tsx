@@ -16,6 +16,7 @@ const StoriesByAgeComponent = () => {
     queryGetStories({
       minAge: selectedGroup.split("-")[0],
       maxAge: selectedGroup.split("-")[1],
+      limit: 10,
     })
   );
   return (
