@@ -1,79 +1,49 @@
-import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import {
-  ActivityIndicator,
-  ImageBackground,
-  ImageSourcePropType,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
-import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
-import { Story } from "../types";
-import ErrorComponent from "./ErrorComponent";
-import LoadingOverlay from "./LoadingOverlay";
-import StoryItem from "./parents/StoryItem";
-import AgeSelectionComponent from "./UI/AgeSelectionComponent";
-import CustomButton from "./UI/CustomButton";
+import { Dispatch, SetStateAction } from "react";
+import { ImageSourcePropType, Text, View } from "react-native";
+import { AgeGroupType, Story } from "../types";
+import GroupedStoriesStoryCarousel from "./GroupedStoriesStoryCarousel";
+import { CustomImageBackground } from "./UI/CustomImage";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 
 type PropTypes = {
-  stories: Story[] | undefined;
-  error: Error | null;
   imageSource?: ImageSourcePropType;
   title: string;
   description: string;
-  isPending: boolean;
-  refetch: () => void;
   showAges?: boolean;
+  setSelectedAgeGroup?: Dispatch<SetStateAction<AgeGroupType>>;
+  selectedAgeGroup?: AgeGroupType;
+  stories: Story[] | undefined;
+  isPending: boolean;
+  error: Error | null;
+  refetch: () => void;
 };
 
 const GroupedStoriesContainer = ({
-  stories,
-  error,
   imageSource,
   title,
   description,
+  selectedAgeGroup,
+  setSelectedAgeGroup,
+  stories,
   isPending,
+  error,
   refetch,
   showAges = true,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const [isImageLoading, setIsImageLoading] = useState(false);
-
-  if (isPending) return <LoadingOverlay visible />;
-  if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
-
-  if (!stories?.length) {
-    return (
-      <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
-        <Text className="font-[abeezee] text-xl text-black">
-          No stories in this category yet
-        </Text>
-        <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
-      </View>
-    );
-  }
-
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="flex flex-1 bg-bgLight">
-        <ImageBackground
-          onLoadStart={() => {
-            setIsImageLoading(true);
-          }}
-          onLoadEnd={() => setIsImageLoading(false)}
-          source={imageSource ?? { uri: stories[0].coverImageUrl }}
-          resizeMode="cover"
+        <CustomImageBackground
+          isPending={isPending}
+          source={
+            imageSource ?? {
+              uri:
+                stories?.[0]?.coverImageUrl ??
+                "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__3_1_b57i6x.jpg",
+            }
+          }
           className="flex h-[30vh] max-h-[500px] w-full flex-col justify-end px-4 pb-8"
         >
-          {isImageLoading && (
-            <View className="absolute inset-0 items-center justify-center bg-black/40">
-              <ActivityIndicator size="large" color="#EC4007" />
-            </View>
-          )}
-
           <View className="flex flex-col gap-y-1.5">
             <Text className="font-[quilka] text-3xl capitalize text-white">
               {title}
@@ -82,30 +52,17 @@ const GroupedStoriesContainer = ({
               {description}
             </Text>
           </View>
-        </ImageBackground>
-        <ScrollView
-          className="-mt-4 rounded-t-3xl bg-white pt-5"
-          contentContainerClassName="flex flex-col px-4 pb-5"
-          showsVerticalScrollIndicator={false}
-        >
-          {showAges && <AgeSelectionComponent />}
-          <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">
-            {stories.map((story, index) => (
-              <StoryItem
-                index={index}
-                key={story.id}
-                onNavigate={() => {
-                  navigator.navigate("stories", {
-                    screen: "childStoryDetails",
-                    params: { storyId: story.id },
-                  });
-                }}
-                story={story}
-                isGrouped
-              />
-            ))}
-          </View>
-        </ScrollView>
+        </CustomImageBackground>
+
+        <GroupedStoriesStoryCarousel
+          isPending={isPending}
+          refetch={refetch}
+          error={error}
+          stories={stories}
+          showAges={showAges}
+          selectedAgeGroup={selectedAgeGroup}
+          setSelectedAgeGroup={setSelectedAgeGroup}
+        />
       </View>
     </SafeAreaWrapper>
   );

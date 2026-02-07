@@ -43,7 +43,8 @@ const queryGetStories = (params: GetStoriesParam) =>
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     select: (res) => res.data,
-    gcTime: 60 * 60 * 10,
+    gcTime: 1000 * 60 * 60 * 10,
   });
 
+export type { GetStoriesParam };
 export default queryGetStories;

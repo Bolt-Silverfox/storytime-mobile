@@ -22,7 +22,7 @@ const queryRecommendedStories = (userId: string | null | undefined) => {
     },
     staleTime: Infinity,
     select: (res) => res.data.data,
-    gcTime: 60 * 60 * 10,
+    gcTime: 1000 * 60 * 60 * 10,
     enabled: !!userId,
   });
 };
