@@ -14,9 +14,9 @@ const StoriesByCategoryScreen = () => {
   return (
     <GroupedStoriesContainer
       stories={data}
+      isPending={isPending}
       error={error}
       refetch={refetch}
-      isPending={isPending}
       description={`Read great and amazing stories on ${params.category}`}
       title={params.category}
     />

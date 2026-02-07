@@ -1,7 +1,8 @@
-import { ComponentProps, useState } from "react";
+import { ComponentProps, memo, ReactNode, useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  ImageBackground,
   ImageSourcePropType,
   View,
 } from "react-native";
@@ -38,4 +39,38 @@ const CustomImage = ({ source, height, width, ...rest }: PropTypes) => {
   );
 };
 
+interface CustomBackgroundProptypes extends ComponentProps<typeof Image> {
+  source: ImageSourcePropType;
+  isPending?: boolean;
+  children?: ReactNode;
+}
+
+const CustomImageBackground = memo(
+  ({ source, isPending, children, ...rest }: CustomBackgroundProptypes) => {
+    const [isImageLoading, setIsImageLoading] = useState(false);
+
+    const showLoadingSpinner = isPending || isImageLoading;
+
+    return (
+      <ImageBackground
+        onLoadStart={() => {
+          setIsImageLoading(true);
+        }}
+        onLoadEnd={() => setIsImageLoading(false)}
+        source={source}
+        resizeMode="cover"
+        {...rest}
+      >
+        {showLoadingSpinner && (
+          <View className="absolute inset-0 items-center justify-center bg-black/40">
+            <ActivityIndicator size="large" color="#EC4007" />
+          </View>
+        )}
+        {children}
+      </ImageBackground>
+    );
+  }
+);
+
+export { CustomImageBackground };
 export default CustomImage;

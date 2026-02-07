@@ -23,7 +23,7 @@ const useQueryParentsFavourites = () => {
     },
     staleTime: Infinity,
     select: (res) => res.data,
-    gcTime: 60 * 60 * 20,
+    gcTime: 1000 * 60 * 60 * 10,
   });
 };
 
