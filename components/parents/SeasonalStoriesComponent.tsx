@@ -9,7 +9,6 @@ const SeasonalStoriesComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
     queryGetStories({
-      limit: 10,
       isSeasonal: true,
     })
   );

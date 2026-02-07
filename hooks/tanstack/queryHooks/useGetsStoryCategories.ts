@@ -1,13 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
-
-type Response = {
-  statusCode: number;
-  success: boolean;
-  data: Categories[];
-  message: string;
-};
+import { QueryResponse } from "../../../types";
 
 type Categories = {
   id: string;
@@ -25,7 +19,7 @@ const queryStoryCategories = () => {
       const request = await apiFetch(url, {
         method: "GET",
       });
-      const response: Response = await request.json();
+      const response: QueryResponse<Categories[]> = await request.json();
       if (!response.success) {
         throw new Error(response.message ?? "Unexpected error, try again");
       }

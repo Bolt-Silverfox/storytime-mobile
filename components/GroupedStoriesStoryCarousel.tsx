@@ -1,8 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { ScrollView, Text, View } from "react-native";
+import queryGetStories, {
+  GetStoriesParam,
+} from "../hooks/tanstack/queryHooks/queryGetStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
-import { AgeGroupType, Story } from "../types";
+import { AgeGroupType } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
@@ -11,36 +15,44 @@ import CustomButton from "./UI/CustomButton";
 
 type PropTypes = {
   showAges: boolean;
-  isPending: boolean;
-  error: Error | null;
-  stories: Story[] | undefined;
-  selectedAgeGroup?: AgeGroupType;
-  setSelectedAgeGroup?: Dispatch<SetStateAction<AgeGroupType>>;
-  refetch: () => void;
+  setSelectedAgeGroup: Dispatch<SetStateAction<AgeGroupType>>;
+  selectedAgeGroup: AgeGroupType;
+  params: GetStoriesParam;
 };
-
 const GroupedStoriesStoryCarousel = ({
   showAges,
   selectedAgeGroup,
   setSelectedAgeGroup,
-  isPending,
-  error,
-  refetch,
-  stories,
+  params,
 }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const {
+    data: stories,
+    isPending,
+    refetch,
+    error,
+  } = useQuery(queryGetStories({ ...params, ageGroup: selectedAgeGroup }));
 
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   if (!stories?.length) {
+    const isFilterDefault = selectedAgeGroup === "All";
     return (
       <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
         <Text className="font-[abeezee] text-xl text-black">
           No stories in this category yet
         </Text>
-        <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+        {isFilterDefault ? (
+          <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+        ) : (
+          <CustomButton
+            transparent
+            text="Reset filters"
+            onPress={() => setSelectedAgeGroup("All")}
+          />
+        )}
       </View>
     );
   }
@@ -51,7 +63,7 @@ const GroupedStoriesStoryCarousel = ({
       contentContainerClassName="flex flex-col px-4 pb-5"
       showsVerticalScrollIndicator={false}
     >
-      {showAges && selectedAgeGroup && (
+      {showAges && (
         <AgeSelectionComponent
           selectedGroupProp={selectedAgeGroup}
           setSelectedCallback={setSelectedAgeGroup}
