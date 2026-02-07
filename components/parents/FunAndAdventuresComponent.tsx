@@ -21,7 +21,7 @@ const FunAndAdventuresComponent = () => {
       <HomepageStoriesContainer
         title="Fun and adventures"
         onViewAll={() => navigator.navigate("funAndAdventureStories")}
-        stories={data!}
+        stories={data ?? []}
       />
     </HomeScreenCarouselComponent>
   );
