@@ -157,6 +157,7 @@ const subscriptionBenefits = [
 ];
 
 const storiesByAgeImages: Record<AgeGroupType, string> = {
+  All: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__3_1_b57i6x.jpg",
   "1-3":
     "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_1-3_djfdem.jpg",
   "4-6":
