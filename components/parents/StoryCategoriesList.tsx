@@ -24,7 +24,7 @@ const StoryCategoriesList = () => {
       <View className="flex flex-col gap-y-4 pb-5">
         <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5">
           <Text className="font-[abeezee] text-[18px] text-black">
-            All catgories
+            All categories
           </Text>
           <Text className="font-[abeezee] text-sm text-text">
             Gain access to all our stories
@@ -59,7 +59,7 @@ const Item = ({ category, id }: { category: string; id: string }) => {
       className="br flex h-16 w-[47%] items-center justify-center rounded-xl px-5"
       style={{
         backgroundColor: `${colour}33`,
-        borderBottomColor: colour,
+        borderBottomColor: `${colour}33`,
         borderBottomWidth: 2,
       }}
     >

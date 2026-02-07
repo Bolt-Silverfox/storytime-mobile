@@ -3,7 +3,7 @@ import StoryItemSkeleton from "./StoryItemSeleton";
 
 const StoryCarouselSkeleton = () => {
   return (
-    <View className="flex bg-pink-400">
+    <View className="flex">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}

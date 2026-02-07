@@ -11,11 +11,11 @@ type PropTypes = {
 const StoryCarousel = memo(({ stories }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   return (
-    <View className=" mx-auto w-full max-w-screen-md">
+    <View className="mx-auto w-full max-w-screen-md">
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex bg-bgLight flex-row gap-x-3"
+        contentContainerClassName="flex bg-bg-light flex-row gap-x-3"
       >
         {stories.map((story, index) => (
           <StoryItem

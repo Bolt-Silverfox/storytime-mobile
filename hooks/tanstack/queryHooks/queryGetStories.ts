@@ -15,7 +15,16 @@ const queryGetStories = (params: GetStoriesParam) =>
   queryOptions({
     queryKey: ["stories", { ...params }],
     queryFn: async () => {
-      const url = `${BASE_URL}/stories?category=${params.category ?? ""}&minAge=${params.minAge}&maxAge=${params.maxAge}&page=${params.page ?? 1}&limit=${params.limit ?? 10}`;
+      const searchParams = new URLSearchParams();
+      if (params.category) searchParams.set("category", params.category);
+      if (params.minAge) searchParams.set("minAge", params.minAge);
+      if (params.maxAge) searchParams.set("maxAge", params.maxAge);
+      if (params.page) searchParams.set("page", String(params.page));
+      if (params.limit) {
+        searchParams.set("limit", String(params.limit));
+      }
+
+      const url = `${BASE_URL}/stories?${searchParams.toString()}`;
       const request = await apiFetch(url, {
         method: "GET",
       });
@@ -26,6 +35,7 @@ const queryGetStories = (params: GetStoriesParam) =>
     },
     staleTime: Infinity,
     select: (res) => res.data,
+    gcTime: 60 * 60 * 10,
   });
 
 export default queryGetStories;
