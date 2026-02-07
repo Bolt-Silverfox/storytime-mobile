@@ -9,6 +9,8 @@ type GetStoriesParam = {
   maxAge?: string;
   page?: number;
   limit?: number;
+  isSeasonal?: boolean;
+  isMostLiked?: boolean;
 };
 
 const queryGetStories = (params: GetStoriesParam) =>
@@ -23,6 +25,10 @@ const queryGetStories = (params: GetStoriesParam) =>
       if (params.limit) {
         searchParams.set("limit", String(params.limit));
       }
+      if (params.isSeasonal !== undefined)
+        searchParams.set("isSeasonal", String(params.isSeasonal));
+      if (params.isMostLiked !== undefined)
+        searchParams.set("isMostLiked", String(params.isMostLiked));
 
       const url = `${BASE_URL}/stories?${searchParams.toString()}`;
       const request = await apiFetch(url, {
@@ -34,6 +40,8 @@ const queryGetStories = (params: GetStoriesParam) =>
       return response.data;
     },
     staleTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
     select: (res) => res.data,
     gcTime: 60 * 60 * 10,
   });

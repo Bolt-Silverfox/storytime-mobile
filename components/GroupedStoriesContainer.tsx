@@ -9,12 +9,12 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
-import { AgeGroupType, Story } from "../types";
+import { Story } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
+import StoryItem from "./parents/StoryItem";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
-import StoryItem from "./parents/StoryItem";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 
 type PropTypes = {

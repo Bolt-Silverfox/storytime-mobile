@@ -18,16 +18,17 @@ const useToggleFavourites = ({
   const { data } = useGetUserProfile();
   const queryKey = [QUERY_KEYS.parentsFavourites, data?.id] as const;
 
+  const previousData =
+    queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
+  const cachedData = previousData?.data ?? [];
+
+  const isLiked = cachedData.some(
+    (stories) => stories.storyId === story.storyId
+  );
+
   return useMutation({
     mutationFn: async () => {
       await queryClient.cancelQueries({ queryKey });
-
-      const currentData =
-        queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
-      const cachedData = currentData?.data ?? [];
-      const isLiked = cachedData.some(
-        (stories) => stories.storyId === story.storyId
-      );
 
       if (isLiked) {
         return await deleteFromFavourites(story.storyId);
@@ -37,16 +38,7 @@ const useToggleFavourites = ({
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
-
-      const previousData =
-        queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
-
       if (!previousData?.data) return { previousData };
-
-      const cachedData: FavouriteStory[] = previousData.data;
-      const isLiked = cachedData.some(
-        (stories) => stories.storyId === story.storyId
-      );
 
       const newFavourites = isLiked
         ? cachedData.filter((item) => item.storyId !== story.storyId)
