@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import GroupedStoriesContainer from "../../../components/GroupedStoriesContainer";
-import useAuth from "../../../contexts/AuthContext";
-import { queryRecommendedStories } from "../../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import queryGetStories from "../../../hooks/tanstack/queryHooks/queryGetStories";
 
 const SeasonalStoriesScreen = () => {
-  const { user } = useAuth();
   const { data, error, refetch, isPending } = useSuspenseQuery(
-    queryRecommendedStories(user?.id)
+    queryGetStories({
+      limit: 10,
+      isSeasonal: true,
+    })
   );
 
   return (

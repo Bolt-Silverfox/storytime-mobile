@@ -19,7 +19,7 @@ const ParentsTopPicksComponent = () => {
       refetch={refetch}
     >
       <HomepageStoriesContainer
-        title="Top picks from parents"
+        title="Today's top picks"
         onViewAll={() => navigator.navigate("parentsTopPicks")}
         stories={data!}
       />

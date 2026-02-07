@@ -1,17 +1,19 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import useAuth from "../../contexts/AuthContext";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
+import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const SeasonalStoriesComponent = () => {
-  const { user } = useAuth();
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
-    queryRecommendedStories(user?.id)
+    queryGetStories({
+      limit: 10,
+      isSeasonal: true,
+    })
   );
+
   return (
     <HomeScreenCarouselComponent
       isPending={isPending}
