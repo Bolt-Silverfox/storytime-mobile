@@ -234,7 +234,17 @@ type AvailableVoices = {
   elevenLabsVoiceId: string;
 };
 
-const ageGroups = ["1-3", "4-6", "7-9", "10-12"] as const;
+type PaginatedData<T> = {
+  data: T;
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    pageSize: number;
+    totalCount: number;
+  };
+};
+
+const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 export type {
@@ -256,5 +266,6 @@ export type {
   AgeGroupType,
   FavouriteStory,
   AvailableVoices,
+  PaginatedData,
 };
 export { ageGroups };

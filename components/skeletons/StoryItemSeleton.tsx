@@ -2,9 +2,12 @@ import React from "react";
 import { ActivityIndicator } from "react-native";
 import { View } from "react-native";
 
-const StoryItemSkeleton = () => {
+const StoryItemSkeleton = ({ isGrouped }: { isGrouped?: boolean }) => {
   return (
-    <View className="flex h-[240px] w-48 max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1">
+    <View
+      // className="flex h-[240px] w-[200px] max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1"
+      className={`flex min-h-[230px] flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-52"} gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
+    >
       <View className="h-full w-full flex-1 rounded-2xl">
         <View className="h-[150px] w-full items-center justify-center rounded-xl bg-gray-200">
           <ActivityIndicator size="large" color="#9CA3AF" />

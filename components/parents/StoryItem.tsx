@@ -51,11 +51,15 @@ const StoryItem = ({
   const duration = secondsToMinutes(story.durationSeconds);
 
   const categoryColour = storyCategoriesColours[getRandomNumber()];
+  const categoryName = story.categories?.[0]?.name ?? "Uncategorized";
+  const categoryLabel =
+    categoryName.length > 15 ? `${categoryName.slice(0, 14)}...` : categoryName;
+
   return (
     <Pressable
       onPress={navigate}
       key={story.id}
-      className={`flex flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-48 max-w-52"} gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
+      className={`flex min-h-[230px] flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-52"} gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
     >
       <View
         className={`relative h-full w-full flex-1 rounded-2xl ${isLocked ? "bg-[#4807EC66]" : null}`}
@@ -85,10 +89,7 @@ const StoryItem = ({
                 color: categoryColour,
               }}
             >
-              {story.categories[0].name.length > 15
-                ? story.categories[0].name.split("").slice(0, 14).join("") +
-                  "..."
-                : story.categories[0].name}
+              {categoryLabel}
             </Text>
           </View>
           <View className="flex flex-row items-center gap-x-1">

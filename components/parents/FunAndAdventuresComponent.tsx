@@ -1,27 +1,29 @@
 import { useNavigation } from "@react-navigation/native";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import useAuth from "../../contexts/AuthContext";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import ErrorComponent from "../ErrorComponent";
+import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
+import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const FunAndAdventuresComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { user } = useAuth();
-  const { data, error, refetch } = useSuspenseQuery(
-    queryRecommendedStories(user?.id)
+  const { data, isPending, error, refetch } = useQuery(
+    queryGetStories({
+      category: "54f4d851-f796-4ce2-ba85-31082dfd7c63",
+    })
   );
-
-  if (error)
-    return <ErrorComponent refetch={refetch} message={error.message} />;
-
   return (
-    <HomepageStoriesContainer
-      title="Fun and adventures"
-      onViewAll={() => navigator.navigate("funAndAdventureStories")}
-      stories={data}
-    />
+    <HomeScreenCarouselComponent
+      isPending={isPending}
+      error={error}
+      refetch={refetch}
+    >
+      <HomepageStoriesContainer
+        title="Fun and adventures"
+        onViewAll={() => navigator.navigate("funAndAdventureStories")}
+        stories={data ?? []}
+      />
+    </HomeScreenCarouselComponent>
   );
 };
 

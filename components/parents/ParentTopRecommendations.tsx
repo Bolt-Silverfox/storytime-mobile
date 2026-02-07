@@ -1,25 +1,29 @@
 import { useNavigation } from "@react-navigation/native";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import useAuth from "../../contexts/AuthContext";
-import { queryRecommendedStories } from "../../hooks/tanstack/queryHooks/useGetRecommendedStories";
-import ErrorComponent from "../ErrorComponent";
+import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
+import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { user } = useAuth();
-  const { data, error, refetch } = useSuspenseQuery(
-    queryRecommendedStories(user?.id)
+  const { data, error, refetch, isPending } = useQuery(
+    queryGetStories({
+      isMostLiked: true,
+    })
   );
-  if (error)
-    return <ErrorComponent refetch={refetch} message={error.message} />;
   return (
-    <HomepageStoriesContainer
-      title="Top recommendations"
-      onViewAll={() => navigator.navigate("topRecommendations")}
-      stories={data}
-    />
+    <HomeScreenCarouselComponent
+      isPending={isPending}
+      error={error}
+      refetch={refetch}
+    >
+      <HomepageStoriesContainer
+        title="Top recommendations"
+        onViewAll={() => navigator.navigate("topRecommendations")}
+        stories={data ?? []}
+      />
+    </HomeScreenCarouselComponent>
   );
 };
 export default ParentsTopRecommendations;

@@ -13,7 +13,7 @@ import { AgeGroupType } from "../types";
 
 type ParentHomeNavigatorParamList = {
   homePage: undefined;
-  storiesByCategory: { category: string; id: string };
+  storiesByCategory: { category: string; id: string; imageUrl: string };
   topRecommendations: undefined;
   seasonalStories: undefined;
   funAndAdventureStories: undefined;
