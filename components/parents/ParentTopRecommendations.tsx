@@ -21,7 +21,7 @@ const ParentsTopRecommendations = () => {
       <HomepageStoriesContainer
         title="Top recommendations"
         onViewAll={() => navigator.navigate("topRecommendations")}
-        stories={data!}
+        stories={data ?? []}
       />
     </HomeScreenCarouselComponent>
   );

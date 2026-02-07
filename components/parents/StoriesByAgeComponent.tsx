@@ -28,7 +28,7 @@ const StoriesByAgeComponent = () => {
           selectedGroupProp={selectedGroup}
           setSelectedCallback={setSelectedGroup}
         />
-        <StoryCarousel stories={data!} />
+        <StoryCarousel stories={data ?? []} />
         <Pressable
           onPress={() =>
             navigator.navigate("storiesByAge", { ageGroup: selectedGroup })

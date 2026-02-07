@@ -19,7 +19,7 @@ const ParentsTopPicksComponent = () => {
       <HomepageStoriesContainer
         title="Today's top picks"
         onViewAll={() => navigator.navigate("parentsTopPicks")}
-        stories={data!}
+        stories={data ?? []}
       />
     </HomeScreenCarouselComponent>
   );

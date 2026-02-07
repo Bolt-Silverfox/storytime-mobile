@@ -22,7 +22,7 @@ const SeasonalStoriesComponent = () => {
       <HomepageStoriesContainer
         title="Seasonal stories"
         onViewAll={() => navigator.navigate("seasonalStories")}
-        stories={data!}
+        stories={data ?? []}
       />
     </HomeScreenCarouselComponent>
   );

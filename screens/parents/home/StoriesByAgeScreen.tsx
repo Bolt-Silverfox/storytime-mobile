@@ -13,7 +13,7 @@ const StoriesByAgeScreen = () => {
       imageSource={{
         uri: storiesByAgeImages[params.ageGroup],
       }}
-      description={`Access stories from ${isSelectedAgeDefault ? "all ages" : "age" + params.ageGroup}`}
+      description={`Access stories from ${isSelectedAgeDefault ? "all ages" : "ages " + params.ageGroup}`}
       title={isSelectedAgeDefault ? "All ages" : `Age ${params.ageGroup}`}
       showAges={false}
     />
