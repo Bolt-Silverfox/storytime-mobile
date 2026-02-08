@@ -15,7 +15,7 @@ const TopModal = ({ isOpen, onClose, children }: Props) => {
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
       <Pressable style={styles.overlay} onPress={onClose} />
       <View
-        className="rounded-b-2xl  bg-white p-4"
+        className="rounded-b-2xl  bg-white p-4 pt-12"
         style={{ maxHeight: height * 0.7 }}
       >
         {children}

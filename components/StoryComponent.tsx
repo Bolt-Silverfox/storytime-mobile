@@ -26,7 +26,7 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
   const sessionStartTime = useRef(Date.now());
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
