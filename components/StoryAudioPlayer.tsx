@@ -1,6 +1,6 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useAudioPlayer } from "expo-audio";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import { BADGE_LABELS, COLORS, VOICE_LABELS } from "../constants/ui";
 import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
@@ -21,21 +21,10 @@ const StoryAudioPlayer = ({
   const { data, isPending } = useTextToAudio({
     content: textContent,
     voiceId: selectedVoice || "",
-    enabled: !!selectedVoice,
   });
-  const player = useAudioPlayer(
-    selectedVoice ? (data?.audioUrl ?? audioUrl) : audioUrl
-  );
+
+  const player = useAudioPlayer(data?.audioUrl ? data.audioUrl : audioUrl);
   const [isPlaying, setIsPlaying] = useState(false);
-
-  useEffect(() => {
-    player.pause();
-    setIsPlaying(false);
-
-    return () => {
-      player.pause(); // Cleanup on unmount
-    };
-  }, [selectedVoice, player]);
 
   const playAudio = () => {
     if (!isSubscribed) {
@@ -74,14 +63,16 @@ const StoryAudioPlayer = ({
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
-        <View
-          style={{ backgroundColor: COLORS.premiumBadge.background }}
-          className="flex h-6 items-center justify-center rounded-full px-3"
-        >
-          <Text className="text-center font-[abeezee] text-xs text-black">
-            {BADGE_LABELS.premium}
-          </Text>
-        </View>
+        {!isSubscribed && (
+          <View
+            style={{ backgroundColor: COLORS.premiumBadge.background }}
+            className="flex h-6 items-center justify-center rounded-full px-3"
+          >
+            <Text className="text-center font-[abeezee] text-xs text-black">
+              {BADGE_LABELS.premium}
+            </Text>
+          </View>
+        )}
         {isPending ? (
           <ActivityIndicator size={"large"} />
         ) : (
