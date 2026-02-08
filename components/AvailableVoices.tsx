@@ -1,56 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
-import {
-  BADGE_LABELS,
-  COLORS,
-  SUBSCRIPTION_STATUS,
-  USER_ROLES,
-} from "../constants/ui";
+import { COLORS, SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
-
-const VoiceBadge = ({
-  isDefault,
-  isPremium,
-}: {
-  isDefault: boolean;
-  isPremium: boolean;
-}) => {
-  if (isDefault) {
-    return (
-      <View
-        style={{ backgroundColor: COLORS.defaultBadge.background }}
-        className="flex h-6 items-center justify-center self-center rounded-full px-2"
-      >
-        <Text
-          style={{ color: COLORS.defaultBadge.text }}
-          className="font-[abeezee] text-xs"
-        >
-          {BADGE_LABELS.default}
-        </Text>
-      </View>
-    );
-  }
-
-  if (!isPremium) {
-    return (
-      <View
-        style={{ backgroundColor: COLORS.premiumBadge.background }}
-        className="flex h-6 items-center justify-center self-center rounded-full px-2"
-      >
-        <Text className="font-[abeezee] text-xs text-black">
-          {BADGE_LABELS.premium}
-        </Text>
-      </View>
-    );
-  }
-
-  return <View className="h-6" />;
-};
+import VoiceBadge from "./UI/VoiceBadge";
 
 const AvailableVoices = ({
   selectedVoice,
@@ -64,14 +21,6 @@ const AvailableVoices = ({
   const [previewingId, setPreviewingId] = useState<string | null>(null);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const player = useAudioPlayer();
-
-  // Auto-select the first (default) voice if none is selected
-  useEffect(() => {
-    if (!selectedVoice && data.length > 0) {
-      setSelectedVoice(data[0].id);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedVoice, data]);
 
   const isPremium =
     user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
@@ -94,12 +43,21 @@ const AvailableVoices = ({
     }
   };
 
+  const handleSelectVoice = (voiceName: string) => {
+    if (!isPremium) {
+      setIsSubscriptionModalOpen(true);
+      return;
+    }
+    setSelectedVoice(voiceName);
+  };
+
   return (
     <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
-      {data.map((voice, index) => {
-        const isSelected = voice.id === selectedVoice;
+      {data.map((voice) => {
+        const isSelected =
+          voice.name.toLowerCase() === selectedVoice?.toLowerCase();
         const isPreviewing = voice.id === previewingId;
-        const isDefault = index === 0;
+        const isDefault = voice.name.toLowerCase() === "lily";
 
         return (
           <Pressable
@@ -131,7 +89,7 @@ const AvailableVoices = ({
                 />
               </Pressable>
               <Switch
-                onValueChange={() => setSelectedVoice(voice.id)}
+                onValueChange={() => handleSelectVoice(voice.name)}
                 value={isSelected}
               />
             </View>
