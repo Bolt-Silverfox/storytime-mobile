@@ -149,11 +149,9 @@ const subscriptionOptions: { name: "Monthly" | "Yearly"; price: number }[] = [
 ];
 
 const subscriptionBenefits = [
-  "Unlock full story library",
-  "Create unlimited child profiles",
-  "Encourage consistent reading habits",
-  "Perfect for bedtime & independent reading",
-  "Watch your child grow with every adventure",
+  "Unlimited access to a growing library of kids' stories.",
+  "Interactive story mode: short quizzes after each story to boost learning.",
+  "Pick from soothing, fun voices tailored to your child.",
 ];
 
 const storiesByAgeImages: Record<AgeGroupType, string> = {
