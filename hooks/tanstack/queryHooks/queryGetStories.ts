@@ -15,6 +15,7 @@ type GetStoriesParam = {
   limit?: number;
   isSeasonal?: boolean;
   isMostLiked?: boolean;
+  topPicksFromUs?: boolean;
 };
 
 const queryGetStories = (params: GetStoriesParam) =>
@@ -33,6 +34,11 @@ const queryGetStories = (params: GetStoriesParam) =>
         searchParams.set("isSeasonal", String(params.isSeasonal));
       if (params.isMostLiked !== undefined)
         searchParams.set("isMostLiked", String(params.isMostLiked));
+      if (params.topPicksFromUs !== undefined)
+        searchParams.set(
+          "topPicksFromUs",
+          `"${String(params.topPicksFromUs)}"`
+        );
       if (params.limit) {
         searchParams.set("limit", String(params.limit));
       } else {
