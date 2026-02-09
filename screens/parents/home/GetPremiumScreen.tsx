@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import SubscriptionScreen from "../../../components/screens/SubscriptionScreen";
+import SubscriptionScreen from "../../../components/screens/SubscriptionScreenComponent";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 
 const GetPremiumScreen = () => {

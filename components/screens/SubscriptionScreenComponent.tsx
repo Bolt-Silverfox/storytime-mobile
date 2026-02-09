@@ -9,7 +9,7 @@ import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 type PropTypes = {
   goBack: () => void;
 };
-const SubscriptionScreen = ({ goBack }: PropTypes) => {
+const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
     null
   );
@@ -74,7 +74,7 @@ const SubscriptionScreen = ({ goBack }: PropTypes) => {
               })}
             </View>
 
-            <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4">
+            <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10">
               <Text className="font-[quilka] text-[18px] text-black ">
                 What you'll enjoy
               </Text>
@@ -94,6 +94,11 @@ const SubscriptionScreen = ({ goBack }: PropTypes) => {
               </View>
             </View>
 
+            <Text className="-mt-5 font-[abeezee] text-base text-black">
+              Your child won't just listen, they'll have an unlimited learning
+              experience, with the voice type you choose for them.
+            </Text>
+
             <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5">
               <Image
                 className="size-6"
@@ -112,4 +117,4 @@ const SubscriptionScreen = ({ goBack }: PropTypes) => {
   );
 };
 
-export default SubscriptionScreen;
+export default SubscriptionScreenComponent;
