@@ -124,23 +124,23 @@ export const privacy = [
 
 export const FAQ = [
   {
-    q: "Are the stories safe for my kids?",
-    a: "Yes. Progress syncs across devices.",
+    q: "What is Storytime4Kids?",
+    a: "Storytime4Kids is a kids’ storytelling app with a library of narrated and read-along stories designed for learning, fun, and bedtime routines. Parents can pick stories by age, theme, or length and play them anytime the device is online.",
     id: 1,
   },
   {
-    q: "Do i need internet to listen?",
-    a: "Restart the app or check your internet connection. Offline stories must be downloaded first.",
+    q: "Are the stories safe for my kids?",
+    a: "Yes. Storytime is built for kids. Our stories are selected and organized for age-appropriate listening/reading, and we avoid mature themes and explicit language.\nIf you ever find something you don’t like, you can report it and we’ll review it.",
     id: 2,
   },
   {
-    q: "How do i upgrade my subscription?",
-    a: "Login to your account, go to profile, select the subscription option, choose a premium and follow the prompts",
+    q: "Do I need the internet to read and listen to stories?",
+    a: "Yes. You need an internet connection to read or listen to stories on Storytime.",
     id: 3,
   },
   {
-    q: "Can parents track reading progress?",
-    a: "Login to your account, go to profile, select the subscription option, choose a premium and follow the prompts",
+    q: "Can I download stories to use offline?",
+    a: "No. Storytime doesn’t support offline downloads right now. To access stories, you’ll need an internet connection.",
     id: 4,
   },
 ];

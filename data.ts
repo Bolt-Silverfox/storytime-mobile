@@ -85,7 +85,7 @@ const termsAndConditionsData: {
     paragraph: [
       "All content, including stories, narration, illustrations, trademarks, and software, is the property of StoryTime4Kids or its licensors and is protected by copyright and intellectual property laws.",
       "Content is licensed to you for personal, non-commercial use only.",
-      "You may not copy, modify, transmit, or publicly display any Content without express written permission",
+      "You may not copy, modify, transmit, or publicly display any Content without express written permission.",
     ],
   },
   {
@@ -104,7 +104,7 @@ const termsAndConditionsData: {
     heading: "Governing Law and Disputes",
     index: "VII",
     paragraph:
-      "These Terms shall be governed by the laws of [Your Jurisdiction, e.g., the State of California], without regard to its conflict of law provisions. Any disputes must first be attempted to be resolved through good faith negotiation or binding arbitration as set forth in the full policy document.",
+      "These Terms shall be governed by the laws of the jurisdiction where the Company is incorporated, without regard to its conflict of law provisions. Any disputes must first be attempted to be resolved through good faith negotiation or binding arbitration as set forth in the full policy document.",
   },
 ];
 
