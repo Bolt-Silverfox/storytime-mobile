@@ -57,70 +57,54 @@ const termsAndConditionsData: {
     heading: "Introduction and Acceptance",
     index: "I",
     paragraph: [
-      'These Terms and Conditions ("Terms") form a legally binding agreement between you ("User," "Parent," or "Guardian") and StoryTime4Kids ("Company," "we," "us," or "our") governing your access to and use of our website, mobile application, and digital content services (collectively, the "Service").',
-      "By accessing, using, or subscribing to the Service, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not access or use the Service.",
+      'This document ("Terms") constitutes a legally binding agreement between you (the "User," "Parent," or "Guardian") and StoryTime4Kids ("Company," "We," or "Us") regarding your access and use of our digital library and app service (the "Service").',
+      "By accessing, using, or subscribing to the Service, you acknowledge that you have read, understood, and agree to be bound by these Terms. If you do not agree to these Terms, you may not use the Service.",
     ],
   },
   {
     heading: "The Service and Age Restrictions",
     index: "II",
     paragraph: [
-      "StoryTime4Kids provides access to a curated digital library of stories, audio, video, and related educational content designed to support children's literacy and imagination.",
-      "The Service is intended for use by parents or legal guardians for children under the age of 18. You must be at least 18 years old to create an account, make payments, and accept these Terms on behalf of a child.",
+      "StoryTime4Kids provides access to a curated digital library of audio and video Content designed to enhance children's literacy and imagination. ",
+      "The Service is intended for use by adults for children under 18. Users must be 18 years of age or older to create an account, make payments, and agree to these Terms.",
     ],
   },
   {
     heading: "Subscriptions, Payments, and Free Trials",
     index: "III",
     paragraph: [
-      "1. Subscription Plans: We offer various subscription plans, including monthly and annual options. Plan details and pricing are displayed at the time of purchase.",
-      "2. Automatic Renewal: All paid subscriptions automatically renew at the applicable rate unless cancelled before the end of the current billing period.",
-      "3. Billing and Cancellation: Subscription management and cancellations are handled through your App Store or Google Play account.",
+      " 1.Subscription: We offer various subscription models (e.g., Monthly, Annual, Family Legacy).",
+      " 2. Automatic Renewal: All paid subscriptions automatically renew at the then-current rate unless you cancel the subscription prior to the end of the current billing period.",
+      " 3. Free Trial: We may offer a Free Trial (e.g., 7 or 14 days).",
+      " 4. CRITICAL NOTICE: Your payment method will be charged automatically immediately following the end of your free trial period unless you cancel before the trial expires.",
     ],
   },
   {
-    heading: "Intellectual Property Rights",
+    heading: "Intellectual Property (IP)",
     index: "IV",
     paragraph: [
-      "All content and materials made available through the Service, including stories, narration, illustrations, graphics, trademarks, and software, are the exclusive property of StoryTime4Kids or its licensors and are protected by applicable intellectual property laws.",
-      "You are granted a limited, non-exclusive, non-transferable license to access and use the Service for personal, non-commercial purposes only. You may not copy, reproduce, distribute, modify, or publicly display any content without prior written consent.",
+      "All content, including stories, narration, illustrations, trademarks, and software, is the property of StoryTime4Kids or its licensors and is protected by copyright and intellectual property laws.",
+      "Content is licensed to you for personal, non-commercial use only.",
+      "You may not copy, modify, transmit, or publicly display any Content without express written permission.",
     ],
   },
   {
     heading: "User Conduct and Account Security",
     index: "V",
-    paragraph: [
-      "You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.",
-      "You agree not to:\n• Use the Service for unlawful or unauthorized purposes\n• Share account access beyond the limits of your subscription plan\n• Attempt to copy, scrape, redistribute, or exploit any part of the Service",
-    ],
+    paragraph:
+      "You are responsible for safeguarding your account login information and for all activity under your account. You agree not to use the Service for any unlawful purpose, including sharing your account credentials with non-subscribers beyond the limits of your plan.",
   },
   {
-    heading: "Suspension and Termination",
+    heading: "Termination",
     index: "VI",
-    paragraph: [
-      "We reserve the right to suspend or terminate your access to the Service, with or without notice, if you violate these Terms, misuse the Service, or fail to meet payment obligations.",
-      "You may discontinue use of the Service at any time by cancelling your subscription or deleting your account.",
-    ],
+    paragraph:
+      "We reserve the right to immediately terminate or suspend your access to the Service, without prior notice or liability, if you breach any part of these Terms, including but not limited to non-payment or unauthorized sharing of Content.",
   },
   {
-    heading: "Governing Law and Dispute Resolution",
+    heading: "Governing Law and Disputes",
     index: "VII",
-    paragraph: [
-      "These Terms shall be governed by and construed in accordance with the laws of your Jurisdiction, without regard to conflict of law principles.",
-      "Any disputes arising out of or relating to these Terms or the Service shall first be attempted to be resolved through good-faith negotiations and, if unresolved, through binding arbitration in accordance with applicable laws.",
-    ],
-  },
-  {
-    heading: "Changes to These Terms",
-    index: "VIII",
     paragraph:
-      'We may update these Terms from time to time. Any changes will be posted on this page with an updated "Last updated" date. Continued use of the Service after changes become effective constitutes acceptance of the revised Terms.',
-  },
-  {
-    heading: "Contact Information",
-    index: "IX",
-    paragraph:
-      "If you have questions about these Terms, please contact us at: Email: team@storytimeapp.me",
+      "These Terms shall be governed by the laws of the jurisdiction where the Company is incorporated, without regard to its conflict of law provisions. Any disputes must first be attempted to be resolved through good faith negotiation or binding arbitration as set forth in the full policy document.",
   },
 ];
 

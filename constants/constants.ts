@@ -122,85 +122,25 @@ export const privacy = [
   },
 ];
 
-export const FAQ = {
-  gettingStarted: [
-    {
-      q: "What is StoryTime for Kids?",
-      a: "StoryTime for Kids helps children build reading and comprehension skills through age-appropriate stories, short quizzes, and daily challenges.",
-    },
-    {
-      q: "What age is the app for?",
-      a: "The app is designed for children aged 1–12, with content automatically adjusted to each child's reading level.",
-    },
-    {
-      q: "Do I need a parent account?",
-      a: "Yes. A parent or guardian aged 18+ must create and manage the account.",
-    },
-    {
-      q: "Can my child use the app independently?",
-      a: "Yes. The app is designed to be safe and easy for children to use independently.",
-    },
-    {
-      q: "How long does a session take?",
-      a: "Most sessions last 5–15 minutes, making it ideal for daily reading.",
-    },
-  ],
-  safetyAndPrivacy: [
-    {
-      q: "Is the app safe for children?",
-      a: "Yes. The app complies with COPPA and GDPR-K.",
-    },
-    {
-      q: "Can I control what my child sees?",
-      a: "Yes. Parents can apply age-based content filters.",
-    },
-    {
-      q: "Can my child make purchases in the app?",
-      a: "No. All purchases are restricted to the parent section.",
-    },
-    {
-      q: "Is my child's data secure?",
-      a: "Yes. Only minimal data is collected, and all data is encrypted and securely stored.",
-    },
-  ],
-  storiesAndSubscription: [
-    {
-      q: "What types of stories are available?",
-      a: "The app includes age-appropriate stories across multiple themes tailored to your child's level.",
-    },
-    {
-      q: "Can my child listen instead of reading?",
-      a: "Yes. Stories include audio narration for early readers.",
-    },
-    {
-      q: "Are new stories added?",
-      a: "Yes. New stories and illustrations are added regularly.",
-    },
-    {
-      q: "Is the app free?",
-      a: "Yes. The app offers free access, with optional premium features.",
-    },
-    {
-      q: "What does a premium include?",
-      a: "Premium unlocks more stories, audio features, and detailed progress insights.",
-    },
-    {
-      q: "How do I cancel my subscription?",
-      a: "You can cancel anytime through your App Store or Google Play settings.",
-    },
-  ],
-  helpAndSupport: [
-    {
-      q: "Can the app be used on more than one device?",
-      a: "Yes. Progress syncs across devices.",
-    },
-    {
-      q: "The app won't load — what should I do?",
-      a: "Restart the app or check your internet connection. Offline stories must be downloaded first.",
-    },
-    {
-      q: "Audio isn't playing — how do I fix it?",
-      a: "Check your device sound settings and the app's internal volume controls.",
-    },
-  ],
-};
+export const FAQ = [
+  {
+    q: "What is Storytime4Kids?",
+    a: "Storytime4Kids is a kids’ storytelling app with a library of narrated and read-along stories designed for learning, fun, and bedtime routines. Parents can pick stories by age, theme, or length and play them anytime the device is online.",
+    id: 1,
+  },
+  {
+    q: "Are the stories safe for my kids?",
+    a: "Yes. Storytime is built for kids. Our stories are selected and organized for age-appropriate listening/reading, and we avoid mature themes and explicit language.\nIf you ever find something you don’t like, you can report it and we’ll review it.",
+    id: 2,
+  },
+  {
+    q: "Do I need the internet to read and listen to stories?",
+    a: "Yes. You need an internet connection to read or listen to stories on Storytime.",
+    id: 3,
+  },
+  {
+    q: "Can I download stories to use offline?",
+    a: "No. Storytime doesn’t support offline downloads right now. To access stories, you’ll need an internet connection.",
+    id: 4,
+  },
+];

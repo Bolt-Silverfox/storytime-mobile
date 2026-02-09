@@ -7,6 +7,7 @@ export type FeedbackPayload = {
   fullname: string;
   email: string;
   message: string;
+  category: string;
 };
 
 const useSubmitFeedback = (options?: {

@@ -10,6 +10,7 @@ import SuccessScreen from "../../../../components/UI/SuccessScreen";
 import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../../styles";
+import useAuth from "../../../../contexts/AuthContext";
 
 const feedBack = z.object({
   fullName: z.string().trim().min(1, "Name is required"),
@@ -23,8 +24,9 @@ type FeedBackSchema = z.infer<typeof feedBack>;
 type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
 export default function SuggestionsScreen() {
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
+  const { user } = useAuth();
+  const [fullName, setFullName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
   const [apiError, setApiError] = useState("");
@@ -58,6 +60,7 @@ export default function SuggestionsScreen() {
       fullname: fullName.trim(),
       email: email.trim().toLowerCase(),
       message: message.trim(),
+      category: "Bug Report",
     });
   };
 
