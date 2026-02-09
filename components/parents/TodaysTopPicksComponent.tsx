@@ -5,10 +5,10 @@ import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
-const ParentsTopPicksComponent = () => {
+const TodaysTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
-    queryGetStories({ isMostLiked: true })
+    queryGetStories({ topPicksFromUs: true })
   );
   return (
     <HomeScreenCarouselComponent
@@ -18,10 +18,10 @@ const ParentsTopPicksComponent = () => {
     >
       <HomepageStoriesContainer
         title="Today's top picks"
-        onViewAll={() => navigator.navigate("parentsTopPicks")}
+        onViewAll={() => navigator.navigate("todaysTopPicks")}
         stories={data ?? []}
       />
     </HomeScreenCarouselComponent>
   );
 };
-export default ParentsTopPicksComponent;
+export default TodaysTopPicksComponent;
