@@ -122,85 +122,25 @@ export const privacy = [
   },
 ];
 
-export const FAQ = {
-  gettingStarted: [
-    {
-      q: "What is StoryTime for Kids?",
-      a: "StoryTime for Kids helps children build reading and comprehension skills through age-appropriate stories, short quizzes, and daily challenges.",
-    },
-    {
-      q: "What age is the app for?",
-      a: "The app is designed for children aged 1–12, with content automatically adjusted to each child's reading level.",
-    },
-    {
-      q: "Do I need a parent account?",
-      a: "Yes. A parent or guardian aged 18+ must create and manage the account.",
-    },
-    {
-      q: "Can my child use the app independently?",
-      a: "Yes. The app is designed to be safe and easy for children to use independently.",
-    },
-    {
-      q: "How long does a session take?",
-      a: "Most sessions last 5–15 minutes, making it ideal for daily reading.",
-    },
-  ],
-  safetyAndPrivacy: [
-    {
-      q: "Is the app safe for children?",
-      a: "Yes. The app complies with COPPA and GDPR-K.",
-    },
-    {
-      q: "Can I control what my child sees?",
-      a: "Yes. Parents can apply age-based content filters.",
-    },
-    {
-      q: "Can my child make purchases in the app?",
-      a: "No. All purchases are restricted to the parent section.",
-    },
-    {
-      q: "Is my child's data secure?",
-      a: "Yes. Only minimal data is collected, and all data is encrypted and securely stored.",
-    },
-  ],
-  storiesAndSubscription: [
-    {
-      q: "What types of stories are available?",
-      a: "The app includes age-appropriate stories across multiple themes tailored to your child's level.",
-    },
-    {
-      q: "Can my child listen instead of reading?",
-      a: "Yes. Stories include audio narration for early readers.",
-    },
-    {
-      q: "Are new stories added?",
-      a: "Yes. New stories and illustrations are added regularly.",
-    },
-    {
-      q: "Is the app free?",
-      a: "Yes. The app offers free access, with optional premium features.",
-    },
-    {
-      q: "What does a premium include?",
-      a: "Premium unlocks more stories, audio features, and detailed progress insights.",
-    },
-    {
-      q: "How do I cancel my subscription?",
-      a: "You can cancel anytime through your App Store or Google Play settings.",
-    },
-  ],
-  helpAndSupport: [
-    {
-      q: "Can the app be used on more than one device?",
-      a: "Yes. Progress syncs across devices.",
-    },
-    {
-      q: "The app won't load — what should I do?",
-      a: "Restart the app or check your internet connection. Offline stories must be downloaded first.",
-    },
-    {
-      q: "Audio isn't playing — how do I fix it?",
-      a: "Check your device sound settings and the app's internal volume controls.",
-    },
-  ],
-};
+export const FAQ = [
+  {
+    q: "Are the stories safe for my kids?",
+    a: "Yes. Progress syncs across devices.",
+    id: 1,
+  },
+  {
+    q: "Do i need internet to listen?",
+    a: "Restart the app or check your internet connection. Offline stories must be downloaded first.",
+    id: 2,
+  },
+  {
+    q: "How do i upgrade my subscription?",
+    a: "Login to your account, go to profile, select the subscription option, choose a premium and follow the prompts",
+    id: 3,
+  },
+  {
+    q: "Can parents track reading progress?",
+    a: "Login to your account, go to profile, select the subscription option, choose a premium and follow the prompts",
+    id: 4,
+  },
+];
