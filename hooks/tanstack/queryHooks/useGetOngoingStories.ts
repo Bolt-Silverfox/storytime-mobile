@@ -2,39 +2,21 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { Story } from "../../../types";
 
-export type OngoingStory = {
-  id: string;
-  title: string;
-  description: string;
-  language: string;
-  themeIds: string[];
-  categoryIds: string[];
-  seasonIds: string[];
-  coverImageUrl: string;
-  audioUrl: string;
-  textContent: string;
-  isInteractive: boolean;
-  ageMin: number;
-  ageMax: number;
-  images: {
-    url: string;
-    caption: string;
-  }[];
-  branches: {
-    prompt: string;
-    optionA: string;
-    optionB: string;
-    nextA: string;
-    nextB: string;
-  }[];
-  durationSeconds: number;
-  createdAt: string;
-  updatedAt: string;
-  progress: number;
-  totalTimeSpent: number;
-  lastAccessed: string;
-};
+type OngoingStory = Pick<
+  Story,
+  | "id"
+  | "title"
+  | "description"
+  | "coverImageUrl"
+  | "textContent"
+  | "ageMin"
+  | "ageMax"
+  | "durationSeconds"
+  | "createdAt"
+  | "categories"
+> & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
 export type Response = {
   data: OngoingStory[];

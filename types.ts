@@ -156,7 +156,7 @@ type Story = {
   ageMin: number;
   ageMax: number;
   backgroundColor: string;
-  recommend: boolean;
+  recommended: boolean;
   aiGenerated: boolean;
   difficultyLevel: number;
   wordCount: number;
@@ -215,15 +215,16 @@ type StoryBuddy = {
   deletedAt: string | null;
 };
 
-type FavouriteStory = {
-  id: string;
-  storyId: string;
-  title: string;
-  description: string;
-  coverImageUrl: string;
-  createdAt: string;
-  ageRange: string;
-};
+type FavouriteStory = Pick<
+  Story,
+  | "id"
+  | "title"
+  | "description"
+  | "coverImageUrl"
+  | "categories"
+  | "createdAt"
+  | "durationSeconds"
+> & { storyId: string; ageRange: string };
 
 type AvailableVoices = {
   id: string;

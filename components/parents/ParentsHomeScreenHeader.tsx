@@ -10,10 +10,16 @@ import Icon from "../Icon";
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
-  const isUserSubscribed = false;
 
   const { data, isPending } = useGetUserProfile();
   if (isPending) return <ActivityIndicator size={"large"} />;
+  const isUserSubscribed =
+    data?.subscriptionStatus === "active" || data?.role === "admin";
+
+  const truncatedName =
+    (data?.name.length ?? 0 > 13)
+      ? data?.name.split("").join("").slice(0, 13) + "..."
+      : data?.name;
 
   return (
     <View
@@ -32,7 +38,7 @@ const ParentsHomeScreenHeader = () => {
         />
       </View>
       <View className="flex flex-1 flex-col gap-y-1.5">
-        <Text className="font-[abeezee] text-base">{data?.name}</Text>
+        <Text className="font-[abeezee] text-base">{truncatedName}</Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
           {getGreeting()}
         </Text>

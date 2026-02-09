@@ -27,10 +27,10 @@ const AvailableVoices = ({
     user?.role === USER_ROLES.admin;
 
   const handlePreview = async (audioUrl: string, voiceId: string) => {
-    if (!isPremium) {
-      setIsSubscriptionModalOpen(true);
-      return;
-    }
+    // if (!isPremium) {
+    //   setIsSubscriptionModalOpen(true);
+    //   return;
+    // }
     setPreviewingId(voiceId);
     try {
       await player.replace(audioUrl);
@@ -63,9 +63,9 @@ const AvailableVoices = ({
           <Pressable
             onPress={() => {
               handlePreview(voice.previewUrl, voice.id);
-              if (isPremium || isDefault) {
-                setSelectedVoice(voice.id);
-              }
+              // if (isPremium || isDefault) {
+              //   setSelectedVoice(voice.id);
+              // }
             }}
             key={voice.id}
             className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${isSelected ? "border-2 border-primary" : "border border-border-light"}`}

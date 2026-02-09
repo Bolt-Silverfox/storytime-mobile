@@ -64,15 +64,15 @@ const StoryContentContainer = ({
       setCurrentlyDisplayed("endOfStoryMessage");
       return;
     }
-    if (isSubscribed) {
-      setActiveParagraph((a) => {
-        const next = a + 1;
-        onProgress(next + 1, false);
-        return next;
-      });
-      return;
-    }
-    setIsSubscriptionModalOpen(true);
+    // if (isSubscribed) {
+    setActiveParagraph((a) => {
+      const next = a + 1;
+      onProgress(next + 1, false);
+      return next;
+    });
+    // return;
+    // }
+    // setIsSubscriptionModalOpen(true);
   };
 
   return (

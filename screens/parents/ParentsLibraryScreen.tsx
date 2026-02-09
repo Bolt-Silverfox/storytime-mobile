@@ -80,7 +80,19 @@ const ParentsLibraryScreen = () => {
                   onPress={() =>
                     protectedNavigator.navigate("stories", {
                       screen: "childStoryDetails",
-                      params: { storyId: story.id },
+                      params: {
+                        story: {
+                          ageMax: story.ageMax,
+                          ageMin: story.ageMin,
+                          categories: story.categories,
+                          coverImageUrl: story.coverImageUrl,
+                          description: story.description,
+                          durationSeconds: story.durationSeconds,
+                          id: story.id,
+                          title: story.title,
+                          createdAt: story.createdAt,
+                        },
+                      },
                     })
                   }
                   className="flex flex-col rounded-xl border border-border-light p-1"
