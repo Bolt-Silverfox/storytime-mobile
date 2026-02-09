@@ -1,11 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, Text, View } from "react-native";
 import PageTitle from "../../../../components/PageTitle";
+import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import { privacy } from "../../../../constants/constants";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../../styles";
-import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 
 export default function PrivacyAndPolicyScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -16,16 +15,15 @@ export default function PrivacyAndPolicyScreen() {
         <PageTitle title="Privacy Policy" goBack={() => navigator.goBack()} />
         <ScrollView
           showsVerticalScrollIndicator={false}
-          className=" mx-[16] gap-4 "
+          contentContainerClassName="flex flex-col gap-y-8"
+          className="mx-4 mb-5 mt-8"
         >
           {privacy.map((term, i) => (
-            <View key={i} className="mt-5">
-              <Text style={[defaultStyles.heading, privacyStyles.sectionTitle]}>
+            <View key={i} className="flex flex-col gap-y-3">
+              <Text className="font-[abeezee] text-[18px] text-black">
                 {term.title}
               </Text>
-              <Text
-                style={[defaultStyles.defaultText, privacyStyles.description]}
-              >
+              <Text className="font-[abeezee] text-base text-text">
                 {term.description}
               </Text>
             </View>
@@ -35,13 +33,3 @@ export default function PrivacyAndPolicyScreen() {
     </SafeAreaWrapper>
   );
 }
-
-const privacyStyles = StyleSheet.create({
-  sectionTitle: {
-    textAlign: "left",
-    fontSize: 18,
-  },
-  description: {
-    marginVertical: 15,
-  },
-});

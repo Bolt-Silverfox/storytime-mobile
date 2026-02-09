@@ -1,27 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
-import React from "react";
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  useWindowDimensions,
-  View,
-} from "react-native";
+import React, { useState } from "react";
+import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import MenuItem from "../../../../components/MenuItem";
+import Icon from "../../../../components/Icon";
 import PageTitle from "../../../../components/PageTitle";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import { FAQ } from "../../../../constants/constants";
 import defaultStyles from "../../../../styles";
 
 export default function FaQScreen() {
-  const { width } = useWindowDimensions();
-  const isTablet = width >= 768;
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const [currentlyOpenQuestion, setCurrentlyOpenQuestion] = useState(-1);
+
+  const toggleOpenQuestion = (questionId: number) => {
+    setCurrentlyOpenQuestion((o) => (o === questionId ? -1 : questionId));
+  };
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-[#FFFCFBFB]">
+      <View className="flex-1 bg-bg-light">
         <PageTitle goBack={() => navigator.goBack()} title="FAQs" />
         <ScrollView contentContainerStyle={faqStyles.scrollContent}>
           <View className="mt-9  items-center">
@@ -32,89 +29,39 @@ export default function FaQScreen() {
               Find answers to frequently asked questions
             </Text>
           </View>
-          <View>
-            <Text
-              style={[defaultStyles.heading, faqStyles.sectionTitle]}
-              className="mt-6"
-            >
-              Getting Started
-            </Text>
-            <View
-              style={styles.menuList}
-              className="rounded-[20px]   border border-border-lighter px-[16]"
-            >
-              {FAQ.gettingStarted.map((faq, i) => (
-                <MenuItem
-                  key={i}
-                  label={faq.q}
-                  isTablet={isTablet}
-                  description={faq.a}
-                />
-              ))}
-            </View>
-          </View>
-          <View>
-            <Text
-              style={[defaultStyles.heading, faqStyles.sectionTitle]}
-              className="mt-6"
-            >
-              Safety & Privacy
-            </Text>
-            <View
-              style={styles.menuList}
-              className="rounded-[20px]   border border-border-lighter px-[16]"
-            >
-              {FAQ.safetyAndPrivacy.map((faq, i) => (
-                <MenuItem
-                  key={i}
-                  label={faq.q}
-                  isTablet={isTablet}
-                  description={faq.a}
-                />
-              ))}
-            </View>
-          </View>
-          <View>
-            <Text
-              style={[defaultStyles.heading, faqStyles.sectionTitle]}
-              className="mt-6"
-            >
-              Stories & Subscription
-            </Text>
-            <View
-              style={styles.menuList}
-              className="rounded-[20px]   border border-border-lighter px-[16]"
-            >
-              {FAQ.storiesAndSubscription.map((faq, i) => (
-                <MenuItem
-                  key={i}
-                  label={faq.q}
-                  isTablet={isTablet}
-                  description={faq.a}
-                />
-              ))}
-            </View>
-          </View>
-          <View>
-            <Text
-              style={[defaultStyles.heading, faqStyles.sectionTitle]}
-              className="mt-6"
-            >
-              Help & Support
-            </Text>
-            <View
-              style={styles.menuList}
-              className="rounded-[20px]   border border-border-lighter px-[16]"
-            >
-              {FAQ.helpAndSupport.map((faq, i) => (
-                <MenuItem
-                  key={i}
-                  label={faq.q}
-                  isTablet={isTablet}
-                  description={faq.a}
-                />
-              ))}
-            </View>
+          <View
+            style={styles.menuList}
+            className="rounded-[20px] border border-border-lighter bg-white px-[16]"
+          >
+            {FAQ.map((faq, i) => (
+              <View
+                key={faq.id}
+                className={`flex flex-col gap-y-2 border-b border-b-border-light ${
+                  i === FAQ.length - 1 ? "border-b-0" : ""
+                }`}
+              >
+                <Pressable
+                  onPress={() => toggleOpenQuestion(faq.id)}
+                  className="flex flex-row items-center justify-between gap-x-3 py-6"
+                >
+                  <Text className="flex-1 font-[abeezee] text-[18px] text-black">
+                    {faq.q}
+                  </Text>
+                  <Icon
+                    name={
+                      currentlyOpenQuestion === faq.id
+                        ? "ChevronUp"
+                        : "ChevronDown"
+                    }
+                  />
+                </Pressable>
+                {currentlyOpenQuestion === faq.id && (
+                  <Text className="mb-4 ml-4 font-[abeezee] text-[18px] text-text">
+                    {faq.a}
+                  </Text>
+                )}
+              </View>
+            ))}
           </View>
         </ScrollView>
       </View>
@@ -137,8 +84,5 @@ const faqStyles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-  },
-  sectionTitle: {
-    fontSize: 19,
   },
 });
