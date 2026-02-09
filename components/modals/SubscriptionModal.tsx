@@ -68,7 +68,7 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
 
         <View
           aria-labelledby="subscription plans"
-          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4"
+          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10"
         >
           <Text className="font-[quilka] text-[18px] text-black ">
             What you'll enjoy
@@ -88,6 +88,10 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
             ))}
           </View>
         </View>
+        <Text className="-mt-5 font-[abeezee] text-base text-black">
+          Your child won't just listen, they'll have an unlimited learning
+          experience, with the voice type you choose for them.
+        </Text>
 
         <View
           aria-labelledby="subscription disclaimer"
