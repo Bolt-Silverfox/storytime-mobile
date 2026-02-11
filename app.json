@@ -20,7 +20,9 @@
         "ITSAppUsesNonExemptEncryption": false
       },
       "entitlements": {
-        "com.apple.developer.applesignin": ["Default"]
+        "com.apple.developer.applesignin": [
+          "Default"
+        ]
       }
     },
     "android": {
@@ -60,7 +62,8 @@
         }
       ],
       "expo-asset",
-      "expo-secure-store"
+      "expo-secure-store",
+      "expo-iap"
     ],
     "extra": {
       "eas": {
