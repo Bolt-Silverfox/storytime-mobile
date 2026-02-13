@@ -2,80 +2,29 @@ import Feather from "@expo/vector-icons/Feather";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import { subscriptionBenefits, subscriptionOptions } from "../../data";
+import { subscriptionBenefits } from "../../data";
 import CustomButton from "../UI/CustomButton";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 
-import { ErrorCode, useIAP } from "expo-iap";
-import { useEffect } from "react";
-import apiFetch from "../../apiFetch";
-import { BASE_URL } from "../../constants";
-import { QueryResponse } from "../../types";
-import { getErrorMessage } from "../../utils/utils";
-
-// const SUBSCRIPTION_IDS = ["1_month_subscription", "st-4-kids-monthly"];
-const SUBSCRIPTION_IDS = ["1_month_subscription:st-4-kids-monthly"];
+import LoadingOverlay from "../LoadingOverlay";
+import { SubscriptionPlan } from "../../types";
+import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 
 type PropTypes = {
   goBack: () => void;
 };
+
 const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
-  const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null
-  );
-
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const {
-    connected,
-    products,
-    fetchProducts,
-    requestPurchase,
-    finishTransaction,
-  } = useIAP({
-    onPurchaseSuccess: async (purchase) => {
-      const { store, productId, purchaseToken, transactionId } = purchase;
-      try {
-        await verifyPurchase({
-          platform: store,
-          productId: productId,
-          purchaseToken: store === "apple" ? transactionId : purchaseToken,
-          packageName: "net.emerj.storytime",
-        });
+    isLoading,
+    errorMessage,
+    subscriptions,
+    handlePurchase,
+    getPlanName,
+  } = useSubscribeIAP(selectedPlan);
 
-        await finishTransaction({ purchase });
-      } catch (err) {
-        console.error("Verification failed, NOT finishing transaction", err);
-      }
-    },
-    onPurchaseError: (error) => {
-      if (error.code !== ErrorCode.UserCancelled) {
-        console.error("Subscription failed", error);
-      }
-    },
-  });
-
-  useEffect(() => {
-    if (connected) {
-      console.log("IAP Connected, fetching products:", SUBSCRIPTION_IDS);
-      fetchProducts({ skus: SUBSCRIPTION_IDS, type: "subs" });
-    } else {
-      console.log("IAP not connected yet");
-    }
-  }, [connected]);
-
-  console.log("Products fetched:", products);
-  console.log("Number of products:", products.length);
-  console.log("Connected status:", connected);
-
-  const handlePurchase = async (productId: string) => {
-    await requestPurchase({
-      request: {
-        apple: { sku: productId },
-        google: { skus: [productId] },
-      },
-      type: "subs",
-    });
-  };
-
+  if (isLoading) return <LoadingOverlay visible />;
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
       <View className="flex flex-1  bg-[#866EFF]">
@@ -104,14 +53,20 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
           </View>
 
           <View className="flex flex-1 flex-col gap-y-10 rounded-t-[32px] bg-white px-4 py-5">
+            {errorMessage && (
+              <Text className="text-center font-[abeezee] text-xl text-red-700">
+                {errorMessage}
+              </Text>
+            )}
             <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
-              {subscriptionOptions.map((subscription) => {
-                const isSelected = selectedPlan === subscription.name;
+              {subscriptions.map((sub) => {
+                const planName = getPlanName(sub.id);
+                const isSelected = selectedPlan === planName;
 
                 return (
                   <Pressable
-                    key={subscription.name}
-                    onPress={() => setSelectedPlan(subscription.name)}
+                    key={sub.id}
+                    onPress={() => setSelectedPlan(planName)}
                     className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
                   >
                     <View
@@ -126,10 +81,10 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
                       )}
                     </View>
                     <Text className="mb-1 mt-4 font-[quilka] text-2xl text-black">
-                      $ {subscription.price}
+                      {sub.displayPrice}
                     </Text>
                     <Text className="font-[abeezee] text-[18px] leading-6 text-black">
-                      {subscription.name} Plan
+                      {planName} Plan
                     </Text>
                   </Pressable>
                 );
@@ -171,7 +126,11 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
                 subscription.
               </Text>
             </View>
-            <CustomButton text="Subscribe" disabled={!selectedPlan} />
+            <CustomButton
+              text="Subscribe"
+              disabled={!selectedPlan}
+              onPress={handlePurchase}
+            />
           </View>
         </ScrollView>
       </View>
@@ -180,22 +139,3 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
 };
 
 export default SubscriptionScreenComponent;
-
-const verifyPurchase = async (params: {
-  platform: string;
-  productId: string;
-  purchaseToken: string | null | undefined;
-  packageName: string;
-}) => {
-  try {
-    const request = await apiFetch(`${BASE_URL}/payment/verify-purchase`, {
-      body: JSON.stringify(params),
-    });
-    const response: QueryResponse = await request.json();
-    if (!response.success) throw new Error(response.message);
-    return response;
-  } catch (err) {
-    console.error("verification failed", err);
-    throw new Error(getErrorMessage(err));
-  }
-};
