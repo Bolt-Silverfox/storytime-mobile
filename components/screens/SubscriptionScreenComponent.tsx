@@ -5,10 +5,10 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { subscriptionBenefits } from "../../data";
 import CustomButton from "../UI/CustomButton";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
-
 import LoadingOverlay from "../LoadingOverlay";
 import { SubscriptionPlan } from "../../types";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
+import SubscriptionOptions from "../SubscriptionOptions";
 
 type PropTypes = {
   goBack: () => void;
@@ -24,7 +24,6 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
     getPlanName,
   } = useSubscribeIAP(selectedPlan);
 
-  if (isLoading) return <LoadingOverlay visible />;
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
       <View className="flex flex-1  bg-[#866EFF]">
@@ -58,38 +57,13 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
                 {errorMessage}
               </Text>
             )}
-            <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
-              {subscriptions.map((sub) => {
-                const planName = getPlanName(sub.id);
-                const isSelected = selectedPlan === planName;
-
-                return (
-                  <Pressable
-                    key={sub.id}
-                    onPress={() => setSelectedPlan(planName)}
-                    className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
-                  >
-                    <View
-                      className={`
-                    flex h-6 w-6 items-center 
-                    justify-center rounded-full border-2
-                    ${isSelected ? "border-blue" : "border-gray-300"}
-                  `}
-                    >
-                      {isSelected && (
-                        <View className="h-3 w-3 rounded-full bg-blue" />
-                      )}
-                    </View>
-                    <Text className="mb-1 mt-4 font-[quilka] text-2xl text-black">
-                      {sub.displayPrice}
-                    </Text>
-                    <Text className="font-[abeezee] text-[18px] leading-6 text-black">
-                      {planName} Plan
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+            <SubscriptionOptions
+              isLoading={isLoading}
+              getPlanName={getPlanName}
+              selectedPlan={selectedPlan}
+              setSelectedPlan={setSelectedPlan}
+              subscriptions={subscriptions}
+            />
 
             <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10">
               <Text className="font-[quilka] text-[18px] text-black ">
@@ -134,6 +108,7 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
           </View>
         </ScrollView>
       </View>
+      <LoadingOverlay visible={isLoading} />
     </SafeAreaWrapper>
   );
 };

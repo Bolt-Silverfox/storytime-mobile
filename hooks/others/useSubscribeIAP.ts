@@ -4,10 +4,14 @@ import apiFetch from "../../apiFetch";
 import { BASE_URL, SUBSCRIPTION_IDS } from "../../constants";
 import { QueryResponse, SubscriptionPlan } from "../../types";
 import { getErrorMessage } from "../../utils/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import useAuth from "../../contexts/AuthContext";
 
 const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const {
     connected,
@@ -28,6 +32,7 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         });
 
         await finishTransaction({ purchase });
+        queryClient.refetchQueries({ queryKey: ["userProfile", user?.id] });
       } catch (err) {
         console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
@@ -42,12 +47,26 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
   });
 
   useEffect(() => {
-    if (connected) {
-      setIsLoading(false);
-      fetchProducts({ skus: SUBSCRIPTION_IDS, type: "subs" });
-    } else {
+    if (!connected) {
       setIsLoading(true);
+      return;
     }
+
+    const loadSubscriptions = async () => {
+      try {
+        setIsLoading(true);
+        await fetchProducts({ skus: SUBSCRIPTION_IDS, type: "subs" });
+      } catch (err) {
+        console.error("Failed to fetch products from google play store");
+        setErrorMessage(getErrorMessage(err));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    (async () => {
+      await loadSubscriptions();
+    })();
   }, [connected, fetchProducts]);
 
   const getPlanName = (id: string): "Monthly" | "Yearly" => {
@@ -63,6 +82,7 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
     try {
       const request = await apiFetch(`${BASE_URL}/payment/verify-purchase`, {
         body: JSON.stringify(params),
+        method: "POST",
       });
       const response: QueryResponse = await request.json();
       if (!response.success) throw new Error(response.message);
