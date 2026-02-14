@@ -9,6 +9,11 @@ import LoadingOverlay from "../LoadingOverlay";
 import { SubscriptionPlan } from "../../types";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 import SubscriptionOptions from "../SubscriptionOptions";
+import { Pressable, Text, View } from "react-native";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import SafeAreaWrapper from "../UI/SafeAreaWrapper";
+import SubscribedUserComponent from "./SubscribedUserComponent";
+import UnsubscribedUserComponent from "./UnsubscribedUserComponent";
 
 type PropTypes = {
   goBack: () => void;
@@ -23,11 +28,15 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
     handlePurchase,
     getPlanName,
   } = useSubscribeIAP(selectedPlan);
+  const { data } = useGetUserProfile();
+
+  const isSubscribed =
+    data?.subscriptionStatus === "active" || data?.role === "admin";
 
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
-      <View className="flex flex-1  bg-[#866EFF]">
-        <View className="flex flex-row px-4 pb-3 pt-5">
+      <View className="flex flex-1 flex-col gap-y-3  bg-[#866EFF]">
+        <View className="flex flex-row px-4  py-4">
           <Pressable onPress={goBack}>
             <Feather name="chevron-left" size={24} color="white" />
           </Pressable>
@@ -107,6 +116,11 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
             />
           </View>
         </ScrollView>
+        {isSubscribed ? (
+          <SubscribedUserComponent />
+        ) : (
+          <UnsubscribedUserComponent />
+        )}
       </View>
       <LoadingOverlay visible={isLoading} />
     </SafeAreaWrapper>
