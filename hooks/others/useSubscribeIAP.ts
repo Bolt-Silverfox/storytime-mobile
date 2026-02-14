@@ -23,7 +23,6 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
     onPurchaseSuccess: async (purchase) => {
       const { store, productId, purchaseToken, transactionId } = purchase;
       try {
-        setErrorMessage("");
         await verifyPurchase({
           platform: store,
           productId: productId,
@@ -94,27 +93,26 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
   };
 
   const handlePurchase = async () => {
-    if (!selectedPlan) return;
-
-    const sub = subscriptions.find((s) => {
-      const id = s.id;
-      return id ? getPlanName(id) === selectedPlan : false;
-    });
-    if (!sub) return;
-
-    const productId = sub.id;
-    if (!productId) {
-      setErrorMessage("Product not found");
-      return;
+    if (!selectedPlan) throw new Error("Select a valid plan");
+    try {
+      setErrorMessage("");
+      const sub = subscriptions.find((s) => {
+        const id = s.id;
+        return id ? getPlanName(id) === selectedPlan : false;
+      });
+      if (!sub) throw new Error("Subscription not found, retry.");
+      const productId = sub.id;
+      if (!productId) throw new Error("Product not found");
+      await requestPurchase({
+        request: {
+          apple: { sku: productId },
+          google: { skus: [productId] },
+        },
+        type: "subs",
+      });
+    } catch (err) {
+      setErrorMessage(getErrorMessage(err));
     }
-
-    await requestPurchase({
-      request: {
-        apple: { sku: productId },
-        google: { skus: [productId] },
-      },
-      type: "subs",
-    });
   };
 
   return {
