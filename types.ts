@@ -250,6 +250,17 @@ type AgeGroupType = (typeof ageGroups)[number];
 
 type SubscriptionPlan = "Monthly" | "Yearly" | null;
 
+type SubscriptionStatus = {
+  id: string;
+  userId: string;
+  plan: SubscriptionPlan;
+  status: "free" | "active";
+  startedAt: string;
+  endsAt: string;
+  isDeleted: boolean;
+  deletedAt: boolean | null;
+};
+
 export type {
   User,
   Profile,
@@ -271,5 +282,6 @@ export type {
   AvailableVoices,
   PaginatedData,
   SubscriptionPlan,
+  SubscriptionStatus,
 };
 export { ageGroups };
