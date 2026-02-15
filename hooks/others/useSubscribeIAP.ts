@@ -1,7 +1,7 @@
 import { ErrorCode, useIAP } from "expo-iap";
 import { useEffect, useState } from "react";
 import apiFetch from "../../apiFetch";
-import { BASE_URL, SUBSCRIPTION_IDS } from "../../constants";
+import { BASE_URL, QUERY_KEYS, SUBSCRIPTION_IDS } from "../../constants";
 import { QueryResponse, SubscriptionPlan } from "../../types";
 import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -31,7 +31,9 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         });
 
         await finishTransaction({ purchase });
-        queryClient.refetchQueries({ queryKey: ["userProfile", user?.id] });
+        queryClient.refetchQueries({
+          queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
+        });
       } catch (err) {
         console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
@@ -93,9 +95,9 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
   };
 
   const handlePurchase = async () => {
-    if (!selectedPlan) throw new Error("Select a valid plan");
     try {
       setErrorMessage("");
+      if (!selectedPlan) throw new Error("Select a valid plan");
       const sub = subscriptions.find((s) => {
         const id = s.id;
         return id ? getPlanName(id) === selectedPlan : false;
