@@ -35,9 +35,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
   const responseListener = useRef<ReturnType<
     typeof Notifications.addNotificationResponseReceivedListener
   > | null>(null);
-  const tokenRefreshListener = useRef<ReturnType<
-    typeof Notifications.addPushTokenListener
-  > | null>(null);
+  const tokenRefreshUnsubscribe = useRef<(() => void) | null>(null);
 
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = (data: NotificationData) => {
@@ -174,7 +172,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
     });
 
     // Listen for FCM token refresh (handles reinstalls & token rotation)
-    tokenRefreshListener.current = addTokenRefreshListener((newToken) => {
+    tokenRefreshUnsubscribe.current = addTokenRefreshListener((newToken) => {
       setExpoPushToken(newToken);
     });
 
@@ -202,8 +200,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
       if (responseListener.current) {
         responseListener.current.remove();
       }
-      if (tokenRefreshListener.current) {
-        tokenRefreshListener.current.remove();
+      if (tokenRefreshUnsubscribe.current) {
+        tokenRefreshUnsubscribe.current();
       }
     };
   }, [isAuthenticated, navigation]);

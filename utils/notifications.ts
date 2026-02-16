@@ -3,6 +3,7 @@ import * as Device from "expo-device";
 import Constants from "expo-constants";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import messaging from "@react-native-firebase/messaging";
 import apiFetch from "../apiFetch";
 import type { DeviceTokenResponse } from "../types";
 
@@ -79,9 +80,20 @@ export const getExpoPushToken = async (): Promise<string | null> => {
   }
 };
 
-// Get the native device push token (FCM token for Android, APNs token for iOS)
+// Get FCM registration token for both platforms
+// On Android: getDevicePushTokenAsync() already returns the FCM token
+// On iOS: getDevicePushTokenAsync() returns raw APNs token, so we use
+// Firebase Messaging to get the FCM registration token instead
 export const getDevicePushToken = async (): Promise<string | null> => {
   try {
+    if (Platform.OS === "ios") {
+      // Register with APNs first, then get the FCM token
+      await messaging().registerDeviceForRemoteMessages();
+      const fcmToken = await messaging().getToken();
+      return fcmToken;
+    }
+
+    // Android: expo-notifications returns the FCM token directly
     const tokenResponse = await Notifications.getDevicePushTokenAsync();
     return tokenResponse.data;
   } catch (error) {
@@ -265,12 +277,29 @@ export const dismissAllNotifications = async () => {
   await Notifications.dismissAllNotificationsAsync();
 };
 
-// Listen for token changes (FCM token rotation or reinstall)
-// Returns a subscription that should be removed on cleanup
+// Listen for FCM token changes (token rotation or reinstall)
+// Returns an unsubscribe function that should be called on cleanup
 export const addTokenRefreshListener = (
   onTokenRefresh?: (token: string) => void
-) => {
-  return Notifications.addPushTokenListener(async (event) => {
+): (() => void) => {
+  if (Platform.OS === "ios") {
+    // Use Firebase Messaging listener on iOS for FCM token refresh
+    return messaging().onTokenRefresh(async (newToken) => {
+      const storedToken = await getStoredPushToken();
+
+      if (newToken !== storedToken) {
+        console.log("FCM token refreshed, re-registering with backend");
+        const result = await registerDeviceToken(newToken);
+        if (result) {
+          await storePushToken(newToken);
+          onTokenRefresh?.(newToken);
+        }
+      }
+    });
+  }
+
+  // Android: expo-notifications listener returns FCM token directly
+  const subscription = Notifications.addPushTokenListener(async (event) => {
     const newToken =
       typeof event.data === "string" ? event.data : (event.data as any)?.data;
 
@@ -278,7 +307,6 @@ export const addTokenRefreshListener = (
 
     const storedToken = await getStoredPushToken();
 
-    // Only re-register if the token actually changed
     if (newToken !== storedToken) {
       console.log("FCM token refreshed, re-registering with backend");
       const result = await registerDeviceToken(newToken);
@@ -288,4 +316,6 @@ export const addTokenRefreshListener = (
       }
     }
   });
+
+  return () => subscription.remove();
 };
