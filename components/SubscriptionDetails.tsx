@@ -18,7 +18,7 @@ const SubscriptionDetails = () => {
   if (isPending)
     return (
       <View className="flex flex-1">
-        <ActivityIndicator size={"large"} />;
+        <ActivityIndicator size={"large"} />
       </View>
     );
 
@@ -33,7 +33,8 @@ const SubscriptionDetails = () => {
               {data.plan} plan
             </Text>
             <Text className="font-[quilka] text-[50px] text-[#333333]">
-              $2.99
+              {data.currency}
+              {data.price}
             </Text>
           </View>
         </View>
@@ -45,7 +46,8 @@ const SubscriptionDetails = () => {
               {new Date(data.endsAt).toLocaleDateString()}.
             </Text>
             <Text className="font-[abeezee] text-base text-black">
-              You'll be charged $2.99/{data.plan}.
+              You'll be charged {data.currency}
+              {data.price}/{data.plan}.
             </Text>
           </View>
           <CustomButton
