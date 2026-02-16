@@ -252,13 +252,14 @@ type SubscriptionPlan = "Monthly" | "Yearly" | null;
 
 type SubscriptionStatus = {
   id: string;
-  userId: string;
   plan: SubscriptionPlan;
+  userId: string;
   status: "free" | "active";
   startedAt: string;
   endsAt: string;
-  isDeleted: boolean;
-  deletedAt: boolean | null;
+  platform: string | null;
+  price: string;
+  currency: string;
 };
 
 export type {

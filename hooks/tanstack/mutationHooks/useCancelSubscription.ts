@@ -13,10 +13,10 @@ const useCancelSubscription = (onSuccessCb?: () => void) => {
   return useMutation({
     mutationFn: cancelSubscription,
     onSuccess: () => {
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
       });
-      queryClient.cancelQueries({
+      queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
       });
       onSuccessCb?.();
