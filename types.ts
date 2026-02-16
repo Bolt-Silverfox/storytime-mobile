@@ -247,6 +247,61 @@ type PaginatedData<T> = {
 const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
+
+// Notification types matching backend NotificationCategory enum
+type NotificationCategory =
+  | "EMAIL_VERIFICATION"
+  | "PASSWORD_RESET"
+  | "PASSWORD_RESET_ALERT"
+  | "PASSWORD_CHANGED"
+  | "PIN_RESET"
+  | "NEW_LOGIN"
+  | "SUBSCRIPTION_REMINDER"
+  | "SUBSCRIPTION_ALERT"
+  | "PAYMENT_SUCCESS"
+  | "PAYMENT_FAILED"
+  | "NEW_STORY"
+  | "FEEDBACK"
+  | "STORY_FINISHED"
+  | "STORY_RECOMMENDATION"
+  | "WE_MISS_YOU"
+  | "INCOMPLETE_STORY_REMINDER"
+  | "DAILY_LISTENING_REMINDER"
+  | "DAILY_CHALLENGE_REMINDER"
+  | "ACHIEVEMENT_UNLOCKED"
+  | "BADGE_EARNED"
+  | "STREAK_MILESTONE"
+  | "SCREEN_TIME_LIMIT"
+  | "BEDTIME_REMINDER"
+  | "WEEKLY_REPORT"
+  | "SYSTEM_ALERT";
+
+type Notification = {
+  id: string;
+  userId: string;
+  category: NotificationCategory;
+  title: string;
+  body: string;
+  data: Record<string, unknown> | null;
+  isRead: boolean;
+  createdAt: string;
+};
+
+type NotificationsResponse = {
+  notifications: Notification[];
+  total: number;
+};
+
+type DeviceTokenResponse = {
+  id: string;
+  userId: string;
+  token: string;
+  platform: "ios" | "android" | "web";
+  deviceName?: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
 export type {
   User,
   Profile,
@@ -267,5 +322,9 @@ export type {
   FavouriteStory,
   AvailableVoices,
   PaginatedData,
+  NotificationCategory,
+  Notification,
+  NotificationsResponse,
+  DeviceTokenResponse,
 };
 export { ageGroups };
