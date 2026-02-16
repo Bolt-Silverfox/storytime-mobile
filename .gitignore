@@ -36,6 +36,10 @@ todo.txt
 .env*.local
 .env
 
+# FCM Configuration Files (contain sensitive credentials)
+google-services.json
+GoogleService-Info.plist
+
 # typescript
 *.tsbuildinfo
 
@@ -45,3 +49,13 @@ todo.txt
 
 .idea/
 .vscode/
+BACKEND_API_ANALYSIS.md
+BACKEND_SETUP_REQUIRED.md
+FCM_IMPLEMENTATION_GUIDE.md
+IOS_TESTING_GUIDE.md
+eas.json.template
+QA_FIXES_REQUIRED.md
+QUICK_START_IOS.md
+SECURITY_REVIEW.md
+
+
