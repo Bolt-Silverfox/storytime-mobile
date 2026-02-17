@@ -1,7 +1,20 @@
 name: Build and Submit (manual)
 
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
 on:
   workflow_dispatch:
+    inputs:
+      profile:
+        type: choice
+        description: Build profile to use
+        options:
+          - production
+          - preview
+        default: production
+        required: true
 
 jobs:
   build-ios:
@@ -9,14 +22,14 @@ jobs:
     type: build
     params:
       platform: ios
-      profile: production
+      profile: ${{ inputs.profile }}
 
   build-android:
     name: Build Android
     type: build
     params:
       platform: android
-      profile: production
+      profile: ${{ inputs.profile }}
 
   submit-ios:
     name: Submit iOS to TestFlight
