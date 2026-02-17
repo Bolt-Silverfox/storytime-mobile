@@ -1,5 +1,9 @@
 name: OTA Update (dev)
 
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
 on:
   push:
     branches: [dev]
@@ -9,5 +13,5 @@ jobs:
     name: OTA Update
     type: update
     params:
-      branch: dev
-      message: "OTA update from dev branch"
+      branch: ${{ github.ref_name }}
+      message: ${{ github.event.head_commit.message || 'OTA update from dev branch' }}

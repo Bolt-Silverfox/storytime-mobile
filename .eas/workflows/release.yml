@@ -1,8 +1,16 @@
 name: Release (main)
 
+concurrency:
+  cancel_in_progress: true
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.eas/workflows/**'
 
 jobs:
   build-ios:
@@ -19,16 +27,21 @@ jobs:
       platform: android
       profile: production
 
+  approve-release:
+    name: Approve Release
+    type: require-approval
+    needs: [build-ios, build-android]
+
   submit-ios:
     name: Submit iOS to TestFlight
-    needs: [build-ios]
+    needs: [build-ios, approve-release]
     type: submit
     params:
       platform: ios
 
   submit-android:
     name: Submit Android to Play Store
-    needs: [build-android]
+    needs: [build-android, approve-release]
     type: submit
     params:
       platform: android
