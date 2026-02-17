@@ -1,17 +1,16 @@
-import { View, Text, ActivityIndicator } from "react-native";
+import { View, Text, ActivityIndicator, Linking, Platform } from "react-native";
 import CustomButton from "./UI/CustomButton";
 import { useQuery } from "@tanstack/react-query";
 import querySubscription from "../hooks/tanstack/queryHooks/querySubscriptionStatus";
 import useAuth from "../contexts/AuthContext";
 import ErrorComponent from "./ErrorComponent";
-import useCancelSubscription from "../hooks/tanstack/mutationHooks/useCancelSubscription";
+import { BUNDLE_IDENTIFIER } from "../constants";
 
 const SubscriptionDetails = () => {
   const { user } = useAuth();
   const { isPending, data, error, refetch } = useQuery(
     querySubscription(user?.id)
   );
-  const { mutate, isPending: isCancelling } = useCancelSubscription();
 
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -21,6 +20,15 @@ const SubscriptionDetails = () => {
         <ActivityIndicator size={"large"} />
       </View>
     );
+
+  const openURL = () => {
+    if (Platform.OS === "ios") {
+      return Linking.openURL("https://apps.apple.com/account/subscriptions");
+    }
+    Linking.openURL(
+      `https://play.google.com/store/account/subscriptions?package=${BUNDLE_IDENTIFIER}`
+    );
+  };
 
   return (
     <View>
@@ -51,10 +59,10 @@ const SubscriptionDetails = () => {
             </Text>
           </View>
           <CustomButton
-            disabled={isCancelling || isPending}
+            disabled={isPending}
             transparent
-            text={isCancelling ? "Cancelling..." : "Cancel Subscription"}
-            onPress={mutate}
+            text={"Cancel Subscription"}
+            onPress={openURL}
           />
         </View>
       </View>

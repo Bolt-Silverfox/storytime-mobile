@@ -1,7 +1,12 @@
 import { ErrorCode, useIAP } from "expo-iap";
 import { useEffect, useState } from "react";
 import apiFetch from "../../apiFetch";
-import { BASE_URL, QUERY_KEYS, SUBSCRIPTION_IDS } from "../../constants";
+import {
+  BASE_URL,
+  BUNDLE_IDENTIFIER,
+  QUERY_KEYS,
+  SUBSCRIPTION_IDS,
+} from "../../constants";
 import { QueryResponse, SubscriptionPlan } from "../../types";
 import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
@@ -27,7 +32,7 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
           platform: store,
           productId: productId,
           purchaseToken: store === "apple" ? transactionId : purchaseToken,
-          packageName: "net.emerj.storytime",
+          packageName: BUNDLE_IDENTIFIER,
         });
 
         await finishTransaction({ purchase });
