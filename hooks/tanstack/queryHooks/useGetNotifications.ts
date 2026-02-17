@@ -1,9 +1,8 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import useAuth from "../../../contexts/AuthContext";
 import apiFetch from "../../../apiFetch";
+import { BASE_URL } from "../../../constants";
 import type { NotificationsResponse } from "../../../types";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 type GetNotificationsParams = {
   limit?: number;
@@ -25,6 +24,10 @@ const fetchNotifications = async (
   const response = await apiFetch(
     `${BASE_URL}/notifications?${queryParams.toString()}`
   );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch notifications (HTTP ${response.status})`);
+  }
 
   const data = await response.json();
 
