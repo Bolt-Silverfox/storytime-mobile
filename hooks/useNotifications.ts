@@ -59,7 +59,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
       try {
         // @ts-expect-error - dynamic navigation
         navigation.navigate(screen, data);
-      } catch (_error) {
+      } catch {
         console.warn("Failed to navigate to screen:", screen);
       }
       return;
