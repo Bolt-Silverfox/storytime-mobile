@@ -31,8 +31,11 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
         const dismissedTime = await AsyncStorage.getItem(BANNER_DISMISSED_KEY);
         if (dismissedTime) {
           const timeSinceDismissed = Date.now() - parseInt(dismissedTime, 10);
-          // Show banner again after 7 days
-          if (timeSinceDismissed > BANNER_DISMISS_DURATION) {
+          // Show banner again after 7 days (or if stored value is corrupted)
+          if (
+            isNaN(timeSinceDismissed) ||
+            timeSinceDismissed > BANNER_DISMISS_DURATION
+          ) {
             setShowBanner(true);
             await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
           } else {
@@ -42,7 +45,7 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
           // Never dismissed, show the banner
           setShowBanner(true);
         }
-      } catch (error) {
+      } catch (_error) {
         // On error, show banner to be safe
         setShowBanner(true);
       }
