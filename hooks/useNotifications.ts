@@ -129,7 +129,13 @@ export const useNotifications = (isAuthenticated: boolean) => {
     const initialize = async () => {
       // Check current permission status first
       const { status } = await Notifications.getPermissionsAsync();
-      setPermissionStatus(status === "granted" ? "granted" : status === "denied" ? "denied" : "undetermined");
+      setPermissionStatus(
+        status === "granted"
+          ? "granted"
+          : status === "denied"
+            ? "denied"
+            : "undetermined"
+      );
 
       const token = await initializePushNotifications();
       if (token) {
@@ -138,7 +144,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
         setPermissionStatus("granted");
       } else {
         // Check if permission was denied
-        const { status: finalStatus } = await Notifications.getPermissionsAsync();
+        const { status: finalStatus } =
+          await Notifications.getPermissionsAsync();
         setPermissionStatus(finalStatus === "granted" ? "granted" : "denied");
       }
     };

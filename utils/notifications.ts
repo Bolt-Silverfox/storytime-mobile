@@ -134,7 +134,9 @@ export const registerDeviceToken = async (
 };
 
 // Unregister device token from backend (on logout)
-export const unregisterDeviceToken = async (token: string): Promise<boolean> => {
+export const unregisterDeviceToken = async (
+  token: string
+): Promise<boolean> => {
   try {
     const response = await apiFetch(`${BASE_URL}/devices`, {
       method: "DELETE",

@@ -1,11 +1,4 @@
-import {
-  Alert,
-  Linking,
-  Platform,
-  Pressable,
-  Text,
-  View,
-} from "react-native";
+import { Alert, Linking, Platform, Pressable, Text, View } from "react-native";
 import { Bell, BellOff, Settings } from "lucide-react-native";
 import * as Notifications from "expo-notifications";
 
