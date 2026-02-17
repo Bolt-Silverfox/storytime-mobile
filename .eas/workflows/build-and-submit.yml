@@ -1,0 +1,33 @@
+name: Build and Submit (manual)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: production
+
+  build-android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+      profile: production
+
+  submit-ios:
+    name: Submit iOS to TestFlight
+    needs: [build-ios]
+    type: submit
+    params:
+      platform: ios
+
+  submit-android:
+    name: Submit Android to Play Store
+    needs: [build-android]
+    type: submit
+    params:
+      platform: android
