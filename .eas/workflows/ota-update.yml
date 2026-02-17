@@ -1,0 +1,13 @@
+name: OTA Update (dev)
+
+on:
+  push:
+    branches: [dev]
+
+jobs:
+  update:
+    name: OTA Update
+    type: update
+    params:
+      branch: dev
+      message: "OTA update from dev branch"
