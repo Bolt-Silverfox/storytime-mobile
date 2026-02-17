@@ -37,17 +37,30 @@ export const useNotifications = (isAuthenticated: boolean) => {
   > | null>(null);
   const tokenRefreshUnsubscribe = useRef<(() => void) | null>(null);
 
+  // Allowed screens for notification-driven navigation
+  const ALLOWED_SCREENS = new Set([
+    "StoryDetails",
+    "ParentsNavigator",
+    "ParentControls",
+    "NotificationsNavigator",
+    "ParentProfileNavigator",
+  ]);
+
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = (data: NotificationData) => {
     const { category, storyId, kidId, screen } = data;
 
-    // If explicit screen is provided, navigate there
+    // If explicit screen is provided, validate and navigate there
     if (screen) {
+      if (!ALLOWED_SCREENS.has(screen)) {
+        console.warn("Unknown notification screen:", screen);
+        return;
+      }
       try {
         // @ts-expect-error - dynamic navigation
         navigation.navigate(screen, data);
-      } catch (error) {
-        console.warn("Failed to navigate to screen:", screen, error);
+      } catch {
+        console.warn("Failed to navigate to screen:", screen);
       }
       return;
     }
