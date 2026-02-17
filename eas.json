@@ -14,6 +14,19 @@
         "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com"
       }
     },
+    "development-simulator": {
+      "ios": {
+        "simulator": true
+      },
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_URL": "https://dev.api.storytimeapp.me/api/v1",
+        "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
+        "EXPO_PUBLIC_WEB_CLIENT_ID": "368397094060-m0ets81k8l0asa8vj0q0d24c783fgsat.apps.googleusercontent.com",
+        "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com"
+      }
+    },
     "preview": {
       "distribution": "internal"
     },
