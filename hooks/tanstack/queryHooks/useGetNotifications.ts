@@ -35,7 +35,9 @@ const fetchNotifications = async (
   return data.data;
 };
 
-export const useGetNotificationsQuery = (params: GetNotificationsParams = {}) => {
+export const useGetNotificationsQuery = (
+  params: GetNotificationsParams = {}
+) => {
   const { user } = useAuth();
 
   return queryOptions({

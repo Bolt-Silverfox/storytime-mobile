@@ -54,10 +54,7 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
   const handleDismiss = async () => {
     setShowBanner(false);
     try {
-      await AsyncStorage.setItem(
-        BANNER_DISMISSED_KEY,
-        Date.now().toString()
-      );
+      await AsyncStorage.setItem(BANNER_DISMISSED_KEY, Date.now().toString());
     } catch (error) {
       if (__DEV__) {
         console.error("Failed to save banner dismiss status:", error);
