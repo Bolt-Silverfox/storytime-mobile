@@ -1,7 +1,7 @@
 name: Build and Submit (manual)
 
 concurrency:
-  cancel_in_progress: true
+  cancel_in_progress: false
   group: ${{ workflow.filename }}-${{ github.ref }}
 
 on:
@@ -34,6 +34,7 @@ jobs:
   submit-ios:
     name: Submit iOS to TestFlight
     needs: [build-ios]
+    if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
       platform: ios
@@ -41,6 +42,7 @@ jobs:
   submit-android:
     name: Submit Android to Play Store
     needs: [build-android]
+    if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
       platform: android
