@@ -45,7 +45,7 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
           // Never dismissed, show the banner
           setShowBanner(true);
         }
-      } catch (_error) {
+      } catch {
         // On error, show banner to be safe
         setShowBanner(true);
       }
