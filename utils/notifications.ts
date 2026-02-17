@@ -1,19 +1,16 @@
 import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
-import Constants from "expo-constants";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from "@react-native-firebase/messaging";
 import apiFetch from "../apiFetch";
+import { BASE_URL } from "../constants";
 import type { DeviceTokenResponse } from "../types";
-
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 const PUSH_TOKEN_KEY = "pushToken";
 
 // Configure how notifications are handled when the app is in foreground
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
     shouldShowBanner: true,
@@ -57,27 +54,6 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
   }
 
   return true;
-};
-
-// Get the FCM/Expo push token
-export const getExpoPushToken = async (): Promise<string | null> => {
-  try {
-    const projectId = Constants.expoConfig?.extra?.eas?.projectId;
-
-    if (!projectId) {
-      console.error("EAS project ID not found in app config");
-      return null;
-    }
-
-    const tokenResponse = await Notifications.getExpoPushTokenAsync({
-      projectId,
-    });
-
-    return tokenResponse.data;
-  } catch (error) {
-    console.error("Failed to get push token:", error);
-    return null;
-  }
 };
 
 // Get FCM registration token for both platforms
@@ -303,7 +279,9 @@ export const addTokenRefreshListener = (
   // Android: expo-notifications listener returns FCM token directly
   const subscription = Notifications.addPushTokenListener(async (event) => {
     const newToken =
-      typeof event.data === "string" ? event.data : (event.data as any)?.data;
+      typeof event.data === "string"
+        ? event.data
+        : (event.data as Record<string, string>)?.data;
 
     if (!newToken) return;
 
