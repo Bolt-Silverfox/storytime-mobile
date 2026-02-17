@@ -1,16 +1,17 @@
 name: Release (main)
 
 concurrency:
-  cancel_in_progress: true
+  cancel_in_progress: false
   group: ${{ workflow.filename }}-${{ github.ref }}
 
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.eas/workflows/**'
+    paths:
+      - '**'
+      - '!**.md'
+      - '!docs/**'
+      - '!.eas/workflows/**'
 
 jobs:
   build-ios:
