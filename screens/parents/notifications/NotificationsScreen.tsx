@@ -55,9 +55,18 @@ const NotificationsScreen = () => {
     }
   };
 
-  if (isPending) return <LoadingOverlay visible />;
+  if (isPending)
+    return (
+      <SafeAreaWrapper variant="solid">
+        <LoadingOverlay visible />
+      </SafeAreaWrapper>
+    );
   if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <SafeAreaWrapper variant="solid">
+        <ErrorComponent message={error.message} refetch={refetch} />
+      </SafeAreaWrapper>
+    );
 
   return (
     <SafeAreaWrapper variant="solid">
@@ -108,7 +117,7 @@ const NotificationsScreen = () => {
                               {noti.title}
                             </Text>
                             <Text className="font-[abeezee] text-xs leading-6 text-text">
-                              {getRelativeTime(noti.createdAt)} ago
+                              {getRelativeTime(noti.createdAt)}
                             </Text>
                           </View>
                           {!noti.isRead && (

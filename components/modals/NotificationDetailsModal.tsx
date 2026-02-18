@@ -33,7 +33,7 @@ const NotificationDetailsModal = ({
           {notification.body}
         </Text>
         <Text className="mb-4 font-[abeezee] text-xs text-text">
-          {getRelativeTime(notification.createdAt)} ago
+          {getRelativeTime(notification.createdAt)}
         </Text>
 
         <Text

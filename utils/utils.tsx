@@ -289,9 +289,10 @@ const getRelativeTime = (dateString: string): string => {
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
   if (diffMins < 1) return "just now";
-  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"}`;
-  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"}`;
-  return `${diffDays} day${diffDays === 1 ? "" : "s"}`;
+  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"} ago`;
+  if (diffHours < 24)
+    return `${diffHours} hour${diffHours === 1 ? "" : "s"} ago`;
+  return `${diffDays} day${diffDays === 1 ? "" : "s"} ago`;
 };
 
 export {
