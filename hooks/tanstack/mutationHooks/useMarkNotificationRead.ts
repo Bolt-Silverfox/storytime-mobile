@@ -8,10 +8,10 @@ const useMarkNotificationRead = () => {
 
   return useMutation({
     mutationFn: async (notificationId: string) => {
-      const response = await apiFetch(
-        `${BASE_URL}/notifications/${notificationId}/read`,
-        { method: "PATCH" }
-      );
+      const response = await apiFetch(`${BASE_URL}/notifications/mark-read`, {
+        method: "PATCH",
+        body: JSON.stringify({ notificationIds: [notificationId] }),
+      });
 
       if (!response.ok) {
         throw new Error(
