@@ -5,15 +5,15 @@ import { subscriptionBenefits, subscriptionOptions } from "../../data";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
-type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
+type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose" | "maxHeight">;
 
-const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
+const SubscriptionModal = ({ isOpen, onClose, maxHeight }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
     null
   );
 
   return (
-    <CustomModal isOpen={isOpen} onClose={onClose}>
+    <CustomModal maxHeight={maxHeight} isOpen={isOpen} onClose={onClose}>
       <ScrollView
         contentContainerClassName="flex flex-col gap-y-10 bg-white"
         showsVerticalScrollIndicator={false}

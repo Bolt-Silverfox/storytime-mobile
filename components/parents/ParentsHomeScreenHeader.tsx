@@ -18,13 +18,13 @@ const ParentsHomeScreenHeader = () => {
 
   const truncatedName =
     (data?.name.length ?? 0 > 13)
-      ? data?.name.split("").join("").slice(0, 13) + "..."
+      ? data?.name.slice(0, 13) + "..."
       : data?.name;
 
   return (
     <View
       aria-labelledby="user avatar container"
-      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-4"
+      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white px-4 pb-4"
     >
       <View>
         <Avatar
@@ -38,7 +38,9 @@ const ParentsHomeScreenHeader = () => {
         />
       </View>
       <View className="flex flex-1 flex-col gap-y-1.5">
-        <Text className="font-[abeezee] text-base">{truncatedName}</Text>
+        <Text className="font-[abeezee] text-base">
+          {isUserSubscribed ? data.name : truncatedName}
+        </Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
           {getGreeting()}
         </Text>
