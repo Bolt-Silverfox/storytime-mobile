@@ -109,13 +109,20 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     const formData = new FormData();
 
-    const uriParts = imageUri.split(".");
-    const fileType = uriParts[uriParts.length - 1];
+    const ext = imageUri.split(".").pop()?.toLowerCase().split("?")[0];
+    const mimeMap: Record<string, string> = {
+      png: "image/png",
+      jpg: "image/jpeg",
+      jpeg: "image/jpeg",
+      gif: "image/gif",
+      webp: "image/webp",
+    };
+    const mimeType = (ext && mimeMap[ext]) || "image/jpeg";
 
     formData.append("image", {
       uri: imageUri,
-      type: `image/${fileType}`,
-      name: `avatar.${fileType}`,
+      type: mimeType,
+      name: `avatar.${ext || "jpg"}`,
     } as unknown as Blob);
 
     formData.append("userId", userId);
