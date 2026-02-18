@@ -73,9 +73,9 @@ const AvailableVoices = ({
         return (
           <Pressable
             onPress={() => {
-              handlePreview(voice.previewUrl, voice.id);
-              if (isPremium || isDefault) {
-                handleSelectVoice(voice);
+              handleSelectVoice(voice);
+              if (isPremium) {
+                handlePreview(voice.previewUrl, voice.id);
               }
             }}
             key={voice.id}
