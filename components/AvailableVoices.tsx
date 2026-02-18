@@ -47,7 +47,8 @@ const AvailableVoices = ({
   };
 
   const handleSelectVoice = (voice: VoiceData) => {
-    if (!isPremium) {
+    const isDefault = voice.name.toUpperCase() === "LILY";
+    if (!isPremium && !isDefault) {
       setIsSubscriptionModalOpen(true);
       return;
     }
@@ -62,7 +63,10 @@ const AvailableVoices = ({
   return (
     <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
       {data.map((voice) => {
-        const isSelected = voice.name.toUpperCase() === selectedVoice;
+        const isSelected =
+          voice.type === "elevenlabs"
+            ? voice.name.toUpperCase() === selectedVoice
+            : voice.id === selectedVoice;
         const isPreviewing = voice.id === previewingId;
         const isDefault = voice.name.toUpperCase() === "LILY";
 
