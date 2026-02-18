@@ -1,6 +1,7 @@
 import * as ImagePicker from "expo-image-picker";
 import { Dispatch, SetStateAction } from "react";
 import { Alert } from "react-native";
+import { MAX_IMAGE_SIZE } from "../../constants";
 
 const useImagePicker = ({
   onClose,
@@ -27,8 +28,8 @@ const useImagePicker = ({
     });
 
     if (!result.canceled) {
-      if (result.assets[0].fileSize && result.assets[0].fileSize > 2000000) {
-        Alert.alert("Size Exceeded", "Maximum image size is 3MB");
+      if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_IMAGE_SIZE) {
+        Alert.alert("Size Exceeded", "Maximum image size is 5MB");
         onClose();
         return;
       }
@@ -56,8 +57,8 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      if (result.assets[0].fileSize && result.assets[0].fileSize > 3000000) {
-        Alert.alert("Size Exceeded", "Maximum image size is 3MB");
+      if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_IMAGE_SIZE) {
+        Alert.alert("Size Exceeded", "Maximum image size is 5MB");
         onClose();
         return;
       }
