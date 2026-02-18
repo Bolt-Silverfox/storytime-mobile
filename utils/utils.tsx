@@ -2,7 +2,11 @@ import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { BASE_URL } from "../constants";
-import { QueryResponse } from "../types";
+import type {
+  Notification,
+  NotificationCategory,
+  QueryResponse,
+} from "../types";
 
 const filterStoriesByTitle = (
   stories: { title?: string }[],
@@ -200,6 +204,96 @@ const getRandomNumber = (): number => {
   return Math.floor(Math.random() * 10 + 0);
 };
 
+const mapCategoryToIconType = (
+  category: NotificationCategory
+): "security" | "achievement" | "limit" => {
+  const securityCategories: NotificationCategory[] = [
+    "EMAIL_VERIFICATION",
+    "PASSWORD_RESET",
+    "PASSWORD_RESET_ALERT",
+    "PASSWORD_CHANGED",
+    "PIN_RESET",
+    "NEW_LOGIN",
+    "SYSTEM_ALERT",
+  ];
+  const achievementCategories: NotificationCategory[] = [
+    "ACHIEVEMENT_UNLOCKED",
+    "BADGE_EARNED",
+    "STREAK_MILESTONE",
+    "STORY_FINISHED",
+    "NEW_STORY",
+    "STORY_RECOMMENDATION",
+    "FEEDBACK",
+  ];
+
+  if (securityCategories.includes(category)) return "security";
+  if (achievementCategories.includes(category)) return "achievement";
+  return "limit";
+};
+
+const groupNotificationsByDate = (
+  notifications: Notification[]
+): { label: string; notifications: Notification[] }[] => {
+  const now = new Date();
+  const startOfToday = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate()
+  );
+
+  const groups = new Map<string, Notification[]>();
+
+  for (const notification of notifications) {
+    const date = new Date(notification.createdAt);
+    const startOfDate = new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    );
+    const diffDays = Math.floor(
+      (startOfToday.getTime() - startOfDate.getTime()) / (1000 * 60 * 60 * 24)
+    );
+
+    let label: string;
+    if (diffDays === 0) {
+      label = "Today";
+    } else if (diffDays === 1) {
+      label = "Yesterday";
+    } else if (diffDays < 7) {
+      label = `${diffDays} days ago`;
+    } else {
+      label = date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    }
+
+    const existing = groups.get(label) ?? [];
+    existing.push(notification);
+    groups.set(label, existing);
+  }
+
+  return Array.from(groups.entries()).map(([label, notifications]) => ({
+    label,
+    notifications,
+  }));
+};
+
+const getRelativeTime = (dateString: string): string => {
+  const now = new Date();
+  const date = new Date(dateString);
+  const diffMs = now.getTime() - date.getTime();
+  const diffMins = Math.floor(diffMs / (1000 * 60));
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffMins < 1) return "just now";
+  if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? "" : "s"}`;
+  if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? "" : "s"}`;
+  return `${diffDays} day${diffDays === 1 ? "" : "s"}`;
+};
+
 export {
   filterStoriesByTitle,
   getGreeting,
@@ -215,4 +309,7 @@ export {
   splitByWordCountPreservingSentences,
   formatTime,
   getRandomNumber,
+  mapCategoryToIconType,
+  groupNotificationsByDate,
+  getRelativeTime,
 };
