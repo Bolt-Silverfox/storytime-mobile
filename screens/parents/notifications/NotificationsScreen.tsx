@@ -4,8 +4,19 @@ import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { ParentsNavigatorProp } from "../../../Navigation/ParentsNavigator";
 import PageTitle from "../../../components/PageTitle";
 import NotificationDetailsModal from "../../../components/modals/NotificationDetailsModal";
-import { getNotificationIcon } from "../../../utils/utils";
+import {
+  getNotificationIcon,
+  mapCategoryToIconType,
+  groupNotificationsByDate,
+  getRelativeTime,
+} from "../../../utils/utils";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { useGetNotifications } from "../../../hooks/tanstack/queryHooks/useGetNotifications";
+import useMarkNotificationRead from "../../../hooks/tanstack/mutationHooks/useMarkNotificationRead";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import ErrorComponent from "../../../components/ErrorComponent";
+import CustomEmptyState from "../../../components/emptyState/CustomEmptyState";
+import type { Notification } from "../../../types";
 
 const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
@@ -13,9 +24,40 @@ type NotificationType = (typeof notificationsLabel)[number];
 const NotificationsScreen = () => {
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
-  const [activeNotification, setActiveNotification] = useState<string | null>(
-    null
-  );
+  const [selectedNotification, setSelectedNotification] =
+    useState<Notification | null>(null);
+
+  const allQuery = useGetNotifications();
+  const unreadQuery = useGetNotifications({ unreadOnly: true });
+
+  const markRead = useMarkNotificationRead();
+
+  const activeQuery = activeLabel === "unread" ? unreadQuery : allQuery;
+  const { isPending, error, refetch } = activeQuery;
+
+  const notifications = (() => {
+    if (activeLabel === "unread") {
+      return unreadQuery.data?.notifications ?? [];
+    }
+    const all = allQuery.data?.notifications ?? [];
+    if (activeLabel === "read") {
+      return all.filter((n) => n.isRead);
+    }
+    return all;
+  })();
+
+  const grouped = groupNotificationsByDate(notifications);
+
+  const handleNotificationPress = (notification: Notification) => {
+    setSelectedNotification(notification);
+    if (!notification.isRead) {
+      markRead.mutate(notification.id);
+    }
+  };
+
+  if (isPending) return <LoadingOverlay visible />;
+  if (error)
+    return <ErrorComponent message={error.message} refetch={refetch} />;
 
   return (
     <SafeAreaWrapper variant="solid">
@@ -38,138 +80,60 @@ const NotificationsScreen = () => {
           ))}
         </ScrollView>
         <View className="mx-auto w-full max-w-screen-md flex-1">
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
-          >
-            <View className="flex flex-col gap-y-6">
-              {notificationsDummyData.map((notification) => (
-                <View className="flex flex-col gap-y-2.5" key={notification.id}>
-                  <Text className="font-[abeezee] text-[18px] text-black">
-                    {notification.date}
-                  </Text>
-                  <Pressable
-                    onPress={() => setActiveNotification(notification.id)}
-                    className="flex flex-col gap-y-6 rounded-xl border border-border-lighter bg-white p-5"
-                  >
-                    {notification.notifications.map((noti) => (
-                      <View className="flex-row gap-x-4" key={noti.text}>
-                        {getNotificationIcon(noti.type)}
-                        <View className="flex flex-1 flex-col gap-y-1.5">
-                          <Text className="w-full text-wrap font-[abeezee] text-base leading-6 text-black">
-                            {noti.text}
-                          </Text>
-                          <Text className="font-[abeezee] text-xs leading-6 text-text">
-                            {noti.time} ago
-                          </Text>
-                        </View>
-                        {noti.status === "unread" && (
-                          <Image
-                            className="size-8"
-                            source={require("../../../assets/icons/middot.png")}
-                          />
-                        )}
-                      </View>
-                    ))}
-                  </Pressable>
-                  <NotificationDetailsModal
-                    isOpen={activeNotification === notification.id}
-                    closeModal={() => setActiveNotification(null)}
-                  />
-                </View>
-              ))}
-            </View>
-          </ScrollView>
+          {notifications.length === 0 ? (
+            <CustomEmptyState message="No notifications yet" />
+          ) : (
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
+            >
+              <View className="flex flex-col gap-y-6">
+                {grouped.map((group) => (
+                  <View className="flex flex-col gap-y-2.5" key={group.label}>
+                    <Text className="font-[abeezee] text-[18px] text-black">
+                      {group.label}
+                    </Text>
+                    <View className="flex flex-col gap-y-6 rounded-xl border border-border-lighter bg-white p-5">
+                      {group.notifications.map((noti) => (
+                        <Pressable
+                          onPress={() => handleNotificationPress(noti)}
+                          className="flex-row gap-x-4"
+                          key={noti.id}
+                        >
+                          {getNotificationIcon(
+                            mapCategoryToIconType(noti.category)
+                          )}
+                          <View className="flex flex-1 flex-col gap-y-1.5">
+                            <Text className="w-full text-wrap font-[abeezee] text-base leading-6 text-black">
+                              {noti.title}
+                            </Text>
+                            <Text className="font-[abeezee] text-xs leading-6 text-text">
+                              {getRelativeTime(noti.createdAt)} ago
+                            </Text>
+                          </View>
+                          {!noti.isRead && (
+                            <Image
+                              className="size-8"
+                              source={require("../../../assets/icons/middot.png")}
+                            />
+                          )}
+                        </Pressable>
+                      ))}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+          )}
         </View>
       </View>
+      <NotificationDetailsModal
+        isOpen={selectedNotification !== null}
+        closeModal={() => setSelectedNotification(null)}
+        notification={selectedNotification}
+      />
     </SafeAreaWrapper>
   );
 };
 
 export default NotificationsScreen;
-
-type NotificationDataType = {
-  id: string;
-  date: string;
-  notifications: {
-    type: "security" | "achievement" | "limit";
-    time: string;
-    text: string;
-    status: "read" | "unread";
-  }[];
-};
-
-const notificationsDummyData: NotificationDataType[] = [
-  {
-    id: "1",
-    date: "Today",
-    notifications: [
-      {
-        type: "security",
-        time: "2 hours",
-        text: "Your account was accessed from a new device on 19 Dec 2025. Review it now.",
-        status: "unread",
-      },
-      {
-        type: "achievement",
-        time: "2 hours",
-        text: 'Ella just finished listening to "The Friendly Dragon." ',
-        status: "unread",
-      },
-      {
-        type: "limit",
-        time: "4 hours",
-        text: 'Ella has reached her screen time limit for today." ',
-        status: "read",
-      },
-    ],
-  },
-  {
-    id: "2",
-    date: "Yesterday",
-    notifications: [
-      {
-        type: "security",
-        time: "1 day",
-        text: "Your account was accessed from a new device on 19 Dec 2025. Review it now.",
-        status: "read",
-      },
-      {
-        type: "security",
-        time: "1 day",
-        text: "Your was accessed from a new device on 19 Dec 2025. Review it now.",
-        status: "read",
-      },
-      {
-        type: "limit",
-        time: "1 day",
-        text: 'Ella has reached her screen time limit for today." ',
-        status: "unread",
-      },
-    ],
-  },
-  {
-    id: "3",
-    date: "2 days ago",
-    notifications: [
-      {
-        type: "security",
-        time: "2 days",
-        text: "Your account was accessed from a new device on 19 Dec 2025. Review it now.",
-        status: "read",
-      },
-      {
-        type: "security",
-        time: "2 days",
-        text: "Your was accessed from a new device on 19 Dec 2025. Review it now.",
-        status: "read",
-      },
-      {
-        type: "limit",
-        time: "2 days",
-        text: 'Ella has reached her screen time limit for today." ',
-        status: "unread",
-      },
-    ],
-  },
-];
