@@ -14,6 +14,7 @@ const useTextToAudio = (params: { content: string; voiceId: string }) => {
   return useQuery({
     queryKey: ["textToSpeech", params.content, params.voiceId, isSubscribed],
     staleTime: Infinity,
+    enabled: !!params.content && !!params.voiceId,
     queryFn: async () =>
       await textToSpeech(params.voiceId, params.content, isSubscribed),
     select: (res) => res?.data,
