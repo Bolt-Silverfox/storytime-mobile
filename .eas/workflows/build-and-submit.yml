@@ -1,7 +1,7 @@
 name: Build and Submit (manual)
 
 concurrency:
-  cancel_in_progress: false
+  cancel_in_progress: true
   group: ${{ workflow.filename }}-${{ github.ref }}
 
 on:
