@@ -3,6 +3,8 @@ import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import { COLORS, SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
+import { AvailableVoices as VoiceData } from "../types";
+import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import Icon from "./Icon";
@@ -21,6 +23,7 @@ const AvailableVoices = ({
   const [previewingId, setPreviewingId] = useState<string | null>(null);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const player = useAudioPlayer();
+  const { mutate: markPreferred } = useSetPreferredVoice();
 
   const isPremium =
     user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
@@ -43,28 +46,36 @@ const AvailableVoices = ({
     }
   };
 
-  const handleSelectVoice = (voiceName: string) => {
-    if (!isPremium) {
+  const handleSelectVoice = (voice: VoiceData) => {
+    const isDefault = voice.name.toUpperCase() === "LILY";
+    if (!isPremium && !isDefault) {
       setIsSubscriptionModalOpen(true);
       return;
     }
-    setSelectedVoice(voiceName);
+    const voiceValue =
+      voice.type === "elevenlabs" ? voice.name.toUpperCase() : voice.id;
+    setSelectedVoice(voiceValue);
+    if (isPremium) {
+      markPreferred(voice.id);
+    }
   };
 
   return (
     <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
       {data.map((voice) => {
         const isSelected =
-          voice.name.toLowerCase() === selectedVoice?.toLowerCase();
+          voice.type === "elevenlabs"
+            ? voice.name.toUpperCase() === selectedVoice
+            : voice.id === selectedVoice;
         const isPreviewing = voice.id === previewingId;
-        const isDefault = voice.name.toLowerCase() === "lily";
+        const isDefault = voice.name.toUpperCase() === "LILY";
 
         return (
           <Pressable
             onPress={() => {
-              handlePreview(voice.previewUrl, voice.id);
-              if (isPremium || isDefault) {
-                setSelectedVoice(voice.id);
+              handleSelectVoice(voice);
+              if (isPremium) {
+                handlePreview(voice.previewUrl, voice.id);
               }
             }}
             key={voice.id}
@@ -89,7 +100,7 @@ const AvailableVoices = ({
                 />
               </Pressable>
               <Switch
-                onValueChange={() => handleSelectVoice(voice.name)}
+                onValueChange={() => handleSelectVoice(voice)}
                 value={isSelected}
               />
             </View>

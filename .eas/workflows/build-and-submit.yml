@@ -1,0 +1,48 @@
+name: Build and Submit (manual)
+
+concurrency:
+  cancel_in_progress: false
+  group: ${{ workflow.filename }}-${{ github.ref }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        type: choice
+        description: Build profile to use
+        options:
+          - production
+          - preview
+        default: production
+        required: true
+
+jobs:
+  build-ios:
+    name: Build iOS
+    type: build
+    params:
+      platform: ios
+      profile: ${{ inputs.profile }}
+
+  build-android:
+    name: Build Android
+    type: build
+    params:
+      platform: android
+      profile: ${{ inputs.profile }}
+
+  submit-ios:
+    name: Submit iOS to TestFlight
+    needs: [build-ios]
+    if: ${{ inputs.profile == 'production' }}
+    type: submit
+    params:
+      platform: ios
+
+  submit-android:
+    name: Submit Android to Play Store
+    needs: [build-android]
+    if: ${{ inputs.profile == 'production' }}
+    type: submit
+    params:
+      platform: android

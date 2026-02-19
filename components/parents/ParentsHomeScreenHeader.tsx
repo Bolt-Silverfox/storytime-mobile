@@ -31,13 +31,15 @@ const ParentsHomeScreenHeader = () => {
           }
         />
       </View>
-      <View className="flex flex-1 flex-col gap-y-1.5">
-        <Text className="font-[abeezee] text-base">{data?.name}</Text>
+      <View className="flex min-w-0 flex-1 flex-col gap-y-1.5">
+        <Text numberOfLines={1} className="font-[abeezee] text-base">
+          {data?.name}
+        </Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
           {getGreeting()}
         </Text>
       </View>
-      <View className="flex flex-row items-center gap-x-3">
+      <View className="flex shrink-0 flex-row items-center gap-x-3">
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
