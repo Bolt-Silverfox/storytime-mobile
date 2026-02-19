@@ -1,14 +1,11 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import SubscriptionDetails from "../SubscriptionDetails";
 
 const SubscribedUserComponent = () => {
   return (
-    <ScrollView
-      showsVerticalScrollIndicator={false}
-      contentContainerClassName="flex flex-grow flex-col gap-y-8"
-    >
-      <View className="flex flex-col items-center pb-10 pt-8">
+    <View className="flex flex-1 flex-col">
+      <View className="flex flex-1 flex-col items-center justify-center">
         <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
           <FontAwesome5 name="crown" size={50} color="#866EFF" />
         </Pressable>
@@ -20,7 +17,7 @@ const SubscribedUserComponent = () => {
         </Text>
       </View>
       <SubscriptionDetails />
-    </ScrollView>
+    </View>
   );
 };
 
