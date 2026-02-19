@@ -103,6 +103,14 @@ const urlToBlob = async (uri: string) => {
   return blob;
 };
 
+const MIME_MAP: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+};
+
 const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
     const token = await AsyncStorage.getItem("accessToken");
@@ -111,15 +119,8 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     const cleanUri = imageUri.split("?")[0];
     const ext = cleanUri.split(".").pop()?.toLowerCase();
-    const mimeMap: Record<string, string> = {
-      png: "image/png",
-      jpg: "image/jpeg",
-      jpeg: "image/jpeg",
-      gif: "image/gif",
-      webp: "image/webp",
-    };
-    const validExt = ext && mimeMap[ext] ? ext : "jpg";
-    const mimeType = mimeMap[validExt] || "image/jpeg";
+    const validExt = ext && MIME_MAP[ext] ? ext : "jpg";
+    const mimeType = MIME_MAP[validExt];
 
     formData.append("image", {
       uri: imageUri,

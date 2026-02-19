@@ -32,7 +32,10 @@ const useImagePicker = ({
         !result.assets[0].fileSize ||
         result.assets[0].fileSize > MAX_IMAGE_SIZE
       ) {
-        Alert.alert("Size Exceeded", "Maximum image size is 5MB");
+        Alert.alert(
+          "Size Exceeded",
+          `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`
+        );
         onClose();
         return;
       }
@@ -64,7 +67,10 @@ const useImagePicker = ({
         !result.assets[0].fileSize ||
         result.assets[0].fileSize > MAX_IMAGE_SIZE
       ) {
-        Alert.alert("Size Exceeded", "Maximum image size is 5MB");
+        Alert.alert(
+          "Size Exceeded",
+          `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`
+        );
         onClose();
         return;
       }
