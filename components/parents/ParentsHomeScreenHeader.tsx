@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../constants/ui";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
@@ -10,9 +11,12 @@ import Icon from "../Icon";
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
-  const isUserSubscribed = false;
 
   const { data, isPending } = useGetUserProfile();
+
+  const isUserSubscribed =
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    data?.role === USER_ROLES.admin;
   if (isPending) return <ActivityIndicator size={"large"} />;
 
   return (
@@ -49,7 +53,13 @@ const ParentsHomeScreenHeader = () => {
               colors={["#3608AB", "#2651D3", "#976FFC"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="flex flex-row items-center gap-x-1.5 px-4 py-3"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
             >
               <Icon name="Crown" color="white" />
               <Text className="font-[abeezee] text-white">Get Premium</Text>
