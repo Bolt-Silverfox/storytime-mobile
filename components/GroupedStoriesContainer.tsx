@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ImageSourcePropType, Pressable, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import queryGetStories, {
   GetStoriesParam,
 } from "../hooks/tanstack/queryHooks/queryGetStories";
@@ -27,6 +28,7 @@ const GroupedStoriesContainer = ({
   showAges = true,
 }: PropTypes) => {
   const navigator = useNavigation();
+  const insets = useSafeAreaInsets();
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroupType>("All");
   const { data: stories } = useQuery(
     queryGetStories({ ...params, ageGroup: selectedAgeGroup })
@@ -47,7 +49,10 @@ const GroupedStoriesContainer = ({
         >
           <Pressable
             onPress={() => navigator.canGoBack() && navigator.goBack()}
-            className="absolute left-4 top-12 flex size-10 items-center justify-center rounded-full bg-black/30"
+            accessibilityLabel="Go back"
+            accessibilityRole="button"
+            className="absolute left-4 flex size-10 items-center justify-center rounded-full bg-black/30"
+            style={{ top: insets.top + 8 }}
           >
             <Icon name="ChevronLeft" color="white" />
           </Pressable>

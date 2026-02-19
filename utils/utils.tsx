@@ -109,7 +109,8 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     const formData = new FormData();
 
-    const ext = imageUri.split(".").pop()?.toLowerCase().split("?")[0];
+    const cleanUri = imageUri.split("?")[0];
+    const ext = cleanUri.split(".").pop()?.toLowerCase();
     const mimeMap: Record<string, string> = {
       png: "image/png",
       jpg: "image/jpeg",
@@ -117,12 +118,13 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
       gif: "image/gif",
       webp: "image/webp",
     };
-    const mimeType = (ext && mimeMap[ext]) || "image/jpeg";
+    const validExt = ext && mimeMap[ext] ? ext : "jpg";
+    const mimeType = mimeMap[validExt] || "image/jpeg";
 
     formData.append("image", {
       uri: imageUri,
       type: mimeType,
-      name: `avatar.${ext || "jpg"}`,
+      name: `avatar.${validExt}`,
     } as unknown as Blob);
 
     formData.append("userId", userId);
