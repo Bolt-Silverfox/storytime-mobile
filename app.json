@@ -85,7 +85,8 @@
           }
         }
       ],
-      "expo-iap"
+      "expo-iap",
+      "./plugins/withFirebaseMessagingManifestFix"
     ],
     "extra": {
       "eas": {
