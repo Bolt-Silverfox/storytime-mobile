@@ -19,6 +19,15 @@ const SubscriptionOptions = ({
   isLoading,
 }: Props) => {
   if (isLoading) return <ActivityIndicator size={"large"} />;
+
+  if (subscriptions.length === 0) {
+    return (
+      <Text className="text-center font-[abeezee] text-base text-text">
+        No subscription plans available. Please try again later.
+      </Text>
+    );
+  }
+
   return (
     <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
       {subscriptions.map((sub) => {
@@ -29,11 +38,14 @@ const SubscriptionOptions = ({
           <Pressable
             key={sub.id}
             onPress={() => setSelectedPlan(planName)}
+            accessibilityRole="radio"
+            accessibilityLabel={`${planName} plan, ${sub.displayPrice}`}
+            accessibilityState={{ selected: isSelected }}
             className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
           >
             <View
               className={`
-                    flex h-6 w-6 items-center 
+                    flex h-6 w-6 items-center
                     justify-center rounded-full border-2
                     ${isSelected ? "border-blue" : "border-gray-300"}
                   `}
