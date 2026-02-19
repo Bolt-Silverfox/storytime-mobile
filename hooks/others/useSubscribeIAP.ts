@@ -43,7 +43,8 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
           queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
         });
       } catch (err) {
-        if (__DEV__) console.error("Verification failed, NOT finishing transaction", err);
+        if (__DEV__)
+          console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
       }
     },
@@ -72,7 +73,8 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        if (__DEV__) console.error("Failed to fetch products from google play store");
+        if (__DEV__)
+          console.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));
       } finally {
         setIsLoading(false);
