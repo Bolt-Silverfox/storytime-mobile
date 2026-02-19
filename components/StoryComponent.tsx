@@ -36,7 +36,13 @@ const StoryComponent = ({
 
   if (isPending) return <LoadingOverlay visible />;
   if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <ErrorComponent
+        message={error.message}
+        goBack={() => navigator.goBack()}
+        refetch={refetch}
+      />
+    );
 
   const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
 

@@ -245,6 +245,16 @@ type PaginatedData<T> = {
   };
 };
 
+type StoryQuota = {
+  isPremium: boolean;
+  unlimited: boolean;
+  used: number;
+  baseLimit: number;
+  bonusStories: number;
+  totalAllowed: number;
+  remaining: number;
+};
+
 const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
@@ -268,5 +278,6 @@ export type {
   FavouriteStory,
   AvailableVoices,
   PaginatedData,
+  StoryQuota,
 };
 export { ageGroups };

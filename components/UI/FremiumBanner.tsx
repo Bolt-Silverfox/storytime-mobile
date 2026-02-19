@@ -1,16 +1,27 @@
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import Icon from "../Icon";
 import SubscriptionModal from "../modals/SubscriptionModal";
+import { useQuery } from "@tanstack/react-query";
+import queryStoriesQuota from "../../hooks/tanstack/queryHooks/queryStoriesQuota";
+import useAuth from "../../contexts/AuthContext";
+import ErrorComponent from "../ErrorComponent";
 
 const FremiumBanner = ({ closeBanner }: { closeBanner: () => void }) => {
-  const numOfStoriesRead = 10;
+  const { user } = useAuth();
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const { data, isPending, error, refetch } = useQuery(
+    queryStoriesQuota(user?.id)
+  );
+
+  if (isPending) return <ActivityIndicator size={"large"} />;
+  if (error)
+    return <ErrorComponent refetch={refetch} message={error.message} />;
 
   return (
     <View className="flex flex-row items-center gap-x-5 bg-blue p-4">
       <View className="flex flex-1 flex-col gap-y-1.5">
-        {numOfStoriesRead >= 10 ? (
+        {data.used >= 10 ? (
           <>
             <Text className="font-[abeezee] text-xs text-[#D3C9FA]">
               10 free stories completed, upgrade to unlock unlimited stories,
@@ -29,7 +40,7 @@ const FremiumBanner = ({ closeBanner }: { closeBanner: () => void }) => {
               story every week with our Freemium plan.
             </Text>
             <Text className="font-[quilka] text-xs text-white">
-              0/10 stories read
+              {data.used}/10 stories read
             </Text>
           </>
         )}

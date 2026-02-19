@@ -5,13 +5,13 @@ import { SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { Story } from "../types";
 import Icon from "./Icon";
-import StoryAudioPlayer from "./StoryAudioPlayer";
-import CustomButton from "./UI/CustomButton";
-import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import SubscriptionModal from "./modals/SubscriptionModal";
+import StoryAudioPlayer from "./StoryAudioPlayer";
+import CustomButton from "./UI/CustomButton";
+import ProgressBar from "./UI/ProgressBar";
 
 type PropTypes = {
   story: Story;
@@ -44,11 +44,11 @@ const StoryContentContainer = ({
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
-  const { data } = useGetUserProfile();
+  const { data: user } = useGetUserProfile();
 
   const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
+    user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    user?.role === USER_ROLES.admin;
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -64,15 +64,11 @@ const StoryContentContainer = ({
       setCurrentlyDisplayed("endOfStoryMessage");
       return;
     }
-    // if (isSubscribed) {
     setActiveParagraph((a) => {
       const next = a + 1;
       onProgress(next + 1, false);
       return next;
     });
-    // return;
-    // }
-    // setIsSubscriptionModalOpen(true);
   };
 
   return (
@@ -157,6 +153,7 @@ const StoryContentContainer = ({
         storyTitle={story.title}
       />
       <SubscriptionModal
+        maxHeight={0.85}
         isOpen={isSubscriptionModalOpen}
         onClose={() => setIsSubscriptionModalOpen(false)}
       />

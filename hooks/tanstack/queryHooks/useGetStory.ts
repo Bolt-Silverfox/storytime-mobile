@@ -1,9 +1,14 @@
-import { queryOptions } from "@tanstack/react-query";
+import { queryOptions, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import { QueryResponse, Story } from "../../../types";
+import useAuth from "../../../contexts/AuthContext";
+import { getErrorMessage } from "../../../utils/utils";
 
-const queryGetStory = (storyId: string) => {
+const useGetStory = (storyId: string) => {
+  const { user } = useAuth();
+  const queryClient = useQueryClient();
+
   return queryOptions({
     queryKey: ["story", storyId],
     queryFn: async () => {
@@ -12,12 +17,13 @@ const queryGetStory = (storyId: string) => {
           method: "GET",
         });
         const response: QueryResponse<Story> = await request.json();
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_STORIES_QUOTA, user?.id],
+        });
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err: unknown) {
-        const message =
-          err instanceof Error ? err.message : "Unexpected error, try again";
-        throw new Error(message);
+        throw new Error(getErrorMessage(err));
       }
     },
     staleTime: Infinity,
@@ -25,4 +31,4 @@ const queryGetStory = (storyId: string) => {
   });
 };
 
-export default queryGetStory;
+export default useGetStory;

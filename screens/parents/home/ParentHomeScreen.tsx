@@ -11,6 +11,7 @@ import StoryCategoriesList from "../../../components/parents/StoryCategoriesList
 import FremiumBanner from "../../../components/UI/FremiumBanner";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { FREMIUM_BANNER_LS_KEY } from "../../../constants";
 
 const ParentHomeScreen = () => {
   const [isFremiumBannerOpen, setIsFremiumBannerOpen] = useState(false);
@@ -20,19 +21,26 @@ const ParentHomeScreen = () => {
     data?.role === "admin" || data?.subscriptionStatus === "active";
 
   const closeBanner = async () => {
-    await AsyncStorage.setItem("fremiumBanner", "removed");
-    setIsFremiumBannerOpen(false);
+    try {
+      await AsyncStorage.setItem(FREMIUM_BANNER_LS_KEY, "removed");
+    } catch (e) {
+      console.error("Failed to persist banner", e);
+    } finally {
+      setIsFremiumBannerOpen(false);
+    }
   };
 
   useEffect(() => {
-    const getFremiumBannerStatus = async (): Promise<boolean> => {
-      const isFremiumBannerClosed = await AsyncStorage.getItem("fremiumBanner");
-      return Boolean(isFremiumBannerClosed);
-    };
-
     (async () => {
-      const fremiumBannerStatus = await getFremiumBannerStatus();
-      if (!fremiumBannerStatus) {
+      try {
+        const isFremiumBannerClosed = await AsyncStorage.getItem(
+          FREMIUM_BANNER_LS_KEY
+        );
+        if (!isFremiumBannerClosed) {
+          setIsFremiumBannerOpen(true);
+        }
+      } catch (e) {
+        console.error("Failed to read banner status", e);
         setIsFremiumBannerOpen(true);
       }
     })();

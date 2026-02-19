@@ -1,6 +1,7 @@
 import Entypo from "@expo/vector-icons/Entypo";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
 import {
   ImageBackground,
   Pressable,
@@ -15,6 +16,8 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import StoryLimitModal from "../../../components/UI/StoryLimitModal";
+import queryStoriesQuota from "../../../hooks/tanstack/queryHooks/queryStoriesQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
   StoryNavigatorParamList,
@@ -43,7 +46,15 @@ const ChildStoryDetails = () => {
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isStoryLimitModalOpen, setIsStoryLimitModalOpen] = useState(false);
   const { data: user } = useGetUserProfile();
+  const { data: quota } = useQuery(queryStoriesQuota(user?.id));
+
+  useEffect(() => {
+    if (quota?.used === 10 || quota?.used === 5) {
+      setIsStoryLimitModalOpen(true);
+    }
+  }, [quota?.used]);
 
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
@@ -78,7 +89,7 @@ const ChildStoryDetails = () => {
             </Pressable>
             <View className="flex flex-row justify-around gap-3 rounded-2xl bg-purple p-5">
               <View className="flex flex-col gap-y-2">
-                <Text className="text-center font-[quilka] text-sm text-white">
+                <Text className="tequota?.usedxt-center font-[quilka] text-sm text-white">
                   Age range
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
@@ -215,8 +226,15 @@ const ChildStoryDetails = () => {
           onClose={() => setShowShareModal(false)}
         />
         <SubscriptionModal
+          maxHeight={0.85}
           isOpen={isSubscriptionModalOpen}
           onClose={() => setIsSubscriptionModalOpen(false)}
+        />
+        <StoryLimitModal
+          maxHeight={0.85}
+          isOpen={isStoryLimitModalOpen && !isPremium}
+          onClose={() => setIsStoryLimitModalOpen(false)}
+          used={quota?.used}
         />
       </View>
     </SafeAreaWrapper>
