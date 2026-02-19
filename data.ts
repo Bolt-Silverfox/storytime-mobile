@@ -121,17 +121,6 @@ const storyCategoriesColours = [
   "#C9240B",
 ];
 
-const subscriptionOptions: { name: "Monthly" | "Yearly"; price: number }[] = [
-  {
-    name: "Monthly",
-    price: 4.99,
-  },
-  {
-    name: "Yearly",
-    price: 47.99,
-  },
-];
-
 const subscriptionBenefits = [
   "Unlimited access to a growing library of kids' stories.",
   "Interactive story mode: short quizzes after each story to boost learning.",
@@ -154,7 +143,6 @@ export {
   privacyPolicyData,
   storyCategoriesColours,
   subscriptionBenefits,
-  subscriptionOptions,
   termsAndConditionsData,
   storiesByAgeImages,
 };

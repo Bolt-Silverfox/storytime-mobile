@@ -1,16 +1,24 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useState } from "react";
-import { Alert, Image, Pressable, ScrollView, Text, View } from "react-native";
-import { subscriptionBenefits, subscriptionOptions } from "../../data";
+import { Image, ScrollView, Text, View } from "react-native";
+import { subscriptionBenefits } from "../../data";
+import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
+import { SubscriptionPlan } from "../../types";
+import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
 
 const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
-  const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null
-  );
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
+  const {
+    isLoading,
+    errorMessage,
+    subscriptions,
+    handlePurchase,
+    getPlanName,
+  } = useSubscribeIAP(selectedPlan);
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
@@ -34,37 +42,19 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
             </Text>
           </View>
         </View>
-        <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
-          {subscriptionOptions.map((subscription) => {
-            const isSelected = selectedPlan === subscription.name;
 
-            return (
-              <Pressable
-                key={subscription.name}
-                onPress={() => setSelectedPlan(subscription.name)}
-                className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
-              >
-                <View
-                  className={`
-                    flex h-6 w-6 items-center 
-                    justify-center rounded-full border-2
-                    ${isSelected ? "border-blue" : "border-gray-300"}
-                  `}
-                >
-                  {isSelected && (
-                    <View className="h-3 w-3 rounded-full bg-blue" />
-                  )}
-                </View>
-                <Text className="mb-1 mt-4 font-[quilka] text-2xl text-black">
-                  $ {subscription.price}
-                </Text>
-                <Text className="font-[abeezee] text-[18px] leading-6 text-black">
-                  {subscription.name} Plan
-                </Text>
-              </Pressable>
-            );
-          })}
-        </View>
+        {errorMessage && (
+          <Text className="text-center font-[abeezee] text-xl text-red-700">
+            {errorMessage}
+          </Text>
+        )}
+        <SubscriptionOptions
+          isLoading={isLoading}
+          getPlanName={getPlanName}
+          selectedPlan={selectedPlan}
+          setSelectedPlan={setSelectedPlan}
+          subscriptions={subscriptions}
+        />
 
         <View
           aria-labelledby="subscription plans"
@@ -113,13 +103,8 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
           <CustomButton
             ariaLabel="Subscribe button"
             text="Subscribe"
-            onPress={() => {
-              Alert.alert(
-                "Coming Soon",
-                "Subscription functionality will be available soon."
-              );
-            }}
             disabled={!selectedPlan}
+            onPress={handlePurchase}
           />
           <CustomButton
             ariaLabel="Cancel button"
