@@ -24,6 +24,7 @@ const CustomButton = ({
   if (transparent) {
     return (
       <Pressable
+        disabled={disabled}
         aria-labelledby={ariaLabel}
         onPress={onPress}
         className="flex h-[46px] w-full flex-row items-center justify-center rounded-full border"

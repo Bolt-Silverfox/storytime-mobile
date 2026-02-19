@@ -248,6 +248,20 @@ const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 
+type SubscriptionPlan = "Monthly" | "Yearly" | null;
+
+type SubscriptionStatus = {
+  id: string;
+  plan: SubscriptionPlan;
+  userId: string;
+  status: "free" | "active";
+  startedAt: string;
+  endsAt: string;
+  platform: string | null;
+  price: string;
+  currency: string;
+};
+
 // Notification types matching backend NotificationCategory enum
 type NotificationCategory =
   | "EMAIL_VERIFICATION"
@@ -302,6 +316,7 @@ type DeviceTokenResponse = {
   createdAt: string;
   updatedAt: string;
 };
+
 export type {
   User,
   Profile,
@@ -322,6 +337,8 @@ export type {
   FavouriteStory,
   AvailableVoices,
   PaginatedData,
+  SubscriptionPlan,
+  SubscriptionStatus,
   NotificationCategory,
   Notification,
   NotificationsResponse,

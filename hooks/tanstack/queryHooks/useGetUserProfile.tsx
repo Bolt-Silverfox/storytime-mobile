@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, UserProfile } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
@@ -8,7 +8,7 @@ import { getErrorMessage } from "../../../utils/utils";
 const useGetUserProfile = () => {
   const { user } = useAuth();
   return useQuery({
-    queryKey: ["userProfile", user?.id],
+    queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
     queryFn: async () => {
       try {
         if (user === null || user === undefined) {
