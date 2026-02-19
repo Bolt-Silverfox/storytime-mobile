@@ -39,14 +39,17 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         queryClient.refetchQueries({
           queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
         });
+        queryClient.refetchQueries({
+          queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
+        });
       } catch (err) {
-        console.error("Verification failed, NOT finishing transaction", err);
+        if (__DEV__) console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
       }
     },
     onPurchaseError: (error) => {
       if (error.code !== ErrorCode.UserCancelled) {
-        console.error("Subscription failed", error);
+        if (__DEV__) console.error("Subscription failed", error);
         setErrorMessage(error.message ?? "Unexpected error, try again");
       }
     },
@@ -69,7 +72,7 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        console.error("Failed to fetch products from google play store");
+        if (__DEV__) console.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));
       } finally {
         setIsLoading(false);
@@ -100,7 +103,7 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
       if (!response.success) throw new Error(response.message);
       return response;
     } catch (err) {
-      console.error("purchase verification failed", err);
+      if (__DEV__) console.error("purchase verification failed", err);
       throw new Error(getErrorMessage(err));
     }
   };
