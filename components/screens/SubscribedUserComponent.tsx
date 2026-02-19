@@ -8,7 +8,7 @@ const SubscribedUserComponent = () => {
       showsVerticalScrollIndicator={false}
       contentContainerClassName="flex flex-grow flex-col gap-y-8"
     >
-      <View className="flex flex-1 flex-col items-center justify-end pb-10">
+      <View className="flex flex-col items-center pb-10 pt-8">
         <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
           <FontAwesome5 name="crown" size={50} color="#866EFF" />
         </Pressable>
