@@ -28,7 +28,10 @@ const useImagePicker = ({
     });
 
     if (!result.canceled) {
-      if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_IMAGE_SIZE) {
+      if (
+        !result.assets[0].fileSize ||
+        result.assets[0].fileSize > MAX_IMAGE_SIZE
+      ) {
         Alert.alert("Size Exceeded", "Maximum image size is 5MB");
         onClose();
         return;
@@ -57,7 +60,10 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      if (result.assets[0].fileSize && result.assets[0].fileSize > MAX_IMAGE_SIZE) {
+      if (
+        !result.assets[0].fileSize ||
+        result.assets[0].fileSize > MAX_IMAGE_SIZE
+      ) {
         Alert.alert("Size Exceeded", "Maximum image size is 5MB");
         onClose();
         return;
