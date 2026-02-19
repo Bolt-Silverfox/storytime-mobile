@@ -31,7 +31,7 @@ const ParentsHomeScreenHeader = () => {
           }
         />
       </View>
-      <View className="min-w-0 flex flex-1 flex-col gap-y-1.5">
+      <View className="flex min-w-0 flex-1 flex-col gap-y-1.5">
         <Text numberOfLines={1} className="font-[abeezee] text-base">
           {data?.name}
         </Text>
