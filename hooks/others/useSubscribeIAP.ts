@@ -55,13 +55,19 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
   useEffect(() => {
     if (!connected) {
       setIsLoading(true);
-      return;
+
+      const timeout = setTimeout(() => {
+        setIsLoading(false);
+        setErrorMessage("Could not connect to the store. Please try again.");
+      }, 10_000);
+
+      return () => clearTimeout(timeout);
     }
 
     const loadSubscriptions = async () => {
       try {
         setIsLoading(true);
-        await fetchProducts({ skus: SUBSCRIPTION_IDS, type: "subs" });
+        await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
         console.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Image, ScrollView, Text, View } from "react-native";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
+import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
@@ -10,9 +11,7 @@ import CustomModal, { CustomModalProps } from "./CustomModal";
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
 
 const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
-  const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null
-  );
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const {
     isLoading,
     errorMessage,
