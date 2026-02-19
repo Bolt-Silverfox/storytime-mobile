@@ -12,6 +12,7 @@ import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
+import NotificationHandler from "./components/NotificationHandler";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
 import RootNavigator from "./Navigation/RootNavigator";
@@ -56,7 +57,9 @@ export default function App() {
       <AuthProvider>
         <QueryClientProvider client={queryClient}>
           <NavigationContainer>
-            <RootNavigator />
+            <NotificationHandler>
+              <RootNavigator />
+            </NotificationHandler>
           </NavigationContainer>
         </QueryClientProvider>
       </AuthProvider>

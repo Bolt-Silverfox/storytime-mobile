@@ -1,10 +1,11 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
+import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
 import { StoryModes } from "../types";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
@@ -29,7 +30,15 @@ const StoryComponent = ({
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
   const sessionStartTime = useRef(Date.now());
 
+  const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+
+  useEffect(() => {
+    if (preferredVoice?.name) {
+      setSelectedVoice(preferredVoice.name.toUpperCase());
+    }
+  }, [preferredVoice]);
+
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
   });

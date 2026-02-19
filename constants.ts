@@ -9,6 +9,9 @@ const QUERY_KEYS = {
   GET_USER_PROFILE: "userProfile",
 } as const;
 
+/** Maximum image upload size in bytes (5 MB), matching backend limit. */
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
 export {
   emailRegex,
   BASE_URL,
@@ -17,4 +20,5 @@ export {
   SUBSCRIPTION_IDS,
   QUERY_KEYS,
   BUNDLE_IDENTIFIER,
+  MAX_IMAGE_SIZE,
 };

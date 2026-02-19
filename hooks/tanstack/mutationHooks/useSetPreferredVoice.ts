@@ -1,20 +1,23 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 
-const useSetPreferredVoice = ({ onSuccess }: { onSuccess: () => void }) => {
+const useSetPreferredVoice = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: async (voiceId: string) => {
-      const URL = `${BASE_URL}/voices/preferred`;
-      const request = await apiFetch(URL, {
+      const request = await apiFetch(`${BASE_URL}/voice/preferred`, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),
       });
-      return request;
+      const response = await request.json();
+      if (!response.success) throw new Error(response.message);
+      return response;
     },
     onSuccess: () => {
-      onSuccess();
+      queryClient.invalidateQueries({ queryKey: ["preferredVoice"] });
     },
     onError: (err) => {
       Alert.alert(err.message ?? "Unexpected error, try again later");
