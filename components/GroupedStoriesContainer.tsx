@@ -46,7 +46,7 @@ const GroupedStoriesContainer = ({
           className="flex h-[30vh] max-h-[500px] w-full flex-col justify-end px-4 pb-8"
         >
           <Pressable
-            onPress={() => navigator.goBack()}
+            onPress={() => navigator.canGoBack() && navigator.goBack()}
             className="absolute left-4 top-12 flex size-10 items-center justify-center rounded-full bg-black/30"
           >
             <Icon name="ChevronLeft" color="white" />
