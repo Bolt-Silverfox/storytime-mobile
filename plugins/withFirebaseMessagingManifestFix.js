@@ -34,7 +34,7 @@ module.exports = function withFirebaseMessagingManifestFix(config) {
   return withDangerousMod(config, [
     "android",
     (config) => {
-      const variants = ["main", "debug", "debugOptimized"];
+      const variants = ["main", "debug", "debugOptimized", "release"];
       for (const variant of variants) {
         const manifestPath = path.join(
           config.modRequest.platformProjectRoot,
