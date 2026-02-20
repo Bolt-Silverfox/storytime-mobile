@@ -41,9 +41,6 @@
       ],
       "package": "net.emerj.storytime"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "plugins": [
       "expo-font",
       [
@@ -85,7 +82,8 @@
           }
         }
       ],
-      "expo-iap"
+      "expo-iap",
+      "./plugins/withFirebaseMessagingManifestFix"
     ],
     "extra": {
       "eas": {
