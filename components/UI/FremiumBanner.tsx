@@ -21,11 +21,12 @@ const FremiumBanner = ({ closeBanner }: { closeBanner: () => void }) => {
   return (
     <View className="flex flex-row items-center gap-x-5 bg-blue p-4">
       <View className="flex flex-1 flex-col gap-y-1.5">
-        {data.used >= 10 ? (
+        {data.remaining < 1 ? (
           <>
             <Text className="font-[abeezee] text-xs text-[#D3C9FA]">
-              10 free stories completed, upgrade to unlock unlimited stories,
-              audio narration and a growing library your child will love.
+              {data.totalAllowed} free stories completed, upgrade to unlock
+              unlimited stories, audio narration and a growing library your
+              child will love.
             </Text>
             <Pressable onPress={() => setIsSubscriptionModalOpen(true)}>
               <Text className="font-[quilka] text-xs text-white underline">
@@ -40,7 +41,7 @@ const FremiumBanner = ({ closeBanner }: { closeBanner: () => void }) => {
               story every week with our Freemium plan.
             </Text>
             <Text className="font-[quilka] text-xs text-white">
-              {data.used}/10 stories read
+              {data.used}/{data.totalAllowed} stories read
             </Text>
           </>
         )}

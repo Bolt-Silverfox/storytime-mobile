@@ -16,7 +16,7 @@ import StoryNavigator, { StoryNavigatorParamList } from "./StoryNavigator";
 type ProtectedRoutesParamList = {
   parents: NavigatorScreenParams<ParentsNavigatorParamList>;
   notification: NavigatorScreenParams<NotificationsNavigatorParamList>;
-  getPremium: undefined;
+  getPremium: { selected?: "Monthly" | "Yearly" | null };
   stories: NavigatorScreenParams<StoryNavigatorParamList>;
 };
 

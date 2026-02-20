@@ -49,7 +49,9 @@ const ParentsHomeScreenHeader = () => {
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => protectedNav.navigate("getPremium")}
+            onPress={() =>
+              protectedNav.navigate("getPremium", { selected: undefined })
+            }
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}

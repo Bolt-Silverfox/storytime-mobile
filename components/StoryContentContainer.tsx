@@ -12,11 +12,11 @@ import SubscriptionModal from "./modals/SubscriptionModal";
 import StoryAudioPlayer from "./StoryAudioPlayer";
 import CustomButton from "./UI/CustomButton";
 import ProgressBar from "./UI/ProgressBar";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
-  paragraphs: string[];
   activeParagraph: number;
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -34,7 +34,6 @@ const StoryContentContainer = ({
   isInteractive,
   setActiveParagraph,
   activeParagraph,
-  paragraphs,
   onProgress,
   selectedVoice,
 }: PropTypes) => {
@@ -49,6 +48,7 @@ const StoryContentContainer = ({
   const isSubscribed =
     user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
     user?.role === USER_ROLES.admin;
+  const paragraphs = splitByWordCountPreservingSentences(story.textContent, 30);
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -64,11 +64,10 @@ const StoryContentContainer = ({
       setCurrentlyDisplayed("endOfStoryMessage");
       return;
     }
-    setActiveParagraph((a) => {
-      const next = a + 1;
-      onProgress(next + 1, false);
-      return next;
-    });
+
+    const next = activeParagraph + 1;
+    setActiveParagraph(next);
+    onProgress(next + 1, false);
   };
 
   return (

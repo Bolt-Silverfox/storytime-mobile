@@ -51,7 +51,7 @@ const ChildStoryDetails = () => {
   const { data: quota } = useQuery(queryStoriesQuota(user?.id));
 
   useEffect(() => {
-    if (quota?.used === 10 || quota?.used === 5) {
+    if ((quota?.used && quota.used === 10) || quota?.used === 5) {
       setIsStoryLimitModalOpen(true);
     }
   }, [quota?.used]);
@@ -88,15 +88,15 @@ const ChildStoryDetails = () => {
               <Entypo name="chevron-thin-left" size={24} color="white" />
             </Pressable>
             <View className="flex flex-row justify-around gap-3 rounded-2xl bg-purple p-5">
-              <View className="flex flex-col gap-y-2">
-                <Text className="tequota?.usedxt-center font-[quilka] text-sm text-white">
+              <View className="flex flex-1 flex-col gap-y-2">
+                <Text className="text-center font-[quilka] text-sm text-white">
                   Age range
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
                   {ageMin} - {ageMax} Years
                 </Text>
               </View>
-              <View className="flex flex-col gap-y-2">
+              <View className="flex flex-1 flex-col gap-y-2">
                 <Text className="text-center font-[quilka] text-sm text-white">
                   Duration
                 </Text>
@@ -105,7 +105,7 @@ const ChildStoryDetails = () => {
                   {duration > 1 ? "mins" : "min"}
                 </Text>
               </View>
-              <View className="flex flex-col gap-y-2">
+              <View className="flex flex-1 flex-col gap-y-2">
                 <Text className="text-center font-[quilka] text-sm text-white">
                   Category
                 </Text>
@@ -235,6 +235,7 @@ const ChildStoryDetails = () => {
           isOpen={isStoryLimitModalOpen && !isPremium}
           onClose={() => setIsStoryLimitModalOpen(false)}
           used={quota?.used}
+          totalAllowed={quota?.totalAllowed}
         />
       </View>
     </SafeAreaWrapper>

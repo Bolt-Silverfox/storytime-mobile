@@ -1,7 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
@@ -14,6 +14,9 @@ import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import StoryLimitModal from "./UI/StoryLimitModal";
+import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
+import queryStoriesQuota from "../hooks/tanstack/queryHooks/queryStoriesQuota";
 
 const StoryComponent = ({
   storyId,
@@ -27,9 +30,12 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [showLimitModal, setShowLimitModal] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+  const { data: user } = useGetUserProfile();
+  const { data: quota } = useQuery(queryStoriesQuota(user?.id));
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
   });
@@ -43,8 +49,14 @@ const StoryComponent = ({
         refetch={refetch}
       />
     );
+  const isPremium =
+    user?.subscriptionStatus === "active" || user?.role === "admin";
 
-  const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
+  useEffect(() => {
+    if (data === null) {
+      setShowLimitModal(true);
+    }
+  }, [data]);
 
   const handleProgress = (progress: number, completed: boolean) => {
     setStoryProgress({
@@ -54,53 +66,68 @@ const StoryComponent = ({
     });
   };
 
+  console.log("sotry data", data);
+  console.log("stry modal is", showLimitModal ? "open" : "close");
+
   return (
     <SafeAreaWrapper variant="transparent">
-      <ScrollView contentContainerClassName="flex min-h-full">
-        <ImageBackground
-          source={{ uri: data.coverImageUrl }}
-          resizeMode="cover"
-          className="flex flex-1 flex-col p-4 pt-12 "
-        >
-          <View className="flex flex-row items-center justify-between">
-            <Pressable
-              onPress={() =>
-                navigator.reset({ index: 0, routes: [{ name: "parents" }] })
-              }
-              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-            >
-              <FontAwesome6 name="house" size={20} color="white" />
-            </Pressable>
-            <Pressable
-              onPress={() => setIsOptionsModalOpen(true)}
-              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-            >
-              <FontAwesome6 name="ellipsis" size={20} color="white" />
-            </Pressable>
-          </View>
-          <StoryContentContainer
+      {data ? (
+        <ScrollView contentContainerClassName="flex min-h-full">
+          <ImageBackground
+            source={{ uri: data.coverImageUrl }}
+            resizeMode="cover"
+            className="flex flex-1 flex-col p-4 pt-12 "
+          >
+            <View className="flex flex-row items-center justify-between">
+              <Pressable
+                onPress={() =>
+                  navigator.reset({ index: 0, routes: [{ name: "parents" }] })
+                }
+                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+              >
+                <FontAwesome6 name="house" size={20} color="white" />
+              </Pressable>
+              <Pressable
+                onPress={() => setIsOptionsModalOpen(true)}
+                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+              >
+                <FontAwesome6 name="ellipsis" size={20} color="white" />
+              </Pressable>
+            </View>
+            <StoryContentContainer
+              selectedVoice={selectedVoice}
+              isInteractive={storyMode === "interactive"}
+              story={data}
+              activeParagraph={activeParagraph}
+              setActiveParagraph={setActiveParagraph}
+              onProgress={handleProgress}
+            />
+          </ImageBackground>
+          <SelectReadingVoiceModal
+            isOpen={isVoiceModalOpen}
+            onClose={() => setIsVoiceModalOpen(false)}
             selectedVoice={selectedVoice}
-            isInteractive={storyMode === "interactive"}
-            story={data}
-            paragraphs={paragraphs}
-            activeParagraph={activeParagraph}
-            setActiveParagraph={setActiveParagraph}
-            onProgress={handleProgress}
+            setSelectedVoice={setSelectedVoice}
           />
-        </ImageBackground>
-        <SelectReadingVoiceModal
-          isOpen={isVoiceModalOpen}
-          onClose={() => setIsVoiceModalOpen(false)}
-          selectedVoice={selectedVoice}
-          setSelectedVoice={setSelectedVoice}
+          <InStoryOptionsModal
+            handleVoiceModal={setIsVoiceModalOpen}
+            isOptionsModalOpen={isOptionsModalOpen}
+            setIsOptionsModalOpen={setIsOptionsModalOpen}
+            setActiveParagraph={setActiveParagraph}
+          />
+        </ScrollView>
+      ) : (
+        <StoryLimitModal
+          maxHeight={0.85}
+          isOpen={showLimitModal && !isPremium}
+          onClose={() => {
+            navigator.goBack();
+            setShowLimitModal(false);
+          }}
+          used={quota?.used}
+          totalAllowed={quota?.totalAllowed}
         />
-        <InStoryOptionsModal
-          handleVoiceModal={setIsVoiceModalOpen}
-          isOptionsModalOpen={isOptionsModalOpen}
-          setIsOptionsModalOpen={setIsOptionsModalOpen}
-          setActiveParagraph={setActiveParagraph}
-        />
-      </ScrollView>
+      )}
     </SafeAreaWrapper>
   );
 };

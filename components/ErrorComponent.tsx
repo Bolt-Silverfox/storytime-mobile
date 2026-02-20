@@ -6,7 +6,7 @@ const ErrorComponent = ({
   goBack,
 }: {
   message?: string;
-  refetch?: () => void;
+  refetch: () => void;
   goBack?: () => void;
 }) => {
   return (

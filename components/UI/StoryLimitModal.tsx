@@ -16,18 +16,24 @@ import CustomButton from "./CustomButton";
 
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose" | "maxHeight"> & {
   used: number | undefined;
+  totalAllowed: number | undefined;
 };
 
-const StoryLimitModal = ({ isOpen, onClose, maxHeight, used }: PropTypes) => {
+const StoryLimitModal = ({
+  isOpen,
+  onClose,
+  maxHeight,
+  used,
+  totalAllowed,
+}: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
     null
   );
-  useState(false);
 
   return (
     <CustomModal maxHeight={maxHeight} isOpen={isOpen} onClose={onClose}>
-      {used ? (
+      {used !== undefined ? (
         <ScrollView
           contentContainerClassName="flex flex-col gap-y-10 bg-white"
           showsVerticalScrollIndicator={false}
@@ -41,12 +47,12 @@ const StoryLimitModal = ({ isOpen, onClose, maxHeight, used }: PropTypes) => {
             </View>
             <View className="flex flex-col gap-y-2">
               <Text className="text-center font-[quilka] text-2xl text-black">
-                {used > 10 ? 10 : used}/10 Free Stories Read
+                {used}/{totalAllowed} Free Stories Read
               </Text>
               <Text className="text-center font-[abeezee] text-sm text-text">
                 {used < 10
                   ? "As a fremium user, you are entitled to 10 free stories overall and 1 free story weekly."
-                  : "That was the last of your 10 free stories. With the Freemium plan, you’ll receive 1 free story every week. Upgrade now for full access to our entire story library."}
+                  : "That was the last of your free stories. With the Freemium plan, you’ll receive 1 free story every week. Upgrade now for full access to our entire story library."}
               </Text>
             </View>
           </View>
@@ -120,7 +126,7 @@ const StoryLimitModal = ({ isOpen, onClose, maxHeight, used }: PropTypes) => {
               ariaLabel="Subscribe button"
               text="Subscribe"
               onPress={() => {
-                navigator.navigate("getPremium");
+                navigator.navigate("getPremium", { selected: selectedPlan });
                 onClose();
               }}
               disabled={!selectedPlan}

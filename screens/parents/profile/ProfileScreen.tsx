@@ -107,7 +107,11 @@ const ProfileScreen: FC = () => {
               icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
               label="Subscription"
               isTablet={isTablet}
-              onPress={() => protectedNavigator.navigate("getPremium")}
+              onPress={() =>
+                protectedNavigator.navigate("getPremium", {
+                  selected: undefined,
+                })
+              }
             />
             <MenuItem
               icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}

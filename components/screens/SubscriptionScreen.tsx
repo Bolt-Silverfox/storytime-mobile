@@ -8,10 +8,11 @@ import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 
 type PropTypes = {
   goBack: () => void;
+  selected?: "Monthly" | "Yearly" | undefined | null;
 };
-const SubscriptionScreen = ({ goBack }: PropTypes) => {
+const SubscriptionScreen = ({ goBack, selected }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
-    null
+    selected ?? null
   );
 
   return (

@@ -6,6 +6,7 @@ type RoutePropTypes = RouteProp<StoryNavigatorParamList, "readStory">;
 
 const ReadStoryScreen = () => {
   const { params } = useRoute<RoutePropTypes>();
+
   return <StoryComponent storyId={params.storyId} storyMode={params.mode} />;
 };
 
