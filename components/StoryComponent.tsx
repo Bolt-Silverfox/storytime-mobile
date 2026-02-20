@@ -5,18 +5,17 @@ import { useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
+import queryStoriesQuota from "../hooks/tanstack/queryHooks/queryStoriesQuota";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { StoryModes } from "../types";
-import { splitByWordCountPreservingSentences } from "../utils/utils";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
+import StoryLimitModal from "./UI/StoryLimitModal";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
-import StoryLimitModal from "./UI/StoryLimitModal";
-import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
-import queryStoriesQuota from "../hooks/tanstack/queryHooks/queryStoriesQuota";
 
 const StoryComponent = ({
   storyId,
@@ -40,6 +39,12 @@ const StoryComponent = ({
     storyId,
   });
 
+  useEffect(() => {
+    if (data === null) {
+      setShowLimitModal(true);
+    }
+  }, [data]);
+
   if (isPending) return <LoadingOverlay visible />;
   if (error)
     return (
@@ -49,14 +54,9 @@ const StoryComponent = ({
         refetch={refetch}
       />
     );
+
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
-
-  useEffect(() => {
-    if (data === null) {
-      setShowLimitModal(true);
-    }
-  }, [data]);
 
   const handleProgress = (progress: number, completed: boolean) => {
     setStoryProgress({
@@ -65,9 +65,6 @@ const StoryComponent = ({
       time: sessionStartTime.current,
     });
   };
-
-  console.log("sotry data", data);
-  console.log("stry modal is", showLimitModal ? "open" : "close");
 
   return (
     <SafeAreaWrapper variant="transparent">

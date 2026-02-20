@@ -8,9 +8,9 @@ import { getErrorMessage } from "../../../utils/utils";
 const useGetStory = (storyId: string) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
-  console.log("story id", storyId);
+
   return queryOptions({
-    queryKey: ["story", storyId],
+    queryKey: ["story", storyId, user?.id],
     queryFn: async () => {
       try {
         const request = await apiFetch(`${BASE_URL}/stories/${storyId}`, {
