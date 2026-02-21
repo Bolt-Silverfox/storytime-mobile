@@ -101,6 +101,7 @@ export default function HelpAndSupportIndexScreen() {
                   screen: "privacyAndPolicy",
                 })
               }
+              isLastItem
             />
           </View>
         </ScrollView>

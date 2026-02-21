@@ -1,5 +1,12 @@
 import { BlurView } from "expo-blur";
-import { Dispatch, SetStateAction, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Pressable, Text, View } from "react-native";
 import { SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
@@ -38,16 +45,26 @@ const StoryContentContainer = ({
   selectedVoice,
 }: PropTypes) => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
-  const { data: user } = useGetUserProfile();
+  const { data } = useGetUserProfile();
+  const isAdvancingRef = useRef(false);
+  const activeParagraphRef = useRef(activeParagraph);
+
+  // Keep ref in sync so the stable callback always sees the latest value
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    // Reset the advancing guard once React has committed the new page
+    isAdvancingRef.current = false;
+  }, [activeParagraph]);
 
   const isSubscribed =
-    user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    user?.role === USER_ROLES.admin;
+    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
+    data?.role === USER_ROLES.admin;
   const paragraphs = splitByWordCountPreservingSentences(story.textContent, 30);
 
   const storyLength = paragraphs.length - 1;
@@ -59,15 +76,48 @@ const StoryContentContainer = ({
     setActiveParagraph(0);
   };
 
-  const handleNextParagraph = () => {
-    if (isLastParagraph) {
-      setCurrentlyDisplayed("endOfStoryMessage");
+  // Stable callback — no dependencies that change per page.
+  // Uses refs to read the latest activeParagraph, and a guard to prevent double-firing.
+  const handlePageAudioFinished = useCallback(() => {
+    // Prevent double-advance if the listener fires twice before React re-renders
+    if (isAdvancingRef.current) return;
+
+    const current = activeParagraphRef.current;
+    if (current >= storyLength) {
+      setIsPlaying(false);
       return;
     }
 
-    const next = activeParagraph + 1;
+    isAdvancingRef.current = true;
+    const next = current + 1;
     setActiveParagraph(next);
     onProgress(next + 1, false);
+    setIsPlaying(true);
+  }, [storyLength, setActiveParagraph, onProgress]);
+
+  const handleManualNavigation = (direction: "next" | "prev") => {
+    // Manual navigation pauses audio
+    if (isPlaying) {
+      setIsPlaying(false);
+    }
+
+    if (direction === "next") {
+      if (isLastParagraph) {
+        setCurrentlyDisplayed("endOfStoryMessage");
+        return;
+      }
+      if (!isSubscribed) {
+        setIsSubscriptionModalOpen(true);
+        return;
+      }
+      setActiveParagraph((a) => {
+        const next = a + 1;
+        onProgress(next + 1, false);
+        return next;
+      });
+    } else {
+      setActiveParagraph((a) => a - 1);
+    }
   };
 
   return (
@@ -75,9 +125,17 @@ const StoryContentContainer = ({
       {currentlyDisplayed === "story" && (
         <StoryAudioPlayer
           audioUrl={story.audioUrl}
-          textContent={story.textContent}
+          textContent={paragraphs[activeParagraph]}
+          nextPageContent={
+            activeParagraph < storyLength
+              ? paragraphs[activeParagraph + 1]
+              : null
+          }
           selectedVoice={selectedVoice}
           isSubscribed={isSubscribed}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          onPageFinished={handlePageAudioFinished}
           setIsSubscriptionModalOpen={setIsSubscriptionModalOpen}
         />
       )}
@@ -93,16 +151,14 @@ const StoryContentContainer = ({
           <View className="mt-4 flex flex-row items-center justify-between">
             <Pressable
               onPress={
-                !isFirstParagraph
-                  ? () => setActiveParagraph((a) => a - 1)
-                  : null
+                !isFirstParagraph ? () => handleManualNavigation("prev") : null
               }
               className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
             >
               {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
             </Pressable>
             <Pressable
-              onPress={handleNextParagraph}
+              onPress={() => handleManualNavigation("next")}
               className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "size-12 rounded-full bg-blue" : "size-12 rounded-full bg-blue/50"}`}
             >
               {!isLastParagraph ? (

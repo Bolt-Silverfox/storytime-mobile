@@ -12,7 +12,9 @@ const ParentsHomeScreenHeader = () => {
   const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
 
   const { data, isPending } = useGetUserProfile();
+
   if (isPending) return <ActivityIndicator size={"large"} />;
+
   const isUserSubscribed =
     data?.subscriptionStatus === "active" || data?.role === "admin";
 
@@ -45,19 +47,23 @@ const ParentsHomeScreenHeader = () => {
           {getGreeting()}
         </Text>
       </View>
-      <View className="flex flex-row items-center gap-x-3">
+      <View className="flex shrink-0 flex-row items-center gap-x-3">
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() =>
-              protectedNav.navigate("getPremium", { selected: undefined })
-            }
+            onPress={() => protectedNav.navigate("getPremium")}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              className="flex flex-row items-center gap-x-1.5 px-4 py-3"
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+                paddingHorizontal: 16,
+                paddingVertical: 12,
+              }}
             >
               <Icon name="Crown" color="white" />
               <Text className="font-[abeezee] text-white">Get Premium</Text>

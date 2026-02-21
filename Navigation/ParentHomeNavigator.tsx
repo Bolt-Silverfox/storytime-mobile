@@ -4,7 +4,7 @@ import {
 } from "@react-navigation/native-stack";
 import FunAndADventureStoriesScreen from "../screens/parents/home/FunAndAdventureStoriesScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
-import ParentsTopPicksScreen from "../screens/parents/home/ParentsTopPicksScreen";
+import TodaysTopPicksScreen from "../screens/parents/home/TodaysTopPicksScreen";
 import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
 import SeasonalStoriesScreen from "../screens/parents/home/SeasonalStoriesScreen";
 import StoriesByAgeScreen from "../screens/parents/home/StoriesByAgeScreen";
@@ -17,7 +17,7 @@ type ParentHomeNavigatorParamList = {
   topRecommendations: undefined;
   seasonalStories: undefined;
   funAndAdventureStories: undefined;
-  parentsTopPicks: undefined;
+  todaysTopPicks: undefined;
   storiesByAge: { ageGroup: AgeGroupType };
 };
 
@@ -29,7 +29,7 @@ const ParentHomeNavigator = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="homePage" component={ParentHomeScreen} />
-      <Stack.Screen name="parentsTopPicks" component={ParentsTopPicksScreen} />
+      <Stack.Screen name="todaysTopPicks" component={TodaysTopPicksScreen} />
       <Stack.Screen
         name="storiesByCategory"
         component={StoriesByCategoryScreen}

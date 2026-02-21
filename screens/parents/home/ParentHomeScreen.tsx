@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { ScrollView, View } from "react-native";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
-import ParentsTopPicksComponent from "../../../components/parents/ParentTopPicsComponent";
+import TodaysTopPicksComponent from "../../../components/parents/TodaysTopPicksComponent";
 import ParentsTopRecommendations from "../../../components/parents/ParentTopRecommendations";
 import SeasonalStoriesComponent from "../../../components/parents/SeasonalStoriesComponent";
 import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeComponent";
@@ -59,7 +59,7 @@ const ParentHomeScreen = () => {
         >
           <StoriesByAgeComponent />
           <ParentsTopRecommendations />
-          <ParentsTopPicksComponent />
+          <TodaysTopPicksComponent />
           <SeasonalStoriesComponent />
           <FunAndAdventuresComponent />
           <StoryCategoriesList />

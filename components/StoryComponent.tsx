@@ -6,6 +6,7 @@ import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import queryStoriesQuota from "../hooks/tanstack/queryHooks/queryStoriesQuota";
+import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { StoryModes } from "../types";
@@ -32,12 +33,19 @@ const StoryComponent = ({
   const [showLimitModal, setShowLimitModal] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
+  const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
   const { data: user } = useGetUserProfile();
   const { data: quota } = useQuery(queryStoriesQuota(user?.id));
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
   });
+
+  useEffect(() => {
+    if (preferredVoice?.name) {
+      setSelectedVoice(preferredVoice.name.toUpperCase());
+    }
+  }, [preferredVoice]);
 
   useEffect(() => {
     if (data === null) {

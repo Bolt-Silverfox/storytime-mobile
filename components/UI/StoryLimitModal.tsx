@@ -9,10 +9,12 @@ import {
   Text,
   View,
 } from "react-native";
-import { subscriptionBenefits, subscriptionOptions } from "../../data";
+import { subscriptionBenefits } from "../../data";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import CustomModal, { CustomModalProps } from "../modals/CustomModal";
 import CustomButton from "./CustomButton";
+import SubscriptionOptions from "../SubscriptionOptions";
+import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose" | "maxHeight"> & {
   used: number | undefined;
@@ -30,6 +32,13 @@ const StoryLimitModal = ({
   const [selectedPlan, setSelectedPlan] = useState<"Monthly" | "Yearly" | null>(
     null
   );
+  const {
+    isLoading,
+    errorMessage,
+    subscriptions,
+    handlePurchase,
+    getPlanName,
+  } = useSubscribeIAP(selectedPlan);
 
   return (
     <CustomModal maxHeight={maxHeight} isOpen={isOpen} onClose={onClose}>
@@ -85,38 +94,19 @@ const StoryLimitModal = ({
               experience, with the voice type you choose for them.
             </Text>
           </View>
-          <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-2">
-            {subscriptionOptions.map((subscription) => {
-              const isSelected = selectedPlan === subscription.name;
 
-              return (
-                <Pressable
-                  key={subscription.name}
-                  onPress={() => setSelectedPlan(subscription.name)}
-                  className={`  flex flex-1 flex-row rounded-[20px] p-6 ${isSelected ? "border-2 border-primary" : "border border-border-light"}`}
-                >
-                  <View className="flex flex-1 flex-row items-center gap-x-3">
-                    <View
-                      className={`
-                      flex h-6 w-6 items-center justify-center rounded-full border-2
-                      ${isSelected ? "border-primary" : "border-gray-300"}
-                      `}
-                    >
-                      {isSelected && (
-                        <View className="h-3 w-3 rounded-full bg-primary" />
-                      )}
-                    </View>
-                    <Text className="font-[quilka] text-2xl text-black">
-                      $ {subscription.price}
-                    </Text>
-                  </View>
-                  <Text className="font-[abeezee] text-[18px] leading-6 text-black">
-                    {subscription.name} Plan
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
+          {errorMessage && (
+            <Text className="text-center font-[abeezee] text-xl text-red-700">
+              {errorMessage}
+            </Text>
+          )}
+          <SubscriptionOptions
+            isLoading={isLoading}
+            getPlanName={getPlanName}
+            selectedPlan={selectedPlan}
+            setSelectedPlan={setSelectedPlan}
+            subscriptions={subscriptions}
+          />
 
           <View
             aria-labelledby="subscription modal call to action buttons"
@@ -125,10 +115,7 @@ const StoryLimitModal = ({
             <CustomButton
               ariaLabel="Subscribe button"
               text="Subscribe"
-              onPress={() => {
-                navigator.navigate("getPremium", { selected: selectedPlan });
-                onClose();
-              }}
+              onPress={handlePurchase}
               disabled={!selectedPlan}
             />
             <CustomButton

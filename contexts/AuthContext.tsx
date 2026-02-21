@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
+import { cleanupPushNotifications } from "../utils/notifications";
 import {
   createContext,
   Dispatch,
@@ -239,6 +240,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const logout = useCallback(async () => {
     try {
+      // Unregister push notifications first (while we still have auth token)
+      await cleanupPushNotifications();
+
       await Promise.all([
         secureTokenStorage.clearTokens(),
         AsyncStorage.removeItem("user"),
