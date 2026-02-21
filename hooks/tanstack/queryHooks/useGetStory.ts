@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import apiFetch from "../../../apiFetch";
+import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse, Story } from "../../../types";
 
@@ -15,6 +15,7 @@ const queryGetStory = (storyId: string) => {
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err: unknown) {
+        if (err instanceof ApiError) throw err;
         const message =
           err instanceof Error ? err.message : "Unexpected error, try again";
         throw new Error(message);

@@ -25,6 +25,7 @@ import { secondsToMinutes } from "../../../utils/utils";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import Entypo from "@expo/vector-icons/Entypo";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
@@ -40,8 +41,10 @@ const ChildStoryDetails = () => {
     queryGetStory(params.storyId)
   );
   const { data: user } = useGetUserProfile();
+  const { data: quota } = useGetStoryQuota();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
+  const hasReachedLimit = !isPremium && (quota?.hasReachedLimit ?? false);
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -180,16 +183,30 @@ const ChildStoryDetails = () => {
           <StoryDetailsCTA setShowShareModal={setShowShareModal} story={data} />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          <CustomButton
-            onPress={() =>
-              navigator.navigate("readStory", {
-                storyId: params.storyId,
-                mode: storyMode,
-              })
-            }
-            text="Start Reading"
-            disabled={!storyMode}
-          />
+          {!isPremium && quota && !hasReachedLimit && (
+            <Text className="py-2 text-center font-[abeezee] text-xs text-text">
+              {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
+              remaining
+            </Text>
+          )}
+          {hasReachedLimit ? (
+            <CustomButton
+              onPress={() => setIsSubscriptionModalOpen(true)}
+              text="Subscribe to Read"
+              ariaLabel="Subscribe to read more stories"
+            />
+          ) : (
+            <CustomButton
+              onPress={() =>
+                navigator.navigate("readStory", {
+                  storyId: params.storyId,
+                  mode: storyMode,
+                })
+              }
+              text="Start Reading"
+              disabled={!storyMode}
+            />
+          )}
         </View>
         <AboutStoryModesModal
           isOpen={showAboutModal}

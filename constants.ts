@@ -10,6 +10,7 @@ const SUBSCRIPTION_IDS = [
 const QUERY_KEYS = {
   GET_SUBSCRIPTION_STATUS: "paymentStatus",
   GET_USER_PROFILE: "userProfile",
+  GET_STORY_QUOTA: "storyQuota",
 } as const;
 
 /** Maximum image upload size in bytes (5 MB), matching backend limit. */

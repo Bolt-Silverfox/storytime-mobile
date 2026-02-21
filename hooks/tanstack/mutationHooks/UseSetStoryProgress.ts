@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
 
@@ -50,6 +50,9 @@ const useSetStoryProgress = ({
       });
       queryClient.invalidateQueries({
         queryKey: ["library", "completedStories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
       onSuccess?.();
     },

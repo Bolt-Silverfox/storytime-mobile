@@ -42,6 +42,9 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         queryClient.refetchQueries({
           queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
         });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
+        });
       } catch (err) {
         if (__DEV__)
           console.error("Verification failed, NOT finishing transaction", err);
