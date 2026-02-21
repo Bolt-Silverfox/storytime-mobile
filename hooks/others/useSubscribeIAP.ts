@@ -14,7 +14,7 @@ import useAuth from "../../contexts/AuthContext";
 
 const useSubscribeIAP = (
   selectedPlan: SubscriptionPlan,
-  onSubscribed?: () => void,
+  onSubscribed?: () => void
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");

@@ -41,10 +41,11 @@ const ChildStoryDetails = () => {
     queryGetStory(params.storyId)
   );
   const { data: user } = useGetUserProfile();
-  const { data: quota } = useGetStoryQuota();
+  const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
-  const hasReachedLimit = !isPremium && (quota?.hasReachedLimit ?? false);
+  const hasReachedLimit =
+    !isPremium && !isQuotaFetching && (quota?.hasReachedLimit ?? false);
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -204,6 +205,7 @@ const ChildStoryDetails = () => {
                 })
               }
               text="Start Reading"
+              ariaLabel="Start reading this story"
             />
           )}
         </View>
