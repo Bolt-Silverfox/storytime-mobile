@@ -8,8 +8,6 @@ import {
   useState,
 } from "react";
 import { Pressable, Text, View } from "react-native";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
-import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -18,7 +16,6 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
-import SubscriptionModal from "./modals/SubscriptionModal";
 
 type PropTypes = {
   story: Story;
@@ -45,14 +42,12 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
 }: PropTypes) => {
-  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
-  const { data } = useGetUserProfile();
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
 
@@ -62,10 +57,6 @@ const StoryContentContainer = ({
     // Reset the advancing guard once React has committed the new page
     isAdvancingRef.current = false;
   }, [activeParagraph]);
-
-  const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -106,10 +97,6 @@ const StoryContentContainer = ({
         setCurrentlyDisplayed("endOfStoryMessage");
         return;
       }
-      if (!isSubscribed) {
-        setIsSubscriptionModalOpen(true);
-        return;
-      }
       setActiveParagraph((a) => {
         const next = a + 1;
         onProgress(next + 1, false);
@@ -132,11 +119,9 @@ const StoryContentContainer = ({
               : null
           }
           selectedVoice={selectedVoice}
-          isSubscribed={isSubscribed}
           isPlaying={isPlaying}
           setIsPlaying={setIsPlaying}
           onPageFinished={handlePageAudioFinished}
-          setIsSubscriptionModalOpen={setIsSubscriptionModalOpen}
           storyId={story.id}
         />
       )}
@@ -160,7 +145,7 @@ const StoryContentContainer = ({
             </Pressable>
             <Pressable
               onPress={() => handleManualNavigation("next")}
-              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "size-12 rounded-full bg-blue" : "size-12 rounded-full bg-blue/50"}`}
+              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
             >
               {!isLastParagraph ? (
                 <Icon name="SkipForward" color="white" />
@@ -207,10 +192,6 @@ const StoryContentContainer = ({
         isOpen={currentlyDisplayed === "endOfQuizMessage"}
         readAgain={readAgain}
         storyTitle={story.title}
-      />
-      <SubscriptionModal
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
       />
     </View>
   );
