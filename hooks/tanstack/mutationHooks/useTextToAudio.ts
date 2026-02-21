@@ -3,29 +3,18 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
-import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
 const useTextToAudio = (params: {
   content: string;
   voiceId: string;
   storyId: string;
 }) => {
-  const { data } = useGetUserProfile();
-
-  const isSubscribed =
-    data?.subscriptionStatus === "active" || data?.role === "admin";
-
   return useQuery({
-    queryKey: ["textToSpeech", params.storyId, params.content, params.voiceId, isSubscribed],
+    queryKey: ["textToSpeech", params.storyId, params.content, params.voiceId],
     staleTime: Infinity,
     enabled: !!params.content && !!params.voiceId && !!params.storyId,
     queryFn: async () =>
-      await textToSpeech(
-        params.voiceId,
-        params.content,
-        params.storyId,
-        isSubscribed
-      ),
+      await textToSpeech(params.voiceId, params.content, params.storyId),
     select: (res) => res?.data,
   });
 };
@@ -35,10 +24,8 @@ export default useTextToAudio;
 const textToSpeech = async (
   voiceId: string,
   content: string,
-  storyId: string,
-  isSubscribed: boolean
+  storyId: string
 ) => {
-  if (!isSubscribed) return { data: { audioUrl: null, voiceId: null } };
   try {
     const request = await apiFetch(`${BASE_URL}/voice/story/audio`, {
       method: "POST",
