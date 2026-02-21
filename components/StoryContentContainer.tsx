@@ -137,6 +137,7 @@ const StoryContentContainer = ({
           setIsPlaying={setIsPlaying}
           onPageFinished={handlePageAudioFinished}
           setIsSubscriptionModalOpen={setIsSubscriptionModalOpen}
+          storyId={story.id}
         />
       )}
       {currentlyDisplayed === "story" && (
