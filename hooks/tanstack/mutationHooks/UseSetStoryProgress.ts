@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
 
@@ -36,10 +36,12 @@ const useSetStoryProgress = ({
       });
       const response = await request.json();
       if (!response.success) {
-        Alert.alert(response.message ?? "Unexpected error, try again");
-        return;
+        throw new Error(response.message ?? "Unexpected error, try again");
       }
       return response;
+    },
+    onError: (err: Error) => {
+      Alert.alert(err.message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -50,6 +52,9 @@ const useSetStoryProgress = ({
       });
       queryClient.invalidateQueries({
         queryKey: ["library", "completedStories"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
       onSuccess?.();
     },

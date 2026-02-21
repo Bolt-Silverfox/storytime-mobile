@@ -8,9 +8,11 @@ import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
-type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose">;
+type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose"> & {
+  onSubscribed?: () => void;
+};
 
-const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
+const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const {
     isLoading,
@@ -18,7 +20,7 @@ const SubscriptionModal = ({ isOpen, onClose }: PropTypes) => {
     subscriptions,
     handlePurchase,
     getPlanName,
-  } = useSubscribeIAP(selectedPlan);
+  } = useSubscribeIAP(selectedPlan, onSubscribed);
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>

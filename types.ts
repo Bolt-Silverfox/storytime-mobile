@@ -306,6 +306,14 @@ type NotificationsResponse = {
   total: number;
 };
 
+type StoryQuota = {
+  limit: number;
+  used: number;
+  remaining: number;
+  hasReachedLimit: boolean;
+  bonusStories: number;
+};
+
 type DeviceTokenResponse = {
   id: string;
   userId: string;
@@ -343,5 +351,6 @@ export type {
   Notification,
   NotificationsResponse,
   DeviceTokenResponse,
+  StoryQuota,
 };
 export { ageGroups };
