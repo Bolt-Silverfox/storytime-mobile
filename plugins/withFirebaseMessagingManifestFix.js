@@ -13,17 +13,24 @@ const path = require("path");
  */
 
 function patchManifestXml(xml) {
+  // Order-agnostic: match <meta-data> with target android:name anywhere in the element
   xml = xml.replace(
-    /(<meta-data\s+android:name="com\.google\.firebase\.messaging\.default_notification_channel_id"\s+android:value="[^"]*")(\s*\/?>)/,
-    '$1 tools:replace="android:value"$2'
+    /(<meta-data\b[^>]*\bandroid:name="com\.google\.firebase\.messaging\.default_notification_channel_id"[^>]*?)(\s*\/?>)/,
+    (m, body, close) =>
+      body.includes("tools:replace")
+        ? m
+        : `${body} tools:replace="android:value"${close}`
   );
   xml = xml.replace(
-    /(<meta-data\s+android:name="com\.google\.firebase\.messaging\.default_notification_color"\s+android:resource="[^"]*")(\s*\/?>)/,
-    '$1 tools:replace="android:resource"$2'
+    /(<meta-data\b[^>]*\bandroid:name="com\.google\.firebase\.messaging\.default_notification_color"[^>]*?)(\s*\/?>)/,
+    (m, body, close) =>
+      body.includes("tools:replace")
+        ? m
+        : `${body} tools:replace="android:resource"${close}`
   );
   if (xml.includes("tools:replace") && !xml.includes("xmlns:tools=")) {
     xml = xml.replace(
-      /(<manifest\s+xmlns:android="[^"]*")/,
+      /(<manifest\b)/,
       '$1\n    xmlns:tools="http://schemas.android.com/tools"'
     );
   }

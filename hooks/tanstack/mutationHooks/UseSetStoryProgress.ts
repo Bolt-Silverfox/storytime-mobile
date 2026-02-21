@@ -36,10 +36,12 @@ const useSetStoryProgress = ({
       });
       const response = await request.json();
       if (!response.success) {
-        Alert.alert(response.message ?? "Unexpected error, try again");
-        return;
+        throw new Error(response.message ?? "Unexpected error, try again");
       }
       return response;
+    },
+    onError: (err: Error) => {
+      Alert.alert(err.message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

@@ -2,22 +2,28 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Modal, Text, View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import SubscriptionModal from "./SubscriptionModal";
 import CustomButton from "../UI/CustomButton";
 
 type PropTypes = {
   visible: boolean;
-  onClose: () => void;
+  storyId: string;
 };
 
-const StoryLimitModal = ({ visible, onClose }: PropTypes) => {
+const StoryLimitModal = ({ visible, storyId }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const queryClient = useQueryClient();
   const [showSubscription, setShowSubscription] = useState(false);
 
   const handleGoHome = () => {
-    onClose();
     navigator.reset({ index: 0, routes: [{ name: "parents" }] });
+  };
+
+  const handleSubscribed = () => {
+    setShowSubscription(false);
+    queryClient.invalidateQueries({ queryKey: ["story", storyId] });
   };
 
   return (
@@ -26,7 +32,7 @@ const StoryLimitModal = ({ visible, onClose }: PropTypes) => {
         visible={visible}
         transparent
         animationType="fade"
-        onRequestClose={onClose}
+        onRequestClose={handleGoHome}
       >
         <View className="flex flex-1 items-center justify-center bg-black/50 px-6">
           <View className="w-full max-w-sm rounded-3xl bg-white px-6 py-10">
@@ -46,6 +52,7 @@ const StoryLimitModal = ({ visible, onClose }: PropTypes) => {
                 <CustomButton
                   ariaLabel="Subscribe for unlimited stories"
                   text="Subscribe"
+                  disabled={showSubscription}
                   onPress={() => {
                     setShowSubscription(true);
                   }}
@@ -64,6 +71,7 @@ const StoryLimitModal = ({ visible, onClose }: PropTypes) => {
       <SubscriptionModal
         isOpen={showSubscription}
         onClose={() => setShowSubscription(false)}
+        onSubscribed={handleSubscribed}
       />
     </>
   );

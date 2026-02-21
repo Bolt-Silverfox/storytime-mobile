@@ -48,7 +48,7 @@ const StoryComponent = ({
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
     if (error instanceof ApiError && error.status === 403) {
-      return <StoryLimitModal visible onClose={() => navigator.goBack()} />;
+      return <StoryLimitModal visible storyId={storyId} />;
     }
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }

@@ -8,16 +8,14 @@ const queryStoryQuota = () =>
   queryOptions({
     queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
     queryFn: async () => {
-      try {
-        const request = await apiFetch(`${BASE_URL}/stories/user/quota`, {
-          method: "GET",
-        });
-        const response: QueryResponse<StoryQuota> = await request.json();
-        if (!response.success) throw new Error(response.message);
-        return response;
-      } catch (err) {
+      const request = await apiFetch(`${BASE_URL}/stories/user/quota`, {
+        method: "GET",
+      }).catch((err) => {
         throw new Error(getErrorMessage(err));
-      }
+      });
+      const response: QueryResponse<StoryQuota> = await request.json();
+      if (!response.success) throw new Error(response.message);
+      return response;
     },
     staleTime: 5 * 60 * 1000,
     select: (res) => res.data,
