@@ -9,12 +9,15 @@ import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVo
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
 import { StoryModes } from "../types";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
+import { ApiError } from "../apiFetch";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
+import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 
 const StoryComponent = ({
   storyId,
@@ -31,6 +34,7 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
+  const { data: quota } = useGetStoryQuota();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   useEffect(() => {
@@ -44,8 +48,12 @@ const StoryComponent = ({
   });
 
   if (isPending) return <LoadingOverlay visible />;
-  if (error)
+  if (error) {
+    if (error instanceof ApiError && error.status === 403) {
+      return <StoryLimitModal visible storyId={storyId} quota={quota} />;
+    }
     return <ErrorComponent message={error.message} refetch={refetch} />;
+  }
 
   const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
 
