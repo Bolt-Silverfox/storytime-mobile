@@ -15,6 +15,7 @@ const StoryAudioPlayer = ({
   setIsPlaying,
   onPageFinished,
   setIsSubscriptionModalOpen,
+  storyId,
 }: {
   audioUrl: string;
   textContent: string;
@@ -25,17 +26,20 @@ const StoryAudioPlayer = ({
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
   setIsSubscriptionModalOpen: Dispatch<SetStateAction<boolean>>;
+  storyId: string;
 }) => {
   const voiceId = selectedVoice || "";
   const { data, isPending } = useTextToAudio({
     content: textContent,
     voiceId,
+    storyId,
   });
 
   // Prefetch next page audio so it's cached and ready when we advance
   useTextToAudio({
     content: nextPageContent || "",
     voiceId,
+    storyId,
   });
 
   const currentUrl = data?.audioUrl ?? audioUrl;
