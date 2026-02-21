@@ -17,6 +17,7 @@ import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 
 const StoryComponent = ({
   storyId,
@@ -33,6 +34,7 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
+  const { data: quota } = useGetStoryQuota();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   useEffect(() => {
@@ -48,7 +50,7 @@ const StoryComponent = ({
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
     if (error instanceof ApiError && error.status === 403) {
-      return <StoryLimitModal visible storyId={storyId} />;
+      return <StoryLimitModal visible storyId={storyId} quota={quota} />;
     }
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }

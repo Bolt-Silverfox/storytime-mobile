@@ -204,7 +204,6 @@ const ChildStoryDetails = () => {
                 })
               }
               text="Start Reading"
-              disabled={!storyMode}
             />
           )}
         </View>

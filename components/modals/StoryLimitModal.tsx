@@ -4,15 +4,17 @@ import { useState } from "react";
 import { Modal, Text, View } from "react-native";
 import { useQueryClient } from "@tanstack/react-query";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import { StoryQuota } from "../../types";
 import SubscriptionModal from "./SubscriptionModal";
 import CustomButton from "../UI/CustomButton";
 
 type PropTypes = {
   visible: boolean;
   storyId: string;
+  quota?: StoryQuota;
 };
 
-const StoryLimitModal = ({ visible, storyId }: PropTypes) => {
+const StoryLimitModal = ({ visible, storyId, quota }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const queryClient = useQueryClient();
   const [showSubscription, setShowSubscription] = useState(false);
@@ -42,7 +44,9 @@ const StoryLimitModal = ({ visible, storyId }: PropTypes) => {
               </View>
               <View className="flex flex-col gap-y-2">
                 <Text className="text-center font-[quilka] text-2xl text-black">
-                  You've read all your free stories!
+                  {quota
+                    ? `You've read all ${quota.limit} free stories!`
+                    : "You've read all your free stories!"}
                 </Text>
                 <Text className="text-center font-[abeezee] text-sm text-text">
                   Subscribe for unlimited access to all stories and features.
