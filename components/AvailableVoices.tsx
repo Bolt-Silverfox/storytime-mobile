@@ -86,8 +86,8 @@ const AvailableVoices = ({
               className="size-[70px] self-center"
             />
             <VoiceBadge isDefault={isDefault} isPremium={isPremium} />
-            <Text className="mt-3 self-center font-[abeezee] text-2xl capitalize text-black">
-              {voice.name.toLowerCase()}
+            <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
+              {voice.displayName ?? voice.name}
             </Text>
             <View className="flex flex-row items-center justify-between gap-x-4">
               <Pressable

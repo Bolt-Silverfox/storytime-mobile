@@ -48,6 +48,7 @@ const StoryLimitModal = ({
   const {
     isLoading,
     errorMessage,
+    isUserCancelled,
     subscriptions,
     handlePurchase,
     getPlanName,
@@ -216,7 +217,7 @@ const StoryLimitModal = ({
                 style={{
                   fontFamily: "abeezee",
                   fontSize: 14,
-                  color: "#B71C1C",
+                  color: isUserCancelled ? "#616161" : "#B71C1C",
                   textAlign: "center",
                 }}
               >
