@@ -42,7 +42,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   // Handle non-401 errors with proper validation
   if (response.status !== 401) {
-    if (!response.ok) {
+    if (!response.ok && response.status !== 403) {
       throw new ApiError(
         `Request failed with status ${response.status}`,
         response.status

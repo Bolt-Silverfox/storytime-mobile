@@ -1,5 +1,5 @@
 import { queryOptions, useQueryClient } from "@tanstack/react-query";
-import apiFetch from "../../../apiFetch";
+import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, Story } from "../../../types";
@@ -17,7 +17,6 @@ const useGetStory = (storyId: string) => {
           method: "GET",
         });
         const response: QueryResponse<Story> = await request.json();
-
         if (response.statusCode === 403) {
           return null;
         }
@@ -27,6 +26,9 @@ const useGetStory = (storyId: string) => {
         });
         return response;
       } catch (err: unknown) {
+        if (err instanceof ApiError) {
+          throw new ApiError(err.message, err.status);
+        }
         throw new Error(getErrorMessage(err));
       }
     },
