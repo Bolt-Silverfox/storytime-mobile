@@ -18,6 +18,7 @@ const useSubscribeIAP = (
 ) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [isUserCancelled, setIsUserCancelled] = useState(false);
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -61,7 +62,11 @@ const useSubscribeIAP = (
       }
     },
     onPurchaseError: (error) => {
-      if (error.code !== ErrorCode.UserCancelled) {
+      if (error.code === ErrorCode.UserCancelled) {
+        setIsUserCancelled(true);
+        setErrorMessage("No worries! You can subscribe anytime.");
+      } else {
+        setIsUserCancelled(false);
         if (__DEV__) console.error("Subscription failed", error);
         setErrorMessage(error.message ?? "Unexpected error, try again");
       }
@@ -125,6 +130,7 @@ const useSubscribeIAP = (
   const handlePurchase = async () => {
     try {
       setErrorMessage("");
+      setIsUserCancelled(false);
       if (!selectedPlan) throw new Error("Select a valid plan");
       const sub = subscriptions.find((s) => {
         const id = s.id;
@@ -148,6 +154,7 @@ const useSubscribeIAP = (
   return {
     isLoading,
     errorMessage,
+    isUserCancelled,
     subscriptions,
     handlePurchase,
     getPlanName,
