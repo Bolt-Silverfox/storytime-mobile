@@ -30,11 +30,16 @@ const useSubscribeIAP = (
   } = useIAP({
     onPurchaseSuccess: async (purchase) => {
       const { store, productId, purchaseToken, transactionId } = purchase;
+      const token = store === "apple" ? transactionId : purchaseToken;
+      if (!token) {
+        setErrorMessage("Purchase token missing. Please try again.");
+        return;
+      }
       try {
         await verifyPurchase({
           platform: store,
           productId: productId,
-          purchaseToken: store === "apple" ? transactionId : purchaseToken,
+          purchaseToken: token,
           packageName: BUNDLE_IDENTIFIER,
         });
 
@@ -100,7 +105,7 @@ const useSubscribeIAP = (
   const verifyPurchase = async (params: {
     platform: string;
     productId: string;
-    purchaseToken: string | null | undefined;
+    purchaseToken: string;
     packageName: string;
   }) => {
     try {

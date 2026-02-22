@@ -7,7 +7,7 @@ export default function LoadingIcon() {
   const starShimmer = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const bookLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(bookPulse, {
           toValue: 1,
@@ -21,10 +21,10 @@ export default function LoadingIcon() {
           easing: Easing.inOut(Easing.ease),
           useNativeDriver: true,
         }),
-      ]),
-    ).start();
+      ])
+    );
 
-    Animated.loop(
+    const starLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(starShimmer, {
           toValue: 1,
@@ -38,8 +38,16 @@ export default function LoadingIcon() {
           easing: Easing.out(Easing.quad),
           useNativeDriver: true,
         }),
-      ]),
-    ).start();
+      ])
+    );
+
+    bookLoop.start();
+    starLoop.start();
+
+    return () => {
+      bookLoop.stop();
+      starLoop.stop();
+    };
   }, [bookPulse, starShimmer]);
 
   const bookScale = bookPulse.interpolate({
