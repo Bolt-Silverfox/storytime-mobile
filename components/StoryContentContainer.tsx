@@ -4,6 +4,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -66,7 +67,10 @@ const StoryContentContainer = ({
     data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
     data?.role === USER_ROLES.admin;
 
-  const paragraphs = splitByWordCountPreservingSentences(story.textContent, 30);
+  const paragraphs = useMemo(
+    () => splitByWordCountPreservingSentences(story.textContent, 30),
+    [story.textContent]
+  );
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
