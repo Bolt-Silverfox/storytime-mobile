@@ -45,6 +45,7 @@ export default function ResetParentPassword() {
 
   const onResetPassword = async () => {
     setErrors({});
+    setError("");
     const result = resetPasswordSchema.safeParse({
       oldPassword,
       newPassword,

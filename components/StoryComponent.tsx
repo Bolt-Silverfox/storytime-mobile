@@ -107,7 +107,7 @@ const StoryComponent = ({
           />
         </ScrollView>
       ) : (
-        <StoryLimitModal visible={true} storyId={storyId} quota={quota} />
+        <StoryLimitModal visible={true} storyId={storyId} />
       )}
     </SafeAreaWrapper>
   );

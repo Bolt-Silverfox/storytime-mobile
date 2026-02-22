@@ -15,6 +15,7 @@ const useGetStory = (storyId: string) => {
       try {
         const request = await apiFetch(`${BASE_URL}/stories/${storyId}`, {
           method: "GET",
+          passThroughStatuses: [403],
         });
         const response: QueryResponse<Story> = await request.json();
         if (response.statusCode === 403) {
