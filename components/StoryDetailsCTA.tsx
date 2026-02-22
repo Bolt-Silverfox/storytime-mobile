@@ -1,28 +1,20 @@
-import { Pressable, Text, View } from "react-native";
-import Icon from "./Icon";
-import { Story } from "../types";
-import { Dispatch, SetStateAction } from "react";
-import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Dispatch, SetStateAction } from "react";
+import { Pressable, Text, View } from "react-native";
+import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
+import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
+import { FavouriteStory } from "../types";
+import Icon from "./Icon";
 
 type PropTypes = {
-  story: Story;
+  story: FavouriteStory;
   setShowShareModal: Dispatch<SetStateAction<boolean>>;
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
   const { data } = useSuspenseQuery(useQueryParentsFavourites());
   const { mutate: onToggle } = useToggleFavourites({
-    story: {
-      id: story.id,
-      storyId: story.id,
-      title: story.title,
-      description: story.description,
-      coverImageUrl: story.coverImageUrl,
-      createdAt: story.createdAt,
-      ageRange: `${story.ageMin}-${story.ageMax}`,
-    },
+    story,
   });
 
   const isStoryLiked = (storyId: string) => {

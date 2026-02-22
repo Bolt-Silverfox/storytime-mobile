@@ -13,13 +13,27 @@ const FavouriteStoryItem = ({
   setActiveStory: Dispatch<SetStateAction<null | FavouriteStory>>;
 }) => {
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const [ageMin, ageMax] = story.ageRange.split("-");
 
   const onNavigate = () => {
     protectedNavigator.navigate("stories", {
       screen: "childStoryDetails",
-      params: { storyId: story.storyId },
+      params: {
+        story: {
+          ageMin: Number(ageMin),
+          ageMax: Number(ageMax),
+          categories: story.categories,
+          coverImageUrl: story.coverImageUrl,
+          description: story.description,
+          durationSeconds: story.durationSeconds,
+          title: story.title,
+          id: story.storyId,
+          createdAt: story.createdAt,
+        },
+      },
     });
   };
+
   return (
     <Pressable
       onPress={onNavigate}

@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { View } from "react-native";
+import { Keyboard, View } from "react-native";
 import { z } from "zod";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
@@ -45,6 +45,7 @@ export default function ResetParentPassword() {
 
   const onResetPassword = async () => {
     setErrors({});
+    setError("");
     const result = resetPasswordSchema.safeParse({
       oldPassword,
       newPassword,
@@ -65,7 +66,10 @@ export default function ResetParentPassword() {
     changePassword({
       oldPassword,
       newPassword,
-      onSuccess: () => setSuccess(true),
+      onSuccess: () => {
+        Keyboard.dismiss();
+        setSuccess(true);
+      },
       setErrorCb: setError,
     });
   };

@@ -1,8 +1,8 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
-import { useQueryClient } from "@tanstack/react-query";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { QUERY_KEYS } from "../../constants";
 import { subscriptionBenefits } from "../../data";

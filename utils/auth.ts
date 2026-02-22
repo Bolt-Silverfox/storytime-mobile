@@ -6,9 +6,6 @@ const auth = {
     const response = await apiFetch(`${BASE_URL}/auth/logout`, {
       method: "POST",
     });
-    if (!response.ok) {
-      throw new Error(response.statusText ?? "Unexpected error");
-    }
     return await response.json();
   },
 
@@ -96,9 +93,7 @@ const auth = {
   setInAppPin: async (pin: string) => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      passThroughStatuses: [400],
       body: JSON.stringify({ pin }),
     });
     return await response.json();
@@ -106,9 +101,7 @@ const auth = {
   verifyInAppPin: async (pin: string) => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin/verify`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      passThroughStatuses: [400],
       body: JSON.stringify({ pin }),
     });
     return await response.json();
@@ -120,19 +113,14 @@ const auth = {
   }) => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin/reset`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
+      passThroughStatuses: [400],
     });
     return await response.json();
   },
   requestPinReset: async () => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin/request-reset`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
     return await response.json();
   },
@@ -143,30 +131,24 @@ const auth = {
   }) => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin/reset-with-otp`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify(data),
+      passThroughStatuses: [400],
     });
     return await response.json();
   },
   validatePinResetOtp: async (otp: string) => {
     const response = await apiFetch(`${BASE_URL}/user/me/pin/validate-otp`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ otp }),
+      passThroughStatuses: [400],
     });
     return await response.json();
   },
   changePassword: async (oldPassword: string, newPassword: string) => {
     const response = await apiFetch(`${BASE_URL}/auth/change-password`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
       body: JSON.stringify({ oldPassword, newPassword }),
+      passThroughStatuses: [400],
     });
     return await response.json();
   },
