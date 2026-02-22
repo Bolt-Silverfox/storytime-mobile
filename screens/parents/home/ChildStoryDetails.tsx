@@ -48,8 +48,6 @@ const ChildStoryDetails = () => {
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
-  const hasReachedLimit =
-    !isPremium && !isQuotaFetching && (quota?.hasReachedLimit ?? false);
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
@@ -62,7 +60,6 @@ const ChildStoryDetails = () => {
   };
 
   const duration = secondsToMinutes(durationSeconds);
-  console.log("quota", quota);
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
@@ -199,30 +196,16 @@ const ChildStoryDetails = () => {
           />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          {!isPremium && quota && !hasReachedLimit && (
-            <Text className="py-2 text-center font-[abeezee] text-xs text-text">
-              {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
-              remaining
-            </Text>
-          )}
-          {hasReachedLimit ? (
-            <CustomButton
-              onPress={() => setIsSubscriptionModalOpen(true)}
-              text="Subscribe to Read"
-              ariaLabel="Subscribe to read more stories"
-            />
-          ) : (
-            <CustomButton
-              onPress={() =>
-                navigator.navigate("readStory", {
-                  storyId: id,
-                  mode: storyMode,
-                })
-              }
-              text="Start Reading"
-              ariaLabel="Start reading this story"
-            />
-          )}
+          <CustomButton
+            onPress={() =>
+              navigator.navigate("readStory", {
+                storyId: id,
+                mode: storyMode,
+              })
+            }
+            text="Start Reading"
+            ariaLabel="Start reading this story"
+          />
         </View>
         <AboutStoryModesModal
           isOpen={showAboutModal}
