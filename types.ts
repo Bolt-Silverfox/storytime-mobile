@@ -156,7 +156,7 @@ type Story = {
   ageMin: number;
   ageMax: number;
   backgroundColor: string;
-  recommend: boolean;
+  recommended: boolean;
   aiGenerated: boolean;
   difficultyLevel: number;
   wordCount: number;
@@ -215,15 +215,16 @@ type StoryBuddy = {
   deletedAt: string | null;
 };
 
-type FavouriteStory = {
-  id: string;
-  storyId: string;
-  title: string;
-  description: string;
-  coverImageUrl: string;
-  createdAt: string;
-  ageRange: string;
-};
+type FavouriteStory = Pick<
+  Story,
+  | "id"
+  | "title"
+  | "description"
+  | "coverImageUrl"
+  | "categories"
+  | "createdAt"
+  | "durationSeconds"
+> & { storyId: string; ageRange: string };
 
 type AvailableVoices = {
   id: string;
@@ -307,11 +308,13 @@ type NotificationsResponse = {
 };
 
 type StoryQuota = {
-  limit: number;
-  used: number;
-  remaining: number;
-  hasReachedLimit: boolean;
+  baseLimit: number;
   bonusStories: number;
+  isPremium: boolean;
+  remaining: number;
+  totalAllowed: number;
+  unlimited: boolean;
+  used: number;
 };
 
 type DeviceTokenResponse = {
@@ -324,6 +327,20 @@ type DeviceTokenResponse = {
   createdAt: string;
   updatedAt: string;
 };
+
+type LibraryStory = Pick<
+  Story,
+  | "id"
+  | "title"
+  | "description"
+  | "coverImageUrl"
+  | "textContent"
+  | "ageMin"
+  | "ageMax"
+  | "durationSeconds"
+  | "createdAt"
+  | "categories"
+> & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
 export type {
   User,
@@ -352,5 +369,6 @@ export type {
   NotificationsResponse,
   DeviceTokenResponse,
   StoryQuota,
+  LibraryStory,
 };
 export { ageGroups };

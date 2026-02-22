@@ -9,9 +9,10 @@ const FunAndAdventuresComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, isPending, error, refetch } = useQuery(
     queryGetStories({
-      category: "54f4d851-f796-4ce2-ba85-31082dfd7c63",
+      category: "82a7bc74-8e3d-40f5-ab44-33f738615753",
     })
   );
+
   return (
     <HomeScreenCarouselComponent
       isPending={isPending}

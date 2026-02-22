@@ -2,12 +2,25 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import { StoryModes } from "../types";
+import { Story, StoryModes } from "../types";
 import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
 import ReadStoryScreen from "../screens/parents/home/ReadStoryScreen";
 
 type StoryNavigatorParamList = {
-  childStoryDetails: { storyId: string };
+  childStoryDetails: {
+    story: Pick<
+      Story,
+      | "ageMax"
+      | "ageMin"
+      | "durationSeconds"
+      | "categories"
+      | "title"
+      | "description"
+      | "coverImageUrl"
+      | "id"
+      | "createdAt"
+    >;
+  };
   readStory: { storyId: string; mode: StoryModes };
 };
 type StoryNavigatorProp = NativeStackNavigationProp<StoryNavigatorParamList>;

@@ -17,7 +17,7 @@ const queryStoryQuota = () =>
       if (!response.success) throw new Error(response.message);
       return response;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: Infinity,
     select: (res) => res.data,
   });
 
