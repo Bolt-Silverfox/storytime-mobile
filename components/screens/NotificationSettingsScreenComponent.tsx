@@ -18,7 +18,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
   });
   const [discoveryContent, setDiscoveryContent] = useState({
     newStories: true,
-    weeklySummary: true,
+    weeklySummary: false,
   });
   return (
     <SafeAreaWrapper variant="solid">
@@ -40,8 +40,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={subscriptionSettings.subscriptionReminders === true}
                     onValueChange={() =>
@@ -58,8 +58,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={
                       subscriptionSettings.subscriptionStatusUpdates === true
@@ -86,8 +86,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={reminders.incompleteStoryReminder === true}
                     onValueChange={() =>
@@ -104,8 +104,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={reminders.dailyListeningReminder === true}
                     onValueChange={() =>
@@ -130,14 +130,32 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={discoveryContent.newStories === true}
                     onValueChange={() =>
                       setDiscoveryContent((s) => ({
                         ...s,
                         newStories: !s.newStories,
+                      }))
+                    }
+                  />
+                </View>
+                <View className="flex flex-row  items-center justify-between">
+                  <Text className="font-[abeezee] text-base text-black">
+                    Weekly summary
+                  </Text>
+                  <Switch
+                    className="my-3"
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
+                    thumbColor={"white"}
+                    value={discoveryContent.weeklySummary === true}
+                    onValueChange={() =>
+                      setDiscoveryContent((s) => ({
+                        ...s,
+                        weeklySummary: !s.weeklySummary,
                       }))
                     }
                   />

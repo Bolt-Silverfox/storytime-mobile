@@ -4,6 +4,7 @@ import {
   SetStateAction,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
@@ -16,11 +17,11 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
-  paragraphs: string[];
   activeParagraph: number;
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -38,7 +39,6 @@ const StoryContentContainer = ({
   isInteractive,
   setActiveParagraph,
   activeParagraph,
-  paragraphs,
   onProgress,
   selectedVoice,
 }: PropTypes) => {
@@ -57,6 +57,11 @@ const StoryContentContainer = ({
     // Reset the advancing guard once React has committed the new page
     isAdvancingRef.current = false;
   }, [activeParagraph]);
+
+  const paragraphs = useMemo(
+    () => splitByWordCountPreservingSentences(story.textContent, 30),
+    [story.textContent]
+  );
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;

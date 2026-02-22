@@ -9,8 +9,6 @@ import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProg
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
 import { StoryModes } from "../types";
-import { splitByWordCountPreservingSentences } from "../utils/utils";
-import { ApiError } from "../apiFetch";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
@@ -37,8 +35,8 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
 
   const { user } = useAuth();
-  const { data: preferredVoice } = useGetPreferredVoice();
   const { data: quota } = useGetStoryQuota();
+  const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   useEffect(() => {
@@ -55,9 +53,9 @@ const StoryComponent = ({
   // Check if we should show the quota reminder modal
   useEffect(() => {
     if (!quota || quota.isPremium || quota.unlimited) return;
-    const used = quota.used ?? 0;
-    const halfway = Math.floor((quota.totalAllowed ?? 0) / 2);
-    if (halfway > 0 && used >= halfway && (quota.remaining ?? 0) > 0) {
+    const used = quota.used;
+    const halfway = Math.floor(quota.totalAllowed / 2);
+    if (halfway > 0 && used >= halfway && quota.remaining > 0) {
       const key = getQuotaReminderKey();
       AsyncStorage.getItem(key)
         .then((seen) => {
@@ -80,13 +78,8 @@ const StoryComponent = ({
 
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
-    if (error instanceof ApiError && error.status === 403) {
-      return <StoryLimitModal visible storyId={storyId} quota={quota} />;
-    }
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }
-
-  const paragraphs = splitByWordCountPreservingSentences(data.textContent, 30);
 
   const handleProgress = (progress: number, completed: boolean) => {
     setStoryProgress({
@@ -98,51 +91,52 @@ const StoryComponent = ({
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <ScrollView contentContainerClassName="flex min-h-full">
-        <ImageBackground
-          source={{ uri: data.coverImageUrl }}
-          resizeMode="cover"
-          className="flex flex-1 flex-col p-4 pt-12 "
-        >
-          <View className="flex flex-row items-center justify-between">
-            <Pressable
-              onPress={() =>
-                navigator.reset({ index: 0, routes: [{ name: "parents" }] })
-              }
-              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-            >
-              <FontAwesome6 name="house" size={20} color="white" />
-            </Pressable>
-            <Pressable
-              onPress={() => setIsOptionsModalOpen(true)}
-              className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-            >
-              <FontAwesome6 name="ellipsis" size={20} color="white" />
-            </Pressable>
-          </View>
-          <StoryContentContainer
+      {data ? (
+        <ScrollView contentContainerClassName="flex min-h-full">
+          <ImageBackground
+            source={{ uri: data.coverImageUrl }}
+            resizeMode="cover"
+            className="flex flex-1 flex-col p-4 pt-12 "
+          >
+            <View className="flex flex-row items-center justify-between">
+              <Pressable
+                onPress={() =>
+                  navigator.reset({ index: 0, routes: [{ name: "parents" }] })
+                }
+                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+              >
+                <FontAwesome6 name="house" size={20} color="white" />
+              </Pressable>
+              <Pressable
+                onPress={() => setIsOptionsModalOpen(true)}
+                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+              >
+                <FontAwesome6 name="ellipsis" size={20} color="white" />
+              </Pressable>
+            </View>
+            <StoryContentContainer
+              selectedVoice={selectedVoice}
+              isInteractive={storyMode === "interactive"}
+              story={data}
+              activeParagraph={activeParagraph}
+              setActiveParagraph={setActiveParagraph}
+              onProgress={handleProgress}
+            />
+          </ImageBackground>
+          <SelectReadingVoiceModal
+            isOpen={isVoiceModalOpen}
+            onClose={() => setIsVoiceModalOpen(false)}
             selectedVoice={selectedVoice}
-            isInteractive={storyMode === "interactive"}
-            story={data}
-            paragraphs={paragraphs}
-            activeParagraph={activeParagraph}
-            setActiveParagraph={setActiveParagraph}
-            onProgress={handleProgress}
+            setSelectedVoice={setSelectedVoice}
           />
-        </ImageBackground>
-        <SelectReadingVoiceModal
-          isOpen={isVoiceModalOpen}
-          onClose={() => setIsVoiceModalOpen(false)}
-          selectedVoice={selectedVoice}
-          setSelectedVoice={setSelectedVoice}
-        />
-        <InStoryOptionsModal
-          handleVoiceModal={setIsVoiceModalOpen}
-          isOptionsModalOpen={isOptionsModalOpen}
-          setIsOptionsModalOpen={setIsOptionsModalOpen}
-          setActiveParagraph={setActiveParagraph}
-        />
-      </ScrollView>
+          <InStoryOptionsModal
+            handleVoiceModal={setIsVoiceModalOpen}
+            isOptionsModalOpen={isOptionsModalOpen}
+            setIsOptionsModalOpen={setIsOptionsModalOpen}
+            setActiveParagraph={setActiveParagraph}
+          />
+        </ScrollView>
+      ) : null}
       <StoryLimitModal
         visible={showQuotaReminder}
         storyId={storyId}
