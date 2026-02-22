@@ -1,22 +1,20 @@
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
+import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
+import ProgressBar from "../../components/parents/ProgressBar";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import Toast from "../../components/UI/Toast";
+import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
+import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingStories";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import {
   secondsToMinutes,
   splitByWordCountPreservingSentences,
 } from "../../utils/utils";
-import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingStories";
-import ProgressBar from "../../components/parents/ProgressBar";
-import queryGetStory from "../../hooks/tanstack/queryHooks/useGetStory";
-import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
-import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
-import Toast from "../../components/UI/Toast";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
@@ -80,7 +78,19 @@ const ParentsLibraryScreen = () => {
                   onPress={() =>
                     protectedNavigator.navigate("stories", {
                       screen: "childStoryDetails",
-                      params: { storyId: story.id },
+                      params: {
+                        story: {
+                          ageMax: story.ageMax,
+                          ageMin: story.ageMin,
+                          categories: story.categories,
+                          coverImageUrl: story.coverImageUrl,
+                          description: story.description,
+                          durationSeconds: story.durationSeconds,
+                          id: story.id,
+                          title: story.title,
+                          createdAt: story.createdAt,
+                        },
+                      },
                     })
                   }
                   className="flex flex-col rounded-xl border border-border-light p-1"
@@ -93,7 +103,9 @@ const ParentsLibraryScreen = () => {
                     <View className="flex flex-row items-center">
                       <View className="flex flex-1 flex-row items-center gap-x-px">
                         <Icon name="Dot" color="#EC0794" />
-                        <StoryCategory storyId={story.id} />
+                        <Text className="font-[abeezee] text-xs text-[#EC0794]">
+                          {story.categories[0].name}
+                        </Text>
                       </View>
                       <View className="flex flex-1 flex-row items-center gap-x-2">
                         <Icon name="Clock" size={12} color="#616161" />
@@ -159,15 +171,3 @@ export default ParentsLibraryScreen;
 
 const libraryFilters = ["ongoing", "completed"] as const;
 type LibraryFilterType = (typeof libraryFilters)[number];
-
-const StoryCategory = ({ storyId }: { storyId: string }) => {
-  const { data } = useQuery(queryGetStory(storyId));
-
-  if (!data?.categories?.length) return null;
-
-  return (
-    <Text className="font-[abeezee] text-xs text-[#EC0794]">
-      {data.categories[0].name}
-    </Text>
-  );
-};
