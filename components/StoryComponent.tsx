@@ -1,4 +1,5 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -15,6 +16,8 @@ import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
+import useAuth from "../contexts/AuthContext";
 
 const StoryComponent = ({
   storyId,
@@ -28,8 +31,11 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
+  const { user } = useAuth();
+  const { data: quota } = useGetStoryQuota();
   const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
@@ -38,6 +44,33 @@ const StoryComponent = ({
       setSelectedVoice(preferredVoice.name.toUpperCase());
     }
   }, [preferredVoice]);
+
+  const getQuotaReminderKey = () => {
+    const now = new Date();
+    return `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+  };
+
+  // Check if we should show the quota reminder modal
+  useEffect(() => {
+    if (!quota || quota.isPremium || quota.unlimited) return;
+    const used = quota.used;
+    const halfway = Math.floor(quota.totalAllowed / 2);
+    if (halfway > 0 && used >= halfway && quota.remaining > 0) {
+      const key = getQuotaReminderKey();
+      AsyncStorage.getItem(key)
+        .then((seen) => {
+          if (!seen) {
+            setShowQuotaReminder(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [quota, user?.id]);
+
+  const handleDismissQuotaReminder = () => {
+    setShowQuotaReminder(false);
+    AsyncStorage.setItem(getQuotaReminderKey(), "true").catch(() => {});
+  };
 
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
@@ -103,9 +136,14 @@ const StoryComponent = ({
             setActiveParagraph={setActiveParagraph}
           />
         </ScrollView>
-      ) : (
-        <StoryLimitModal visible={true} storyId={storyId} />
-      )}
+      ) : null}
+      <StoryLimitModal
+        visible={showQuotaReminder}
+        storyId={storyId}
+        quota={quota}
+        mode="reminder"
+        onClose={handleDismissQuotaReminder}
+      />
     </SafeAreaWrapper>
   );
 };
