@@ -40,8 +40,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={subscriptionSettings.subscriptionReminders === true}
                     onValueChange={() =>
@@ -58,8 +58,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={
                       subscriptionSettings.subscriptionStatusUpdates === true
@@ -86,8 +86,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={reminders.incompleteStoryReminder === true}
                     onValueChange={() =>
@@ -104,8 +104,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={reminders.dailyListeningReminder === true}
                     onValueChange={() =>
@@ -130,8 +130,8 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                   </Text>
                   <Switch
                     className="my-3"
-                    ios_backgroundColor={"#4807EC"}
-                    trackColor={{ true: "#4807EC" }}
+                    ios_backgroundColor="#B7C8FF"
+                    trackColor={{ true: "#4807EC", false: "#B7C8FF" }}
                     thumbColor={"white"}
                     value={discoveryContent.newStories === true}
                     onValueChange={() =>

@@ -70,19 +70,8 @@ const GroupedStoriesStoryCarousel = ({
         />
       )}
       <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">
-        {stories.map((story, index) => (
-          <StoryItem
-            index={index}
-            key={story.id}
-            onNavigate={() => {
-              navigator.navigate("stories", {
-                screen: "childStoryDetails",
-                params: { storyId: story.id },
-              });
-            }}
-            story={story}
-            isGrouped
-          />
+        {stories.map((story) => (
+          <StoryItem key={story.id} story={story} isGrouped />
         ))}
       </View>
     </ScrollView>
