@@ -90,7 +90,7 @@ const ChildStoryDetails = () => {
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
                   {duration > 0 ? duration : "<1"}{" "}
-                  {duration > 1 ? "mins" : "min"}
+                  {duration > 1 ? " mins" : " min"}
                 </Text>
               </View>
               <View className="flex flex-col gap-y-2">

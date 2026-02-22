@@ -111,7 +111,7 @@ const ParentsLibraryScreen = () => {
                         <Icon name="Clock" size={12} color="#616161" />
                         <Text className="font-[abeezee] text-xs text-text">
                           {storyDuration > 0 ? storyDuration : "<1"}
-                          {storyDuration > 1 ? "mins" : "min"}
+                          {storyDuration > 1 ? " mins" : " min"}
                         </Text>
                       </View>
                     </View>
