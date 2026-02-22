@@ -15,6 +15,7 @@ import {
   secondsToMinutes,
   splitByWordCountPreservingSentences,
 } from "../../utils/utils";
+import ErrorComponent from "../../components/ErrorComponent";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
@@ -23,6 +24,7 @@ const ParentsLibraryScreen = () => {
   const [toastMsg, setToastMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
 
+  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const ongoingQuery = useGetOngoingStories();
   const completedQuery = useGetCompletedStories();
 
@@ -30,8 +32,16 @@ const ParentsLibraryScreen = () => {
     storyFilter === "ongoing" ? ongoingQuery.data : completedQuery.data;
 
   const isPending = ongoingQuery.isPending || completedQuery.isPending;
+  const isError = ongoingQuery.error || completedQuery.error;
 
-  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
+  if (isError)
+    return (
+      <ErrorComponent
+        message={ongoingQuery.error?.message || completedQuery.error?.message}
+        refetch={ongoingQuery.refetch || completedQuery.refetch}
+      />
+    );
+
   if (isPending) return <LoadingOverlay visible />;
 
   const handleRemoveSuccess = (title: string) => {
@@ -150,7 +160,7 @@ const ParentsLibraryScreen = () => {
         </ScrollView>
         {removeId && (
           <RemoveStoryModal
-            isOpen={!!removeId}
+            isOpen
             storyId={removeId}
             onClose={() => setRemoveId(null)}
             storyTitle={selectedStoryTitle}
