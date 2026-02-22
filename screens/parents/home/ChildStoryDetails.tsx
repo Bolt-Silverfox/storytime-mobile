@@ -1,5 +1,5 @@
+import Entypo from "@expo/vector-icons/Entypo";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import {
   ImageBackground,
@@ -8,47 +8,44 @@ import {
   Text,
   View,
 } from "react-native";
-import ErrorComponent from "../../../components/ErrorComponent";
 import Icon from "../../../components/Icon";
-import LoadingOverlay from "../../../components/LoadingOverlay";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
 import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
-import queryGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
-import SubscriptionModal from "../../../components/modals/SubscriptionModal";
-import Entypo from "@expo/vector-icons/Entypo";
-import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
-import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
-import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
 const ChildStoryDetails = () => {
   const navigator = useNavigation<StoryNavigatorProp>();
   const { params } = useRoute<RoutePropTypes>();
+  const {
+    ageMax,
+    ageMin,
+    durationSeconds,
+    categories,
+    title,
+    description,
+    coverImageUrl,
+    id,
+    createdAt,
+  } = params.story;
   const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
-  const { isPending, data, error, refetch } = useQuery(
-    queryGetStory(params.storyId)
-  );
   const { data: user } = useGetUserProfile();
-  const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
-  const hasReachedLimit =
-    !isPremium && !isQuotaFetching && (quota?.hasReachedLimit ?? false);
-  if (isPending) return <LoadingOverlay visible={isPending} />;
-  if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
@@ -60,13 +57,13 @@ const ChildStoryDetails = () => {
     setStoryMode("plain");
   };
 
-  const duration = secondsToMinutes(data.durationSeconds);
+  const duration = secondsToMinutes(durationSeconds);
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
         <ScrollView contentContainerClassName="flex pb-10 bg-bgLight flex-col">
           <ImageBackground
-            source={{ uri: data.coverImageUrl }}
+            source={{ uri: coverImageUrl }}
             resizeMode="cover"
             className="relative flex h-[50vh] max-h-[500px] flex-col justify-end px-4 pb-8"
           >
@@ -84,7 +81,7 @@ const ChildStoryDetails = () => {
                   Age range
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
-                  {data.ageMin} - {data.ageMax} Years
+                  {ageMin} - {ageMax} Years
                 </Text>
               </View>
               <View className="flex flex-col gap-y-2">
@@ -92,8 +89,8 @@ const ChildStoryDetails = () => {
                   Duration
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
-                  {duration > 0 ? duration : "<1"}{" "}
-                  {duration > 1 ? "mins" : "min"}
+                  {duration > 0 ? duration : "<1"}
+                  {duration > 1 ? " mins" : " min"}
                 </Text>
               </View>
               <View className="flex flex-col gap-y-2">
@@ -101,7 +98,7 @@ const ChildStoryDetails = () => {
                   Category
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs capitalize text-purple-light">
-                  {data.categories?.[0]?.name ?? "Uncategorized"}
+                  {categories?.[0]?.name ?? "Uncategorized"}
                 </Text>
               </View>
             </View>
@@ -112,13 +109,13 @@ const ChildStoryDetails = () => {
                 accessibilityLabel="story title"
                 className="font-[quilka] text-3xl text-black"
               >
-                {data.title}{" "}
+                {title}{" "}
               </Text>
               <Text
                 accessibilityLabel="story description"
                 className="font-[abeezee] text-base text-text"
               >
-                {data.description}
+                {description}
               </Text>
             </View>
             <View className="flex flex-col gap-y-6 border-b border-border-light py-6">
@@ -181,33 +178,32 @@ const ChildStoryDetails = () => {
               </View>
             </View>
           </View>
-          <StoryDetailsCTA setShowShareModal={setShowShareModal} story={data} />
+          <StoryDetailsCTA
+            setShowShareModal={setShowShareModal}
+            story={{
+              ageRange: `${ageMin}-${ageMax}`,
+              id,
+              title,
+              description,
+              coverImageUrl,
+              createdAt,
+              durationSeconds,
+              categories,
+              storyId: id,
+            }}
+          />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          {!isPremium && quota && !hasReachedLimit && (
-            <Text className="py-2 text-center font-[abeezee] text-xs text-text">
-              {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
-              remaining
-            </Text>
-          )}
-          {hasReachedLimit ? (
-            <CustomButton
-              onPress={() => setIsSubscriptionModalOpen(true)}
-              text="Subscribe to Read"
-              ariaLabel="Subscribe to read more stories"
-            />
-          ) : (
-            <CustomButton
-              onPress={() =>
-                navigator.navigate("readStory", {
-                  storyId: params.storyId,
-                  mode: storyMode,
-                })
-              }
-              text="Start Reading"
-              ariaLabel="Start reading this story"
-            />
-          )}
+          <CustomButton
+            onPress={() =>
+              navigator.navigate("readStory", {
+                storyId: id,
+                mode: storyMode,
+              })
+            }
+            text="Start Reading"
+            ariaLabel="Start reading this story"
+          />
         </View>
         <AboutStoryModesModal
           isOpen={showAboutModal}

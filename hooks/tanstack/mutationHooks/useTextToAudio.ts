@@ -16,7 +16,13 @@ const useTextToAudio = (params: {
     data?.subscriptionStatus === "active" || data?.role === "admin";
 
   return useQuery({
-    queryKey: ["textToSpeech", params.storyId, params.content, params.voiceId, isSubscribed],
+    queryKey: [
+      "textToSpeech",
+      params.storyId,
+      params.content,
+      params.voiceId,
+      isSubscribed,
+    ],
     staleTime: Infinity,
     enabled: !!params.content && !!params.voiceId && !!params.storyId,
     queryFn: async () =>

@@ -17,6 +17,7 @@ export type CustomModalProps = {
     message: string;
     retry: () => void;
   };
+  maxHeight?: number;
 };
 
 const CustomModal = ({
@@ -25,6 +26,7 @@ const CustomModal = ({
   children,
   isPending,
   error,
+  maxHeight = 0.7,
 }: CustomModalProps) => {
   return (
     <Modal
@@ -36,7 +38,7 @@ const CustomModal = ({
       <Pressable onPress={onClose} className="flex-1 bg-black/40" />
 
       <View
-        style={{ maxHeight: Dimensions.get("window").height * 0.7 }}
+        style={{ maxHeight: Dimensions.get("window").height * maxHeight }}
         className="absolute bottom-0 w-full flex-1 overflow-hidden rounded-t-3xl bg-white p-6 px-4 pb-12"
       >
         {isPending ? (
