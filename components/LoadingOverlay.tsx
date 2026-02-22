@@ -14,7 +14,12 @@ export default function LoadingOverlay({
   if (!visible) return null;
 
   return (
-    <Modal visible={visible} animationType="fade" transparent onRequestClose={() => {}}>
+    <Modal
+      visible={visible}
+      animationType="fade"
+      transparent
+      onRequestClose={() => {}}
+    >
       <View className="absolute inset-0 items-center justify-center bg-black/50">
         <LoadingIcon />
         <Text className="mt-4 font-[abeezee] text-2xl text-white">{label}</Text>
