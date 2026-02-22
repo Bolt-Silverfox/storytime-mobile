@@ -15,7 +15,6 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
-import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
   StoryNavigatorParamList,
@@ -45,7 +44,6 @@ const ChildStoryDetails = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { data: user } = useGetUserProfile();
-  const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
 

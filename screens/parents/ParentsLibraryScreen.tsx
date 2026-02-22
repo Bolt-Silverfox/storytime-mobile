@@ -104,7 +104,7 @@ const ParentsLibraryScreen = () => {
                       <View className="flex flex-1 flex-row items-center gap-x-px">
                         <Icon name="Dot" color="#EC0794" />
                         <Text className="font-[abeezee] text-xs text-[#EC0794]">
-                          {story.categories[0].name}
+                          {story.categories?.[0]?.name ?? "Uncategorised"}
                         </Text>
                       </View>
                       <View className="flex flex-1 flex-row items-center gap-x-2">
