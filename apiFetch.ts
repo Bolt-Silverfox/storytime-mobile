@@ -19,6 +19,7 @@ const triggerLogout = () => {
 
 interface FetchOptions extends RequestInit {
   headers?: Record<string, string>;
+  passThroughStatuses?: number[];
 }
 
 class ApiError extends Error {
@@ -42,7 +43,10 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   // Handle non-401 errors with proper validation
   if (response.status !== 401) {
-    if (!response.ok && response.status !== 403 && response.status !== 400) {
+    if (
+      !response.ok &&
+      !options.passThroughStatuses?.includes(response.status)
+    ) {
       throw new ApiError(
         `Request failed with status ${response.status}`,
         response.status
@@ -71,8 +75,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   if (
     !retryResponse.ok &&
-    retryResponse.status !== 403 &&
-    retryResponse.status !== 400
+    !options.passThroughStatuses?.includes(retryResponse.status)
   ) {
     throw new ApiError(
       `Request failed with status ${retryResponse.status}`,
