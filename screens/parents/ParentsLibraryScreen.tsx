@@ -1,48 +1,18 @@
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
-import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
-import Icon from "../../components/Icon";
-import LoadingOverlay from "../../components/LoadingOverlay";
+import { Pressable, Text, View } from "react-native";
+import LibraryStories from "../../components/LibraryStories";
 import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
-import ProgressBar from "../../components/parents/ProgressBar";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import Toast from "../../components/UI/Toast";
-import useGetCompletedStories from "../../hooks/tanstack/queryHooks/useGetCompletedStories";
-import useGetOngoingStories from "../../hooks/tanstack/queryHooks/useGetOngoingStories";
-import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import {
-  secondsToMinutes,
-  splitByWordCountPreservingSentences,
-} from "../../utils/utils";
-import ErrorComponent from "../../components/ErrorComponent";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
-  const [removeId, setRemoveId] = useState<string | null>(null);
-  const [selectedStoryTitle, setSelectedStoryTitle] = useState<string>("");
+  const [activeStory, setActiveStory] = useState<{
+    title: string;
+    id: string;
+  } | null>(null);
   const [toastMsg, setToastMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
-
-  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const ongoingQuery = useGetOngoingStories();
-  const completedQuery = useGetCompletedStories();
-
-  const data =
-    storyFilter === "ongoing" ? ongoingQuery.data : completedQuery.data;
-
-  const isPending = ongoingQuery.isPending || completedQuery.isPending;
-  const isError = ongoingQuery.error || completedQuery.error;
-
-  if (isError)
-    return (
-      <ErrorComponent
-        message={ongoingQuery.error?.message || completedQuery.error?.message}
-        refetch={ongoingQuery.refetch || completedQuery.refetch}
-      />
-    );
-
-  if (isPending) return <LoadingOverlay visible />;
 
   const handleRemoveSuccess = (title: string) => {
     setToastMsg(`"${title}" removed from library`);
@@ -70,100 +40,15 @@ const ParentsLibraryScreen = () => {
             </Pressable>
           ))}
         </View>
-        <ScrollView contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5">
-          {data?.length ? (
-            data?.map((story) => {
-              const paragraphs = splitByWordCountPreservingSentences(
-                story.textContent,
-                30
-              );
-
-              const totalSteps = paragraphs.length;
-              const progressRatio =
-                totalSteps > 0 ? story.progress / totalSteps : 0;
-              const storyDuration = secondsToMinutes(story.durationSeconds);
-              return (
-                <Pressable
-                  key={story.id}
-                  onPress={() =>
-                    protectedNavigator.navigate("stories", {
-                      screen: "childStoryDetails",
-                      params: {
-                        story: {
-                          ageMax: story.ageMax,
-                          ageMin: story.ageMin,
-                          categories: story.categories,
-                          coverImageUrl: story.coverImageUrl,
-                          description: story.description,
-                          durationSeconds: story.durationSeconds,
-                          id: story.id,
-                          title: story.title,
-                          createdAt: story.createdAt,
-                        },
-                      },
-                    })
-                  }
-                  className="flex flex-col rounded-xl border border-border-light p-1"
-                >
-                  <Image
-                    source={{ uri: story.coverImageUrl }}
-                    className="mb-3 h-40 rounded-xl"
-                  />
-                  <View className="p-2">
-                    <View className="flex flex-row items-center">
-                      <View className="flex flex-1 flex-row items-center gap-x-px">
-                        <Icon name="Dot" color="#EC0794" />
-                        <Text className="font-[abeezee] text-xs text-[#EC0794]">
-                          {story.categories?.[0]?.name ?? "Uncategorized"}
-                        </Text>
-                      </View>
-                      <View className="flex flex-1 flex-row items-center gap-x-2">
-                        <Icon name="Clock" size={12} color="#616161" />
-                        <Text className="font-[abeezee] text-xs text-text">
-                          {storyDuration > 0 ? storyDuration : "<1"}
-                          {storyDuration > 1 ? " mins" : " min"}
-                        </Text>
-                      </View>
-                    </View>
-                    <Text className="my-1.5 font-[abeezee] text-base text-black">
-                      {story.title}
-                    </Text>
-                    <Text className="mb-4 font-[abeezee] text-xs text-text">
-                      {story.ageMin} - {story.ageMax} years
-                    </Text>
-                    <View className="flex-row items-center gap-6">
-                      <View className="flex-1">
-                        <ProgressBar progress={progressRatio} color="#4807EC" />
-                      </View>
-
-                      <Pressable
-                        onPress={() => {
-                          setRemoveId(story.id);
-                          setSelectedStoryTitle(story.title);
-                        }}
-                        className="rounded-full bg-[#EC0707] p-2"
-                      >
-                        <Icon name="Trash" color="#fff" size={24} />
-                      </Pressable>
-                    </View>
-                  </View>
-                </Pressable>
-              );
-            })
-          ) : (
-            <CustomEmptyState
-              url={require("../../assets/images/stories-empty-state.png")}
-              message={`No ${storyFilter} stories`}
-              secondaryMessage={`You do not have any ${storyFilter} stories yet`}
-            />
-          )}
-        </ScrollView>
-        {removeId && (
+        <LibraryStories
+          setActiveStory={setActiveStory}
+          storyFilter={storyFilter}
+        />
+        {activeStory && (
           <RemoveStoryModal
             isOpen
-            storyId={removeId}
-            onClose={() => setRemoveId(null)}
-            storyTitle={selectedStoryTitle}
+            onClose={() => setActiveStory(null)}
+            activeStory={activeStory}
             onRemoveSuccess={handleRemoveSuccess}
           />
         )}
@@ -180,4 +65,4 @@ const ParentsLibraryScreen = () => {
 export default ParentsLibraryScreen;
 
 const libraryFilters = ["ongoing", "completed"] as const;
-type LibraryFilterType = (typeof libraryFilters)[number];
+export type LibraryFilterType = (typeof libraryFilters)[number];

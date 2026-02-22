@@ -4,24 +4,25 @@ import CustomModal, { CustomModalProps } from "../CustomModal";
 import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 
 interface RemoveStoryModalProps extends Omit<CustomModalProps, "children"> {
-  storyId: string;
-  storyTitle: string;
+  activeStory: {
+    title: string;
+    id: string;
+  };
   onRemoveSuccess: (title: string) => void;
 }
 
 const RemoveStoryModal = ({
   isOpen,
   onClose,
-  storyId,
-  storyTitle,
+  activeStory,
   onRemoveSuccess,
 }: RemoveStoryModalProps) => {
   const { mutate: removeStory, isPending } = useRemoveStoryFromLibrary();
 
   const handleRemove = () => {
-    removeStory(storyId, {
+    removeStory(activeStory.id, {
       onSuccess: () => {
-        onRemoveSuccess(storyTitle);
+        onRemoveSuccess(activeStory.title);
         onClose();
       },
     });
@@ -40,7 +41,9 @@ const RemoveStoryModal = ({
             Remove story
           </Text>
           <Text className="text-center font-[abeezee] text-base text-text">
-            You are about to remove a story from your library. Are you sure?
+            You are about to remove{" "}
+            <Text className="font-[quilka]">{activeStory.title}</Text> from your
+            library. Are you sure?
           </Text>
         </View>
 

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
+import useAuth from "../../../contexts/AuthContext";
 
 const useSetStoryProgress = ({
   storyId,
@@ -11,6 +12,7 @@ const useSetStoryProgress = ({
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async ({
@@ -31,7 +33,7 @@ const useSetStoryProgress = ({
           storyId: storyId,
           progress: progress,
           completed: completed,
-          sessionTime: sessionTime,
+          sessionTime,
         }),
       });
       const response = await request.json();
@@ -48,10 +50,10 @@ const useSetStoryProgress = ({
         queryKey: ["storyProgress", storyId],
       });
       queryClient.invalidateQueries({
-        queryKey: ["library", "ongoingStories"],
+        queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, "completed", user?.id],
       });
       queryClient.invalidateQueries({
-        queryKey: ["library", "completedStories"],
+        queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, "ongoing", user?.id],
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
