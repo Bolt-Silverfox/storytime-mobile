@@ -16,7 +16,9 @@ import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import StoryLimitModal from "./UI/StoryLimitModal";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
+import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 
 const StoryComponent = ({
   storyId,
@@ -34,6 +36,7 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
+  const { data: quota } = useGetStoryQuota();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
   const { data: user } = useGetUserProfile();
   const { data: quota } = useQuery(queryStoriesQuota(user?.id));

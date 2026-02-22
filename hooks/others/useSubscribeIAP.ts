@@ -12,7 +12,10 @@ import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../contexts/AuthContext";
 
-const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
+const useSubscribeIAP = (
+  selectedPlan: SubscriptionPlan,
+  onSubscribed?: () => void
+) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const queryClient = useQueryClient();
@@ -42,6 +45,10 @@ const useSubscribeIAP = (selectedPlan: SubscriptionPlan) => {
         queryClient.refetchQueries({
           queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
         });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
+        });
+        onSubscribed?.();
       } catch (err) {
         if (__DEV__)
           console.error("Verification failed, NOT finishing transaction", err);

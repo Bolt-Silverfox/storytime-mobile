@@ -20,7 +20,7 @@ const SubscriptionModal = ({ isOpen, onClose, maxHeight }: PropTypes) => {
     subscriptions,
     handlePurchase,
     getPlanName,
-  } = useSubscribeIAP(selectedPlan);
+  } = useSubscribeIAP(selectedPlan, onSubscribed);
 
   return (
     <CustomModal maxHeight={maxHeight} isOpen={isOpen} onClose={onClose}>
