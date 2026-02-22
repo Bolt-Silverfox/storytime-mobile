@@ -19,8 +19,7 @@ import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
-
-const HALFWAY_MODAL_KEY = "hasSeenHalfwayQuotaModal";
+import useAuth from "../contexts/AuthContext";
 
 const StoryComponent = ({
   storyId,
@@ -34,9 +33,10 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
-  const [showHalfwayModal, setShowHalfwayModal] = useState(false);
+  const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
+  const { user } = useAuth();
   const { data: preferredVoice } = useGetPreferredVoice();
   const { data: quota } = useGetStoryQuota();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
@@ -47,22 +47,28 @@ const StoryComponent = ({
     }
   }, [preferredVoice]);
 
-  // Check if we should show the halfway quota modal
+  // Check if we should show the quota reminder modal
   useEffect(() => {
-    if (!quota) return;
+    if (!quota || quota.isPremium || quota.unlimited) return;
     const halfway = Math.floor((quota.totalAllowed ?? 0) / 2);
     if ((quota.used ?? 0) >= halfway && (quota.remaining ?? 0) > 0) {
-      AsyncStorage.getItem(HALFWAY_MODAL_KEY).then((seen) => {
-        if (!seen) {
-          setShowHalfwayModal(true);
-        }
-      });
+      const now = new Date();
+      const key = `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+      AsyncStorage.getItem(key)
+        .then((seen) => {
+          if (!seen) {
+            setShowQuotaReminder(true);
+          }
+        })
+        .catch(() => {});
     }
-  }, [quota]);
+  }, [quota, user?.id]);
 
-  const handleDismissHalfway = () => {
-    setShowHalfwayModal(false);
-    AsyncStorage.setItem(HALFWAY_MODAL_KEY, "true");
+  const handleDismissQuotaReminder = () => {
+    setShowQuotaReminder(false);
+    const now = new Date();
+    const key = `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+    AsyncStorage.setItem(key, "true").catch(() => {});
   };
 
   const { mutate: setStoryProgress } = useSetStoryProgress({
@@ -135,10 +141,11 @@ const StoryComponent = ({
         />
       </ScrollView>
       <StoryLimitModal
-        visible={showHalfwayModal}
+        visible={showQuotaReminder}
         storyId={storyId}
         quota={quota}
-        onClose={handleDismissHalfway}
+        mode="reminder"
+        onClose={handleDismissQuotaReminder}
       />
     </SafeAreaWrapper>
   );

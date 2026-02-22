@@ -17,23 +17,26 @@ const FreeStoriesBanner = () => {
 
   if (dismissed || isPremium || !quota) return null;
 
-  const isLimitReached = quota.remaining === 0 && (quota.bonusStories ?? 0) === 0;
+  const used = quota.used ?? 0;
+  const totalAllowed = quota.totalAllowed ?? 0;
+  const remaining = quota.remaining ?? 0;
+  const isLimitReached = remaining === 0 && (quota.bonusStories ?? 0) === 0;
   const hasBonus = (quota.bonusStories ?? 0) > 0;
   const showUpgrade = isLimitReached || hasBonus;
 
   const getDescription = () => {
     if (isLimitReached) {
-      return "10 free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library your child will love.";
+      return `${totalAllowed} free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library your child will love.`;
     }
     if (hasBonus) {
       return "A new free story has arrived for you this month. Settle in and enjoy the moment, your next free story will be available next week.";
     }
-    return "Get started with 10 free stories, and continue enjoying 1 free story every week with our Freemium plan.";
+    return `Get started with ${totalAllowed} free stories, and continue enjoying 1 free story every week with our Freemium plan.`;
   };
 
   const getBoldText = () => {
     if (showUpgrade) return "Upgrade to Premium";
-    return `${quota.used}/${quota.totalAllowed} stories read`;
+    return `${used}/${totalAllowed} stories read`;
   };
 
   return (
@@ -45,7 +48,6 @@ const FreeStoriesBanner = () => {
         gap: 16,
         padding: 16,
         borderRadius: 12,
-        marginBottom: 8,
       }}
     >
       <View style={{ flex: 1, gap: 6 }}>
@@ -89,6 +91,8 @@ const FreeStoriesBanner = () => {
       </View>
       <Pressable
         onPress={() => setDismissed(true)}
+        accessibilityRole="button"
+        accessibilityLabel="Dismiss banner"
         style={{
           backgroundColor: "#E2D6FE",
           borderWidth: 0.5,

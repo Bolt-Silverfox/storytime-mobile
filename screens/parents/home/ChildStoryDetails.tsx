@@ -45,7 +45,7 @@ const ChildStoryDetails = () => {
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
   const hasReachedLimit =
-    !isPremium && !isQuotaFetching && quota?.remaining === 0;
+    !isPremium && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
@@ -186,7 +186,7 @@ const ChildStoryDetails = () => {
         <View className="border-t border-t-border-light bg-bgLight px-4">
           {!isPremium && quota && !hasReachedLimit && (
             <Text className="py-2 text-center font-[abeezee] text-xs text-text">
-              {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
+              {quota.remaining ?? 0} {(quota.remaining ?? 0) === 1 ? "story" : "stories"}{" "}
               remaining
             </Text>
           )}

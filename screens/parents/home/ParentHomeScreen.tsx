@@ -14,11 +14,11 @@ const ParentHomeScreen = () => {
     <SafeAreaWrapper variant="solid">
       <View className="flex flex-1 bg-bgLight px-4">
         <ParentsHomeScreenHeader />
-        <FreeStoriesBanner />
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerClassName=" flex flex-col gap-y-8"
         >
+          <FreeStoriesBanner />
           <StoriesByAgeComponent />
           <ParentsTopRecommendations />
           <TodaysTopPicksComponent />

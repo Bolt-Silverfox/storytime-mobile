@@ -14,19 +14,19 @@ type PropTypes = {
   visible: boolean;
   storyId: string;
   quota?: StoryQuota;
+  mode?: "blocking" | "reminder";
   onClose?: () => void;
 };
 
-const StoryLimitModal = ({ visible, storyId, quota, onClose }: PropTypes) => {
+const StoryLimitModal = ({ visible, storyId, quota, mode = "blocking", onClose }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
 
-  const isAtLimit = quota ? quota.remaining === 0 : false;
-  const isHalfway = !isAtLimit;
+  const isDismissible = mode === "reminder";
 
   const handleCancel = () => {
-    if (isHalfway && onClose) {
+    if (isDismissible && onClose) {
       onClose();
     } else {
       navigator.reset({ index: 0, routes: [{ name: "parents" }] });
@@ -47,13 +47,16 @@ const StoryLimitModal = ({ visible, storyId, quota, onClose }: PropTypes) => {
     getPlanName,
   } = useSubscribeIAP(selectedPlan, handleSubscribed);
 
+  const used = quota?.used ?? 0;
+  const totalAllowed = quota?.totalAllowed ?? 0;
+
   const title = quota
-    ? `${quota.used}/${quota.totalAllowed} Free Stories Read`
+    ? `${used}/${totalAllowed} Free Stories Read`
     : "Free Stories Read";
 
-  const subtitle = isAtLimit
-    ? "That was the last of your 10 free stories. With the Freemium plan, you'll receive 1 free story every week. Upgrade now for full access to our entire story library."
-    : "As a freemium user, you are entitled to 10 free stories overall and 1 free story weekly.";
+  const subtitle = !isDismissible
+    ? `That was the last of your ${totalAllowed} free stories. With the Freemium plan, you'll receive 1 free story every week. Upgrade now for full access to our entire story library.`
+    : `As a freemium user, you are entitled to ${totalAllowed} free stories overall and 1 free story weekly.`;
 
   return (
     <Modal
@@ -63,7 +66,7 @@ const StoryLimitModal = ({ visible, storyId, quota, onClose }: PropTypes) => {
       onRequestClose={handleCancel}
     >
       <Pressable
-        onPress={isHalfway ? handleCancel : undefined}
+        onPress={isDismissible ? handleCancel : undefined}
         style={{
           flex: 1,
           backgroundColor: "rgba(33, 33, 33, 0.6)",
