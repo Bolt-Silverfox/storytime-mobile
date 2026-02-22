@@ -113,7 +113,7 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
           <View className="flex flex-row items-center gap-x-1">
             <Icon size={12} name="Clock" color="#616161" />
             <Text className="font-[abeezee] text-xs capitalize text-text">
-              {duration > 0 ? duration : "<1"} {duration > 1 ? "mins" : "min"}
+              {duration > 0 ? duration : "<1"} {duration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>

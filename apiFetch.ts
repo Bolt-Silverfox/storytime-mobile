@@ -69,7 +69,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   const retryResponse = await fetch(url, { ...options, headers: retryHeaders });
 
-  if (!retryResponse.ok) {
+  if (!retryResponse.ok && retryResponse.status !== 403) {
     throw new ApiError(
       `Request failed with status ${retryResponse.status}`,
       retryResponse.status
