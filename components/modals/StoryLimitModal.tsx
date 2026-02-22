@@ -18,7 +18,13 @@ type PropTypes = {
   onClose?: () => void;
 };
 
-const StoryLimitModal = ({ visible, storyId, quota, mode = "blocking", onClose }: PropTypes) => {
+const StoryLimitModal = ({
+  visible,
+  storyId,
+  quota,
+  mode = "blocking",
+  onClose,
+}: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const queryClient = useQueryClient();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
@@ -239,9 +245,9 @@ const StoryLimitModal = ({ visible, storyId, quota, mode = "blocking", onClose }
             <View style={{ width: "100%", gap: 12 }}>
               <Pressable
                 onPress={handlePurchase}
-                disabled={!selectedPlan}
+                disabled={!selectedPlan || isLoading}
                 style={{
-                  backgroundColor: selectedPlan ? "#FF8771" : "#FFB8AD",
+                  backgroundColor: selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
                   borderRadius: 99,
                   height: 46,
                   alignItems: "center",

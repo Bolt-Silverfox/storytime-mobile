@@ -47,13 +47,18 @@ const StoryComponent = ({
     }
   }, [preferredVoice]);
 
+  const getQuotaReminderKey = () => {
+    const now = new Date();
+    return `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+  };
+
   // Check if we should show the quota reminder modal
   useEffect(() => {
     if (!quota || quota.isPremium || quota.unlimited) return;
+    const used = quota.used ?? 0;
     const halfway = Math.floor((quota.totalAllowed ?? 0) / 2);
-    if ((quota.used ?? 0) >= halfway && (quota.remaining ?? 0) > 0) {
-      const now = new Date();
-      const key = `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+    if (halfway > 0 && used >= halfway && (quota.remaining ?? 0) > 0) {
+      const key = getQuotaReminderKey();
       AsyncStorage.getItem(key)
         .then((seen) => {
           if (!seen) {
@@ -66,9 +71,7 @@ const StoryComponent = ({
 
   const handleDismissQuotaReminder = () => {
     setShowQuotaReminder(false);
-    const now = new Date();
-    const key = `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
-    AsyncStorage.setItem(key, "true").catch(() => {});
+    AsyncStorage.setItem(getQuotaReminderKey(), "true").catch(() => {});
   };
 
   const { mutate: setStoryProgress } = useSetStoryProgress({
