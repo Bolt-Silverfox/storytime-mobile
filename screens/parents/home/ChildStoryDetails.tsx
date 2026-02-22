@@ -89,7 +89,7 @@ const ChildStoryDetails = () => {
                   Duration
                 </Text>
                 <Text className="text-center font-[abeezee] text-xs text-purple-light">
-                  {duration > 0 ? duration : "<1"}{" "}
+                  {duration > 0 ? duration : "<1"}
                   {duration > 1 ? " mins" : " min"}
                 </Text>
               </View>
