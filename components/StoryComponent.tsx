@@ -4,11 +4,9 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
-import { ApiError } from "../apiFetch";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
-import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
@@ -33,7 +31,6 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
-  const { data: quota } = useGetStoryQuota();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   useEffect(() => {
