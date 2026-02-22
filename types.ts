@@ -307,11 +307,13 @@ type NotificationsResponse = {
 };
 
 type StoryQuota = {
-  limit: number;
-  used: number;
-  remaining: number;
-  hasReachedLimit: boolean;
-  bonusStories: number;
+  isPremium: boolean;
+  unlimited: boolean;
+  used?: number;
+  baseLimit?: number;
+  bonusStories?: number;
+  totalAllowed?: number;
+  remaining?: number;
 };
 
 type DeviceTokenResponse = {

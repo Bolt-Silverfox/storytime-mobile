@@ -45,7 +45,7 @@ const ChildStoryDetails = () => {
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
   const hasReachedLimit =
-    !isPremium && !isQuotaFetching && (quota?.hasReachedLimit ?? false);
+    !isPremium && !isQuotaFetching && quota?.remaining === 0;
   if (isPending) return <LoadingOverlay visible={isPending} />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;

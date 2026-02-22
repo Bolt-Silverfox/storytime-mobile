@@ -1,4 +1,5 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -19,6 +20,8 @@ import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 
+const HALFWAY_MODAL_KEY = "hasSeenHalfwayQuotaModal";
+
 const StoryComponent = ({
   storyId,
   storyMode,
@@ -31,6 +34,7 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [showHalfwayModal, setShowHalfwayModal] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
@@ -42,6 +46,24 @@ const StoryComponent = ({
       setSelectedVoice(preferredVoice.name.toUpperCase());
     }
   }, [preferredVoice]);
+
+  // Check if we should show the halfway quota modal
+  useEffect(() => {
+    if (!quota) return;
+    const halfway = Math.floor((quota.totalAllowed ?? 0) / 2);
+    if ((quota.used ?? 0) >= halfway && (quota.remaining ?? 0) > 0) {
+      AsyncStorage.getItem(HALFWAY_MODAL_KEY).then((seen) => {
+        if (!seen) {
+          setShowHalfwayModal(true);
+        }
+      });
+    }
+  }, [quota]);
+
+  const handleDismissHalfway = () => {
+    setShowHalfwayModal(false);
+    AsyncStorage.setItem(HALFWAY_MODAL_KEY, "true");
+  };
 
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
@@ -112,6 +134,12 @@ const StoryComponent = ({
           setActiveParagraph={setActiveParagraph}
         />
       </ScrollView>
+      <StoryLimitModal
+        visible={showHalfwayModal}
+        storyId={storyId}
+        quota={quota}
+        onClose={handleDismissHalfway}
+      />
     </SafeAreaWrapper>
   );
 };
