@@ -1,4 +1,5 @@
 import { ScrollView, View } from "react-native";
+import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
 import TodaysTopPicksComponent from "../../../components/parents/TodaysTopPicksComponent";
@@ -17,6 +18,7 @@ const ParentHomeScreen = () => {
           showsVerticalScrollIndicator={false}
           contentContainerClassName=" flex flex-col gap-y-8"
         >
+          <FreeStoriesBanner />
           <StoriesByAgeComponent />
           <ParentsTopRecommendations />
           <TodaysTopPicksComponent />

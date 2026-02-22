@@ -15,6 +15,7 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
   StoryNavigatorParamList,
@@ -46,6 +47,9 @@ const ChildStoryDetails = () => {
   const { data: user } = useGetUserProfile();
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
+  const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
+  const hasReachedLimit =
+    !isPremium && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
 
   const handleStoryMode = (storyMode: StoryModes) => {
     if (storyMode === "interactive") {
@@ -194,16 +198,30 @@ const ChildStoryDetails = () => {
           />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          <CustomButton
-            onPress={() =>
-              navigator.navigate("readStory", {
-                storyId: id,
-                mode: storyMode,
-              })
-            }
-            text="Start Reading"
-            ariaLabel="Start reading this story"
-          />
+          {!isPremium && quota && !hasReachedLimit && (
+            <Text className="py-2 text-center font-[abeezee] text-xs text-text">
+              {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
+              remaining
+            </Text>
+          )}
+          {hasReachedLimit ? (
+            <CustomButton
+              onPress={() => setIsSubscriptionModalOpen(true)}
+              text="Subscribe to Read"
+              ariaLabel="Subscribe to read more stories"
+            />
+          ) : (
+            <CustomButton
+              onPress={() =>
+                navigator.navigate("readStory", {
+                  storyId: id,
+                  mode: storyMode,
+                })
+              }
+              text="Start Reading"
+              ariaLabel="Start reading this story"
+            />
+          )}
         </View>
         <AboutStoryModesModal
           isOpen={showAboutModal}
