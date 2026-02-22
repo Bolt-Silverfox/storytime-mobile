@@ -42,7 +42,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   // Handle non-401 errors with proper validation
   if (response.status !== 401) {
-    if (!response.ok && response.status !== 403) {
+    if (!response.ok && response.status !== 403 && response.status !== 400) {
       throw new ApiError(
         `Request failed with status ${response.status}`,
         response.status
@@ -69,7 +69,11 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   const retryResponse = await fetch(url, { ...options, headers: retryHeaders });
 
-  if (!retryResponse.ok && retryResponse.status !== 403) {
+  if (
+    !retryResponse.ok &&
+    retryResponse.status !== 403 &&
+    retryResponse.status !== 400
+  ) {
     throw new ApiError(
       `Request failed with status ${retryResponse.status}`,
       retryResponse.status
