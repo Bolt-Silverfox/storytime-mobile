@@ -19,11 +19,11 @@ import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import SubscriptionModal from "./modals/SubscriptionModal";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
-  paragraphs: string[];
   activeParagraph: number;
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -41,7 +41,6 @@ const StoryContentContainer = ({
   isInteractive,
   setActiveParagraph,
   activeParagraph,
-  paragraphs,
   onProgress,
   selectedVoice,
 }: PropTypes) => {
@@ -66,6 +65,8 @@ const StoryContentContainer = ({
   const isSubscribed =
     data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
     data?.role === USER_ROLES.admin;
+
+  const paragraphs = splitByWordCountPreservingSentences(story.textContent, 30);
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;

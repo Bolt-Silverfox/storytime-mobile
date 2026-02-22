@@ -45,7 +45,7 @@ const StoryLimitModal = ({ visible, storyId, quota }: PropTypes) => {
               <View className="flex flex-col gap-y-2">
                 <Text className="text-center font-[quilka] text-2xl text-black">
                   {quota
-                    ? `You've read all ${quota.limit} free stories!`
+                    ? `You've read all ${quota.used} free stories!`
                     : "You've read all your free stories!"}
                 </Text>
                 <Text className="text-center font-[abeezee] text-sm text-text">
