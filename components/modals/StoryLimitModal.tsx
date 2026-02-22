@@ -247,7 +247,8 @@ const StoryLimitModal = ({
                 onPress={handlePurchase}
                 disabled={!selectedPlan || isLoading}
                 style={{
-                  backgroundColor: selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
+                  backgroundColor:
+                    selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
                   borderRadius: 99,
                   height: 46,
                   alignItems: "center",
