@@ -27,7 +27,7 @@ const useGetStory = (storyId: string) => {
         return response;
       } catch (err: unknown) {
         if (err instanceof ApiError) {
-          throw new ApiError(err.message, err.status);
+          throw err;
         }
         throw new Error(getErrorMessage(err));
       }
