@@ -43,6 +43,7 @@ const StoryComponent = ({
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
   const [controlsVisible, setControlsVisible] = useState(true);
+  const [controlsInteractive, setControlsInteractive] = useState(true);
   const controlsOpacity = useRef(new Animated.Value(1)).current;
   const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const controlsVisibleRef = useRef(controlsVisible);
@@ -73,11 +74,16 @@ const StoryComponent = ({
 
   // Drive animation and timer from controlsVisible state changes
   useEffect(() => {
+    // Make interactive immediately on show (before animation finishes)
+    if (controlsVisible) setControlsInteractive(true);
     Animated.timing(controlsOpacity, {
       toValue: controlsVisible ? 1 : 0,
       duration: 200,
       useNativeDriver: true,
-    }).start();
+    }).start(({ finished }) => {
+      // Only drop interactivity after fade-out completes
+      if (finished && !controlsVisible) setControlsInteractive(false);
+    });
     if (controlsVisible) startAutoHideTimer();
     else clearAutoHideTimer();
     return () => clearAutoHideTimer();
@@ -241,7 +247,7 @@ const StoryComponent = ({
               {/* Top bar */}
               <Animated.View
                 style={{ opacity: controlsOpacity }}
-                pointerEvents={controlsVisible ? "auto" : "none"}
+                pointerEvents={controlsInteractive ? "auto" : "none"}
                 className="flex flex-row items-center justify-between"
               >
                 <Pressable
@@ -274,7 +280,7 @@ const StoryComponent = ({
                 activeParagraph={activeParagraph}
                 setActiveParagraph={setActiveParagraph}
                 onProgress={handleProgress}
-                controlsVisible={controlsVisible}
+                controlsInteractive={controlsInteractive}
                 controlsOpacity={controlsOpacity}
                 resetAutoHideTimer={resetAutoHideTimer}
               />

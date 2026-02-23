@@ -26,7 +26,7 @@ type PropTypes = {
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
-  controlsVisible: boolean;
+  controlsInteractive: boolean;
   controlsOpacity: Animated.Value;
   resetAutoHideTimer: () => void;
 };
@@ -44,7 +44,7 @@ const StoryContentContainer = ({
   activeParagraph,
   onProgress,
   selectedVoice,
-  controlsVisible,
+  controlsInteractive,
   controlsOpacity,
   resetAutoHideTimer,
 }: PropTypes) => {
@@ -124,7 +124,7 @@ const StoryContentContainer = ({
       {currentlyDisplayed === "story" && (
         <Animated.View
           style={{ opacity: controlsOpacity }}
-          pointerEvents={controlsVisible ? "auto" : "none"}
+          pointerEvents={controlsInteractive ? "auto" : "none"}
         >
           <StoryAudioPlayer
             audioUrl={story.audioUrl}
@@ -153,7 +153,7 @@ const StoryContentContainer = ({
           </Text>
           <Animated.View
             style={{ opacity: controlsOpacity }}
-            pointerEvents={controlsVisible ? "auto" : "none"}
+            pointerEvents={controlsInteractive ? "auto" : "none"}
             className="mt-4 flex flex-row items-center justify-between"
           >
             <Pressable
@@ -196,7 +196,7 @@ const StoryContentContainer = ({
       {currentlyDisplayed === "story" && (
         <Animated.View
           style={{ opacity: controlsOpacity }}
-          pointerEvents={controlsVisible ? "auto" : "none"}
+          pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
         >
           <ProgressBar
