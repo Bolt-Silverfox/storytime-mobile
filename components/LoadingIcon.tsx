@@ -62,7 +62,7 @@ export default function LoadingIcon() {
 
   const starScale = starShimmer.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.5, 1.2],
+    outputRange: [0.8, 1.1],
   });
 
   const starOpacity = starShimmer;
@@ -76,7 +76,7 @@ export default function LoadingIcon() {
           { transform: [{ scale: bookScale }], opacity: bookOpacity },
         ]}
       >
-        <Svg width="120" height="120" viewBox="0 0 512 512" fill="none">
+        <Svg width="180" height="180" viewBox="0 0 512 512" fill="none">
           <Path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -99,7 +99,7 @@ export default function LoadingIcon() {
           { transform: [{ scale: starScale }], opacity: starOpacity },
         ]}
       >
-        <Svg width="120" height="120" viewBox="0 0 512 512" fill="none">
+        <Svg width="180" height="180" viewBox="0 0 512 512" fill="none">
           <Path
             fillRule="evenodd"
             clipRule="evenodd"
@@ -138,8 +138,8 @@ export default function LoadingIcon() {
 
 const styles = StyleSheet.create({
   container: {
-    width: 120,
-    height: 120,
+    width: 180,
+    height: 180,
     position: "relative",
     justifyContent: "center",
     alignItems: "center",

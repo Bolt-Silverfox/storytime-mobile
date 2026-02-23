@@ -229,6 +229,7 @@ type FavouriteStory = Pick<
 type AvailableVoices = {
   id: string;
   name: string;
+  displayName: string;
   type: string;
   previewUrl: string;
   voiceAvatar: string;

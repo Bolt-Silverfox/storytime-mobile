@@ -19,7 +19,15 @@ import RootNavigator from "./Navigation/RootNavigator";
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 onlineManager.setEventListener((setOnline) => {
   return Netinfo.addEventListener((state) => {
     setOnline(!!state.isConnected);
