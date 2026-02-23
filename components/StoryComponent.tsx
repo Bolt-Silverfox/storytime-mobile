@@ -12,6 +12,7 @@ import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
+import AnimatedControlWrapper from "./UI/AnimatedControlWrapper";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
@@ -45,14 +46,15 @@ const StoryComponent = ({
     }, 4000);
   }, []);
 
-  // Animate opacity when controlsVisible changes
+  // Animate opacity and manage auto-hide timer when controlsVisible changes
   useEffect(() => {
     Animated.timing(controlsOpacity, {
       toValue: controlsVisible ? 1 : 0,
       duration: 200,
       useNativeDriver: true,
     }).start();
-  }, [controlsVisible, controlsOpacity]);
+    resetAutoHideTimer(controlsVisible);
+  }, [controlsVisible, controlsOpacity, resetAutoHideTimer]);
 
   // Start auto-hide timer on mount
   useEffect(() => {
@@ -63,12 +65,8 @@ const StoryComponent = ({
   }, [resetAutoHideTimer]);
 
   const handleScreenTap = useCallback(() => {
-    setControlsVisible((prev) => {
-      const next = !prev;
-      resetAutoHideTimer(next);
-      return next;
-    });
-  }, [resetAutoHideTimer]);
+    setControlsVisible((prev) => !prev);
+  }, []);
 
   const { user } = useAuth();
   const { data: quota } = useGetStoryQuota();
@@ -135,9 +133,9 @@ const StoryComponent = ({
             className="flex flex-1 flex-col p-4 pt-12 "
           >
             <Pressable onPress={handleScreenTap} style={{ flex: 1 }}>
-              <Animated.View
-                style={{ opacity: controlsOpacity }}
-                pointerEvents={controlsVisible ? "auto" : "none"}
+              <AnimatedControlWrapper
+                controlsOpacity={controlsOpacity}
+                controlsVisible={controlsVisible}
                 className="flex flex-row items-center justify-between"
               >
                 <Pressable
@@ -157,7 +155,7 @@ const StoryComponent = ({
                 >
                   <FontAwesome6 name="ellipsis" size={20} color="white" />
                 </Pressable>
-              </Animated.View>
+              </AnimatedControlWrapper>
               <StoryContentContainer
                 selectedVoice={selectedVoice}
                 isInteractive={storyMode === "interactive"}
