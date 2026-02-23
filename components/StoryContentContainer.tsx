@@ -8,7 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Animated, Pressable, Text, View } from "react-native";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -26,6 +26,8 @@ type PropTypes = {
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
+  controlsVisible: boolean;
+  controlsOpacity: Animated.Value;
 };
 
 type DisplayOptions =
@@ -41,6 +43,8 @@ const StoryContentContainer = ({
   activeParagraph,
   onProgress,
   selectedVoice,
+  controlsVisible,
+  controlsOpacity,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -115,20 +119,25 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <StoryAudioPlayer
-          audioUrl={story.audioUrl}
-          textContent={paragraphs[activeParagraph]}
-          nextPageContent={
-            activeParagraph < storyLength
-              ? paragraphs[activeParagraph + 1]
-              : null
-          }
-          selectedVoice={selectedVoice}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          onPageFinished={handlePageAudioFinished}
-          storyId={story.id}
-        />
+        <Animated.View
+          style={{ opacity: controlsOpacity }}
+          pointerEvents={controlsVisible ? "auto" : "none"}
+        >
+          <StoryAudioPlayer
+            audioUrl={story.audioUrl}
+            textContent={paragraphs[activeParagraph]}
+            nextPageContent={
+              activeParagraph < storyLength
+                ? paragraphs[activeParagraph + 1]
+                : null
+            }
+            selectedVoice={selectedVoice}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            onPageFinished={handlePageAudioFinished}
+            storyId={story.id}
+          />
+        </Animated.View>
       )}
       {currentlyDisplayed === "story" && (
         <BlurView
@@ -139,7 +148,11 @@ const StoryContentContainer = ({
           <Text className="font-[quilka] text-xl text-white">
             {paragraphs[activeParagraph]}
           </Text>
-          <View className="mt-4 flex flex-row items-center justify-between">
+          <Animated.View
+            style={{ opacity: controlsOpacity }}
+            pointerEvents={controlsVisible ? "auto" : "none"}
+            className="mt-4 flex flex-row items-center justify-between"
+          >
             <Pressable
               onPress={
                 !isFirstParagraph ? () => handleManualNavigation("prev") : null
@@ -165,11 +178,15 @@ const StoryContentContainer = ({
                 />
               )}
             </Pressable>
-          </View>
+          </Animated.View>
         </BlurView>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="rounded-2xl bg-white p-4">
+        <Animated.View
+          style={{ opacity: controlsOpacity }}
+          pointerEvents={controlsVisible ? "auto" : "none"}
+          className="rounded-2xl bg-white p-4"
+        >
           <ProgressBar
             backgroundColor="#4807EC"
             currentStep={activeParagraph + 1}
@@ -177,7 +194,7 @@ const StoryContentContainer = ({
             totalSteps={paragraphs.length}
             height={11}
           />
-        </View>
+        </Animated.View>
       )}
       <EndOfStoryMessage
         isInteractive={isInteractive}
