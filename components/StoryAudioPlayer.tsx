@@ -73,24 +73,31 @@ const StoryAudioPlayer = ({
       // Reset edge detection so the next finish is treated as fresh
       prevDidJustFinishRef.current = false;
 
-      player.replace(currentUrl);
-
-      if (wasPlaying) {
-        player.play();
-      } else {
+      try {
+        player.replace(currentUrl);
+        if (wasPlaying) {
+          player.play();
+        }
+      } catch (e) {
+        if (__DEV__) console.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
     }
   }, [currentUrl, player, setIsPlaying]);
 
   const playAudio = () => {
-    if (isPlaying) {
+    try {
+      if (isPlaying) {
+        setIsPlaying(false);
+        player.pause();
+        return;
+      }
+      setIsPlaying(true);
+      player.play();
+    } catch (e) {
+      if (__DEV__) console.error("Audio playback failed:", e);
       setIsPlaying(false);
-      player.pause();
-      return;
     }
-    setIsPlaying(true);
-    player.play();
   };
 
   return (
