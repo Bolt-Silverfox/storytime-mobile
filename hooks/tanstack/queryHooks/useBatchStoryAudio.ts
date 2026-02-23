@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
 type BatchParagraph = {
@@ -33,12 +34,8 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
       method: "POST",
       body: JSON.stringify({ storyId, voiceId }),
     });
-    const response: {
-      success: boolean;
-      message: string;
-      statusCode: number;
-      data: BatchStoryAudioResponse;
-    } = await request.json();
+    const response: QueryResponse<BatchStoryAudioResponse> =
+      await request.json();
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
