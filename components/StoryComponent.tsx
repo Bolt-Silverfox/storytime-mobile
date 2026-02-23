@@ -39,6 +39,7 @@ const StoryComponent = ({
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
   const [controlsVisible, setControlsVisible] = useState(true);
@@ -97,7 +98,25 @@ const StoryComponent = ({
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
-  const { data: batchAudio } = useBatchStoryAudio(storyId, selectedVoice);
+
+  // Debounce voice selection to prevent rapid batch requests
+  useEffect(() => {
+    if (!selectedVoice) {
+      setDebouncedVoice(null);
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedVoice(selectedVoice), 1000);
+    return () => clearTimeout(timer);
+  }, [selectedVoice]);
+
+  // Cancel stale batch queries when debounced voice changes
+  useEffect(() => {
+    if (debouncedVoice) {
+      queryClient.cancelQueries({ queryKey: ["batchStoryAudio"] });
+    }
+  }, [debouncedVoice, queryClient]);
+
+  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
 
   useEffect(() => {
     if (!isVoiceFetched) return;
