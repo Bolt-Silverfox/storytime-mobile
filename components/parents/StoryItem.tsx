@@ -83,7 +83,7 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
     >
       <View className={`relative h-full w-full flex-1 rounded-2xl`}>
         <CustomImage
-          className=" -z-10 h-[150px] w-full min-w-full rounded-xl bg-cover"
+          className="h-[150px] w-full min-w-full rounded-xl bg-cover"
           source={{ uri: coverImageUrl }}
           height={150}
         />
