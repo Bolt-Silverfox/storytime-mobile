@@ -3,12 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-} from "react-native";
+import { Animated, ImageBackground, Pressable, ScrollView } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -42,8 +37,9 @@ const StoryComponent = ({
   const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionStartTime = useRef(Date.now());
 
-  const resetAutoHideTimer = useCallback(() => {
+  const resetAutoHideTimer = useCallback((nextVisible = true) => {
     if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
+    if (!nextVisible) return;
     autoHideTimer.current = setTimeout(() => {
       setControlsVisible(false);
     }, 4000);
@@ -67,8 +63,11 @@ const StoryComponent = ({
   }, [resetAutoHideTimer]);
 
   const handleScreenTap = useCallback(() => {
-    setControlsVisible((prev) => !prev);
-    resetAutoHideTimer();
+    setControlsVisible((prev) => {
+      const next = !prev;
+      resetAutoHideTimer(next);
+      return next;
+    });
   }, [resetAutoHideTimer]);
 
   const { user } = useAuth();

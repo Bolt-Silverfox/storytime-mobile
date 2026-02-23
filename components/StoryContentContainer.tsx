@@ -8,7 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import { Animated, Pressable, Text, View, ViewProps } from "react-native";
+import { ReactNode } from "react";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -18,6 +19,25 @@ import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
+
+const AnimatedControlWrapper = ({
+  controlsOpacity,
+  controlsVisible,
+  children,
+  ...rest
+}: {
+  controlsOpacity: Animated.Value;
+  controlsVisible: boolean;
+  children: ReactNode;
+} & Omit<ViewProps, "style">) => (
+  <Animated.View
+    style={{ opacity: controlsOpacity }}
+    pointerEvents={controlsVisible ? "auto" : "none"}
+    {...rest}
+  >
+    {children}
+  </Animated.View>
+);
 
 type PropTypes = {
   story: Story;
@@ -119,9 +139,9 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <Animated.View
-          style={{ opacity: controlsOpacity }}
-          pointerEvents={controlsVisible ? "auto" : "none"}
+        <AnimatedControlWrapper
+          controlsOpacity={controlsOpacity}
+          controlsVisible={controlsVisible}
         >
           <StoryAudioPlayer
             audioUrl={story.audioUrl}
@@ -137,7 +157,7 @@ const StoryContentContainer = ({
             onPageFinished={handlePageAudioFinished}
             storyId={story.id}
           />
-        </Animated.View>
+        </AnimatedControlWrapper>
       )}
       {currentlyDisplayed === "story" && (
         <BlurView
@@ -148,9 +168,9 @@ const StoryContentContainer = ({
           <Text className="font-[quilka] text-xl text-white">
             {paragraphs[activeParagraph]}
           </Text>
-          <Animated.View
-            style={{ opacity: controlsOpacity }}
-            pointerEvents={controlsVisible ? "auto" : "none"}
+          <AnimatedControlWrapper
+            controlsOpacity={controlsOpacity}
+            controlsVisible={controlsVisible}
             className="mt-4 flex flex-row items-center justify-between"
           >
             <Pressable
@@ -178,13 +198,13 @@ const StoryContentContainer = ({
                 />
               )}
             </Pressable>
-          </Animated.View>
+          </AnimatedControlWrapper>
         </BlurView>
       )}
       {currentlyDisplayed === "story" && (
-        <Animated.View
-          style={{ opacity: controlsOpacity }}
-          pointerEvents={controlsVisible ? "auto" : "none"}
+        <AnimatedControlWrapper
+          controlsOpacity={controlsOpacity}
+          controlsVisible={controlsVisible}
           className="rounded-2xl bg-white p-4"
         >
           <ProgressBar
@@ -194,7 +214,7 @@ const StoryContentContainer = ({
             totalSteps={paragraphs.length}
             height={11}
           />
-        </Animated.View>
+        </AnimatedControlWrapper>
       )}
       <EndOfStoryMessage
         isInteractive={isInteractive}
