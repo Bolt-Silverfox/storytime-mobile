@@ -68,7 +68,7 @@ const NotificationPermissionBanner = ({
   };
 
   return (
-    <View className="mx-4 mt-3 rounded-lg bg-amber-50 p-4 shadow-sm">
+    <View className="absolute left-0 right-0 top-12 z-50 mx-4 rounded-lg bg-amber-50 p-4 shadow-sm">
       <View className="flex-row items-start">
         <View className="mr-3 mt-0.5">
           {isDenied ? (
