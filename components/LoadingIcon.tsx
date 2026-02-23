@@ -52,20 +52,23 @@ export default function LoadingIcon() {
 
   const bookScale = bookPulse.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.95, 1.05],
+    outputRange: [0.85, 1.15],
   });
 
   const bookOpacity = bookPulse.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.8, 1],
+    outputRange: [0.6, 1],
   });
 
   const starScale = starShimmer.interpolate({
     inputRange: [0, 1],
-    outputRange: [0.8, 1.1],
+    outputRange: [0.5, 1.2],
   });
 
-  const starOpacity = starShimmer;
+  const starOpacity = starShimmer.interpolate({
+    inputRange: [0, 0.2, 1],
+    outputRange: [0.4, 0.6, 1],
+  });
 
   return (
     <View style={styles.container}>

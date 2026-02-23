@@ -1,9 +1,16 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, View } from "react-native";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -17,6 +24,7 @@ import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
+import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
 import useAuth from "../contexts/AuthContext";
 
 const StoryComponent = ({
@@ -30,20 +38,138 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
-
-  const { user } = useAuth();
-  const { data: quota } = useGetStoryQuota();
-  const { data: preferredVoice } = useGetPreferredVoice();
-  const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [controlsInteractive, setControlsInteractive] = useState(true);
+  const controlsOpacity = useRef(new Animated.Value(1)).current;
+  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const controlsVisibleRef = useRef(controlsVisible);
+  const isScrollingRef = useRef(false);
 
   useEffect(() => {
-    if (preferredVoice?.name) {
-      setSelectedVoice(preferredVoice.name.toUpperCase());
+    controlsVisibleRef.current = controlsVisible;
+  }, [controlsVisible]);
+
+  const clearAutoHideTimer = useCallback(() => {
+    if (autoHideTimer.current) {
+      clearTimeout(autoHideTimer.current);
+      autoHideTimer.current = null;
     }
-  }, [preferredVoice]);
+  }, []);
+
+  const startAutoHideTimer = useCallback(() => {
+    clearAutoHideTimer();
+    autoHideTimer.current = setTimeout(() => {
+      setControlsVisible(false);
+    }, 4000);
+  }, [clearAutoHideTimer]);
+
+  const toggleControls = useCallback(() => {
+    if (isScrollingRef.current) return;
+    setControlsVisible((prev) => !prev);
+  }, []);
+
+  // Drive animation and timer from controlsVisible state changes
+  useEffect(() => {
+    // Make interactive immediately on show (before animation finishes)
+    if (controlsVisible) setControlsInteractive(true);
+    Animated.timing(controlsOpacity, {
+      toValue: controlsVisible ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      // Only drop interactivity after fade-out completes
+      if (finished && !controlsVisible) setControlsInteractive(false);
+    });
+    if (controlsVisible) startAutoHideTimer();
+    else clearAutoHideTimer();
+    return () => clearAutoHideTimer();
+  }, [
+    controlsVisible,
+    controlsOpacity,
+    startAutoHideTimer,
+    clearAutoHideTimer,
+  ]);
+
+  const resetAutoHideTimer = useCallback(() => {
+    if (controlsVisibleRef.current) startAutoHideTimer();
+  }, [startAutoHideTimer]);
+
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { data: quota } = useGetStoryQuota();
+  const { data: preferredVoice, isFetched: isVoiceFetched } =
+    useGetPreferredVoice();
+  const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+
+  // Debounce voice selection to prevent rapid batch requests
+  // Skip debounce on initial voice load for faster first batch
+  const isInitialVoiceSet = useRef(false);
+  useEffect(() => {
+    if (!selectedVoice) {
+      setDebouncedVoice(null);
+      return;
+    }
+    if (!isInitialVoiceSet.current) {
+      isInitialVoiceSet.current = true;
+      setDebouncedVoice(selectedVoice);
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedVoice(selectedVoice), 1000);
+    return () => clearTimeout(timer);
+  }, [selectedVoice]);
+
+  // Cancel stale batch queries when debounced voice changes (not on initial load)
+  const prevDebouncedVoice = useRef<string | null>(null);
+  useEffect(() => {
+    if (
+      debouncedVoice &&
+      prevDebouncedVoice.current &&
+      prevDebouncedVoice.current !== debouncedVoice
+    ) {
+      queryClient.cancelQueries({
+        queryKey: ["batchStoryAudio", storyId],
+        predicate: (query) => query.queryKey[2] !== debouncedVoice,
+      });
+    }
+    prevDebouncedVoice.current = debouncedVoice;
+  }, [debouncedVoice, storyId, queryClient]);
+
+  // Note: During debounce window, per-paragraph useTextToAudio fires with
+  // selectedVoice (new) while batch still uses debouncedVoice (old).
+  // The current paragraph makes an individual request; backend
+  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
+  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
+
+  useEffect(() => {
+    if (!isVoiceFetched) return;
+    setSelectedVoice(
+      preferredVoice?.name ? preferredVoice.name.toUpperCase() : "LILY"
+    );
+  }, [preferredVoice, isVoiceFetched]);
+
+  // Seed per-paragraph TanStack Query cache from batch response
+  // so useTextToAudio in StoryAudioPlayer gets instant cache hits
+  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
+  useEffect(() => {
+    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
+    for (const p of batchAudio.paragraphs) {
+      if (p.audioUrl) {
+        queryClient.setQueryData(
+          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
+          {
+            success: true,
+            message: "Audio generated successfully",
+            statusCode: 200,
+            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
+          }
+        );
+      }
+    }
+  }, [batchAudio, storyId, queryClient]);
 
   const getQuotaReminderKey = () => {
     const now = new Date();
@@ -92,36 +218,73 @@ const StoryComponent = ({
   return (
     <SafeAreaWrapper variant="transparent">
       {data ? (
-        <ScrollView contentContainerClassName="flex min-h-full">
+        <ScrollView
+          contentContainerClassName="flex min-h-full"
+          onScrollBeginDrag={() => {
+            isScrollingRef.current = true;
+          }}
+          onScrollEndDrag={() => {
+            setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 100);
+          }}
+        >
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
             className="flex flex-1 flex-col p-4 pt-12 "
           >
-            <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-1 flex-col">
+              {/* Background tap target — first child = lowest z-order */}
               <Pressable
-                onPress={() =>
-                  navigator.reset({ index: 0, routes: [{ name: "parents" }] })
-                }
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                onPress={toggleControls}
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { backgroundColor: "transparent" },
+                ]}
+              />
+
+              {/* Top bar */}
+              <Animated.View
+                style={{ opacity: controlsOpacity }}
+                pointerEvents={controlsInteractive ? "auto" : "none"}
+                className="flex flex-row items-center justify-between"
               >
-                <FontAwesome6 name="house" size={20} color="white" />
-              </Pressable>
-              <Pressable
-                onPress={() => setIsOptionsModalOpen(true)}
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-              >
-                <FontAwesome6 name="ellipsis" size={20} color="white" />
-              </Pressable>
+                <Pressable
+                  onPress={() => {
+                    resetAutoHideTimer();
+                    navigator.reset({
+                      index: 0,
+                      routes: [{ name: "parents" }],
+                    });
+                  }}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="house" size={20} color="white" />
+                </Pressable>
+                <Pressable
+                  onPress={() => {
+                    resetAutoHideTimer();
+                    setIsOptionsModalOpen(true);
+                  }}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="ellipsis" size={20} color="white" />
+                </Pressable>
+              </Animated.View>
+
+              <StoryContentContainer
+                selectedVoice={selectedVoice}
+                isInteractive={storyMode === "interactive"}
+                story={data}
+                activeParagraph={activeParagraph}
+                setActiveParagraph={setActiveParagraph}
+                onProgress={handleProgress}
+                controlsInteractive={controlsInteractive}
+                controlsOpacity={controlsOpacity}
+                resetAutoHideTimer={resetAutoHideTimer}
+              />
             </View>
-            <StoryContentContainer
-              selectedVoice={selectedVoice}
-              isInteractive={storyMode === "interactive"}
-              story={data}
-              activeParagraph={activeParagraph}
-              setActiveParagraph={setActiveParagraph}
-              onProgress={handleProgress}
-            />
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
