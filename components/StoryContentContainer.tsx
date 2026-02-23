@@ -8,11 +8,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View } from "react-native";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
-import AnimatedControlWrapper from "./UI/AnimatedControlWrapper";
 import CustomButton from "./UI/CustomButton";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
@@ -27,8 +26,6 @@ type PropTypes = {
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
-  controlsVisible: boolean;
-  controlsOpacity: Animated.Value;
 };
 
 type DisplayOptions =
@@ -44,8 +41,6 @@ const StoryContentContainer = ({
   activeParagraph,
   onProgress,
   selectedVoice,
-  controlsVisible,
-  controlsOpacity,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -120,25 +115,20 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <AnimatedControlWrapper
-          controlsOpacity={controlsOpacity}
-          controlsVisible={controlsVisible}
-        >
-          <StoryAudioPlayer
-            audioUrl={story.audioUrl}
-            textContent={paragraphs[activeParagraph]}
-            nextPageContent={
-              activeParagraph < storyLength
-                ? paragraphs[activeParagraph + 1]
-                : null
-            }
-            selectedVoice={selectedVoice}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            onPageFinished={handlePageAudioFinished}
-            storyId={story.id}
-          />
-        </AnimatedControlWrapper>
+        <StoryAudioPlayer
+          audioUrl={story.audioUrl}
+          textContent={paragraphs[activeParagraph]}
+          nextPageContent={
+            activeParagraph < storyLength
+              ? paragraphs[activeParagraph + 1]
+              : null
+          }
+          selectedVoice={selectedVoice}
+          isPlaying={isPlaying}
+          setIsPlaying={setIsPlaying}
+          onPageFinished={handlePageAudioFinished}
+          storyId={story.id}
+        />
       )}
       {currentlyDisplayed === "story" && (
         <BlurView
@@ -149,11 +139,7 @@ const StoryContentContainer = ({
           <Text className="font-[quilka] text-xl text-white">
             {paragraphs[activeParagraph]}
           </Text>
-          <AnimatedControlWrapper
-            controlsOpacity={controlsOpacity}
-            controlsVisible={controlsVisible}
-            className="mt-4 flex flex-row items-center justify-between"
-          >
+          <View className="mt-4 flex flex-row items-center justify-between">
             <Pressable
               onPress={
                 !isFirstParagraph ? () => handleManualNavigation("prev") : null
@@ -179,15 +165,11 @@ const StoryContentContainer = ({
                 />
               )}
             </Pressable>
-          </AnimatedControlWrapper>
+          </View>
         </BlurView>
       )}
       {currentlyDisplayed === "story" && (
-        <AnimatedControlWrapper
-          controlsOpacity={controlsOpacity}
-          controlsVisible={controlsVisible}
-          className="rounded-2xl bg-white p-4"
-        >
+        <View className="rounded-2xl bg-white p-4">
           <ProgressBar
             backgroundColor="#4807EC"
             currentStep={activeParagraph + 1}
@@ -195,7 +177,7 @@ const StoryContentContainer = ({
             totalSteps={paragraphs.length}
             height={11}
           />
-        </AnimatedControlWrapper>
+        </View>
       )}
       <EndOfStoryMessage
         isInteractive={isInteractive}

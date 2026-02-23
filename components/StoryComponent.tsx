@@ -2,14 +2,8 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  Animated,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  View,
-} from "react-native";
+import { useEffect, useRef, useState } from "react";
+import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -18,7 +12,6 @@ import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
-import AnimatedControlWrapper from "./UI/AnimatedControlWrapper";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
@@ -39,40 +32,7 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
-  const [controlsVisible, setControlsVisible] = useState(true);
-  const controlsOpacity = useRef(new Animated.Value(1)).current;
-  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionStartTime = useRef(Date.now());
-
-  const resetAutoHideTimer = useCallback((nextVisible = true) => {
-    if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
-    if (!nextVisible) return;
-    autoHideTimer.current = setTimeout(() => {
-      setControlsVisible(false);
-    }, 4000);
-  }, []);
-
-  // Animate opacity and manage auto-hide timer when controlsVisible changes
-  useEffect(() => {
-    Animated.timing(controlsOpacity, {
-      toValue: controlsVisible ? 1 : 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
-    resetAutoHideTimer(controlsVisible);
-  }, [controlsVisible, controlsOpacity, resetAutoHideTimer]);
-
-  // Start auto-hide timer on mount
-  useEffect(() => {
-    resetAutoHideTimer();
-    return () => {
-      if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
-    };
-  }, [resetAutoHideTimer]);
-
-  const handleScreenTap = useCallback(() => {
-    setControlsVisible((prev) => !prev);
-  }, []);
 
   const { user } = useAuth();
   const { data: quota } = useGetStoryQuota();
@@ -139,15 +99,7 @@ const StoryComponent = ({
             className="flex flex-1 flex-col p-4 pt-12 "
           >
             <View className="flex flex-1 flex-col">
-              <Pressable
-                onPress={handleScreenTap}
-                className="absolute bottom-0 left-0 right-0 top-0 z-0"
-              />
-              <AnimatedControlWrapper
-                controlsOpacity={controlsOpacity}
-                controlsVisible={controlsVisible}
-                className="z-10 flex flex-row items-center justify-between"
-              >
+              <View className="z-10 flex flex-row items-center justify-between">
                 <Pressable
                   onPress={() =>
                     navigator.reset({
@@ -165,7 +117,7 @@ const StoryComponent = ({
                 >
                   <FontAwesome6 name="ellipsis" size={20} color="white" />
                 </Pressable>
-              </AnimatedControlWrapper>
+              </View>
               <StoryContentContainer
                 selectedVoice={selectedVoice}
                 isInteractive={storyMode === "interactive"}
@@ -173,8 +125,6 @@ const StoryComponent = ({
                 activeParagraph={activeParagraph}
                 setActiveParagraph={setActiveParagraph}
                 onProgress={handleProgress}
-                controlsVisible={controlsVisible}
-                controlsOpacity={controlsOpacity}
               />
             </View>
           </ImageBackground>
