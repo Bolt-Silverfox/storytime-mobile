@@ -19,7 +19,8 @@ type BatchStoryAudioResponse = {
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   return useQuery({
     queryKey: ["batchStoryAudio", storyId, voiceId],
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 30, // 30 min — audio URLs are permanent (Cloudinary) but avoid stale paragraph lists
+    gcTime: 1000 * 60 * 60, // 1 hour — keep in memory to avoid redundant batch requests
     enabled: !!storyId && !!voiceId,
     queryFn: () => fetchBatchAudio(storyId, voiceId!),
     select: (res) => res?.data,
