@@ -88,7 +88,7 @@ const NotificationPermissionBanner = ({
               : "Stay updated with new stories, achievements, and important reminders for your kids."}
           </Text>
 
-          <View className="flex-row items-center gap-2">
+          <View className="flex-row flex-wrap items-center gap-2">
             <Pressable
               onPress={handlePrimaryAction}
               className="flex-row items-center rounded-md bg-amber-600 px-4 py-2"
