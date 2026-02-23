@@ -8,7 +8,6 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
-  StyleSheet,
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
@@ -139,15 +138,15 @@ const StoryComponent = ({
             resizeMode="cover"
             className="flex flex-1 flex-col p-4 pt-12 "
           >
-            <View style={{ flex: 1 }}>
+            <View className="flex flex-1 flex-col">
               <Pressable
                 onPress={handleScreenTap}
-                style={StyleSheet.absoluteFill}
+                className="absolute bottom-0 left-0 right-0 top-0 z-0"
               />
               <AnimatedControlWrapper
                 controlsOpacity={controlsOpacity}
                 controlsVisible={controlsVisible}
-                className="flex flex-row items-center justify-between"
+                className="z-10 flex flex-row items-center justify-between"
               >
                 <Pressable
                   onPress={() =>
