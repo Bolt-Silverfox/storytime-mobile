@@ -100,21 +100,37 @@ const StoryComponent = ({
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   // Debounce voice selection to prevent rapid batch requests
+  // Skip debounce on initial voice load for faster first batch
+  const isInitialVoiceSet = useRef(false);
   useEffect(() => {
     if (!selectedVoice) {
       setDebouncedVoice(null);
+      return;
+    }
+    if (!isInitialVoiceSet.current) {
+      isInitialVoiceSet.current = true;
+      setDebouncedVoice(selectedVoice);
       return;
     }
     const timer = setTimeout(() => setDebouncedVoice(selectedVoice), 1000);
     return () => clearTimeout(timer);
   }, [selectedVoice]);
 
-  // Cancel stale batch queries when debounced voice changes
+  // Cancel stale batch queries when debounced voice changes (not on initial load)
+  const prevDebouncedVoice = useRef<string | null>(null);
   useEffect(() => {
-    if (debouncedVoice) {
-      queryClient.cancelQueries({ queryKey: ["batchStoryAudio"] });
+    if (
+      debouncedVoice &&
+      prevDebouncedVoice.current &&
+      prevDebouncedVoice.current !== debouncedVoice
+    ) {
+      queryClient.cancelQueries({
+        queryKey: ["batchStoryAudio", storyId],
+        predicate: (query) => query.queryKey[2] !== debouncedVoice,
+      });
     }
-  }, [debouncedVoice, queryClient]);
+    prevDebouncedVoice.current = debouncedVoice;
+  }, [debouncedVoice, storyId, queryClient]);
 
   const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
 
@@ -127,22 +143,23 @@ const StoryComponent = ({
 
   // Seed per-paragraph TanStack Query cache from batch response
   // so useTextToAudio in StoryAudioPlayer gets instant cache hits
+  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
   useEffect(() => {
-    if (!batchAudio?.paragraphs || !selectedVoice) return;
+    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
     for (const p of batchAudio.paragraphs) {
       if (p.audioUrl) {
         queryClient.setQueryData(
-          ["textToSpeech", storyId, p.text, selectedVoice],
+          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
           {
             success: true,
             message: "Audio generated successfully",
             statusCode: 200,
-            data: { audioUrl: p.audioUrl, voiceId: selectedVoice },
+            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
           }
         );
       }
     }
-  }, [batchAudio, storyId, selectedVoice, queryClient]);
+  }, [batchAudio, storyId, queryClient]);
 
   const getQuotaReminderKey = () => {
     const now = new Date();
