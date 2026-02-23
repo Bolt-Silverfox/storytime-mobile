@@ -8,36 +8,17 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Pressable, Text, View, ViewProps } from "react-native";
-import { ReactNode } from "react";
+import { Animated, Pressable, Text, View } from "react-native";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
+import AnimatedControlWrapper from "./UI/AnimatedControlWrapper";
 import CustomButton from "./UI/CustomButton";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
-
-const AnimatedControlWrapper = ({
-  controlsOpacity,
-  controlsVisible,
-  children,
-  ...rest
-}: {
-  controlsOpacity: Animated.Value;
-  controlsVisible: boolean;
-  children: ReactNode;
-} & Omit<ViewProps, "style">) => (
-  <Animated.View
-    style={{ opacity: controlsOpacity }}
-    pointerEvents={controlsVisible ? "auto" : "none"}
-    {...rest}
-  >
-    {children}
-  </Animated.View>
-);
 
 type PropTypes = {
   story: Story;
