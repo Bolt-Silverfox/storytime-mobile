@@ -3,7 +3,7 @@ import { Pressable, Text, View } from "react-native";
 import LibraryStories from "../../components/LibraryStories";
 import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
-import Toast from "../../components/UI/Toast";
+import { libraryFilters, LibraryFilterType } from "../../types";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
@@ -11,13 +11,6 @@ const ParentsLibraryScreen = () => {
     title: string;
     id: string;
   } | null>(null);
-  const [toastMsg, setToastMsg] = useState("");
-  const [showToast, setShowToast] = useState(false);
-
-  const handleRemoveSuccess = (title: string) => {
-    setToastMsg(`"${title}" removed from library`);
-    setShowToast(true);
-  };
 
   return (
     <SafeAreaWrapper variant="solid">
@@ -49,20 +42,11 @@ const ParentsLibraryScreen = () => {
             isOpen
             onClose={() => setActiveStory(null)}
             activeStory={activeStory}
-            onRemoveSuccess={handleRemoveSuccess}
           />
         )}
-        <Toast
-          visible={showToast}
-          message={toastMsg}
-          onHide={() => setShowToast(false)}
-        />
       </View>
     </SafeAreaWrapper>
   );
 };
 
 export default ParentsLibraryScreen;
-
-const libraryFilters = ["ongoing", "completed"] as const;
-export type LibraryFilterType = (typeof libraryFilters)[number];

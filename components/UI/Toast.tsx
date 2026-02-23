@@ -1,59 +1,91 @@
 import { useCallback, useEffect, useRef } from "react";
-import { Animated, StyleSheet, Text, View } from "react-native";
+import {
+  Animated,
+  StyleSheet,
+  Text,
+  View,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { ToastItem } from "../../contexts/ToastContext";
 
 type ToastProps = {
-  message: string;
-  visible: boolean;
-  onHide: () => void;
+  toast: ToastItem;
+  index: number;
+  onDismiss: (id: number) => void;
 };
 
-const Toast = ({ message, visible, onHide }: ToastProps) => {
-  const translateY = useRef(new Animated.Value(80)).current;
-  const onHideRef = useRef(onHide);
+const TOAST_HEIGHT = 60;
+const TOAST_GAP = 8;
+
+const Toast = ({ toast, index, onDismiss }: ToastProps) => {
+  const translateY = useRef(new Animated.Value(100)).current;
+  const opacity = useRef(new Animated.Value(0)).current;
+
+  const dismiss = useCallback(() => {
+    Animated.parallel([
+      Animated.timing(translateY, {
+        toValue: 100,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      onDismiss(toast.id);
+    });
+  }, [toast.id, onDismiss, translateY, opacity]);
 
   useEffect(() => {
-    onHideRef.current = onHide;
-  }, [onHide]);
-
-  const handleHide = useCallback(() => {
-    onHideRef.current();
-  }, []);
-
-  useEffect(() => {
-    if (visible) {
+    Animated.parallel([
       Animated.timing(translateY, {
         toValue: 0,
         duration: 250,
         useNativeDriver: true,
-      }).start();
+      }),
+      Animated.timing(opacity, {
+        toValue: 1,
+        duration: 250,
+        useNativeDriver: true,
+      }),
+    ]).start();
 
-      const timer = setTimeout(() => {
-        Animated.timing(translateY, {
-          toValue: 80,
-          duration: 250,
-          useNativeDriver: true,
-        }).start(handleHide);
-      }, 2500);
+    const timer = setTimeout(() => {
+      dismiss();
+    }, 2500);
 
-      return () => clearTimeout(timer);
-    }
-  }, [visible, translateY, handleHide]);
+    return () => clearTimeout(timer);
+  }, [dismiss, translateY, opacity]);
 
-  if (!visible) return null;
+  const bottomOffset = 24 + index * (TOAST_HEIGHT + TOAST_GAP);
 
   return (
-    <Animated.View style={[styles.container, { transform: [{ translateY }] }]}>
-      <View className="w-full rounded-lg bg-white px-5 py-3">
-        <Text className="text-center font-[abeezee] text-sm">{message}</Text>
-      </View>
-    </Animated.View>
+    <TouchableWithoutFeedback onPress={dismiss}>
+      <Animated.View
+        style={[
+          styles.container,
+          {
+            bottom: bottomOffset,
+            transform: [{ translateY }],
+            opacity,
+          },
+        ]}
+      >
+        <View className="w-full rounded-lg border border-border-lighter bg-white px-5 py-3 shadow-lg">
+          <Text className="text-center font-[abeezee] text-sm">
+            {toast.message}
+          </Text>
+        </View>
+      </Animated.View>
+    </TouchableWithoutFeedback>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 24,
     left: 16,
     right: 16,
     zIndex: 9999,

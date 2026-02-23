@@ -16,6 +16,7 @@ import NotificationHandler from "./components/NotificationHandler";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
 import RootNavigator from "./Navigation/RootNavigator";
+import { ToastProvider } from "./contexts/ToastContext";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -55,13 +56,15 @@ export default function App() {
   return (
     <ErrorBoundary>
       <AuthProvider>
-        <QueryClientProvider client={queryClient}>
-          <NavigationContainer>
-            <NotificationHandler>
-              <RootNavigator />
-            </NotificationHandler>
-          </NavigationContainer>
-        </QueryClientProvider>
+        <ToastProvider>
+          <QueryClientProvider client={queryClient}>
+            <NavigationContainer>
+              <NotificationHandler>
+                <RootNavigator />
+              </NotificationHandler>
+            </NavigationContainer>
+          </QueryClientProvider>
+        </ToastProvider>
       </AuthProvider>
     </ErrorBoundary>
   );

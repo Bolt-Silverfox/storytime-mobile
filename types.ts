@@ -342,6 +342,9 @@ type LibraryStory = Pick<
   | "categories"
 > & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
+const libraryFilters = ["ongoing", "completed"] as const;
+type LibraryFilterType = (typeof libraryFilters)[number];
+
 export type {
   User,
   Profile,
@@ -370,6 +373,7 @@ export type {
   DeviceTokenResponse,
   StoryQuota,
   LibraryStory,
+  LibraryFilterType,
 };
 
-export { ageGroups };
+export { ageGroups, libraryFilters };

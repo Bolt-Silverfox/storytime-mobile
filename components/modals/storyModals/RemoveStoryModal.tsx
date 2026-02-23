@@ -1,31 +1,40 @@
 import { Image, Text, View } from "react-native";
+import useToast from "../../../contexts/ToastContext";
+import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
-import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 
 interface RemoveStoryModalProps extends Omit<CustomModalProps, "children"> {
   activeStory: {
     title: string;
     id: string;
   };
-  onRemoveSuccess: (title: string) => void;
 }
 
 const RemoveStoryModal = ({
   isOpen,
   onClose,
   activeStory,
-  onRemoveSuccess,
 }: RemoveStoryModalProps) => {
   const { mutate: removeStory, isPending } = useRemoveStoryFromLibrary();
+  const { notify } = useToast();
 
   const handleRemove = () => {
     removeStory(activeStory.id, {
       onSuccess: () => {
-        onRemoveSuccess(activeStory.title);
         onClose();
+        setTimeout(() => {
+          notify("Story removed successfully");
+        }, 500);
+        notifyWithTitle();
       },
     });
+  };
+
+  const notifyWithTitle = () => {
+    setTimeout(() => {
+      notify(`"${activeStory.title}" removed from library`);
+    }, 1000);
   };
 
   return (

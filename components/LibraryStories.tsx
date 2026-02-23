@@ -10,7 +10,6 @@ import {
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
-import { LibraryFilterType } from "../screens/parents/ParentsLibraryScreen";
 import {
   secondsToMinutes,
   splitByWordCountPreservingSentences,
@@ -19,6 +18,7 @@ import ErrorComponent from "./ErrorComponent";
 import Icon from "./Icon";
 import CustomEmptyState from "./emptyState/CustomEmptyState";
 import ProgressBar from "./parents/ProgressBar";
+import { LibraryFilterType } from "../types";
 
 type PropTypes = {
   storyFilter: LibraryFilterType;
@@ -32,7 +32,6 @@ type PropTypes = {
 
 const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-
   const { data, isPending, error, refetch } = useGetLibraryStories(storyFilter);
 
   if (isPending) return <LoadingComponent storyFilter={storyFilter} />;
