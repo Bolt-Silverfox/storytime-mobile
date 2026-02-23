@@ -3,7 +3,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Animated, ImageBackground, Pressable, ScrollView } from "react-native";
+import {
+  Animated,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -132,7 +139,11 @@ const StoryComponent = ({
             resizeMode="cover"
             className="flex flex-1 flex-col p-4 pt-12 "
           >
-            <Pressable onPress={handleScreenTap} style={{ flex: 1 }}>
+            <View style={{ flex: 1 }}>
+              <Pressable
+                onPress={handleScreenTap}
+                style={StyleSheet.absoluteFill}
+              />
               <AnimatedControlWrapper
                 controlsOpacity={controlsOpacity}
                 controlsVisible={controlsVisible}
@@ -166,7 +177,7 @@ const StoryComponent = ({
                 controlsVisible={controlsVisible}
                 controlsOpacity={controlsOpacity}
               />
-            </Pressable>
+            </View>
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
