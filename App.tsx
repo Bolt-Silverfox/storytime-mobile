@@ -22,8 +22,10 @@ SplashScreen.preventAutoHideAsync();
 
 setAudioModeAsync({
   playsInSilentMode: true,
-  interruptionMode: "duckOthers",
   shouldPlayInBackground: false,
+  ...(Platform.OS === "ios" && { interruptionMode: "duckOthers" }),
+}).catch((e) => {
+  if (__DEV__) console.warn("setAudioModeAsync failed:", e);
 });
 
 const queryClient = new QueryClient({

@@ -77,8 +77,6 @@ const StoryAudioPlayer = ({
         player.replace(currentUrl);
         if (wasPlaying) {
           player.play();
-        } else {
-          setIsPlaying(false);
         }
       } catch (e) {
         if (__DEV__) console.error("Audio replace failed:", e);
