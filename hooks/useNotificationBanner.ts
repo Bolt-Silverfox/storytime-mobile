@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
 
 const BANNER_DISMISSED_KEY = "notificationBannerDismissed";
@@ -11,41 +12,48 @@ const useNotificationBanner = () => {
     "granted" | "denied" | "undetermined"
   >("undetermined");
 
-  useEffect(() => {
-    const check = async () => {
-      const { status } = await Notifications.getPermissionsAsync();
-      setPermissionStatus(status as "granted" | "denied" | "undetermined");
+  useFocusEffect(
+    useCallback(() => {
+      const check = async () => {
+        const { status } = await Notifications.getPermissionsAsync();
+        const normalizedStatus =
+          status === "granted"
+            ? "granted"
+            : status === "denied"
+              ? "denied"
+              : "undetermined";
+        setPermissionStatus(normalizedStatus);
 
-      if (status === "granted") {
-        setShowBanner(false);
-        return;
-      }
+        if (status === "granted") {
+          setShowBanner(false);
+          return;
+        }
 
-      try {
-        const dismissedTime =
-          await AsyncStorage.getItem(BANNER_DISMISSED_KEY);
-        if (dismissedTime) {
-          const timeSinceDismissed =
-            Date.now() - parseInt(dismissedTime, 10);
-          if (
-            isNaN(timeSinceDismissed) ||
-            timeSinceDismissed > BANNER_DISMISS_DURATION
-          ) {
-            setShowBanner(true);
-            await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
+        try {
+          const dismissedTime =
+            await AsyncStorage.getItem(BANNER_DISMISSED_KEY);
+          if (dismissedTime) {
+            const timeSinceDismissed = Date.now() - parseInt(dismissedTime, 10);
+            if (
+              isNaN(timeSinceDismissed) ||
+              timeSinceDismissed > BANNER_DISMISS_DURATION
+            ) {
+              setShowBanner(true);
+              await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
+            } else {
+              setShowBanner(false);
+            }
           } else {
-            setShowBanner(false);
+            setShowBanner(true);
           }
-        } else {
+        } catch {
           setShowBanner(true);
         }
-      } catch {
-        setShowBanner(true);
-      }
-    };
+      };
 
-    check();
-  }, []);
+      check();
+    }, [])
+  );
 
   const handleDismiss = async () => {
     setShowBanner(false);
@@ -60,6 +68,7 @@ const useNotificationBanner = () => {
 
   const handlePermissionGranted = async () => {
     setShowBanner(false);
+    setPermissionStatus("granted");
     try {
       await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
     } catch (error) {
@@ -69,7 +78,12 @@ const useNotificationBanner = () => {
     }
   };
 
-  return { showBanner, permissionStatus, handleDismiss, handlePermissionGranted };
+  return {
+    showBanner,
+    permissionStatus,
+    handleDismiss,
+    handlePermissionGranted,
+  };
 };
 
 export default useNotificationBanner;
