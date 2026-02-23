@@ -2,8 +2,13 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -32,7 +37,39 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(0);
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const controlsOpacity = useRef(new Animated.Value(1)).current;
+  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const sessionStartTime = useRef(Date.now());
+
+  const resetAutoHideTimer = useCallback(() => {
+    if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
+    autoHideTimer.current = setTimeout(() => {
+      setControlsVisible(false);
+    }, 4000);
+  }, []);
+
+  // Animate opacity when controlsVisible changes
+  useEffect(() => {
+    Animated.timing(controlsOpacity, {
+      toValue: controlsVisible ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [controlsVisible, controlsOpacity]);
+
+  // Start auto-hide timer on mount
+  useEffect(() => {
+    resetAutoHideTimer();
+    return () => {
+      if (autoHideTimer.current) clearTimeout(autoHideTimer.current);
+    };
+  }, [resetAutoHideTimer]);
+
+  const handleScreenTap = useCallback(() => {
+    setControlsVisible((prev) => !prev);
+    resetAutoHideTimer();
+  }, [resetAutoHideTimer]);
 
   const { user } = useAuth();
   const { data: quota } = useGetStoryQuota();
@@ -98,30 +135,41 @@ const StoryComponent = ({
             resizeMode="cover"
             className="flex flex-1 flex-col p-4 pt-12 "
           >
-            <View className="flex flex-row items-center justify-between">
-              <Pressable
-                onPress={() =>
-                  navigator.reset({ index: 0, routes: [{ name: "parents" }] })
-                }
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+            <Pressable onPress={handleScreenTap} style={{ flex: 1 }}>
+              <Animated.View
+                style={{ opacity: controlsOpacity }}
+                pointerEvents={controlsVisible ? "auto" : "none"}
+                className="flex flex-row items-center justify-between"
               >
-                <FontAwesome6 name="house" size={20} color="white" />
-              </Pressable>
-              <Pressable
-                onPress={() => setIsOptionsModalOpen(true)}
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-              >
-                <FontAwesome6 name="ellipsis" size={20} color="white" />
-              </Pressable>
-            </View>
-            <StoryContentContainer
-              selectedVoice={selectedVoice}
-              isInteractive={storyMode === "interactive"}
-              story={data}
-              activeParagraph={activeParagraph}
-              setActiveParagraph={setActiveParagraph}
-              onProgress={handleProgress}
-            />
+                <Pressable
+                  onPress={() =>
+                    navigator.reset({
+                      index: 0,
+                      routes: [{ name: "parents" }],
+                    })
+                  }
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="house" size={20} color="white" />
+                </Pressable>
+                <Pressable
+                  onPress={() => setIsOptionsModalOpen(true)}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="ellipsis" size={20} color="white" />
+                </Pressable>
+              </Animated.View>
+              <StoryContentContainer
+                selectedVoice={selectedVoice}
+                isInteractive={storyMode === "interactive"}
+                story={data}
+                activeParagraph={activeParagraph}
+                setActiveParagraph={setActiveParagraph}
+                onProgress={handleProgress}
+                controlsVisible={controlsVisible}
+                controlsOpacity={controlsOpacity}
+              />
+            </Pressable>
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
