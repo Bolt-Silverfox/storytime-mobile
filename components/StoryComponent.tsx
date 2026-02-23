@@ -30,20 +30,22 @@ const StoryComponent = ({
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(0);
-  const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
 
   const { user } = useAuth();
   const { data: quota } = useGetStoryQuota();
-  const { data: preferredVoice } = useGetPreferredVoice();
+  const { data: preferredVoice, isFetched: isVoiceFetched } =
+    useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   useEffect(() => {
-    if (preferredVoice?.name) {
-      setSelectedVoice(preferredVoice.name.toUpperCase());
-    }
-  }, [preferredVoice]);
+    if (!isVoiceFetched) return;
+    setSelectedVoice(
+      preferredVoice?.name ? preferredVoice.name.toUpperCase() : "LILY",
+    );
+  }, [preferredVoice, isVoiceFetched]);
 
   const getQuotaReminderKey = () => {
     const now = new Date();
