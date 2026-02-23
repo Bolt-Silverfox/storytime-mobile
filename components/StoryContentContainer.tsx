@@ -106,6 +106,7 @@ const StoryContentContainer = ({
     if (direction === "next") {
       if (isLastParagraph) {
         setCurrentlyDisplayed("endOfStoryMessage");
+        onProgress(paragraphs.length, true);
         return;
       }
       setActiveParagraph((a) => {

@@ -21,7 +21,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     queryKey: ["batchStoryAudio", storyId, voiceId],
     staleTime: Infinity,
     enabled: !!storyId && !!voiceId,
-    queryFn: async () => await fetchBatchAudio(storyId, voiceId!),
+    queryFn: () => fetchBatchAudio(storyId, voiceId!),
     select: (res) => res?.data,
   });
 };

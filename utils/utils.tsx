@@ -172,7 +172,7 @@ const splitByWordCount = (text: string, wordsPerChunk: number): string[] => {
 
 const splitByWordCountPreservingSentences = (
   text: string,
-  wordsPerChunk: number,
+  wordsPerChunk: number
 ): string[] => {
   const cleanedText = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
   const sentences = cleanedText.split(/(?<=[.!?])\s+/).filter((s) => s.trim());

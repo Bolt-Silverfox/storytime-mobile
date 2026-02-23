@@ -12,8 +12,12 @@ import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 
 const ParentHomeScreen = () => {
-  const { showBanner, permissionStatus, handleDismiss, handlePermissionGranted } =
-    useNotificationBanner();
+  const {
+    showBanner,
+    permissionStatus,
+    handleDismiss,
+    handlePermissionGranted,
+  } = useNotificationBanner();
 
   return (
     <SafeAreaWrapper variant="solid">
