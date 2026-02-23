@@ -132,6 +132,10 @@ const StoryComponent = ({
     prevDebouncedVoice.current = debouncedVoice;
   }, [debouncedVoice, storyId, queryClient]);
 
+  // Note: During debounce window, per-paragraph useTextToAudio fires with
+  // selectedVoice (new) while batch still uses debouncedVoice (old).
+  // The current paragraph makes an individual request; backend
+  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
   const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
 
   useEffect(() => {
