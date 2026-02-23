@@ -2,8 +2,15 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, View } from "react-native";
+import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Animated,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -33,6 +40,51 @@ const StoryComponent = ({
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const controlsOpacity = useRef(new Animated.Value(1)).current;
+  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearAutoHideTimer = useCallback(() => {
+    if (autoHideTimer.current) {
+      clearTimeout(autoHideTimer.current);
+      autoHideTimer.current = null;
+    }
+  }, []);
+
+  const startAutoHideTimer = useCallback(() => {
+    clearAutoHideTimer();
+    autoHideTimer.current = setTimeout(() => {
+      setControlsVisible(false);
+      Animated.timing(controlsOpacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }, 4000);
+  }, [clearAutoHideTimer, controlsOpacity]);
+
+  const toggleControls = useCallback(() => {
+    setControlsVisible((prev) => {
+      const next = !prev;
+      Animated.timing(controlsOpacity, {
+        toValue: next ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+      if (next) startAutoHideTimer();
+      else clearAutoHideTimer();
+      return next;
+    });
+  }, [controlsOpacity, startAutoHideTimer, clearAutoHideTimer]);
+
+  const resetAutoHideTimer = useCallback(() => {
+    if (controlsVisible) startAutoHideTimer();
+  }, [controlsVisible, startAutoHideTimer]);
+
+  useEffect(() => {
+    startAutoHideTimer();
+    return () => clearAutoHideTimer();
+  }, [startAutoHideTimer, clearAutoHideTimer]);
 
   const { user } = useAuth();
   const { data: quota } = useGetStoryQuota();
@@ -101,25 +153,41 @@ const StoryComponent = ({
             className="flex flex-1 flex-col p-4 pt-12 "
           >
             <View className="flex flex-1 flex-col">
-              <View className="z-10 flex flex-row items-center justify-between">
+              {/* Background tap target — first child = lowest z-order */}
+              <Pressable
+                onPress={toggleControls}
+                style={StyleSheet.absoluteFillObject}
+              />
+
+              {/* Top bar */}
+              <Animated.View
+                style={{ opacity: controlsOpacity }}
+                pointerEvents={controlsVisible ? "auto" : "none"}
+                className="z-10 flex flex-row items-center justify-between"
+              >
                 <Pressable
-                  onPress={() =>
+                  onPress={() => {
+                    resetAutoHideTimer();
                     navigator.reset({
                       index: 0,
                       routes: [{ name: "parents" }],
-                    })
-                  }
+                    });
+                  }}
                   className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
                   <FontAwesome6 name="house" size={20} color="white" />
                 </Pressable>
                 <Pressable
-                  onPress={() => setIsOptionsModalOpen(true)}
+                  onPress={() => {
+                    resetAutoHideTimer();
+                    setIsOptionsModalOpen(true);
+                  }}
                   className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
                   <FontAwesome6 name="ellipsis" size={20} color="white" />
                 </Pressable>
-              </View>
+              </Animated.View>
+
               <StoryContentContainer
                 selectedVoice={selectedVoice}
                 isInteractive={storyMode === "interactive"}
@@ -127,6 +195,9 @@ const StoryComponent = ({
                 activeParagraph={activeParagraph}
                 setActiveParagraph={setActiveParagraph}
                 onProgress={handleProgress}
+                controlsVisible={controlsVisible}
+                controlsOpacity={controlsOpacity}
+                resetAutoHideTimer={resetAutoHideTimer}
               />
             </View>
           </ImageBackground>

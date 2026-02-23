@@ -79,6 +79,7 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
 
   return (
     <>
+      {children}
       {showBanner && isAuthenticated && (
         <NotificationPermissionBanner
           permissionStatus={permissionStatus}
@@ -86,7 +87,6 @@ const NotificationHandler = ({ children }: NotificationHandlerProps) => {
           onPermissionGranted={handlePermissionGranted}
         />
       )}
-      {children}
     </>
   );
 };
