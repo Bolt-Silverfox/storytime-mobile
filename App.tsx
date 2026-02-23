@@ -7,6 +7,7 @@ import {
   onlineManager,
 } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
+import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
@@ -18,6 +19,12 @@ import "./global.css";
 import RootNavigator from "./Navigation/RootNavigator";
 
 SplashScreen.preventAutoHideAsync();
+
+setAudioModeAsync({
+  playsInSilentMode: true,
+  interruptionMode: "duckOthers",
+  shouldPlayInBackground: false,
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {
