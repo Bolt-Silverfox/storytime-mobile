@@ -166,7 +166,12 @@ const StoryContentContainer = ({
                 {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
               </Pressable>
               <Pressable
-                onPress={() => handleManualNavigation("next")}
+                onPress={
+                  !isLastParagraph
+                    ? () => handleManualNavigation("next")
+                    : undefined
+                }
+                disabled={isLastParagraph}
                 className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
               >
                 {!isLastParagraph ? (
