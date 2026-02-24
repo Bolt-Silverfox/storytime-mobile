@@ -171,7 +171,6 @@ const StoryContentContainer = ({
                     ? () => handleManualNavigation("next")
                     : undefined
                 }
-                disabled={isLastParagraph}
                 className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
               >
                 {!isLastParagraph ? (
