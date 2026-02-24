@@ -16,6 +16,9 @@ const QUERY_KEYS = {
 /** Maximum image upload size in bytes (5 MB), matching backend limit. */
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
+/** Color for the "Read" badge on story cards. */
+const READ_BADGE_COLOR = "#4ADE80";
+
 export {
   emailRegex,
   BASE_URL,
@@ -25,4 +28,5 @@ export {
   QUERY_KEYS,
   BUNDLE_IDENTIFIER,
   MAX_IMAGE_SIZE,
+  READ_BADGE_COLOR,
 };

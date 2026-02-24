@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback } from "react";
 import { RefreshControl, ScrollView, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
@@ -12,6 +12,7 @@ import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeCompo
 import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
+import useRefreshControl from "../../../hooks/others/useRefreshControl";
 
 const ParentHomeScreen = () => {
   const {
@@ -22,16 +23,17 @@ const ParentHomeScreen = () => {
   } = useNotificationBanner();
 
   const queryClient = useQueryClient();
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ["stories"] }),
-      queryClient.invalidateQueries({ queryKey: ["storyCategories"] }),
-      queryClient.invalidateQueries({ queryKey: ["storyQuota"] }),
-    ]);
-    setRefreshing(false);
-  };
+  const invalidateAll = useCallback(
+    () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["stories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyCategories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyQuota"] }),
+        queryClient.invalidateQueries({ queryKey: ["parentsFavourites"] }),
+      ]),
+    [queryClient]
+  );
+  const { refreshing, onRefresh } = useRefreshControl(invalidateAll);
 
   return (
     <SafeAreaWrapper variant="solid">

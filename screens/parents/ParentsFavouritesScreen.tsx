@@ -16,6 +16,7 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useRefreshControl from "../../hooks/others/useRefreshControl";
 import { AgeGroupType, FavouriteStory } from "../../types";
 
 type AgeFilter = AgeGroupType | "ALL";
@@ -35,12 +36,7 @@ const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryParentsFavourites()
   );
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  };
+  const { refreshing, onRefresh } = useRefreshControl(refetch);
 
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,12 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import queryGetStories, {
   GetStoriesParam,
 } from "../hooks/tanstack/queryHooks/queryGetStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
+import useRefreshControl from "../hooks/others/useRefreshControl";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
@@ -33,16 +34,11 @@ const GroupedStoriesStoryCarousel = ({
     error,
   } = useQuery(queryGetStories({ ...params, ageGroup: selectedAgeGroup }));
 
+  const { refreshing, onRefresh } = useRefreshControl(refetch);
+
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
-
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await refetch();
-    setRefreshing(false);
-  };
 
   if (!stories?.length) {
     const isFilterDefault = selectedAgeGroup === "All";

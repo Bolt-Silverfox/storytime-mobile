@@ -2,6 +2,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { Pressable, Text, View } from "react-native";
+import { READ_BADGE_COLOR } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
@@ -89,7 +90,7 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
         />
         {story.isRead && (
           <View className="absolute left-2 top-2 flex flex-row items-center gap-x-1 rounded-full bg-black/50 px-2 py-1">
-            <Icon name="CircleCheck" size={14} color="#4ADE80" />
+            <Icon name="CircleCheck" size={14} color={READ_BADGE_COLOR} />
             <Text className="font-[abeezee] text-[10px] text-white">Read</Text>
           </View>
         )}
