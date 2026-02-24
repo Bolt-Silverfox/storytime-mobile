@@ -36,12 +36,14 @@ const GroupedStoriesStoryCarousel = ({
   } = useQuery(queryGetStories({ ...params, ageGroup: selectedAgeGroup }));
 
   const { refreshing, onRefresh } = useRefreshControl(refetch);
+  const sorted = useMemo(
+    () => sortStoriesByReadStatus(stories ?? []),
+    [stories],
+  );
 
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
-
-  const sorted = useMemo(() => sortStoriesByReadStatus(stories), [stories]);
 
   if (!stories?.length) {
     const isFilterDefault = selectedAgeGroup === "All";
