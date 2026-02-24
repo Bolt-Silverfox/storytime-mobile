@@ -1,6 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
-import { Image, Pressable, ScrollView, Text, View } from "react-native";
+import { useCallback, useState } from "react";
+import {
+  Image,
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -16,6 +23,7 @@ import {
   splitByWordCountPreservingSentences,
 } from "../../utils/utils";
 import ErrorComponent from "../../components/ErrorComponent";
+import useRefreshControl from "../../hooks/others/useRefreshControl";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
@@ -27,6 +35,12 @@ const ParentsLibraryScreen = () => {
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const ongoingQuery = useGetOngoingStories();
   const completedQuery = useGetCompletedStories();
+
+  const refetchAll = useCallback(
+    () => Promise.all([ongoingQuery.refetch(), completedQuery.refetch()]),
+    [ongoingQuery.refetch, completedQuery.refetch]
+  );
+  const { refreshing, onRefresh } = useRefreshControl(refetchAll);
 
   const data =
     storyFilter === "ongoing" ? ongoingQuery.data : completedQuery.data;
@@ -70,7 +84,12 @@ const ParentsLibraryScreen = () => {
             </Pressable>
           ))}
         </View>
-        <ScrollView contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5">
+        <ScrollView
+          contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
           {data?.length ? (
             data?.map((story) => {
               const paragraphs = splitByWordCountPreservingSentences(

@@ -1,4 +1,6 @@
-import { ScrollView, View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
@@ -10,6 +12,7 @@ import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeCompo
 import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
+import useRefreshControl from "../../../hooks/others/useRefreshControl";
 
 const ParentHomeScreen = () => {
   const {
@@ -19,6 +22,19 @@ const ParentHomeScreen = () => {
     handlePermissionGranted,
   } = useNotificationBanner();
 
+  const queryClient = useQueryClient();
+  const invalidateAll = useCallback(
+    () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["stories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyCategories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyQuota"] }),
+        queryClient.invalidateQueries({ queryKey: ["parentsFavourites"] }),
+      ]),
+    [queryClient]
+  );
+  const { refreshing, onRefresh } = useRefreshControl(invalidateAll);
+
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex flex-1 bg-bgLight px-4">
@@ -26,6 +42,9 @@ const ParentHomeScreen = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerClassName=" flex flex-col gap-y-8"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {showBanner && (
             <NotificationPermissionBanner
