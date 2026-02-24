@@ -1,7 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
-import { ScrollView, Text, View } from "react-native";
+import { Dispatch, SetStateAction, useState } from "react";
+import { RefreshControl, ScrollView, Text, View } from "react-native";
 import queryGetStories, {
   GetStoriesParam,
 } from "../hooks/tanstack/queryHooks/queryGetStories";
@@ -37,6 +37,13 @@ const GroupedStoriesStoryCarousel = ({
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   if (!stories?.length) {
     const isFilterDefault = selectedAgeGroup === "All";
     return (
@@ -62,6 +69,9 @@ const GroupedStoriesStoryCarousel = ({
       className="-mt-4 rounded-t-3xl bg-white pt-5"
       contentContainerClassName="flex flex-col px-4 pb-5"
       showsVerticalScrollIndicator={false}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       {showAges && (
         <AgeSelectionComponent

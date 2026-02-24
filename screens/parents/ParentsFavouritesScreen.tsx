@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import ErrorComponent from "../../components/ErrorComponent";
 import FavouriteStoryItem from "../../components/FavouriteStoryItem";
@@ -28,6 +35,13 @@ const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryParentsFavourites()
   );
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilterOption, setActiveFilterOption] = useState<
@@ -164,7 +178,12 @@ const ParentsFavouritesScreen = () => {
             secondaryMessage="Try changing filters or search"
           />
         ) : (
-          <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
+          <ScrollView
+            contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4"
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+          >
             {filteredStories.map((story) => (
               <FavouriteStoryItem
                 key={story.id}
