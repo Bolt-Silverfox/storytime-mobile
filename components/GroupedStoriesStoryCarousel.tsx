@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { RefreshControl, ScrollView, Text, View } from "react-native";
 import queryGetStories, {
   GetStoriesParam,
@@ -41,6 +41,8 @@ const GroupedStoriesStoryCarousel = ({
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
+  const sorted = useMemo(() => sortStoriesByReadStatus(stories), [stories]);
+
   if (!stories?.length) {
     const isFilterDefault = selectedAgeGroup === "All";
     return (
@@ -77,7 +79,7 @@ const GroupedStoriesStoryCarousel = ({
         />
       )}
       <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">
-        {sortStoriesByReadStatus(stories).map((story) => (
+        {sorted.map((story) => (
           <StoryItem key={story.id} story={story} isGrouped />
         ))}
       </View>
