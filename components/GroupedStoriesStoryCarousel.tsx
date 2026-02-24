@@ -38,7 +38,7 @@ const GroupedStoriesStoryCarousel = ({
   const { refreshing, onRefresh } = useRefreshControl(refetch);
   const sorted = useMemo(
     () => sortStoriesByReadStatus(stories ?? []),
-    [stories],
+    [stories]
   );
 
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
