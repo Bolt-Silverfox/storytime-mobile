@@ -1,6 +1,6 @@
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
-import apiFetch from "../apiFetch";
+import apiFetch, { ApiError } from "../apiFetch";
 import { BASE_URL } from "../constants";
 import type {
   Notification,
@@ -136,14 +136,16 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {
-    if (err instanceof Error && err.message === "Session expired") {
+    if (err instanceof ApiError && err.status === 401) {
       throw new Error("Your session has expired. Please log in again.");
     }
-    if (err instanceof Error && err.message.startsWith("Request failed")) {
+    if (err instanceof ApiError) {
       throw new Error("Unable to upload avatar. Please try again later.");
     }
     const message =
-      err instanceof Error ? err.message : "Something went wrong. Please try again.";
+      err instanceof Error
+        ? err.message
+        : "Something went wrong. Please try again.";
     throw new Error(message);
   }
 };
@@ -220,9 +222,8 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
-const getRandomNumber = (): number => {
-  return Math.floor(Math.random() * 10 + 0);
-};
+const getCategoryColourIndex = (id: string, totalColours: number): number =>
+  id.split("").reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % totalColours;
 
 const mapCategoryToIconType = (
   category: NotificationCategory
@@ -329,7 +330,7 @@ export {
   splitByWordCount,
   splitByWordCountPreservingSentences,
   formatTime,
-  getRandomNumber,
+  getCategoryColourIndex,
   mapCategoryToIconType,
   groupNotificationsByDate,
   getRelativeTime,
