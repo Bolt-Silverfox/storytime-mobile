@@ -38,7 +38,7 @@ const ParentsLibraryScreen = () => {
 
   const refetchAll = useCallback(
     () => Promise.all([ongoingQuery.refetch(), completedQuery.refetch()]),
-    [ongoingQuery, completedQuery]
+    [ongoingQuery.refetch, completedQuery.refetch]
   );
   const { refreshing, onRefresh } = useRefreshControl(refetchAll);
 
