@@ -1,4 +1,4 @@
-import { ComponentProps, memo, ReactNode, useEffect, useState } from "react";
+import { ComponentProps, memo, ReactNode, useState } from "react";
 import {
   ActivityIndicator,
   Image,
@@ -13,7 +13,14 @@ interface PropTypes extends ComponentProps<typeof Image> {
   width?: number;
 }
 
-const CustomImage = ({ source, height, width, ...rest }: PropTypes) => {
+const CustomImage = ({
+  source,
+  height,
+  width,
+  className: _className,
+  style: _style,
+  ...rest
+}: PropTypes & { className?: string }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   return (
@@ -27,13 +34,13 @@ const CustomImage = ({ source, height, width, ...rest }: PropTypes) => {
         </View>
       )}
       <Image
+        {...rest}
         source={source}
         style={{ width: "100%", height: "100%" }}
         resizeMode="cover"
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
         onError={() => setIsLoading(false)}
-        {...rest}
       />
     </View>
   );

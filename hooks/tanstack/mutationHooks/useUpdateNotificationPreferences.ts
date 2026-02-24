@@ -48,8 +48,8 @@ const useUpdateNotificationPreferences = (userId: string | undefined) => {
           : (err.message ?? "Unexpected error, try again later")
       );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey });
+    onSuccess: (data) => {
+      queryClient.setQueryData(queryKey, data);
     },
   });
 };
