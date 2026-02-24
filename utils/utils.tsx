@@ -142,11 +142,8 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     if (err instanceof ApiError) {
       throw new Error("Unable to upload avatar. Please try again later.");
     }
-    const message =
-      err instanceof Error
-        ? err.message
-        : "Something went wrong. Please try again.";
-    throw new Error(message);
+    if (err instanceof Error) throw err;
+    throw new Error("Something went wrong. Please try again.");
   }
 };
 

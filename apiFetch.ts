@@ -43,7 +43,13 @@ const buildHeaders = (
     headers["Authorization"] = `Bearer ${token}`;
   }
   // Let FormData set its own Content-Type with the correct boundary
-  if (!isFormData) {
+  // Don't overwrite a caller-provided Content-Type
+  const hasContentType = options.headers
+    ? Object.keys(options.headers).some(
+        (k) => k.toLowerCase() === "content-type"
+      )
+    : false;
+  if (!isFormData && !hasContentType) {
     headers["Content-Type"] = "application/json";
   }
   return headers;
@@ -114,6 +120,7 @@ const refreshTokensWithLock = async (): Promise<boolean> => {
 const refreshTokens = async (): Promise<boolean> => {
   try {
     const token = await secureTokenStorage.getRefreshToken();
+    if (!token) return false;
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
       {
