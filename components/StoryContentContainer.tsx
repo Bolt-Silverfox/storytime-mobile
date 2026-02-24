@@ -28,7 +28,6 @@ type PropTypes = {
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
   controlsOpacity: Animated.Value;
-  resetAutoHideTimer: () => void;
 };
 
 type DisplayOptions =
@@ -46,7 +45,6 @@ const StoryContentContainer = ({
   selectedVoice,
   controlsInteractive,
   controlsOpacity,
-  resetAutoHideTimer,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -143,55 +141,54 @@ const StoryContentContainer = ({
         </Animated.View>
       )}
       {currentlyDisplayed === "story" && (
-        <BlurView
-          intensity={60}
-          tint="systemMaterialDark"
-          className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
-        >
-          <Text className="font-[quilka] text-xl text-white">
-            {paragraphs[activeParagraph]}
-          </Text>
-          <Animated.View
-            style={{ opacity: controlsOpacity }}
-            pointerEvents={controlsInteractive ? "auto" : "none"}
-            className="mt-4 flex flex-row items-center justify-between"
+        <View>
+          <BlurView
+            intensity={60}
+            tint="systemMaterialDark"
+            className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
           >
-            <Pressable
-              onPress={
-                !isFirstParagraph
-                  ? () => {
-                      resetAutoHideTimer();
-                      handleManualNavigation("prev");
-                    }
-                  : null
-              }
-              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+            <Text className="font-[quilka] text-xl text-white">
+              {paragraphs[activeParagraph]}
+            </Text>
+            <Animated.View
+              style={{ opacity: controlsOpacity }}
+              pointerEvents={controlsInteractive ? "auto" : "none"}
+              className="mt-4 flex flex-row items-center justify-between"
             >
-              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                resetAutoHideTimer();
-                handleManualNavigation("next");
-              }}
-              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
-            >
-              {!isLastParagraph ? (
-                <Icon name="SkipForward" color="white" />
-              ) : (
-                <CustomButton
-                  text="Finish story"
-                  bgColor="#4807EC"
-                  onPress={() => {
-                    resetAutoHideTimer();
-                    setCurrentlyDisplayed("endOfStoryMessage");
-                    onProgress(paragraphs.length, true);
-                  }}
-                />
-              )}
-            </Pressable>
-          </Animated.View>
-        </BlurView>
+              <Pressable
+                onPress={
+                  !isFirstParagraph
+                    ? () => handleManualNavigation("prev")
+                    : null
+                }
+                className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+              >
+                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+              </Pressable>
+              <Pressable
+                onPress={
+                  !isLastParagraph
+                    ? () => handleManualNavigation("next")
+                    : undefined
+                }
+                className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
+              >
+                {!isLastParagraph ? (
+                  <Icon name="SkipForward" color="white" />
+                ) : (
+                  <CustomButton
+                    text="Finish story"
+                    bgColor="#4807EC"
+                    onPress={() => {
+                      setCurrentlyDisplayed("endOfStoryMessage");
+                      onProgress(paragraphs.length, true);
+                    }}
+                  />
+                )}
+              </Pressable>
+            </Animated.View>
+          </BlurView>
+        </View>
       )}
       {currentlyDisplayed === "story" && (
         <Animated.View
