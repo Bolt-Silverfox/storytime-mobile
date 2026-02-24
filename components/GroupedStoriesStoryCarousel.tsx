@@ -8,6 +8,7 @@ import queryGetStories, {
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
 import useRefreshControl from "../hooks/others/useRefreshControl";
+import { sortStoriesByReadStatus } from "../utils/sortStories";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
@@ -76,7 +77,7 @@ const GroupedStoriesStoryCarousel = ({
         />
       )}
       <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">
-        {stories.map((story) => (
+        {sortStoriesByReadStatus(stories).map((story) => (
           <StoryItem key={story.id} story={story} isGrouped />
         ))}
       </View>
