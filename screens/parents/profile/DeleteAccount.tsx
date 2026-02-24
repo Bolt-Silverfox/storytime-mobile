@@ -51,9 +51,10 @@ export default function DeleteAccount() {
 
   const handleToggle = (id: number) => {
     setDeleteAccountCheckList((prev) =>
-      prev.map((item) =>
-        item.id === id ? { ...item, checked: !item.checked } : item
-      )
+      prev.map((item) => ({
+        ...item,
+        checked: item.id === id ? !item.checked : false,
+      }))
     );
   };
   return (
@@ -75,19 +76,19 @@ export default function DeleteAccount() {
           </View>
           <View className="mt-8 gap-8  ">
             {deleteCheckList.map((reason) => (
-              <View key={reason.id} className="flex-row justify-between ">
-                <Text
-                  className=" "
-                  style={[defaultStyles.defaultText, styles.textColor]}
-                >
+              <Pressable
+                key={reason.id}
+                onPress={() => handleToggle(reason.id)}
+                className="flex-row items-center justify-between"
+              >
+                <Text style={[defaultStyles.defaultText, styles.textColor]}>
                   {reason.reason}
                 </Text>
                 <Checkbox
                   value={reason.checked}
-                  onValueChange={() => handleToggle(reason.id)}
                   color={reason.checked ? "#4630EB" : undefined}
                 />
-              </View>
+              </Pressable>
             ))}
           </View>
           {isOthersChecked && (

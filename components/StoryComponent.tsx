@@ -3,6 +3,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import {
   Animated,
   ImageBackground,
@@ -45,58 +46,24 @@ const StoryComponent = ({
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsInteractive, setControlsInteractive] = useState(true);
   const controlsOpacity = useRef(new Animated.Value(1)).current;
-  const autoHideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const controlsVisibleRef = useRef(controlsVisible);
   const isScrollingRef = useRef(false);
-
-  useEffect(() => {
-    controlsVisibleRef.current = controlsVisible;
-  }, [controlsVisible]);
-
-  const clearAutoHideTimer = useCallback(() => {
-    if (autoHideTimer.current) {
-      clearTimeout(autoHideTimer.current);
-      autoHideTimer.current = null;
-    }
-  }, []);
-
-  const startAutoHideTimer = useCallback(() => {
-    clearAutoHideTimer();
-    autoHideTimer.current = setTimeout(() => {
-      setControlsVisible(false);
-    }, 4000);
-  }, [clearAutoHideTimer]);
 
   const toggleControls = useCallback(() => {
     if (isScrollingRef.current) return;
     setControlsVisible((prev) => !prev);
   }, []);
 
-  // Drive animation and timer from controlsVisible state changes
+  // Drive animation from controlsVisible state changes
   useEffect(() => {
-    // Make interactive immediately on show (before animation finishes)
     if (controlsVisible) setControlsInteractive(true);
     Animated.timing(controlsOpacity, {
       toValue: controlsVisible ? 1 : 0,
-      duration: 200,
+      duration: controlsVisible ? 200 : 500,
       useNativeDriver: true,
     }).start(({ finished }) => {
-      // Only drop interactivity after fade-out completes
       if (finished && !controlsVisible) setControlsInteractive(false);
     });
-    if (controlsVisible) startAutoHideTimer();
-    else clearAutoHideTimer();
-    return () => clearAutoHideTimer();
-  }, [
-    controlsVisible,
-    controlsOpacity,
-    startAutoHideTimer,
-    clearAutoHideTimer,
-  ]);
-
-  const resetAutoHideTimer = useCallback(() => {
-    if (controlsVisibleRef.current) startAutoHideTimer();
-  }, [startAutoHideTimer]);
+  }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();
   const { user } = useAuth();
@@ -232,7 +199,8 @@ const StoryComponent = ({
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
-            className="flex flex-1 flex-col p-4 pt-12 "
+            className="flex flex-1 flex-col p-4 pt-12"
+            style={{ backgroundColor: "#1a1a2e" }}
           >
             <View className="flex flex-1 flex-col">
               {/* Background tap target — first child = lowest z-order */}
@@ -252,7 +220,6 @@ const StoryComponent = ({
               >
                 <Pressable
                   onPress={() => {
-                    resetAutoHideTimer();
                     navigator.reset({
                       index: 0,
                       routes: [{ name: "parents" }],
@@ -263,10 +230,7 @@ const StoryComponent = ({
                   <FontAwesome6 name="house" size={20} color="white" />
                 </Pressable>
                 <Pressable
-                  onPress={() => {
-                    resetAutoHideTimer();
-                    setIsOptionsModalOpen(true);
-                  }}
+                  onPress={() => setIsOptionsModalOpen(true)}
                   className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
                   <FontAwesome6 name="ellipsis" size={20} color="white" />
@@ -282,7 +246,6 @@ const StoryComponent = ({
                 onProgress={handleProgress}
                 controlsInteractive={controlsInteractive}
                 controlsOpacity={controlsOpacity}
-                resetAutoHideTimer={resetAutoHideTimer}
               />
             </View>
           </ImageBackground>
