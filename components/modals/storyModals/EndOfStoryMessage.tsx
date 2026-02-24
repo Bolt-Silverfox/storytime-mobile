@@ -1,4 +1,6 @@
+import { useNavigation } from "@react-navigation/native";
 import { Image, Text, View } from "react-native";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 import CustomButton from "../../UI/CustomButton";
 
 type Props = {
@@ -15,6 +17,7 @@ const EndOfStoryMessage = ({
   readAgain,
   isInteractive,
 }: Props) => {
+  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (!isOpen) return null;
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
@@ -37,6 +40,16 @@ const EndOfStoryMessage = ({
           <CustomButton text="Test knowledge" onPress={onTestKnowledge} />
         )}
         <CustomButton text="Read story again" transparent onPress={readAgain} />
+        <CustomButton
+          text="Go home"
+          transparent
+          onPress={() =>
+            navigator.replace("parents", {
+              screen: "home",
+              params: { screen: "homePage" },
+            })
+          }
+        />
       </View>
     </View>
   );
