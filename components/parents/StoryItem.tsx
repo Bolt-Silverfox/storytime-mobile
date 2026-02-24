@@ -131,7 +131,12 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
             {ageMin} - {ageMax} years
           </Text>
           {story.readStatus === "done" && (
-            <View className="flex flex-row items-center gap-x-1">
+            <View
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel="Story already read"
+              className="flex flex-row items-center gap-x-1"
+            >
               <Icon
                 name="CircleCheck"
                 size={14}
@@ -146,7 +151,12 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
             </View>
           )}
           {story.readStatus === "reading" && (
-            <View className="flex flex-row items-center gap-x-1">
+            <View
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel="Story in progress"
+              className="flex flex-row items-center gap-x-1"
+            >
               <View
                 style={readStatusStyles.readingDot}
                 className="size-3 rounded-full"
