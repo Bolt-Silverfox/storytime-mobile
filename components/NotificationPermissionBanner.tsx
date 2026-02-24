@@ -17,26 +17,28 @@ const NotificationPermissionBanner = ({
 
   const isDenied = permissionStatus === "denied";
 
-  const openDeviceSettings = () => {
-    Platform.OS === "ios"
-      ? Linking.openURL("app-settings:")
-      : Linking.openSettings();
+  const openDeviceSettings = async () => {
+    if (Platform.OS === "ios") {
+      await Linking.openURL("app-settings:");
+    } else {
+      await Linking.openSettings();
+    }
   };
 
   const handlePress = async () => {
-    if (isDenied) {
-      openDeviceSettings();
-    } else {
-      try {
-        const { status } = await Notifications.requestPermissionsAsync();
-        if (status === "granted") {
-          onPermissionGranted?.();
-        } else {
-          openDeviceSettings();
-        }
-      } catch {
-        openDeviceSettings();
+    try {
+      if (isDenied) {
+        await openDeviceSettings();
+        return;
       }
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status === "granted") {
+        onPermissionGranted?.();
+      } else {
+        await openDeviceSettings();
+      }
+    } catch {
+      await openDeviceSettings();
     }
   };
 
