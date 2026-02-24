@@ -9,15 +9,7 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
 
   return useQuery({
     queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, type, user?.id],
-    queryFn: async () => {
-      const url = `${BASE_URL}/stories/user/library/${type === "completed" ? "completed" : "continue-reading"}`;
-      const request = await apiFetch(url, {
-        method: "GET",
-      });
-      const response: QueryResponse<LibraryStory[]> = await request.json();
-      if (!response.success) throw new Error(response.message);
-      return response;
-    },
+    queryFn: () => getLibraryStories(type),
     select: (res) => res.data,
     enabled: !!user,
     staleTime: Infinity,
@@ -25,3 +17,14 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
 };
 
 export default useGetLibraryStories;
+export { getLibraryStories };
+
+const getLibraryStories = async (type: LibraryFilterType) => {
+  const url = `${BASE_URL}/stories/user/library/${type === "completed" ? "completed" : "continue-reading"}`;
+  const request = await apiFetch(url, {
+    method: "GET",
+  });
+  const response: QueryResponse<LibraryStory[]> = await request.json();
+  if (!response.success) throw new Error(response.message);
+  return response;
+};

@@ -1,7 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ImageBackground, Pressable, ScrollView, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
@@ -43,18 +43,21 @@ const StoryComponent = ({
     storyId,
   });
 
+  const handleProgress = useCallback(
+    (progress: number, completed: boolean) => {
+      setStoryProgress({
+        progress,
+        completed,
+        time: sessionStartTime.current,
+      });
+    },
+    [setStoryProgress]
+  );
+
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }
-
-  const handleProgress = (progress: number, completed: boolean) => {
-    setStoryProgress({
-      progress,
-      completed,
-      time: sessionStartTime.current,
-    });
-  };
 
   return (
     <SafeAreaWrapper variant="transparent">

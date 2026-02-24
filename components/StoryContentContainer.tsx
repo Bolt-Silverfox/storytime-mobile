@@ -55,14 +55,6 @@ const StoryContentContainer = ({
   const { data } = useGetUserProfile();
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
-
-  // Keep ref in sync so the stable callback always sees the latest value
-  useEffect(() => {
-    activeParagraphRef.current = activeParagraph;
-    // Reset the advancing guard once React has committed the new page
-    isAdvancingRef.current = false;
-  }, [activeParagraph]);
-
   const isSubscribed =
     data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
     data?.role === USER_ROLES.admin;
@@ -75,6 +67,19 @@ const StoryContentContainer = ({
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
   const isFirstParagraph = activeParagraph === 0;
+
+  useEffect(() => {
+    if (isLastParagraph) {
+      return onProgress(paragraphs.length, true);
+    }
+  }, [isLastParagraph, paragraphs.length, onProgress]);
+
+  // Keep ref in sync so the stable callback always sees the latest value
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    // Reset the advancing guard once React has committed the new page
+    isAdvancingRef.current = false;
+  }, [activeParagraph]);
 
   const readAgain = () => {
     setCurrentlyDisplayed("story");
@@ -175,7 +180,6 @@ const StoryContentContainer = ({
                   bgColor="#4807EC"
                   onPress={() => {
                     setCurrentlyDisplayed("endOfStoryMessage");
-                    onProgress(paragraphs.length, true);
                   }}
                 />
               )}
