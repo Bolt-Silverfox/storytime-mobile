@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { BASE_URL, QUERY_KEYS } from "../../../constants";
-import apiFetch from "../../../apiFetch";
 import { Alert } from "react-native";
+import apiFetch from "../../../apiFetch";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { QueryResponse } from "../../../types";
 
 const useSetStoryProgress = ({
   storyId,
@@ -26,7 +27,6 @@ const useSetStoryProgress = ({
     }) => {
       const url = `${BASE_URL}/stories/user/progress`;
       const sessionTime = Math.floor((Date.now() - time) / 1000);
-
       const request = await apiFetch(url, {
         method: "POST",
         body: JSON.stringify({
@@ -36,14 +36,12 @@ const useSetStoryProgress = ({
           sessionTime,
         }),
       });
-      const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message ?? "Unexpected error, try again");
-      }
+      const response: QueryResponse = await request.json();
+      if (!response.success) throw new Error(response.message);
       return response;
     },
     onError: (err: Error) => {
-      Alert.alert(err.message);
+      Alert.alert("Failed to register story progreee", err.message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
