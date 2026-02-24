@@ -13,5 +13,5 @@ export const sortStoriesByReadStatus = (stories: Story[]): Story[] =>
   [...stories].sort(
     (a, b) =>
       (READ_STATUS_ORDER[a.readStatus ?? ""] ?? 0) -
-      (READ_STATUS_ORDER[b.readStatus ?? ""] ?? 0),
+      (READ_STATUS_ORDER[b.readStatus ?? ""] ?? 0)
   );
