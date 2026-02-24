@@ -56,6 +56,9 @@ const useSetStoryProgress = ({
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["stories"],
+      });
       onSuccess?.();
     },
   });

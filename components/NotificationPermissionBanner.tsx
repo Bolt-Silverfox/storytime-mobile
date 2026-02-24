@@ -1,5 +1,5 @@
-import { Alert, Linking, Platform, Pressable, Text, View } from "react-native";
-import { Bell, BellOff, Settings } from "lucide-react-native";
+import { Linking, Platform, Pressable, Text, View } from "react-native";
+import { BellOff, X } from "lucide-react-native";
 import * as Notifications from "expo-notifications";
 
 type NotificationPermissionBannerProps = {
@@ -13,115 +13,66 @@ const NotificationPermissionBanner = ({
   onDismiss,
   onPermissionGranted,
 }: NotificationPermissionBannerProps) => {
-  // Don't show banner if permissions are granted
   if (permissionStatus === "granted") return null;
 
   const isDenied = permissionStatus === "denied";
 
-  const handleRequestPermissions = async () => {
-    try {
-      const { status } = await Notifications.requestPermissionsAsync();
-
-      if (status === "granted") {
-        onPermissionGranted?.();
-      } else {
-        // If still denied, show settings alert
-        openSettings();
-      }
-    } catch (error) {
-      if (__DEV__) {
-        console.error("Failed to request permissions:", error);
-      }
-      openSettings();
+  const openDeviceSettings = async () => {
+    if (Platform.OS === "ios") {
+      await Linking.openURL("app-settings:");
+    } else {
+      await Linking.openSettings();
     }
   };
 
-  const openSettings = () => {
-    Alert.alert(
-      "Enable Notifications",
-      "To receive story updates, achievements, and reminders, please enable notifications in your device settings.",
-      [
-        {
-          text: "Cancel",
-          style: "cancel",
-        },
-        {
-          text: "Open Settings",
-          onPress: () => {
-            if (Platform.OS === "ios") {
-              Linking.openURL("app-settings:");
-            } else {
-              Linking.openSettings();
-            }
-          },
-        },
-      ]
-    );
-  };
-
-  const handlePrimaryAction = () => {
-    if (isDenied) {
-      openSettings();
-    } else {
-      handleRequestPermissions();
+  const handlePress = async () => {
+    try {
+      if (isDenied) {
+        await openDeviceSettings();
+        return;
+      }
+      const { status } = await Notifications.requestPermissionsAsync();
+      if (status === "granted") {
+        onPermissionGranted?.();
+      } else {
+        await openDeviceSettings();
+      }
+    } catch {
+      await openDeviceSettings();
     }
   };
 
   return (
-    <View className="rounded-lg bg-amber-50 p-4 shadow-sm">
-      <View className="flex-row items-start">
-        <View className="mr-3 mt-0.5">
-          {isDenied ? (
-            <BellOff size={20} color="#f59e0b" />
-          ) : (
-            <Bell size={20} color="#f59e0b" />
-          )}
-        </View>
-
-        <View className="flex-1">
-          <Text className="mb-1 font-semibold text-amber-900">
-            {isDenied ? "Notifications Disabled" : "Enable Notifications"}
+    <View className="flex-row items-center rounded-lg bg-amber-50 px-3 py-2.5">
+      <BellOff size={16} color="#d97706" />
+      <Pressable
+        onPress={handlePress}
+        className="ml-2 flex-1"
+        accessibilityRole="button"
+        accessibilityLabel={
+          isDenied ? "Enable notifications" : "Turn on notifications"
+        }
+      >
+        <Text className="text-sm text-amber-800">
+          {isDenied
+            ? "Notifications are off. "
+            : "Enable notifications for updates. "}
+          <Text className="font-semibold text-amber-900 underline">
+            {isDenied ? "Enable" : "Turn on"}
           </Text>
-          <Text className="mb-3 text-sm leading-5 text-amber-800">
-            {isDenied
-              ? "You won't receive story updates, achievements, or reminders. Enable notifications in settings."
-              : "Stay updated with new stories, achievements, and important reminders for your kids."}
-          </Text>
-
-          <View className="flex-row flex-wrap items-center gap-2">
-            <Pressable
-              onPress={handlePrimaryAction}
-              className="flex-row items-center rounded-md bg-amber-600 px-4 py-2"
-              accessibilityLabel={
-                isDenied
-                  ? "Open device settings to enable notifications"
-                  : "Request notification permissions"
-              }
-              accessibilityRole="button"
-            >
-              {isDenied ? (
-                <Settings size={16} color="#fff" />
-              ) : (
-                <Bell size={16} color="#fff" />
-              )}
-              <Text className="ml-2 font-medium text-white">
-                {isDenied ? "Open Settings" : "Enable Now"}
-              </Text>
-            </Pressable>
-
-            {onDismiss && (
-              <Pressable
-                onPress={onDismiss}
-                className="rounded-md px-4 py-2"
-                accessibilityLabel="Dismiss notification banner"
-                accessibilityRole="button"
-              >
-                <Text className="font-medium text-amber-700">Later</Text>
-              </Pressable>
-            )}
-          </View>
-        </View>
-      </View>
+        </Text>
+      </Pressable>
+      {onDismiss && (
+        <Pressable
+          onPress={onDismiss}
+          className="ml-2 p-1"
+          accessibilityLabel="Dismiss notification banner"
+          accessibilityRole="button"
+          hitSlop={8}
+        >
+          <X size={16} color="#92400e" />
+        </Pressable>
+      )}
     </View>
   );
 };
