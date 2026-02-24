@@ -1,4 +1,10 @@
-import { ActivityIndicator, ScrollView, Switch, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  Switch,
+  Text,
+  View,
+} from "react-native";
 import PageTitle from "../PageTitle";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 import useAuth from "../../contexts/AuthContext";
@@ -47,8 +53,9 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
     isError,
     refetch,
   } = useGetNotificationPreferences();
-  const { mutate, isPending: isMutating } =
-    useUpdateNotificationPreferences(user?.id);
+  const { mutate, isPending: isMutating } = useUpdateNotificationPreferences(
+    user?.id
+  );
 
   if (isLoading) {
     return (
