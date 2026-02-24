@@ -1,6 +1,6 @@
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 import type {
   Notification,
@@ -113,8 +113,6 @@ const MIME_MAP: Record<string, string> = {
 
 const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
-    const token = await AsyncStorage.getItem("accessToken");
-
     const formData = new FormData();
 
     const cleanUri = imageUri.split("?")[0];
@@ -129,24 +127,23 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     } as unknown as Blob);
 
     formData.append("userId", userId);
-    const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
+    const request = await apiFetch(`${BASE_URL}/avatars/upload/user`, {
       method: "POST",
       body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
-
-    if (!request.ok) {
-      throw new Error(`Upload failed with status ${request.status}`);
-    }
 
     const response: QueryResponse = await request.json();
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {
+    if (err instanceof Error && err.message === "Session expired") {
+      throw new Error("Your session has expired. Please log in again.");
+    }
+    if (err instanceof Error && err.message.startsWith("Request failed")) {
+      throw new Error("Unable to upload avatar. Please try again later.");
+    }
     const message =
-      err instanceof Error ? err.message : "Unexpected error, try again";
+      err instanceof Error ? err.message : "Something went wrong. Please try again.";
     throw new Error(message);
   }
 };
