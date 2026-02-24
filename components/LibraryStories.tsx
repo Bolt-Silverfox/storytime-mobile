@@ -69,6 +69,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
                       title: story.title,
                       createdAt: story.createdAt,
                     },
+                    page: story.progress ?? 0,
                   },
                 })
               }

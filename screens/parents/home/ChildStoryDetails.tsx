@@ -199,6 +199,7 @@ const ChildStoryDetails = () => {
               navigator.navigate("readStory", {
                 storyId: id,
                 mode: storyMode,
+                page: params.page,
               })
             }
             text="Start Reading"

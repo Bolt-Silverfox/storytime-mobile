@@ -20,8 +20,9 @@ type StoryNavigatorParamList = {
       | "id"
       | "createdAt"
     >;
+    page?: number;
   };
-  readStory: { storyId: string; mode: StoryModes };
+  readStory: { storyId: string; mode: StoryModes; page?: number };
 };
 type StoryNavigatorProp = NativeStackNavigationProp<StoryNavigatorParamList>;
 const Stack = createNativeStackNavigator();
