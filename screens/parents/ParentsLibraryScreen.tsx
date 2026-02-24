@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Image,
   Pressable,
@@ -23,6 +23,7 @@ import {
   splitByWordCountPreservingSentences,
 } from "../../utils/utils";
 import ErrorComponent from "../../components/ErrorComponent";
+import useRefreshControl from "../../hooks/others/useRefreshControl";
 
 const ParentsLibraryScreen = () => {
   const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
@@ -35,12 +36,11 @@ const ParentsLibraryScreen = () => {
   const ongoingQuery = useGetOngoingStories();
   const completedQuery = useGetCompletedStories();
 
-  const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await Promise.all([ongoingQuery.refetch(), completedQuery.refetch()]);
-    setRefreshing(false);
-  };
+  const refetchAll = useCallback(
+    () => Promise.all([ongoingQuery.refetch(), completedQuery.refetch()]),
+    [ongoingQuery, completedQuery]
+  );
+  const { refreshing, onRefresh } = useRefreshControl(refetchAll);
 
   const data =
     storyFilter === "ongoing" ? ongoingQuery.data : completedQuery.data;
