@@ -6,7 +6,10 @@ const registerSchema = z
     email: z.email("Invalid email, try again"),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character (!@#$%^&*)")
+      .min(
+        8,
+        "Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character (!@#$%^&*)"
+      )
       .regex(
         /(?=.*[a-z])/,
         "Password must contain at least one lowercase letter"

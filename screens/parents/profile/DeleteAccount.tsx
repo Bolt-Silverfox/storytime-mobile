@@ -34,6 +34,8 @@ export default function DeleteAccount() {
 
   const handleNext = () => {
     setErrors({});
+    const hasSelection = deleteCheckList.some((r) => r.checked);
+    if (!hasSelection) return;
     if (isOthersChecked) {
       const result = feedBack.safeParse({ message });
       if (!result.success) {
@@ -53,7 +55,7 @@ export default function DeleteAccount() {
     setDeleteAccountCheckList((prev) =>
       prev.map((item) => ({
         ...item,
-        checked: item.id === id ? !item.checked : false,
+        checked: item.id === id ? true : false,
       }))
     );
   };
@@ -87,6 +89,7 @@ export default function DeleteAccount() {
                 <Checkbox
                   value={reason.checked}
                   color={reason.checked ? "#4630EB" : undefined}
+                  pointerEvents="none"
                 />
               </Pressable>
             ))}
