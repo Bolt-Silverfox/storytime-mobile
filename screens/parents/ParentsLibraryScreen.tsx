@@ -38,7 +38,9 @@ const ParentsLibraryScreen = () => {
 
   const refetchAll = useCallback(
     () => Promise.all([ongoingQuery.refetch(), completedQuery.refetch()]),
-    [ongoingQuery.refetch, completedQuery.refetch]
+    // refetch functions are stable in behavior across renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
   );
   const { refreshing, onRefresh } = useRefreshControl(refetchAll);
 

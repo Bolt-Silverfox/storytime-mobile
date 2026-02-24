@@ -31,7 +31,11 @@ const useUpdateNotificationPreferences = () => {
         if (!old) return old;
         const updated = { ...old };
         for (const [category, enabled] of Object.entries(newPreferences)) {
-          updated[category] = { ...updated[category], push: enabled };
+          const existing = updated[category] ?? {
+            push: true,
+            in_app: true,
+          };
+          updated[category] = { ...existing, push: enabled };
         }
         return updated;
       });
@@ -49,9 +53,6 @@ const useUpdateNotificationPreferences = () => {
           ? "Too many changes, please wait a moment."
           : (err.message ?? "Unexpected error, try again later")
       );
-    },
-    onSuccess: (data) => {
-      queryClient.setQueryData(queryKey, data);
     },
   });
 };
