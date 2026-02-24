@@ -18,7 +18,7 @@ const useGetNotificationPreferences = () => {
       try {
         const request = await apiFetch(
           `${BASE_URL}/users/me/notification-preferences`,
-          { method: "GET" },
+          { method: "GET" }
         );
         const response: NotificationPreferences = await request.json();
         return response;

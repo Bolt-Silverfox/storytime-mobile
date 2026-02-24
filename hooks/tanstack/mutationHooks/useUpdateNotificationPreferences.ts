@@ -15,7 +15,7 @@ const useUpdateNotificationPreferences = (userId: string | undefined) => {
         {
           method: "PATCH",
           body: JSON.stringify(preferences),
-        },
+        }
       );
       const response: NotificationPreferences = await request.json();
       return response;
@@ -45,7 +45,7 @@ const useUpdateNotificationPreferences = (userId: string | undefined) => {
         "Error",
         is429
           ? "Too many changes, please wait a moment."
-          : err.message ?? "Unexpected error, try again later",
+          : (err.message ?? "Unexpected error, try again later")
       );
     },
     onSuccess: () => {

@@ -29,7 +29,9 @@ const GroupedStoriesContainer = ({
 }: PropTypes) => {
   const navigator = useNavigation();
   const insets = useSafeAreaInsets();
-  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroupType>("All");
+  const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroupType>(
+    params.ageGroup ?? "All"
+  );
   const { data: stories } = useQuery(
     queryGetStories({ ...params, ageGroup: selectedAgeGroup })
   );
