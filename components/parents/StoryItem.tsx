@@ -18,6 +18,12 @@ type Proptypes = {
   isGrouped?: boolean;
 };
 
+const readStatusStyles = {
+  doneText: { color: READ_STATUS_COLORS.done },
+  readingDot: { backgroundColor: READ_STATUS_COLORS.reading },
+  readingText: { color: READ_STATUS_COLORS.reading },
+} as const;
+
 const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   const {
     id,
@@ -178,9 +184,3 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
 StoryItem.displayName = "StoryItem";
 
 export default StoryItem;
-
-const readStatusStyles = {
-  doneText: { color: READ_STATUS_COLORS.done },
-  readingDot: { backgroundColor: READ_STATUS_COLORS.reading },
-  readingText: { color: READ_STATUS_COLORS.reading },
-} as const;
