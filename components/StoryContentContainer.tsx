@@ -21,6 +21,7 @@ import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
+  isInteractive: boolean;
   activeParagraph: number;
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
@@ -37,6 +38,7 @@ type DisplayOptions =
 
 const StoryContentContainer = ({
   story,
+  isInteractive,
   setActiveParagraph,
   activeParagraph,
   onProgress,
@@ -204,7 +206,7 @@ const StoryContentContainer = ({
         </Animated.View>
       )}
       <EndOfStoryMessage
-        isInteractive={false}
+        isInteractive={isInteractive}
         isOpen={currentlyDisplayed === "endOfStoryMessage"}
         onTestKnowledge={() => setCurrentlyDisplayed("quiz")}
         readAgain={readAgain}

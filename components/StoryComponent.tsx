@@ -30,7 +30,7 @@ import useAuth from "../contexts/AuthContext";
 
 const StoryComponent = ({
   storyId,
-  storyMode: _storyMode,
+  storyMode,
 }: {
   storyId: string;
   storyMode: StoryModes;
@@ -239,6 +239,7 @@ const StoryComponent = ({
 
               <StoryContentContainer
                 selectedVoice={selectedVoice}
+                isInteractive={storyMode === "interactive"}
                 story={data}
                 activeParagraph={activeParagraph}
                 setActiveParagraph={setActiveParagraph}
