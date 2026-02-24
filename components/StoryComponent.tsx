@@ -19,9 +19,11 @@ import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 const StoryComponent = ({
   storyId,
   storyMode,
+  page,
 }: {
   storyId: string;
   storyMode: StoryModes;
+  page?: number;
 }) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
@@ -32,6 +34,12 @@ const StoryComponent = ({
 
   const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+
+  useEffect(() => {
+    if (page && page > 0) {
+      setActiveParagraph(page - 1);
+    }
+  }, [page]);
 
   useEffect(() => {
     if (preferredVoice?.name) {
