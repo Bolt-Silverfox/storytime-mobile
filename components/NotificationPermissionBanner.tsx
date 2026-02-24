@@ -43,7 +43,14 @@ const NotificationPermissionBanner = ({
   return (
     <View className="flex-row items-center rounded-lg bg-amber-50 px-3 py-2.5">
       <BellOff size={16} color="#d97706" />
-      <Pressable onPress={handlePress} className="ml-2 flex-1">
+      <Pressable
+        onPress={handlePress}
+        className="ml-2 flex-1"
+        accessibilityRole="button"
+        accessibilityLabel={
+          isDenied ? "Enable notifications" : "Turn on notifications"
+        }
+      >
         <Text className="text-sm text-amber-800">
           {isDenied
             ? "Notifications are off. "
