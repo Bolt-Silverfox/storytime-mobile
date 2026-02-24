@@ -222,8 +222,12 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
-const getCategoryColourIndex = (id: string, totalColours: number): number =>
-  id.split("").reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % totalColours;
+const getCategoryColourIndex = (id: string, totalColours: number): number => {
+  if (totalColours <= 0) return 0;
+  return (
+    id.split("").reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % totalColours
+  );
+};
 
 const mapCategoryToIconType = (
   category: NotificationCategory
