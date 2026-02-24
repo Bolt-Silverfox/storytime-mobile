@@ -87,6 +87,12 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
           source={{ uri: coverImageUrl }}
           height={150}
         />
+        {story.isRead && (
+          <View className="absolute left-2 top-2 flex flex-row items-center gap-x-1 rounded-full bg-black/50 px-2 py-1">
+            <Icon name="CircleCheck" size={14} color="#4ADE80" />
+            <Text className="font-[abeezee] text-[10px] text-white">Read</Text>
+          </View>
+        )}
         <Pressable
           disabled={isPending}
           onPress={() => onToggle()}
