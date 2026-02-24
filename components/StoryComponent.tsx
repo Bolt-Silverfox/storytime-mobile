@@ -9,8 +9,6 @@ import {
   ImageBackground,
   Pressable,
   ScrollView,
-  StyleSheet,
-  View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
@@ -214,16 +212,7 @@ const StoryComponent = ({
             className="flex flex-1 flex-col p-4 pt-12"
             style={{ backgroundColor: "#1a1a2e" }}
           >
-            <View className="flex flex-1 flex-col">
-              {/* Background tap target — first child = lowest z-order */}
-              <Pressable
-                onPress={toggleControls}
-                style={[
-                  StyleSheet.absoluteFillObject,
-                  { backgroundColor: "transparent" },
-                ]}
-              />
-
+            <Pressable onPress={toggleControls} className="flex flex-1 flex-col">
               {/* Top bar */}
               <Animated.View
                 style={{ opacity: controlsOpacity }}
@@ -259,7 +248,7 @@ const StoryComponent = ({
                 controlsInteractive={controlsInteractive}
                 controlsOpacity={controlsOpacity}
               />
-            </View>
+            </Pressable>
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
