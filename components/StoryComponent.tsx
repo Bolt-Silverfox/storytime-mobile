@@ -52,9 +52,14 @@ const StoryComponent = ({
   const controlsOpacity = useRef(new Animated.Value(1)).current;
   const isScrollingRef = useRef(false);
 
+  const isTogglingRef = useRef(false);
   const toggleControls = useCallback(() => {
-    if (isScrollingRef.current) return;
+    if (isScrollingRef.current || isTogglingRef.current) return;
+    isTogglingRef.current = true;
     setControlsVisible((prev) => !prev);
+    setTimeout(() => {
+      isTogglingRef.current = false;
+    }, 400);
   }, []);
 
   // Drive animation from controlsVisible state changes
@@ -62,7 +67,7 @@ const StoryComponent = ({
     if (controlsVisible) setControlsInteractive(true);
     Animated.timing(controlsOpacity, {
       toValue: controlsVisible ? 1 : 0,
-      duration: controlsVisible ? 200 : 500,
+      duration: 200,
       useNativeDriver: true,
     }).start(({ finished }) => {
       if (finished && !controlsVisible) setControlsInteractive(false);

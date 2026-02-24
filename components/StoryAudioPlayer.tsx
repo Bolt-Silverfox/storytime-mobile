@@ -6,7 +6,6 @@ import { VOICE_LABELS } from "../constants/ui";
 import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
 const StoryAudioPlayer = ({
-  audioUrl,
   textContent,
   nextPageContent,
   selectedVoice,
@@ -15,7 +14,6 @@ const StoryAudioPlayer = ({
   onPageFinished,
   storyId,
 }: {
-  audioUrl: string;
   textContent: string;
   nextPageContent: string | null;
   selectedVoice: string | null;
@@ -38,7 +36,7 @@ const StoryAudioPlayer = ({
     storyId,
   });
 
-  const currentUrl = data?.audioUrl ?? audioUrl;
+  const currentUrl = data?.audioUrl || "";
   const player = useAudioPlayer(currentUrl);
   const status = useAudioPlayerStatus(player);
   const prevUrlRef = useRef(currentUrl);

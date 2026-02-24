@@ -138,7 +138,6 @@ const StoryContentContainer = ({
           pointerEvents={controlsInteractive ? "auto" : "none"}
         >
           <StoryAudioPlayer
-            audioUrl={story.audioUrl}
             textContent={paragraphs[activeParagraph]}
             nextPageContent={
               activeParagraph < storyLength
