@@ -2,7 +2,6 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { Pressable, Text, View } from "react-native";
-import { READ_BADGE_COLOR } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
@@ -88,12 +87,6 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
           source={{ uri: coverImageUrl }}
           height={150}
         />
-        {story.isRead && (
-          <View className="absolute left-2 top-2 flex flex-row items-center gap-x-1 rounded-full bg-black/50 px-2 py-1">
-            <Icon name="CircleCheck" size={14} color={READ_BADGE_COLOR} />
-            <Text className="font-[abeezee] text-[10px] text-white">Read</Text>
-          </View>
-        )}
         <Pressable
           disabled={isPending}
           onPress={() => onToggle()}
@@ -128,9 +121,27 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
         <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
           {title}
         </Text>
-        <Text className="px-1 font-[abeezee] text-xs text-text">
-          {ageMin} - {ageMax} years
-        </Text>
+        <View className="flex flex-row items-center justify-between px-1">
+          <Text className="font-[abeezee] text-xs text-text">
+            {ageMin} - {ageMax} years
+          </Text>
+          {story.readStatus === "done" && (
+            <View className="flex flex-row items-center gap-x-1">
+              <Icon name="CircleCheck" size={14} color="#16A34A" />
+              <Text className="font-[abeezee] text-xs font-bold text-[#16A34A]">
+                Done
+              </Text>
+            </View>
+          )}
+          {story.readStatus === "reading" && (
+            <View className="flex flex-row items-center gap-x-1">
+              <View className="size-3 rounded-full bg-[#EA580C]" />
+              <Text className="font-[abeezee] text-xs font-bold text-[#EA580C]">
+                Reading
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </Pressable>
   );

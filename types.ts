@@ -165,7 +165,7 @@ type Story = {
   updatedAt: string;
   isDeleted: boolean;
   deletedAt: string | null;
-  isRead?: boolean;
+  readStatus?: "done" | "reading" | null;
   creatorKidId: null | string;
   images: string[];
   branches: string[];
