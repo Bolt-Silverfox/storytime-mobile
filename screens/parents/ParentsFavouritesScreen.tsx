@@ -161,34 +161,34 @@ const ParentsFavouritesScreen = () => {
         )}
 
         {/* BODY */}
-        {showNoData ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No Favourites added yet"
-            secondaryMessage="You do not have any favourite stories added yet"
-          />
-        ) : showNoMatches ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No matching favourites"
-            secondaryMessage="Try changing filters or search"
-          />
-        ) : (
-          <ScrollView
-            contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4"
-            refreshControl={
-              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-            }
-          >
-            {filteredStories.map((story) => (
+        <ScrollView
+          contentContainerClassName="flex flex-1 flex-col pb-10 gap-y-4 my-6 px-4"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {showNoData ? (
+            <CustomEmptyState
+              url={require("../../assets/images/favourites-empty-state.png")}
+              message="No Favourites added yet"
+              secondaryMessage="You do not have any favourite stories added yet"
+            />
+          ) : showNoMatches ? (
+            <CustomEmptyState
+              url={require("../../assets/images/favourites-empty-state.png")}
+              message="No matching favourites"
+              secondaryMessage="Try changing filters or search"
+            />
+          ) : (
+            filteredStories.map((story) => (
               <FavouriteStoryItem
                 key={story.id}
                 story={story}
                 setActiveStory={setActiveItem}
               />
-            ))}
-          </ScrollView>
-        )}
+            ))
+          )}
+        </ScrollView>
         {activeItem && (
           <FavouriteStoriesModal
             isOpen={activeItem !== null}
