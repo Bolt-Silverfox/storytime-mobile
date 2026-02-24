@@ -1,4 +1,6 @@
-import { ScrollView, View } from "react-native";
+import { useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
+import { RefreshControl, ScrollView, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
@@ -19,6 +21,18 @@ const ParentHomeScreen = () => {
     handlePermissionGranted,
   } = useNotificationBanner();
 
+  const queryClient = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ["stories"] }),
+      queryClient.invalidateQueries({ queryKey: ["storyCategories"] }),
+      queryClient.invalidateQueries({ queryKey: ["storyQuota"] }),
+    ]);
+    setRefreshing(false);
+  };
+
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex flex-1 bg-bgLight px-4">
@@ -26,6 +40,9 @@ const ParentHomeScreen = () => {
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerClassName=" flex flex-col gap-y-8"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
           {showBanner && (
             <NotificationPermissionBanner
