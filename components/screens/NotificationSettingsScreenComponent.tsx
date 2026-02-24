@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import PageTitle from "../PageTitle";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
-import useAuth from "../../contexts/AuthContext";
 import useGetNotificationPreferences from "../../hooks/tanstack/queryHooks/useGetNotificationPreferences";
 import useUpdateNotificationPreferences from "../../hooks/tanstack/mutationHooks/useUpdateNotificationPreferences";
 
@@ -46,16 +45,13 @@ const SECTIONS = [
 ] as const;
 
 const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
-  const { user } = useAuth();
   const {
     data: preferences,
     isLoading,
     isError,
     refetch,
   } = useGetNotificationPreferences();
-  const { mutate, isPending: isMutating } = useUpdateNotificationPreferences(
-    user?.id
-  );
+  const { mutate, isPending: isMutating } = useUpdateNotificationPreferences();
 
   if (isLoading) {
     return (

@@ -2,11 +2,13 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
 import { NotificationPreferences } from "../queryHooks/useGetNotificationPreferences";
 
-const useUpdateNotificationPreferences = (userId: string | undefined) => {
+const useUpdateNotificationPreferences = () => {
   const queryClient = useQueryClient();
-  const queryKey = ["notificationPreferences", userId];
+  const { user } = useAuth();
+  const queryKey = ["notificationPreferences", user?.id];
 
   return useMutation({
     mutationFn: async (preferences: Record<string, boolean>) => {
@@ -29,7 +31,7 @@ const useUpdateNotificationPreferences = (userId: string | undefined) => {
         if (!old) return old;
         const updated = { ...old };
         for (const [category, enabled] of Object.entries(newPreferences)) {
-          updated[category] = { push: enabled, in_app: enabled };
+          updated[category] = { ...updated[category], push: enabled };
         }
         return updated;
       });
