@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, Text } from "react-native";
+import { Pressable, Text } from "react-native";
 
 const CustomButton = ({
   text,
@@ -41,12 +41,11 @@ const CustomButton = ({
       onPress={onPress}
       disabled={disabled}
       style={[
-        bgColor ? { backgroundColor: bgColor } : null,
+        disabled ? null : bgColor ? { backgroundColor: bgColor } : null,
         borderColor ? { borderColor } : null,
         borderWidth ? { borderWidth } : null,
-        disabled && buttonStyles.disabled,
       ]}
-      className="mx-5 mt-4 flex h-[46px] w-full items-center justify-center self-center rounded-full  bg-primary sm:mx-auto"
+      className={`mx-5 mt-4 flex h-[46px] w-full items-center justify-center self-center rounded-full sm:mx-auto ${disabled ? "bg-gray-300" : "bg-primary"}`}
     >
       <Text
         className="text-center font-[abeezee]"
@@ -59,9 +58,3 @@ const CustomButton = ({
 };
 
 export default CustomButton;
-
-const buttonStyles = StyleSheet.create({
-  disabled: {
-    opacity: 0.5,
-  },
-});

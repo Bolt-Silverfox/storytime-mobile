@@ -20,8 +20,9 @@ const SelectReadingVoiceModal = ({
   setSelectedVoice,
 }: PropTypes) => {
   const { data: voices } = useQuery(queryAvailableVoices);
+  const normalizedSelected = selectedVoice?.toUpperCase() ?? null;
   const selectedVoiceDisplay = voices?.find(
-    (v) => v.name.toUpperCase() === selectedVoice || v.id === selectedVoice
+    (v) => v.name.toUpperCase() === normalizedSelected || v.id === selectedVoice
   );
 
   return (
