@@ -28,6 +28,7 @@ type PropTypes = {
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
   controlsOpacity: Animated.Value;
+  onBackgroundTap: () => void;
 };
 
 type DisplayOptions =
@@ -45,6 +46,7 @@ const StoryContentContainer = ({
   selectedVoice,
   controlsInteractive,
   controlsOpacity,
+  onBackgroundTap,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -76,13 +78,6 @@ const StoryContentContainer = ({
       onProgress(paragraphs.length, true);
     }
   }, [isLastParagraph, paragraphs.length, onProgress]);
-
-  // Keep ref in sync so the stable callback always sees the latest value
-  useEffect(() => {
-    activeParagraphRef.current = activeParagraph;
-    // Reset the advancing guard once React has committed the new page
-    isAdvancingRef.current = false;
-  }, [activeParagraph]);
 
   const readAgain = () => {
     setCurrentlyDisplayed("story");
@@ -132,11 +127,13 @@ const StoryContentContainer = ({
 
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
+      {/* Tap anywhere in this empty area to toggle controls */}
+      <Pressable onPress={onBackgroundTap} style={{ flex: 1, zIndex: -1 }} />
+
       {currentlyDisplayed === "story" && (
         <Animated.View
           style={{ opacity: controlsOpacity }}
           pointerEvents={controlsInteractive ? "auto" : "none"}
-          onStartShouldSetResponder={() => true}
         >
           <StoryAudioPlayer
             textContent={paragraphs[activeParagraph]}
@@ -160,14 +157,15 @@ const StoryContentContainer = ({
             tint="systemMaterialDark"
             className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
           >
-            <Text className="font-[quilka] text-xl text-white">
-              {paragraphs[activeParagraph]}
-            </Text>
+            <Pressable onPress={onBackgroundTap}>
+              <Text className="font-[quilka] text-xl text-white">
+                {paragraphs[activeParagraph]}
+              </Text>
+            </Pressable>
             <Animated.View
               style={{ opacity: controlsOpacity }}
               pointerEvents={controlsInteractive ? "auto" : "none"}
               className="mt-4 flex flex-row items-center justify-between"
-              onStartShouldSetResponder={() => true}
             >
               <Pressable
                 onPress={
@@ -209,7 +207,6 @@ const StoryContentContainer = ({
           style={{ opacity: controlsOpacity }}
           pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
-          onStartShouldSetResponder={() => true}
         >
           <ProgressBar
             backgroundColor="#4807EC"
