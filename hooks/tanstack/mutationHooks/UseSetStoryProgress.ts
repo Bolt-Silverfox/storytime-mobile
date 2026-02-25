@@ -41,12 +41,9 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
-      Alert.alert("Failed to register story progreee", err.message);
+      Alert.alert("Failed to register story progress", err.message);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["storyProgress", storyId],
-      });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, "completed", user?.id],
       });

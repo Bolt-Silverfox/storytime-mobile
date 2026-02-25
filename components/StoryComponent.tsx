@@ -28,18 +28,14 @@ const StoryComponent = ({
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const [activeParagraph, setActiveParagraph] = useState(0);
+  const [activeParagraph, setActiveParagraph] = useState(() =>
+    page && page > 0 ? page - 1 : 0
+  );
   const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
   const sessionStartTime = useRef(Date.now());
 
   const { data: preferredVoice } = useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
-
-  useEffect(() => {
-    if (page && page > 0) {
-      setActiveParagraph(page - 1);
-    }
-  }, [page]);
 
   useEffect(() => {
     if (preferredVoice?.name) {

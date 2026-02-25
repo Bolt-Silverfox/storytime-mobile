@@ -74,7 +74,10 @@ const Toast = ({ toast, index, onDismiss }: ToastProps) => {
         ]}
       >
         <View className="w-full rounded-lg border border-border-lighter bg-white px-5 py-3 shadow-lg">
-          <Text className="text-center font-[abeezee] text-sm">
+          <Text
+            numberOfLines={1}
+            className="text-center font-[abeezee] text-sm"
+          >
             {toast.message}
           </Text>
         </View>

@@ -4,6 +4,11 @@ import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { LibraryFilterType, LibraryStory, QueryResponse } from "../../../types";
 
+const FILTER_PATH: Record<LibraryFilterType, string> = {
+  completed: "completed",
+  ongoing: "continue-reading",
+};
+
 const useGetLibraryStories = (type: LibraryFilterType) => {
   const { user } = useAuth();
 
@@ -20,7 +25,7 @@ export default useGetLibraryStories;
 export { getLibraryStories };
 
 const getLibraryStories = async (type: LibraryFilterType) => {
-  const url = `${BASE_URL}/stories/user/library/${type === "completed" ? "completed" : "continue-reading"}`;
+  const url = `${BASE_URL}/stories/user/library/${FILTER_PATH[type]}`;
   const request = await apiFetch(url, {
     method: "GET",
   });
