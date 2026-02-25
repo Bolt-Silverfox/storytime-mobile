@@ -11,19 +11,13 @@ import CustomButton from "../../../components/UI/CustomButton";
 import useAuth from "../../../contexts/AuthContext";
 import SuccessScreen from "../../../components/UI/SuccessScreen";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { passwordSchema } from "../../../zodSchemas";
 
 const resetPasswordSchema = z
   .object({
-    oldPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long"),
-    newPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long"),
-
-    confirmPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long"),
+    oldPassword: z.string().min(1, "Old password is required"),
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
     path: ["confirmPassword"],

@@ -1,7 +1,7 @@
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 import apiFetch, { ApiError } from "../apiFetch";
-import { BASE_URL } from "../constants";
+import { BASE_URL, IMAGE_MIME_MAP } from "../constants";
 import type {
   Notification,
   NotificationCategory,
@@ -103,22 +103,14 @@ const urlToBlob = async (uri: string) => {
   return blob;
 };
 
-const MIME_MAP: Record<string, string> = {
-  png: "image/png",
-  jpg: "image/jpeg",
-  jpeg: "image/jpeg",
-  gif: "image/gif",
-  webp: "image/webp",
-};
-
 const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
     const formData = new FormData();
 
     const cleanUri = imageUri.split("?")[0];
-    const ext = cleanUri.split(".").pop()?.toLowerCase();
-    const validExt = ext && MIME_MAP[ext] ? ext : "jpg";
-    const mimeType = MIME_MAP[validExt];
+    const ext = cleanUri.split(".").pop()?.toLowerCase() ?? "";
+    const validExt = ext in IMAGE_MIME_MAP ? (ext as keyof typeof IMAGE_MIME_MAP) : "jpg";
+    const mimeType = IMAGE_MIME_MAP[validExt];
 
     formData.append("image", {
       uri: imageUri,

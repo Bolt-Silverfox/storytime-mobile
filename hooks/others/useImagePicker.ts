@@ -1,7 +1,27 @@
 import * as ImagePicker from "expo-image-picker";
 import { Dispatch, SetStateAction } from "react";
 import { Alert } from "react-native";
-import { MAX_IMAGE_SIZE } from "../../constants";
+import { IMAGE_MIME_MAP, MAX_IMAGE_SIZE } from "../../constants";
+
+function validateImageAsset(
+  asset: ImagePicker.ImagePickerAsset,
+  skipExtensionCheck = false
+): string | null {
+  if (!asset.fileSize || asset.fileSize > MAX_IMAGE_SIZE) {
+    return `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`;
+  }
+
+  // Camera URIs on some Android devices lack file extensions (e.g. content://...),
+  // so callers can opt out of the extension check when the source is the camera.
+  if (!skipExtensionCheck) {
+    const ext = asset.uri.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
+    if (!(ext in IMAGE_MIME_MAP)) {
+      return "Unsupported image format. Please use JPG, PNG, GIF, or WebP.";
+    }
+  }
+
+  return null;
+}
 
 const useImagePicker = ({
   onClose,
@@ -28,14 +48,9 @@ const useImagePicker = ({
     });
 
     if (!result.canceled) {
-      if (
-        !result.assets[0].fileSize ||
-        result.assets[0].fileSize > MAX_IMAGE_SIZE
-      ) {
-        Alert.alert(
-          "Size Exceeded",
-          `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`
-        );
+      const error = validateImageAsset(result.assets[0]);
+      if (error) {
+        Alert.alert("Invalid Image", error);
         onClose();
         return;
       }
@@ -63,14 +78,9 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      if (
-        !result.assets[0].fileSize ||
-        result.assets[0].fileSize > MAX_IMAGE_SIZE
-      ) {
-        Alert.alert(
-          "Size Exceeded",
-          `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`
-        );
+      const error = validateImageAsset(result.assets[0], true);
+      if (error) {
+        Alert.alert("Invalid Image", error);
         onClose();
         return;
       }
