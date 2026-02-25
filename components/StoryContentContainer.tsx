@@ -190,7 +190,7 @@ const StoryContentContainer = ({
                     }
                   : undefined
               }
-              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-transparent" : "bg-blue"}`}
             >
               {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
             </Pressable>
