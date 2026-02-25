@@ -31,14 +31,18 @@ import useAuth from "../contexts/AuthContext";
 const StoryComponent = ({
   storyId,
   storyMode,
+  page,
 }: {
   storyId: string;
   storyMode: StoryModes;
+  page?: number;
 }) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
-  const [activeParagraph, setActiveParagraph] = useState(0);
+  const [activeParagraph, setActiveParagraph] = useState(() =>
+    page && page > 0 ? page - 1 : 0
+  );
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
@@ -169,18 +173,21 @@ const StoryComponent = ({
     storyId,
   });
 
+  const handleProgress = useCallback(
+    (progress: number, completed: boolean) => {
+      setStoryProgress({
+        progress,
+        completed,
+        time: sessionStartTime.current,
+      });
+    },
+    [setStoryProgress]
+  );
+
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }
-
-  const handleProgress = (progress: number, completed: boolean) => {
-    setStoryProgress({
-      progress,
-      completed,
-      time: sessionStartTime.current,
-    });
-  };
 
   return (
     <SafeAreaWrapper variant="transparent">

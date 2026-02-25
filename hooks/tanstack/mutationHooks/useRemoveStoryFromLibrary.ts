@@ -1,34 +1,32 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
 import { Alert } from "react-native";
+import apiFetch from "../../../apiFetch";
+import { BASE_URL, QUERY_KEYS } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
+import { QueryResponse } from "../../../types";
 
 const useRemoveStoryFromLibrary = () => {
+  const { user } = useAuth();
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (storyId: string) => {
-      const url = `${BASE_URL}/stories/user/library/remove/${storyId}`;
-
-      const response = await apiFetch(url, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        const errJson = await response.json().catch(() => null);
-        throw new Error(
-          errJson?.message || `Failed with status ${response.status}`
-        );
-      }
-
-      return response.json();
+      const request = await apiFetch(
+        `${BASE_URL}/stories/user/library/remove/${storyId}`,
+        {
+          method: "DELETE",
+        }
+      );
+      const response: QueryResponse = await request.json();
+      if (!response.success) throw new Error(response.message);
+      return response;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["library", "ongoingStories"],
+        queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, "completed", user?.id],
       });
       queryClient.invalidateQueries({
-        queryKey: ["library", "completedStories"],
+        queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, "ongoing", user?.id],
       });
     },
     onError: (error: Error) => {
