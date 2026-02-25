@@ -270,7 +270,6 @@ const StoryComponent = ({
             handleVoiceModal={setIsVoiceModalOpen}
             isOptionsModalOpen={isOptionsModalOpen}
             setIsOptionsModalOpen={setIsOptionsModalOpen}
-            setActiveParagraph={setActiveParagraph}
           />
         </View>
       ) : null}

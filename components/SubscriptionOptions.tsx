@@ -39,7 +39,8 @@ const SubscriptionOptions = ({
             key={sub.id}
             onPress={() => setSelectedPlan(planName)}
             accessibilityRole="radio"
-            accessibilityLabel={`${planName} plan, ${sub.displayPrice}${isSelected ? ", selected" : ""}`}
+            accessibilityState={{ checked: isSelected }}
+            accessibilityLabel={`${planName} plan, ${sub.displayPrice}`}
             className={`flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple bg-purple/10" : "border border-border-light"}`}
           >
             <View

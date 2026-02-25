@@ -32,7 +32,6 @@ const ShareStoryModal = ({
           onPress={() =>
             shareContent({
               message: `Check out "${storyTitle}" on Storytime4Kids!\n${shareUrl}`,
-              url: shareUrl,
               title: storyTitle,
             })
           }

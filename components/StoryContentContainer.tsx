@@ -141,7 +141,7 @@ const StoryContentContainer = ({
 
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
-      {currentlyDisplayed === "story" && controlsInLayout && (
+      {currentlyDisplayed === "story" && (
         <Animated.View
           style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
@@ -194,30 +194,26 @@ const StoryContentContainer = ({
             >
               {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
             </Pressable>
-            <Pressable
-              onPress={
-                !isLastParagraph
-                  ? (e) => {
-                      e.stopPropagation();
-                      handleManualNavigation("next");
-                    }
-                  : undefined
-              }
-              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
-            >
-              {!isLastParagraph ? (
+            {!isLastParagraph ? (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleManualNavigation("next");
+                }}
+                className="flex size-12 items-center justify-center rounded-full bg-blue"
+              >
                 <Icon name="SkipForward" color="white" />
-              ) : (
-                <CustomButton
-                  text="Finish story"
-                  bgColor="#4807EC"
-                  onPress={() => {
-                    setCurrentlyDisplayed("endOfStoryMessage");
-                    onProgress(paragraphs.length, true);
-                  }}
-                />
-              )}
-            </Pressable>
+              </Pressable>
+            ) : (
+              <CustomButton
+                text="Finish story"
+                bgColor="#4807EC"
+                onPress={() => {
+                  setCurrentlyDisplayed("endOfStoryMessage");
+                  onProgress(paragraphs.length, true);
+                }}
+              />
+            )}
           </View>
           <View className="rounded-2xl bg-white p-4">
             <ProgressBar

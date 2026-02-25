@@ -1,34 +1,18 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Dispatch, SetStateAction } from "react";
+import { RouteProp, useRoute } from "@react-navigation/native";
 import { Pressable, Text, View } from "react-native";
-import {
-  StoryNavigatorParamList,
-  StoryNavigatorProp,
-} from "../../../Navigation/StoryNavigator";
+import { StoryNavigatorParamList } from "../../../Navigation/StoryNavigator";
 import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
 
-interface Props extends Omit<CustomModalProps, "children"> {
-  setActiveParagraph: Dispatch<SetStateAction<number>>;
-}
+type Props = Omit<CustomModalProps, "children">;
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "readStory">;
 
-const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
+const InStoryModeModal = ({ isOpen, onClose }: Props) => {
   const { params } = useRoute<RoutePropTypes>();
-  const navigator = useNavigation<StoryNavigatorProp>();
 
   const handleChangeStoryMode = () => {
-    if (params.mode === "plain") {
-      onClose();
-      return;
-    }
-    setActiveParagraph(0);
-    navigator.navigate("readStory", {
-      mode: "plain",
-      storyId: params.storyId,
-    });
     onClose();
   };
 
@@ -69,10 +53,7 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
             </Text>
           </View>
         </View>
-        <CustomButton
-          onPress={handleChangeStoryMode}
-          text="Select preferred story mode"
-        />
+        <CustomButton onPress={handleChangeStoryMode} text="Got it" />
       </View>
     </CustomModal>
   );
