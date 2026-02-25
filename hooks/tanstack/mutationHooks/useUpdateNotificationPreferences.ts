@@ -42,6 +42,11 @@ const useUpdateNotificationPreferences = () => {
 
       return { previousData };
     },
+    onSuccess: (data) => {
+      // Sync cache with the actual server state so preferences persist
+      // across app restarts and after staleTime expires.
+      queryClient.setQueryData(queryKey, data);
+    },
     onError: (err: Error, _variables, context) => {
       if (context?.previousData) {
         queryClient.setQueryData(queryKey, context.previousData);
