@@ -196,8 +196,6 @@ type Story = {
   }[];
 };
 
-type ChildStoryStatus = "ongoing" | "completed";
-
 type StoryBuddy = {
   id: string;
   name: string;
@@ -344,6 +342,9 @@ type LibraryStory = Pick<
   | "categories"
 > & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
+const libraryFilters = ["ongoing", "completed"] as const;
+type LibraryFilterType = (typeof libraryFilters)[number];
+
 export type {
   User,
   Profile,
@@ -358,7 +359,6 @@ export type {
   StoryModes,
   LearningExpectation,
   Story,
-  ChildStoryStatus,
   StoryBuddy,
   AgeGroupType,
   FavouriteStory,
@@ -372,5 +372,7 @@ export type {
   DeviceTokenResponse,
   StoryQuota,
   LibraryStory,
+  LibraryFilterType,
 };
-export { ageGroups };
+
+export { ageGroups, libraryFilters };

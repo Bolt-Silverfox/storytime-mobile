@@ -1,30 +1,40 @@
 import { Image, Text, View } from "react-native";
+import useToast from "../../../contexts/ToastContext";
+import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
-import useRemoveStoryFromLibrary from "../../../hooks/tanstack/mutationHooks/useRemoveStoryFromLibrary";
 
 interface RemoveStoryModalProps extends Omit<CustomModalProps, "children"> {
-  storyId: string;
-  storyTitle: string;
-  onRemoveSuccess: (title: string) => void;
+  activeStory: {
+    title: string;
+    id: string;
+  };
 }
 
 const RemoveStoryModal = ({
   isOpen,
   onClose,
-  storyId,
-  storyTitle,
-  onRemoveSuccess,
+  activeStory,
 }: RemoveStoryModalProps) => {
   const { mutate: removeStory, isPending } = useRemoveStoryFromLibrary();
+  const { notify } = useToast();
 
   const handleRemove = () => {
-    removeStory(storyId, {
+    removeStory(activeStory.id, {
       onSuccess: () => {
-        onRemoveSuccess(storyTitle);
         onClose();
+        setTimeout(() => {
+          notify("Story removed successfully");
+        }, 500);
+        notifyWithTitle();
       },
     });
+  };
+
+  const notifyWithTitle = () => {
+    setTimeout(() => {
+      notify(`"${activeStory.title}" removed from library`);
+    }, 1000);
   };
 
   return (
@@ -40,7 +50,9 @@ const RemoveStoryModal = ({
             Remove story
           </Text>
           <Text className="text-center font-[abeezee] text-base text-text">
-            You are about to remove a story from your library. Are you sure?
+            You are about to remove{" "}
+            <Text className="font-[quilka]">{activeStory.title}</Text> from your
+            library. Are you sure?
           </Text>
         </View>
 

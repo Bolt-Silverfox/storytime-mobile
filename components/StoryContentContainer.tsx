@@ -71,6 +71,19 @@ const StoryContentContainer = ({
   const isLastParagraph = activeParagraph === storyLength;
   const isFirstParagraph = activeParagraph === 0;
 
+  useEffect(() => {
+    if (isLastParagraph) {
+      onProgress(paragraphs.length, true);
+    }
+  }, [isLastParagraph, paragraphs.length, onProgress]);
+
+  // Keep ref in sync so the stable callback always sees the latest value
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    // Reset the advancing guard once React has committed the new page
+    isAdvancingRef.current = false;
+  }, [activeParagraph]);
+
   const readAgain = () => {
     setCurrentlyDisplayed("story");
     setActiveParagraph(0);
