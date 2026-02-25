@@ -1,56 +1,52 @@
-import { Dispatch, SetStateAction } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
-import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
-import { LibraryFilterType } from "../types";
-import ErrorComponent from "./ErrorComponent";
-import LibraryStoryItem from "./LibraryStoryItem";
-import CustomEmptyState from "./emptyState/CustomEmptyState";
+import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
+import LibraryStories from "../../components/LibraryStories";
+import RemoveStoryModal from "../../components/modals/storyModals/RemoveStoryModal";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import { libraryFilters, LibraryFilterType } from "../../types";
 
-type PropTypes = {
-  storyFilter: LibraryFilterType;
-  setActiveStory: Dispatch<
-    SetStateAction<{
-      title: string;
-      id: string;
-    } | null>
-  >;
-};
-
-const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
-  return (
-    <View className="flex flex-1 flex-col items-center justify-center gap-y-4">
-      <ActivityIndicator size={"large"} />
-      <Text className="text-center font-[abeezee] text-xl">
-        Loading {storyFilter} stories
-      </Text>
-    </View>
-  );
-};
-
-const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
-  const { data, isPending, error, refetch } = useGetLibraryStories(storyFilter);
-
-  if (isPending) return <LoadingComponent storyFilter={storyFilter} />;
-  if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+const ParentsLibraryScreen = () => {
+  const [storyFilter, setStoryFilter] = useState<LibraryFilterType>("ongoing");
+  const [activeStory, setActiveStory] = useState<{
+    title: string;
+    id: string;
+  } | null>(null);
 
   return (
-    <FlatList
-      data={data ?? []}
-      keyExtractor={(item) => item.id}
-      contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
-      renderItem={({ item: story }) => (
-        <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
-      )}
-      ListEmptyComponent={
-        <CustomEmptyState
-          url={require("../assets/images/stories-empty-state.png")}
-          message={`No ${storyFilter} stories`}
-          secondaryMessage={`You do not have any ${storyFilter} stories yet`}
+    <SafeAreaWrapper variant="solid">
+      <View className="flex-1 flex-col gap-y-8 bg-bgLight">
+        <View className="flex flex-row border-b border-b-border-lighter bg-white px-4 pb-5 pt-2">
+          <Text className="flex-1  font-[abeezee] text-[18px]">Library</Text>
+        </View>
+        <View className="mx-4 flex flex-row items-center justify-between gap-x-2">
+          {libraryFilters.map((filter) => (
+            <Pressable
+              key={filter}
+              onPress={() => setStoryFilter(filter)}
+              className={`${filter === storyFilter ? "bg-blue" : "border bg-white"} flex h-10 flex-1 items-center justify-center rounded-full`}
+            >
+              <Text
+                className={`font-[abeezee] text-base capitalize ${filter === storyFilter ? "text-white" : "text-text"}`}
+              >
+                {filter}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
+        <LibraryStories
+          setActiveStory={setActiveStory}
+          storyFilter={storyFilter}
         />
-      }
-    />
+        {activeStory && (
+          <RemoveStoryModal
+            isOpen
+            onClose={() => setActiveStory(null)}
+            activeStory={activeStory}
+          />
+        )}
+      </View>
+    </SafeAreaWrapper>
   );
 };
 
-export default LibraryStories;
+export default ParentsLibraryScreen;
