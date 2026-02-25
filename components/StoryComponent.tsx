@@ -59,12 +59,6 @@ const StoryComponent = ({
     }, 400);
   }, []);
 
-  // Drive animation from controlsVisible state changes.
-  // Set controlsInteractive synchronously — relying on the animation
-  // completion callback is fragile because `finished` is false if the
-  // animation is interrupted by concurrent re-renders (audio loading,
-  // TanStack Query updates, etc.), which leaves pointerEvents="auto"
-  // on hidden controls and swallows taps meant for the parent toggle.
   useEffect(() => {
     setControlsInteractive(controlsVisible);
     Animated.timing(controlsOpacity, {
@@ -82,7 +76,6 @@ const StoryComponent = ({
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   // Debounce voice selection to prevent rapid batch requests
-  // Skip debounce on initial voice load for faster first batch
   const isInitialVoiceSet = useRef(false);
   useEffect(() => {
     if (!selectedVoice) {
