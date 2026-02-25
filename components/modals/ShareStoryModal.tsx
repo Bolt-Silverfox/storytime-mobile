@@ -1,17 +1,22 @@
 import { Text, View } from "react-native";
+import { DEEP_LINK_BASE_URL } from "../../constants";
 import { shareContent } from "../../utils/utils";
 import Icon from "../Icon";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
 type ShareStoryModalProps = Omit<CustomModalProps, "children"> & {
+  storyId: string;
   storyTitle: string;
 };
 
 const ShareStoryModal = ({
   isOpen,
   onClose,
+  storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
+  const shareUrl = `${DEEP_LINK_BASE_URL}/story/${storyId}`;
+
   return (
     <CustomModal onClose={onClose} isOpen={isOpen}>
       <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4">
@@ -26,7 +31,8 @@ const ShareStoryModal = ({
           name="Share2"
           onPress={() =>
             shareContent({
-              message: `Check out "${storyTitle}" on Storytime4Kids!`,
+              message: `Check out "${storyTitle}" on Storytime4Kids!\n${shareUrl}`,
+              url: shareUrl,
               title: storyTitle,
             })
           }

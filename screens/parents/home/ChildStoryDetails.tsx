@@ -195,6 +195,7 @@ const ChildStoryDetails = () => {
         <ShareStoryModal
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
+          storyId={id}
           storyTitle={title}
         />
         <SubscriptionModal
