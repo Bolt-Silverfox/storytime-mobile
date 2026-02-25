@@ -1,5 +1,8 @@
 import Netinfo from "@react-native-community/netinfo";
-import { NavigationContainer } from "@react-navigation/native";
+import {
+  LinkingOptions,
+  NavigationContainer,
+} from "@react-navigation/native";
 import {
   QueryClient,
   QueryClientProvider,
@@ -11,13 +14,35 @@ import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
+import * as Linking from "expo-linking";
 import CustomSplashScreen from "./components/CustomSplashScreen";
 import ErrorBoundary from "./components/ErrorBoundary";
 import NotificationHandler from "./components/NotificationHandler";
 import { AuthProvider } from "./contexts/AuthContext";
 import "./global.css";
-import RootNavigator from "./Navigation/RootNavigator";
+import RootNavigator, {
+  RootNavigatorParamList,
+} from "./Navigation/RootNavigator";
 import { ToastProvider } from "./contexts/ToastContext";
+
+const prefix = Linking.createURL("/");
+
+const linking: LinkingOptions<RootNavigatorParamList> = {
+  prefixes: [prefix, "storytime4kids://", "https://www.storytimeapp.me"],
+  config: {
+    screens: {
+      protected: {
+        screens: {
+          stories: {
+            screens: {
+              storyDeepLink: "story/:storyId",
+            },
+          },
+        },
+      },
+    },
+  } as LinkingOptions<RootNavigatorParamList>["config"],
+};
 
 SplashScreen.preventAutoHideAsync();
 
@@ -75,7 +100,7 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <QueryClientProvider client={queryClient}>
-            <NavigationContainer>
+            <NavigationContainer linking={linking}>
               <NotificationHandler>
                 <RootNavigator />
               </NotificationHandler>
