@@ -86,7 +86,9 @@ const StoryAudioPlayer = ({
       prevUrlRef.current = null;
       try {
         player.pause();
-      } catch (_) {}
+      } catch (e) {
+        if (__DEV__) console.error("Audio pause failed:", e);
+      }
       setIsPlaying(false);
     }
   }, [currentUrl, player, setIsPlaying]);

@@ -20,8 +20,13 @@ const ShareStoryModal = ({
   const shareUrl = `${SHARE_BASE_URL}/story/${storyId}`;
 
   const handleCopy = async () => {
-    await Clipboard.setStringAsync(shareUrl);
-    Alert.alert("Copied", "Link copied to clipboard");
+    try {
+      await Clipboard.setStringAsync(shareUrl);
+      Alert.alert("Copied", "Link copied to clipboard");
+    } catch (e) {
+      if (__DEV__) console.error("Clipboard copy failed:", e);
+      Alert.alert("Error", "Failed to copy link to clipboard");
+    }
   };
 
   return (
