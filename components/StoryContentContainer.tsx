@@ -156,72 +156,63 @@ const StoryContentContainer = ({
             <Text className="font-[quilka] text-xl text-white">
               {paragraphs[activeParagraph]}
             </Text>
-            <Animated.View
-              style={[
-                animatedControlsStyle,
-                {
-                  marginTop: 16,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                },
-              ]}
-              pointerEvents={controlsInteractive ? "auto" : "none"}
-            >
-              <Pressable
-                onPress={
-                  !isFirstParagraph
-                    ? (e) => {
-                        e.stopPropagation();
-                        handleManualNavigation("prev");
-                      }
-                    : undefined
-                }
-                className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
-              >
-                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
-              </Pressable>
-              <Pressable
-                onPress={
-                  !isLastParagraph
-                    ? (e) => {
-                        e.stopPropagation();
-                        handleManualNavigation("next");
-                      }
-                    : undefined
-                }
-                className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
-              >
-                {!isLastParagraph ? (
-                  <Icon name="SkipForward" color="white" />
-                ) : (
-                  <CustomButton
-                    text="Finish story"
-                    bgColor="#4807EC"
-                    onPress={() => {
-                      setCurrentlyDisplayed("endOfStoryMessage");
-                      onProgress(paragraphs.length, true);
-                    }}
-                  />
-                )}
-              </Pressable>
-            </Animated.View>
           </BlurView>
         </View>
       )}
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={[animatedControlsStyle]}
+          style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
-          className="rounded-2xl bg-white p-4"
+          className="flex flex-col gap-y-3"
         >
-          <ProgressBar
-            backgroundColor="#4807EC"
-            currentStep={activeParagraph + 1}
-            label="Page"
-            totalSteps={paragraphs.length}
-            height={11}
-          />
+          <View className="flex flex-row items-center justify-between">
+            <Pressable
+              onPress={
+                !isFirstParagraph
+                  ? (e) => {
+                      e.stopPropagation();
+                      handleManualNavigation("prev");
+                    }
+                  : undefined
+              }
+              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+            >
+              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+            </Pressable>
+            <Pressable
+              onPress={
+                !isLastParagraph
+                  ? (e) => {
+                      e.stopPropagation();
+                      handleManualNavigation("next");
+                    }
+                  : undefined
+              }
+              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
+            >
+              {!isLastParagraph ? (
+                <Icon name="SkipForward" color="white" />
+              ) : (
+                <CustomButton
+                  text="Finish story"
+                  bgColor="#4807EC"
+                  onPress={() => {
+                    setCurrentlyDisplayed("endOfStoryMessage");
+                    onProgress(paragraphs.length, true);
+                  }}
+                />
+              )}
+            </Pressable>
+          </View>
+          <View className="rounded-2xl bg-white p-4">
+            <ProgressBar
+              backgroundColor="#4807EC"
+              currentStep={activeParagraph + 1}
+              label="Page"
+              totalSteps={paragraphs.length}
+              height={11}
+            />
+          </View>
         </Animated.View>
       )}
       <EndOfStoryMessage
