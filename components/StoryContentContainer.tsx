@@ -8,7 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, ViewStyle } from "react-native";
+import Animated from "react-native-reanimated";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -27,8 +28,7 @@ type PropTypes = {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
-  controlsOpacity: Animated.Value;
-  onBackgroundTap: () => void;
+  animatedControlsStyle: { opacity: number };
 };
 
 type DisplayOptions =
@@ -45,8 +45,7 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
   controlsInteractive,
-  controlsOpacity,
-  onBackgroundTap,
+  animatedControlsStyle,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -127,12 +126,9 @@ const StoryContentContainer = ({
 
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
-      {/* Tap anywhere in this empty area to toggle controls */}
-      <Pressable onPress={onBackgroundTap} style={{ flex: 1, zIndex: -1 }} />
-
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={{ opacity: controlsOpacity }}
+          style={animatedControlsStyle as ViewStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
         >
           <StoryAudioPlayer
@@ -157,21 +153,29 @@ const StoryContentContainer = ({
             tint="systemMaterialDark"
             className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
           >
-            <Pressable onPress={onBackgroundTap}>
-              <Text className="font-[quilka] text-xl text-white">
-                {paragraphs[activeParagraph]}
-              </Text>
-            </Pressable>
+            <Text className="font-[quilka] text-xl text-white">
+              {paragraphs[activeParagraph]}
+            </Text>
             <Animated.View
-              style={{ opacity: controlsOpacity }}
+              style={[
+                animatedControlsStyle as ViewStyle,
+                {
+                  marginTop: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                },
+              ]}
               pointerEvents={controlsInteractive ? "auto" : "none"}
-              className="mt-4 flex flex-row items-center justify-between"
             >
               <Pressable
                 onPress={
                   !isFirstParagraph
-                    ? () => handleManualNavigation("prev")
-                    : null
+                    ? (e) => {
+                        e.stopPropagation();
+                        handleManualNavigation("prev");
+                      }
+                    : undefined
                 }
                 className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
               >
@@ -180,8 +184,15 @@ const StoryContentContainer = ({
               <Pressable
                 onPress={
                   !isLastParagraph
-                    ? () => handleManualNavigation("next")
-                    : undefined
+                    ? (e) => {
+                        e.stopPropagation();
+                        handleManualNavigation("next");
+                      }
+                    : (e) => {
+                        e.stopPropagation();
+                        setCurrentlyDisplayed("endOfStoryMessage");
+                        onProgress(paragraphs.length, true);
+                      }
                 }
                 className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
               >
@@ -191,10 +202,6 @@ const StoryContentContainer = ({
                   <CustomButton
                     text="Finish story"
                     bgColor="#4807EC"
-                    onPress={() => {
-                      setCurrentlyDisplayed("endOfStoryMessage");
-                      onProgress(paragraphs.length, true);
-                    }}
                   />
                 )}
               </Pressable>
@@ -204,7 +211,7 @@ const StoryContentContainer = ({
       )}
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={{ opacity: controlsOpacity }}
+          style={[animatedControlsStyle as ViewStyle]}
           pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
         >

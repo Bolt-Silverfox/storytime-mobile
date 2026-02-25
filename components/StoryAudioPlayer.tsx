@@ -101,7 +101,10 @@ const StoryAudioPlayer = ({
   return (
     <Pressable
       disabled={isPending}
-      onPress={playAudio}
+      onPress={(e) => {
+        e.stopPropagation();
+        playAudio();
+      }}
       className={`${isPending ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
     >
       <View className="flex flex-row items-center gap-x-2">
