@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { QueryResponse } from "../../../types";
 import { NotificationPreferences } from "../queryHooks/useGetNotificationPreferences";
 
 const useUpdateNotificationPreferences = () => {
@@ -19,8 +20,10 @@ const useUpdateNotificationPreferences = () => {
           body: JSON.stringify(preferences),
         }
       );
-      const response: NotificationPreferences = await request.json();
-      return response;
+      const response: QueryResponse<NotificationPreferences> =
+        await request.json();
+      if (!response.success) throw new Error(response.message);
+      return response.data;
     },
     onMutate: async (newPreferences) => {
       await queryClient.cancelQueries({ queryKey });
@@ -41,6 +44,11 @@ const useUpdateNotificationPreferences = () => {
       });
 
       return { previousData };
+    },
+    onSuccess: (data) => {
+      // Sync cache with the actual server state so preferences persist
+      // across app restarts and after staleTime expires.
+      queryClient.setQueryData(queryKey, data);
     },
     onError: (err: Error, _variables, context) => {
       if (context?.previousData) {

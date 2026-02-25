@@ -1,6 +1,13 @@
 import { Dispatch, SetStateAction } from "react";
-import { ActivityIndicator, FlatList, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
+import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LibraryStoryItem from "./LibraryStoryItem";
@@ -29,6 +36,7 @@ const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
 
 const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
   const { data, isPending, error, refetch } = useGetLibraryStories(storyFilter);
+  const { refreshing, onRefresh } = useRefreshControl(refetch);
 
   if (isPending) return <LoadingComponent storyFilter={storyFilter} />;
   if (error)
@@ -39,6 +47,9 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       data={data ?? []}
       keyExtractor={(item) => item.id}
       contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
       renderItem={({ item: story }) => (
         <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
       )}

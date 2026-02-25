@@ -4,14 +4,13 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  Animated,
-  ImageBackground,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  View,
-} from "react-native";
+import { ImageBackground, Pressable, View } from "react-native";
+import Animated, {
+  runOnJS,
+  useSharedValue,
+  useAnimatedStyle,
+  withTiming,
+} from "react-native-reanimated";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -27,6 +26,8 @@ import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
 import useAuth from "../contexts/AuthContext";
+
+const TOGGLE_DEBOUNCE_MS = 400;
 
 const StoryComponent = ({
   storyId,
@@ -49,24 +50,39 @@ const StoryComponent = ({
   const sessionStartTime = useRef(Date.now());
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsInteractive, setControlsInteractive] = useState(true);
-  const controlsOpacity = useRef(new Animated.Value(1)).current;
-  const isScrollingRef = useRef(false);
+  const controlsOpacity = useSharedValue(1);
 
+  const animatedControlsStyle = useAnimatedStyle(() => ({
+    opacity: controlsOpacity.value,
+  }));
+
+  const isTogglingRef = useRef(false);
   const toggleControls = useCallback(() => {
-    if (isScrollingRef.current) return;
+    if (isTogglingRef.current) return;
+    isTogglingRef.current = true;
     setControlsVisible((prev) => !prev);
+    setTimeout(() => {
+      isTogglingRef.current = false;
+    }, TOGGLE_DEBOUNCE_MS);
   }, []);
 
-  // Drive animation from controlsVisible state changes
   useEffect(() => {
-    if (controlsVisible) setControlsInteractive(true);
-    Animated.timing(controlsOpacity, {
-      toValue: controlsVisible ? 1 : 0,
-      duration: controlsVisible ? 200 : 500,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished && !controlsVisible) setControlsInteractive(false);
-    });
+    if (!controlsVisible) {
+      // Hiding — disable interaction immediately
+      setControlsInteractive(false);
+    }
+    controlsOpacity.value = withTiming(
+      controlsVisible ? 1 : 0,
+      {
+        duration: 200,
+      },
+      (finished) => {
+        if (controlsVisible && finished) {
+          // Showing — enable interaction after animation completes
+          runOnJS(setControlsInteractive)(true);
+        }
+      }
+    );
   }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();
@@ -77,7 +93,6 @@ const StoryComponent = ({
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
   // Debounce voice selection to prevent rapid batch requests
-  // Skip debounce on initial voice load for faster first batch
   const isInitialVoiceSet = useRef(false);
   useEffect(() => {
     if (!selectedVoice) {
@@ -192,70 +207,58 @@ const StoryComponent = ({
   return (
     <SafeAreaWrapper variant="transparent">
       {data ? (
-        <ScrollView
-          contentContainerClassName="flex min-h-full"
-          onScrollBeginDrag={() => {
-            isScrollingRef.current = true;
-          }}
-          onScrollEndDrag={() => {
-            setTimeout(() => {
-              isScrollingRef.current = false;
-            }, 100);
-          }}
-        >
-          <ImageBackground
-            source={{ uri: data.coverImageUrl }}
-            resizeMode="cover"
-            className="flex flex-1 flex-col p-4 pt-12"
-            style={{ backgroundColor: "#1a1a2e" }}
-          >
-            <View className="flex flex-1 flex-col">
-              {/* Background tap target — first child = lowest z-order */}
-              <Pressable
-                onPress={toggleControls}
-                style={[
-                  StyleSheet.absoluteFillObject,
-                  { backgroundColor: "transparent" },
-                ]}
-              />
-
-              {/* Top bar */}
-              <Animated.View
-                style={{ opacity: controlsOpacity }}
-                pointerEvents={controlsInteractive ? "auto" : "none"}
-                className="flex flex-row items-center justify-between"
-              >
-                <Pressable
-                  onPress={() => {
-                    navigator.reset({
-                      index: 0,
-                      routes: [{ name: "parents" }],
-                    });
-                  }}
-                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+        <View className="flex-1">
+          <Pressable style={{ flex: 1 }} onPress={toggleControls}>
+            <ImageBackground
+              source={{ uri: data.coverImageUrl }}
+              resizeMode="cover"
+              className="flex flex-1 flex-col p-4 pt-12"
+              style={{ backgroundColor: "#1a1a2e" }}
+            >
+              <View className="flex flex-1 flex-col">
+                <Animated.View
+                  style={[
+                    animatedControlsStyle,
+                    { flexDirection: "row", justifyContent: "space-between" },
+                  ]}
+                  pointerEvents={controlsInteractive ? "auto" : "none"}
                 >
-                  <FontAwesome6 name="house" size={20} color="white" />
-                </Pressable>
-                <Pressable
-                  onPress={() => setIsOptionsModalOpen(true)}
-                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-                >
-                  <FontAwesome6 name="ellipsis" size={20} color="white" />
-                </Pressable>
-              </Animated.View>
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      navigator.reset({
+                        index: 0,
+                        routes: [{ name: "parents" }],
+                      });
+                    }}
+                    className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                  >
+                    <FontAwesome6 name="house" size={20} color="white" />
+                  </Pressable>
+                  <Pressable
+                    onPress={(e) => {
+                      e.stopPropagation();
+                      setIsOptionsModalOpen(true);
+                    }}
+                    className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                  >
+                    <FontAwesome6 name="ellipsis" size={20} color="white" />
+                  </Pressable>
+                </Animated.View>
 
-              <StoryContentContainer
-                selectedVoice={selectedVoice}
-                isInteractive={storyMode === "interactive"}
-                story={data}
-                activeParagraph={activeParagraph}
-                setActiveParagraph={setActiveParagraph}
-                onProgress={handleProgress}
-                controlsInteractive={controlsInteractive}
-                controlsOpacity={controlsOpacity}
-              />
-            </View>
-          </ImageBackground>
+                <StoryContentContainer
+                  selectedVoice={selectedVoice}
+                  isInteractive={storyMode === "interactive"}
+                  story={data}
+                  activeParagraph={activeParagraph}
+                  setActiveParagraph={setActiveParagraph}
+                  onProgress={handleProgress}
+                  controlsInteractive={controlsInteractive}
+                  animatedControlsStyle={animatedControlsStyle}
+                />
+              </View>
+            </ImageBackground>
+          </Pressable>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
             onClose={() => setIsVoiceModalOpen(false)}
@@ -268,7 +271,7 @@ const StoryComponent = ({
             setIsOptionsModalOpen={setIsOptionsModalOpen}
             setActiveParagraph={setActiveParagraph}
           />
-        </ScrollView>
+        </View>
       ) : null}
       <StoryLimitModal
         visible={showQuotaReminder}

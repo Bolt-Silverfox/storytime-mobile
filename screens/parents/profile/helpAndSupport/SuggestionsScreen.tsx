@@ -13,11 +13,18 @@ import defaultStyles from "../../../../styles";
 import useAuth from "../../../../contexts/AuthContext";
 
 const feedBack = z.object({
-  fullName: z.string().trim().min(1, "Name is required"),
+  fullName: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name is too long"),
 
   email: z.email("Invalid email, try again"),
 
-  message: z.string().min(1, "feedback should not be empty"),
+  message: z
+    .string()
+    .min(10, "Please provide more detail (at least 10 characters)")
+    .max(2000, "Message is too long (max 2000 characters)"),
 });
 
 type FeedBackSchema = z.infer<typeof feedBack>;
@@ -88,6 +95,7 @@ export default function SuggestionsScreen() {
               placeholderTextColor={errors.fullName ? "red" : colours.text}
               onChangeText={setFullName}
               value={fullName}
+              maxLength={100}
             />
             {errors.fullName && (
               <Text className="text-sm text-red-600">{errors.fullName}</Text>
@@ -114,6 +122,7 @@ export default function SuggestionsScreen() {
               className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
               placeholderTextColor={errors.message ? "red" : colours.text}
               multiline
+              maxLength={2000}
             />
             {errors.message && (
               <Text className="text-sm text-red-600">{errors.message}</Text>
@@ -162,7 +171,6 @@ const suggestStyles = StyleSheet.create({
   },
   textArea: {
     height: 150,
-    maxHeight: 140,
     textAlignVertical: "top",
   },
   whiteText: {
