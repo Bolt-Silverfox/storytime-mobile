@@ -195,8 +195,6 @@ type Story = {
   }[];
 };
 
-type ChildStoryStatus = "ongoing" | "completed";
-
 type StoryBuddy = {
   id: string;
   name: string;
@@ -359,7 +357,6 @@ export type {
   StoryModes,
   LearningExpectation,
   Story,
-  ChildStoryStatus,
   StoryBuddy,
   AgeGroupType,
   FavouriteStory,

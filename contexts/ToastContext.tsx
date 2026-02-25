@@ -5,8 +5,7 @@ import {
   useContext,
   useState,
 } from "react";
-import Toast from "../components/UI/Toast";
-// import ToastContainer from "../components/UI/ToastContainer";
+import ToastContainer from "../components/UI/ToastContainer";
 
 type ToastContextType = {
   notify: (message: string) => void;
@@ -17,13 +16,15 @@ type ToastItem = {
   message: string;
 };
 
+let toastId = 0;
+
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
 
 const ToastProvider = ({ children }: { children: ReactNode }) => {
   const [toasts, setToasts] = useState<Array<ToastItem>>([]);
 
   const notify = useCallback((message: string): void => {
-    const id = Date.now();
+    const id = toastId++;
     setToasts((p) => [...p, { id, message }]);
   }, []);
 
@@ -48,24 +49,3 @@ const useToast = () => {
 export { ToastProvider };
 export type { ToastItem };
 export default useToast;
-
-const ToastContainer = ({
-  toasts,
-  onDismiss,
-}: {
-  toasts: Array<ToastItem>;
-  onDismiss: (id: number) => void;
-}) => {
-  return (
-    <>
-      {toasts.map((toast, index) => (
-        <Toast
-          onDismiss={onDismiss}
-          key={toast.id}
-          toast={toast}
-          index={index}
-        />
-      ))}
-    </>
-  );
-};

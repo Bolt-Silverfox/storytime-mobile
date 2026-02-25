@@ -70,7 +70,7 @@ const StoryContentContainer = ({
 
   useEffect(() => {
     if (isLastParagraph) {
-      return onProgress(paragraphs.length, true);
+      onProgress(paragraphs.length, true);
     }
   }, [isLastParagraph, paragraphs.length, onProgress]);
 
