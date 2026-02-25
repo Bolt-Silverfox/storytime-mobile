@@ -198,11 +198,14 @@ const StoryComponent = ({
             style={{ backgroundColor: "#1a1a2e" }}
           >
             <Pressable onPress={toggleControls} className="flex flex-1 flex-col">
-              {/* Top bar */}
+              {/* Top bar — onStartShouldSetResponder prevents taps on the
+                  bar (including gaps between buttons) from bubbling to the
+                  parent Pressable and triggering controls dismissal. */}
               <Animated.View
                 style={{ opacity: controlsOpacity }}
                 pointerEvents={controlsInteractive ? "auto" : "none"}
                 className="flex flex-row items-center justify-between"
+                onStartShouldSetResponder={() => true}
               >
                 <Pressable
                   onPress={() => {

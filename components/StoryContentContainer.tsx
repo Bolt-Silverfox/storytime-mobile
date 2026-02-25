@@ -136,6 +136,7 @@ const StoryContentContainer = ({
         <Animated.View
           style={{ opacity: controlsOpacity }}
           pointerEvents={controlsInteractive ? "auto" : "none"}
+          onStartShouldSetResponder={() => true}
         >
           <StoryAudioPlayer
             textContent={paragraphs[activeParagraph]}
@@ -166,6 +167,7 @@ const StoryContentContainer = ({
               style={{ opacity: controlsOpacity }}
               pointerEvents={controlsInteractive ? "auto" : "none"}
               className="mt-4 flex flex-row items-center justify-between"
+              onStartShouldSetResponder={() => true}
             >
               <Pressable
                 onPress={
@@ -207,6 +209,7 @@ const StoryContentContainer = ({
           style={{ opacity: controlsOpacity }}
           pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
+          onStartShouldSetResponder={() => true}
         >
           <ProgressBar
             backgroundColor="#4807EC"
