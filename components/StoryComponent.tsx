@@ -254,6 +254,7 @@ const StoryComponent = ({
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}
                   controlsInteractive={controlsInteractive}
+                  controlsVisible={controlsVisible}
                   animatedControlsStyle={animatedControlsStyle}
                 />
               </View>

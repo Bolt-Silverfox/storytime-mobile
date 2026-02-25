@@ -28,6 +28,7 @@ type PropTypes = {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
+  controlsVisible: boolean;
   animatedControlsStyle: AnimatedStyle<ViewStyle>;
 };
 
@@ -45,11 +46,25 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
   controlsInteractive,
+  controlsVisible,
   animatedControlsStyle,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
+  // Collapse control layout after fade-out so text drops to bottom
+  const [controlsInLayout, setControlsInLayout] = useState(true);
+
+  useEffect(() => {
+    if (controlsVisible) {
+      // Restore layout immediately before fade-in starts
+      setControlsInLayout(true);
+    } else {
+      // Remove from layout after fade-out completes (200ms animation)
+      const timer = setTimeout(() => setControlsInLayout(false), 220);
+      return () => clearTimeout(timer);
+    }
+  }, [controlsVisible]);
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
@@ -126,7 +141,7 @@ const StoryContentContainer = ({
 
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
-      {currentlyDisplayed === "story" && (
+      {currentlyDisplayed === "story" && controlsInLayout && (
         <Animated.View
           style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
@@ -159,7 +174,7 @@ const StoryContentContainer = ({
           </BlurView>
         </View>
       )}
-      {currentlyDisplayed === "story" && (
+      {currentlyDisplayed === "story" && controlsInLayout && (
         <Animated.View
           style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
