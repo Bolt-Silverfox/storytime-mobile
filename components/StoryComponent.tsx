@@ -8,7 +8,7 @@ import {
   Animated,
   ImageBackground,
   Pressable,
-  ScrollView,
+  View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
@@ -48,11 +48,10 @@ const StoryComponent = ({
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsInteractive, setControlsInteractive] = useState(true);
   const controlsOpacity = useRef(new Animated.Value(1)).current;
-  const isScrollingRef = useRef(false);
 
   const isTogglingRef = useRef(false);
   const toggleControls = useCallback(() => {
-    if (isScrollingRef.current || isTogglingRef.current) return;
+    if (isTogglingRef.current) return;
     isTogglingRef.current = true;
     setControlsVisible((prev) => !prev);
     setTimeout(() => {
@@ -195,17 +194,7 @@ const StoryComponent = ({
   return (
     <SafeAreaWrapper variant="transparent">
       {data ? (
-        <ScrollView
-          contentContainerClassName="flex min-h-full"
-          onScrollBeginDrag={() => {
-            isScrollingRef.current = true;
-          }}
-          onScrollEndDrag={() => {
-            setTimeout(() => {
-              isScrollingRef.current = false;
-            }, 100);
-          }}
-        >
+        <View className="flex-1">
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
@@ -262,7 +251,7 @@ const StoryComponent = ({
             setIsOptionsModalOpen={setIsOptionsModalOpen}
             setActiveParagraph={setActiveParagraph}
           />
-        </ScrollView>
+        </View>
       ) : null}
       <StoryLimitModal
         visible={showQuotaReminder}
