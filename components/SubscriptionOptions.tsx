@@ -40,21 +40,23 @@ const SubscriptionOptions = ({
             onPress={() => setSelectedPlan(planName)}
             accessibilityRole="radio"
             accessibilityLabel={`${planName} plan, ${sub.displayPrice}${isSelected ? ", selected" : ""}`}
-            className={`  flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple" : "border border-border-light"}`}
+            className={`flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple bg-purple/10" : "border border-border-light"}`}
           >
             <View
-              className={`
-                    flex h-6 w-6 items-center
-                    justify-center rounded-full border-2
-                    ${isSelected ? "border-blue" : "border-gray-300"}
-                  `}
+              className={`flex size-6 items-center justify-center rounded-full border-2 ${isSelected ? "border-purple bg-purple" : "border-gray-300"}`}
             >
-              {isSelected && <View className="h-3 w-3 rounded-full bg-blue" />}
+              {isSelected && (
+                <View className="size-2.5 rounded-full bg-white" />
+              )}
             </View>
-            <Text className="mb-1 mt-4 font-[quilka] text-2xl text-black">
+            <Text
+              className={`mb-1 mt-4 font-[quilka] text-2xl ${isSelected ? "text-purple" : "text-black"}`}
+            >
               {sub.displayPrice}
             </Text>
-            <Text className="font-[abeezee] text-[18px] leading-6 text-black">
+            <Text
+              className={`font-[abeezee] text-[18px] leading-6 ${isSelected ? "text-purple" : "text-black"}`}
+            >
               {planName} Plan
             </Text>
           </Pressable>
