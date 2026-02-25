@@ -91,6 +91,7 @@ export default function SuggestionsScreen() {
               placeholderTextColor={errors.fullName ? "red" : colours.text}
               onChangeText={setFullName}
               value={fullName}
+              maxLength={100}
             />
             {errors.fullName && (
               <Text className="text-sm text-red-600">{errors.fullName}</Text>
@@ -166,7 +167,6 @@ const suggestStyles = StyleSheet.create({
   },
   textArea: {
     height: 150,
-    maxHeight: 140,
     textAlignVertical: "top",
   },
   whiteText: {

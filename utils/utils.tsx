@@ -109,7 +109,12 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     const cleanUri = imageUri.split("?")[0];
     const ext = cleanUri.split(".").pop()?.toLowerCase() ?? "";
-    const validExt = ext in IMAGE_MIME_MAP ? (ext as keyof typeof IMAGE_MIME_MAP) : "jpg";
+    if (!(ext in IMAGE_MIME_MAP)) {
+      throw new Error(
+        "Unsupported image format. Please use JPG, PNG, GIF, or WebP."
+      );
+    }
+    const validExt = ext as keyof typeof IMAGE_MIME_MAP;
     const mimeType = IMAGE_MIME_MAP[validExt];
 
     formData.append("image", {

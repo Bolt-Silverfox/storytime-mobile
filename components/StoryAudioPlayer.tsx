@@ -36,10 +36,10 @@ const StoryAudioPlayer = ({
     storyId,
   });
 
-  const currentUrl = data?.audioUrl || "";
+  const currentUrl = data?.audioUrl ?? null;
   const player = useAudioPlayer(currentUrl);
   const status = useAudioPlayerStatus(player);
-  const prevUrlRef = useRef(currentUrl);
+  const prevUrlRef = useRef<string | null>(currentUrl);
   const prevDidJustFinishRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const onPageFinishedRef = useRef(onPageFinished);

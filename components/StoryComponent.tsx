@@ -59,16 +59,19 @@ const StoryComponent = ({
     }, 400);
   }, []);
 
-  // Drive animation from controlsVisible state changes
+  // Drive animation from controlsVisible state changes.
+  // Set controlsInteractive synchronously — relying on the animation
+  // completion callback is fragile because `finished` is false if the
+  // animation is interrupted by concurrent re-renders (audio loading,
+  // TanStack Query updates, etc.), which leaves pointerEvents="auto"
+  // on hidden controls and swallows taps meant for the parent toggle.
   useEffect(() => {
-    if (controlsVisible) setControlsInteractive(true);
+    setControlsInteractive(controlsVisible);
     Animated.timing(controlsOpacity, {
       toValue: controlsVisible ? 1 : 0,
       duration: 200,
       useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished && !controlsVisible) setControlsInteractive(false);
-    });
+    }).start();
   }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();
