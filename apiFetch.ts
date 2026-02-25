@@ -31,13 +31,33 @@ class ApiError extends Error {
   }
 }
 
+const buildHeaders = (
+  token: string | null,
+  options: FetchOptions
+): Record<string, string> => {
+  const isFormData = options.body instanceof FormData;
+  const headers: Record<string, string> = {
+    ...options.headers,
+  };
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+  // Let FormData set its own Content-Type with the correct boundary
+  // Don't overwrite a caller-provided Content-Type
+  const hasContentType = options.headers
+    ? Object.keys(options.headers).some(
+        (k) => k.toLowerCase() === "content-type"
+      )
+    : false;
+  if (!isFormData && !hasContentType) {
+    headers["Content-Type"] = "application/json";
+  }
+  return headers;
+};
+
 const apiFetch = async (url: string, options: FetchOptions = {}) => {
   const token = await secureTokenStorage.getAccessToken();
-  const headers = {
-    ...options.headers,
-    "Content-Type": "application/json",
-    Authorization: token ? `Bearer ${token}` : "",
-  };
+  const headers = buildHeaders(token, options);
 
   let response = await fetch(url, { ...options, headers });
 
@@ -64,12 +84,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
   }
 
   const newToken = await secureTokenStorage.getAccessToken();
-
-  const retryHeaders = {
-    ...options.headers,
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${newToken}`,
-  };
+  const retryHeaders = buildHeaders(newToken, options);
 
   const retryResponse = await fetch(url, { ...options, headers: retryHeaders });
 
@@ -103,8 +118,9 @@ const refreshTokensWithLock = async (): Promise<boolean> => {
 };
 
 const refreshTokens = async (): Promise<boolean> => {
-  const token = await secureTokenStorage.getRefreshToken();
   try {
+    const token = await secureTokenStorage.getRefreshToken();
+    if (!token) return false;
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
       {

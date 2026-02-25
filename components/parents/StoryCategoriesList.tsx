@@ -4,7 +4,7 @@ import { Pressable, Text, View } from "react-native";
 import { storyCategoriesColours } from "../../data";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import { getRandomNumber } from "../../utils/utils";
+import { getCategoryColourIndex } from "../../utils/utils";
 import ErrorComponent from "../ErrorComponent";
 import StoryCarouselSkeleton from "../skeletons/StoryCarouselSkeleton";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
@@ -61,8 +61,10 @@ const Item = ({
   id: string;
   imageUrl: string;
 }) => {
-  const randomNum = getRandomNumber();
-  const colour = storyCategoriesColours[randomNum];
+  const colour =
+    storyCategoriesColours[
+      getCategoryColourIndex(id, storyCategoriesColours.length)
+    ];
   const navigator = useNavigation<ParntHomeNavigatorProp>();
 
   return (

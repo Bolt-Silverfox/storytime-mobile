@@ -1,8 +1,17 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { ImageBackground, Pressable, ScrollView, View } from "react-native";
+
+import {
+  Animated,
+  ImageBackground,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
@@ -15,6 +24,9 @@ import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
+import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
+import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
+import useAuth from "../contexts/AuthContext";
 
 const StoryComponent = ({
   storyId,
@@ -31,17 +43,131 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(() =>
     page && page > 0 ? page - 1 : 0
   );
-  const [selectedVoice, setSelectedVoice] = useState<string | null>("LILY");
+  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
+  const [showQuotaReminder, setShowQuotaReminder] = useState(false);
   const sessionStartTime = useRef(Date.now());
+  const [controlsVisible, setControlsVisible] = useState(true);
+  const [controlsInteractive, setControlsInteractive] = useState(true);
+  const controlsOpacity = useRef(new Animated.Value(1)).current;
+  const isScrollingRef = useRef(false);
 
-  const { data: preferredVoice } = useGetPreferredVoice();
+  const toggleControls = useCallback(() => {
+    if (isScrollingRef.current) return;
+    setControlsVisible((prev) => !prev);
+  }, []);
+
+  // Drive animation from controlsVisible state changes
+  useEffect(() => {
+    if (controlsVisible) setControlsInteractive(true);
+    Animated.timing(controlsOpacity, {
+      toValue: controlsVisible ? 1 : 0,
+      duration: controlsVisible ? 200 : 500,
+      useNativeDriver: true,
+    }).start(({ finished }) => {
+      if (finished && !controlsVisible) setControlsInteractive(false);
+    });
+  }, [controlsVisible, controlsOpacity]);
+
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const { data: quota } = useGetStoryQuota();
+  const { data: preferredVoice, isFetched: isVoiceFetched } =
+    useGetPreferredVoice();
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
+  // Debounce voice selection to prevent rapid batch requests
+  // Skip debounce on initial voice load for faster first batch
+  const isInitialVoiceSet = useRef(false);
   useEffect(() => {
-    if (preferredVoice?.name) {
-      setSelectedVoice(preferredVoice.name.toUpperCase());
+    if (!selectedVoice) {
+      setDebouncedVoice(null);
+      return;
     }
-  }, [preferredVoice]);
+    if (!isInitialVoiceSet.current) {
+      isInitialVoiceSet.current = true;
+      setDebouncedVoice(selectedVoice);
+      return;
+    }
+    const timer = setTimeout(() => setDebouncedVoice(selectedVoice), 1000);
+    return () => clearTimeout(timer);
+  }, [selectedVoice]);
+
+  // Cancel stale batch queries when debounced voice changes (not on initial load)
+  const prevDebouncedVoice = useRef<string | null>(null);
+  useEffect(() => {
+    if (
+      debouncedVoice &&
+      prevDebouncedVoice.current &&
+      prevDebouncedVoice.current !== debouncedVoice
+    ) {
+      queryClient.cancelQueries({
+        queryKey: ["batchStoryAudio", storyId],
+        predicate: (query) => query.queryKey[2] !== debouncedVoice,
+      });
+    }
+    prevDebouncedVoice.current = debouncedVoice;
+  }, [debouncedVoice, storyId, queryClient]);
+
+  // Note: During debounce window, per-paragraph useTextToAudio fires with
+  // selectedVoice (new) while batch still uses debouncedVoice (old).
+  // The current paragraph makes an individual request; backend
+  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
+  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
+
+  useEffect(() => {
+    if (!isVoiceFetched) return;
+    setSelectedVoice(
+      preferredVoice?.name ? preferredVoice.name.toUpperCase() : "LILY"
+    );
+  }, [preferredVoice, isVoiceFetched]);
+
+  // Seed per-paragraph TanStack Query cache from batch response
+  // so useTextToAudio in StoryAudioPlayer gets instant cache hits
+  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
+  useEffect(() => {
+    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
+    for (const p of batchAudio.paragraphs) {
+      if (p.audioUrl) {
+        queryClient.setQueryData(
+          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
+          {
+            success: true,
+            message: "Audio generated successfully",
+            statusCode: 200,
+            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
+          }
+        );
+      }
+    }
+  }, [batchAudio, storyId, queryClient]);
+
+  const getQuotaReminderKey = () => {
+    const now = new Date();
+    return `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
+  };
+
+  // Check if we should show the quota reminder modal
+  useEffect(() => {
+    if (!quota || quota.isPremium || quota.unlimited) return;
+    const used = quota.used;
+    const halfway = Math.floor(quota.totalAllowed / 2);
+    if (halfway > 0 && used >= halfway && quota.remaining > 0) {
+      const key = getQuotaReminderKey();
+      AsyncStorage.getItem(key)
+        .then((seen) => {
+          if (!seen) {
+            setShowQuotaReminder(true);
+          }
+        })
+        .catch(() => {});
+    }
+  }, [quota, user?.id]);
+
+  const handleDismissQuotaReminder = () => {
+    setShowQuotaReminder(false);
+    AsyncStorage.setItem(getQuotaReminderKey(), "true").catch(() => {});
+  };
 
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
@@ -66,36 +192,69 @@ const StoryComponent = ({
   return (
     <SafeAreaWrapper variant="transparent">
       {data ? (
-        <ScrollView contentContainerClassName="flex min-h-full">
+        <ScrollView
+          contentContainerClassName="flex min-h-full"
+          onScrollBeginDrag={() => {
+            isScrollingRef.current = true;
+          }}
+          onScrollEndDrag={() => {
+            setTimeout(() => {
+              isScrollingRef.current = false;
+            }, 100);
+          }}
+        >
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
-            className="flex flex-1 flex-col p-4 pt-12 "
+            className="flex flex-1 flex-col p-4 pt-12"
+            style={{ backgroundColor: "#1a1a2e" }}
           >
-            <View className="flex flex-row items-center justify-between">
+            <View className="flex flex-1 flex-col">
+              {/* Background tap target — first child = lowest z-order */}
               <Pressable
-                onPress={() =>
-                  navigator.reset({ index: 0, routes: [{ name: "parents" }] })
-                }
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                onPress={toggleControls}
+                style={[
+                  StyleSheet.absoluteFillObject,
+                  { backgroundColor: "transparent" },
+                ]}
+              />
+
+              {/* Top bar */}
+              <Animated.View
+                style={{ opacity: controlsOpacity }}
+                pointerEvents={controlsInteractive ? "auto" : "none"}
+                className="flex flex-row items-center justify-between"
               >
-                <FontAwesome6 name="house" size={20} color="white" />
-              </Pressable>
-              <Pressable
-                onPress={() => setIsOptionsModalOpen(true)}
-                className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-              >
-                <FontAwesome6 name="ellipsis" size={20} color="white" />
-              </Pressable>
+                <Pressable
+                  onPress={() => {
+                    navigator.reset({
+                      index: 0,
+                      routes: [{ name: "parents" }],
+                    });
+                  }}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="house" size={20} color="white" />
+                </Pressable>
+                <Pressable
+                  onPress={() => setIsOptionsModalOpen(true)}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="ellipsis" size={20} color="white" />
+                </Pressable>
+              </Animated.View>
+
+              <StoryContentContainer
+                selectedVoice={selectedVoice}
+                isInteractive={storyMode === "interactive"}
+                story={data}
+                activeParagraph={activeParagraph}
+                setActiveParagraph={setActiveParagraph}
+                onProgress={handleProgress}
+                controlsInteractive={controlsInteractive}
+                controlsOpacity={controlsOpacity}
+              />
             </View>
-            <StoryContentContainer
-              selectedVoice={selectedVoice}
-              isInteractive={storyMode === "interactive"}
-              story={data}
-              activeParagraph={activeParagraph}
-              setActiveParagraph={setActiveParagraph}
-              onProgress={handleProgress}
-            />
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
@@ -110,9 +269,14 @@ const StoryComponent = ({
             setActiveParagraph={setActiveParagraph}
           />
         </ScrollView>
-      ) : (
-        <StoryLimitModal visible={true} storyId={storyId} />
-      )}
+      ) : null}
+      <StoryLimitModal
+        visible={showQuotaReminder}
+        storyId={storyId}
+        quota={quota}
+        mode="reminder"
+        onClose={handleDismissQuotaReminder}
+      />
     </SafeAreaWrapper>
   );
 };

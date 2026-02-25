@@ -17,6 +17,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   const {
     isLoading,
     errorMessage,
+    isUserCancelled,
     subscriptions,
     handlePurchase,
     getPlanName,
@@ -46,7 +47,9 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
         </View>
 
         {errorMessage && (
-          <Text className="text-center font-[abeezee] text-xl text-red-700">
+          <Text
+            className={`text-center font-[abeezee] text-xl ${isUserCancelled ? "text-[#616161]" : "text-red-700"}`}
+          >
             {errorMessage}
           </Text>
         )}

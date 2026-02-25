@@ -6,7 +6,10 @@ const registerSchema = z
     email: z.email("Invalid email, try again"),
     password: z
       .string()
-      .min(8, "Password must be at least 8 characters long")
+      .min(
+        8,
+        "Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character (!@#$%^&*)"
+      )
       .regex(
         /(?=.*[a-z])/,
         "Password must contain at least one lowercase letter"
@@ -15,14 +18,12 @@ const registerSchema = z
         /(?=.*[A-Z])/,
         "Password must contain at least one uppercase letter"
       )
-      .regex(/(?=.*\d)/, "Password must contain at least one number"),
-    confirmPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long")
+      .regex(/(?=.*\d)/, "Password must contain at least one number")
       .regex(
         /(?=.*[!@#$%^&*])/,
         "Password must contain at least one special character (!@#$%^&*)"
       ),
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.fullName.split(" ").length >= 2, {
     path: ["fullName"],

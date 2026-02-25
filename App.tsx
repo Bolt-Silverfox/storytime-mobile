@@ -7,6 +7,7 @@ import {
   onlineManager,
 } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
+import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
@@ -20,7 +21,23 @@ import { ToastProvider } from "./contexts/ToastContext";
 
 SplashScreen.preventAutoHideAsync();
 
-const queryClient = new QueryClient();
+setAudioModeAsync({
+  playsInSilentMode: true,
+  shouldPlayInBackground: false,
+  ...(Platform.OS === "ios" && { interruptionMode: "duckOthers" }),
+}).catch((e) => {
+  if (__DEV__) console.warn("setAudioModeAsync failed:", e);
+});
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 onlineManager.setEventListener((setOnline) => {
   return Netinfo.addEventListener((state) => {
     setOnline(!!state.isConnected);

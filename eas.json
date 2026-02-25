@@ -7,6 +7,7 @@
     "development": {
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "development",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://dev.api.storytimeapp.me/api/v1",
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
@@ -20,6 +21,7 @@
       },
       "developmentClient": true,
       "distribution": "internal",
+      "channel": "development",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://dev.api.storytimeapp.me/api/v1",
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
@@ -29,6 +31,7 @@
     },
     "preview": {
       "distribution": "internal",
+      "channel": "preview",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://dev.api.storytimeapp.me/api/v1",
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
@@ -38,7 +41,7 @@
     },
     "production": {
       "autoIncrement": true,
-      "channel": "v0.0.4",
+      "channel": "production",
       "env": {
         "EXPO_PUBLIC_API_URL": "https://dev.api.storytimeapp.me/api/v1",
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",

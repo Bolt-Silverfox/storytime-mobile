@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pressable, ScrollView, Text, TextInput, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import ErrorComponent from "../../components/ErrorComponent";
 import FavouriteStoryItem from "../../components/FavouriteStoryItem";
@@ -9,6 +16,7 @@ import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useRefreshControl from "../../hooks/others/useRefreshControl";
 import { AgeGroupType, FavouriteStory } from "../../types";
 
 type AgeFilter = AgeGroupType | "ALL";
@@ -28,6 +36,8 @@ const ParentsFavouritesScreen = () => {
   const { data, isPending, error, refetch } = useQuery(
     queryParentsFavourites()
   );
+  const { refreshing, onRefresh } = useRefreshControl(refetch);
+
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeFilterOption, setActiveFilterOption] = useState<
@@ -151,29 +161,34 @@ const ParentsFavouritesScreen = () => {
         )}
 
         {/* BODY */}
-        {showNoData ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No Favourites added yet"
-            secondaryMessage="You do not have any favourite stories added yet"
-          />
-        ) : showNoMatches ? (
-          <CustomEmptyState
-            url={require("../../assets/images/favourites-empty-state.png")}
-            message="No matching favourites"
-            secondaryMessage="Try changing filters or search"
-          />
-        ) : (
-          <ScrollView contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4">
-            {filteredStories.map((story) => (
+        <ScrollView
+          contentContainerClassName="flex flex-1 flex-col pb-10 gap-y-4 my-6 px-4"
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        >
+          {showNoData ? (
+            <CustomEmptyState
+              url={require("../../assets/images/favourites-empty-state.png")}
+              message="No Favourites added yet"
+              secondaryMessage="You do not have any favourite stories added yet"
+            />
+          ) : showNoMatches ? (
+            <CustomEmptyState
+              url={require("../../assets/images/favourites-empty-state.png")}
+              message="No matching favourites"
+              secondaryMessage="Try changing filters or search"
+            />
+          ) : (
+            filteredStories.map((story) => (
               <FavouriteStoryItem
                 key={story.id}
                 story={story}
                 setActiveStory={setActiveItem}
               />
-            ))}
-          </ScrollView>
-        )}
+            ))
+          )}
+        </ScrollView>
         {activeItem && (
           <FavouriteStoriesModal
             isOpen={activeItem !== null}

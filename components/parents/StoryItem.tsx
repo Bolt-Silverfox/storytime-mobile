@@ -1,13 +1,15 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
+import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
+import { READ_STATUS_COLORS } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { Story } from "../../types";
-import { getRandomNumber, secondsToMinutes } from "../../utils/utils";
+import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
 import CustomImage from "../UI/CustomImage";
 
@@ -16,7 +18,13 @@ type Proptypes = {
   isGrouped?: boolean;
 };
 
-const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
+const readStatusStyles = {
+  doneText: { color: READ_STATUS_COLORS.done },
+  readingDot: { backgroundColor: READ_STATUS_COLORS.reading },
+  readingText: { color: READ_STATUS_COLORS.reading },
+} as const;
+
+const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   const {
     id,
     title,
@@ -63,14 +71,17 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
     });
   };
 
-  const isStoryLiked = (storyId: string) => {
-    if (!data) return false;
-    return data.some((stories) => stories.storyId === storyId);
-  };
+  const isLiked = useMemo(
+    () => data?.some((s) => s.storyId === id) ?? false,
+    [data, id]
+  );
 
   const duration = secondsToMinutes(durationSeconds);
 
-  const categoryColour = storyCategoriesColours[getRandomNumber()];
+  const categoryColour =
+    storyCategoriesColours[
+      getCategoryColourIndex(id, storyCategoriesColours.length)
+    ];
   const categoryName = categories?.[0]?.name ?? "Uncategorized";
   const categoryLabel =
     categoryName.length > 15 ? `${categoryName.slice(0, 14)}...` : categoryName;
@@ -83,7 +94,7 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
     >
       <View className={`relative h-full w-full flex-1 rounded-2xl`}>
         <CustomImage
-          className=" -z-10 h-[150px] w-full min-w-full rounded-xl bg-cover"
+          className="h-[150px] w-full min-w-full rounded-xl bg-cover"
           source={{ uri: coverImageUrl }}
           height={150}
         />
@@ -92,7 +103,7 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
           onPress={() => onToggle()}
           className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
-          {isStoryLiked(id) ? (
+          {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />
           ) : (
             <FontAwesome name="heart-o" size={24} color="white" />
@@ -121,12 +132,55 @@ const StoryItem = ({ story, isGrouped = false }: Proptypes) => {
         <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
           {title}
         </Text>
-        <Text className="px-1 font-[abeezee] text-xs text-text">
-          {ageMin} - {ageMax} years
-        </Text>
+        <View className="flex flex-row items-center justify-between px-1">
+          <Text className="font-[abeezee] text-xs text-text">
+            {ageMin} - {ageMax} years
+          </Text>
+          {story.readStatus === "done" && (
+            <View
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel="Story already read"
+              className="flex flex-row items-center gap-x-1"
+            >
+              <Icon
+                name="CircleCheck"
+                size={14}
+                color={READ_STATUS_COLORS.done}
+              />
+              <Text
+                style={readStatusStyles.doneText}
+                className="font-[abeezee] text-xs font-bold"
+              >
+                Done
+              </Text>
+            </View>
+          )}
+          {story.readStatus === "reading" && (
+            <View
+              accessible
+              accessibilityRole="text"
+              accessibilityLabel="Story in progress"
+              className="flex flex-row items-center gap-x-1"
+            >
+              <View
+                style={readStatusStyles.readingDot}
+                className="size-3 rounded-full"
+              />
+              <Text
+                style={readStatusStyles.readingText}
+                className="font-[abeezee] text-xs font-bold"
+              >
+                Reading
+              </Text>
+            </View>
+          )}
+        </View>
       </View>
     </Pressable>
   );
-};
+});
+
+StoryItem.displayName = "StoryItem";
 
 export default StoryItem;

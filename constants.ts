@@ -17,6 +17,11 @@ const QUERY_KEYS = {
 /** Maximum image upload size in bytes (5 MB), matching backend limit. */
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
+const READ_STATUS_COLORS = {
+  done: "#16A34A",
+  reading: "#EA580C",
+} as const;
+
 export {
   emailRegex,
   BASE_URL,
@@ -26,4 +31,5 @@ export {
   QUERY_KEYS,
   BUNDLE_IDENTIFIER,
   MAX_IMAGE_SIZE,
+  READ_STATUS_COLORS,
 };
