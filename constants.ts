@@ -17,6 +17,16 @@ const QUERY_KEYS = {
 /** Maximum image upload size in bytes (5 MB), matching backend limit. */
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
+/** Extension → MIME type map for image uploads. Single source of truth for both
+ *  client-side validation (useImagePicker) and upload FormData (uploadUserAvatar). */
+const IMAGE_MIME_MAP = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+} as const satisfies Record<string, string>;
+
 const READ_STATUS_COLORS = {
   done: "#16A34A",
   reading: "#EA580C",
@@ -31,5 +41,6 @@ export {
   QUERY_KEYS,
   BUNDLE_IDENTIFIER,
   MAX_IMAGE_SIZE,
+  IMAGE_MIME_MAP,
   READ_STATUS_COLORS,
 };

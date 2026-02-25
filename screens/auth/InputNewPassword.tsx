@@ -11,16 +11,12 @@ import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import SuccessScreen from "../../components/UI/SuccessScreen";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import { passwordSchema } from "../../zodSchemas";
 
 const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, "Password should be at least 8 characters long"),
-
-    confirmPassword: z
-      .string()
-      .min(8, "Password should be at least 8 characters long"),
+    password: passwordSchema,
+    confirmPassword: z.string().min(1, "Please confirm your password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ["confirmPassword"],
