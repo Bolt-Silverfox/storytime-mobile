@@ -162,7 +162,7 @@ const ParentsFavouritesScreen = () => {
 
         {/* BODY */}
         <ScrollView
-          contentContainerClassName="flex flex-1 flex-col pb-10 gap-y-4 my-6 px-4"
+          contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4"
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
