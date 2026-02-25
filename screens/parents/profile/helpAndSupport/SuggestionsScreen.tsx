@@ -13,7 +13,11 @@ import defaultStyles from "../../../../styles";
 import useAuth from "../../../../contexts/AuthContext";
 
 const feedBack = z.object({
-  fullName: z.string().trim().min(1, "Name is required").max(100, "Name is too long"),
+  fullName: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name is too long"),
 
   email: z.email("Invalid email, try again"),
 

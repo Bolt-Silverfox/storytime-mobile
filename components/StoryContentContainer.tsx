@@ -9,7 +9,7 @@ import {
   useState,
 } from "react";
 import { Pressable, Text, View, ViewStyle } from "react-native";
-import Animated from "react-native-reanimated";
+import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -28,7 +28,7 @@ type PropTypes = {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
-  animatedControlsStyle: { opacity: number };
+  animatedControlsStyle: AnimatedStyle<ViewStyle>;
 };
 
 type DisplayOptions =
@@ -128,7 +128,7 @@ const StoryContentContainer = ({
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={animatedControlsStyle as ViewStyle}
+          style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
         >
           <StoryAudioPlayer
@@ -158,7 +158,7 @@ const StoryContentContainer = ({
             </Text>
             <Animated.View
               style={[
-                animatedControlsStyle as ViewStyle,
+                animatedControlsStyle,
                 {
                   marginTop: 16,
                   flexDirection: "row",
@@ -211,7 +211,7 @@ const StoryContentContainer = ({
       )}
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={[animatedControlsStyle as ViewStyle]}
+          style={[animatedControlsStyle]}
           pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
         >
