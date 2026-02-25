@@ -1,4 +1,4 @@
-name: OTA Update (dev)
+name: OTA Update
 
 concurrency:
   cancel_in_progress: true
@@ -6,12 +6,26 @@ concurrency:
 
 on:
   push:
-    branches: [dev]
+    branches: [dev, main]
+    paths:
+      - '**'
+      - '!**.md'
+      - '!docs/**'
+      - '!.eas/workflows/**'
 
 jobs:
-  update:
-    name: OTA Update
+  update-dev:
+    name: OTA Update (dev)
+    if: ${{ github.ref == 'refs/heads/dev' }}
     type: update
     params:
-      branch: ${{ github.ref_name }}
-      message: ${{ github.event.head_commit.message || 'OTA update from dev branch' }}
+      branch: development
+      message: ${{ github.event.head_commit.message || 'OTA update from dev' }}
+
+  update-production:
+    name: OTA Update (production)
+    if: ${{ github.ref == 'refs/heads/main' }}
+    type: update
+    params:
+      branch: production
+      message: ${{ github.event.head_commit.message || 'OTA update from main' }}

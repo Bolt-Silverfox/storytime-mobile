@@ -165,6 +165,7 @@ type Story = {
   updatedAt: string;
   isDeleted: boolean;
   deletedAt: string | null;
+  readStatus?: "done" | "reading" | null;
   creatorKidId: null | string;
   images: string[];
   branches: string[];
@@ -227,6 +228,7 @@ type FavouriteStory = Pick<
 type AvailableVoices = {
   id: string;
   name: string;
+  displayName: string;
   type: string;
   previewUrl: string;
   voiceAvatar: string;

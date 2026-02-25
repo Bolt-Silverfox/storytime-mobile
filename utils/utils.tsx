@@ -1,6 +1,6 @@
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import apiFetch, { ApiError } from "../apiFetch";
 import { BASE_URL } from "../constants";
 import type {
   Notification,
@@ -113,8 +113,6 @@ const MIME_MAP: Record<string, string> = {
 
 const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
-    const token = await AsyncStorage.getItem("accessToken");
-
     const formData = new FormData();
 
     const cleanUri = imageUri.split("?")[0];
@@ -129,25 +127,23 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     } as unknown as Blob);
 
     formData.append("userId", userId);
-    const request = await fetch(`${BASE_URL}/avatars/upload/user`, {
+    const request = await apiFetch(`${BASE_URL}/avatars/upload/user`, {
       method: "POST",
       body: formData,
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
     });
-
-    if (!request.ok) {
-      throw new Error(`Upload failed with status ${request.status}`);
-    }
 
     const response: QueryResponse = await request.json();
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err: unknown) {
-    const message =
-      err instanceof Error ? err.message : "Unexpected error, try again";
-    throw new Error(message);
+    if (err instanceof ApiError && err.status === 401) {
+      throw new Error("Your session has expired. Please log in again.");
+    }
+    if (err instanceof ApiError) {
+      throw new Error("Unable to upload avatar. Please try again later.");
+    }
+    if (err instanceof Error) throw err;
+    throw new Error("Something went wrong. Please try again.");
   }
 };
 
@@ -175,7 +171,7 @@ const splitByWordCountPreservingSentences = (
   wordsPerChunk: number
 ): string[] => {
   const cleanedText = text.replace(/\n/g, " ").replace(/\s+/g, " ").trim();
-  const sentences = cleanedText.split(/([.!?]+\s+)/).filter((s) => s.trim());
+  const sentences = cleanedText.split(/(?<=[.!?])\s+/).filter((s) => s.trim());
   const chunks: string[] = [];
   let currentChunk: string[] = [];
   let currentWordCount = 0;
@@ -183,6 +179,19 @@ const splitByWordCountPreservingSentences = (
   for (const sentence of sentences) {
     const words = sentence.split(" ").filter((w) => w.length > 0);
     const sentenceWordCount = words.length;
+
+    // If a single sentence exceeds the limit, split it into sub-chunks
+    if (sentenceWordCount > wordsPerChunk) {
+      if (currentChunk.length > 0) {
+        chunks.push(currentChunk.join(" "));
+        currentChunk = [];
+        currentWordCount = 0;
+      }
+      for (let i = 0; i < words.length; i += wordsPerChunk) {
+        chunks.push(words.slice(i, i + wordsPerChunk).join(" "));
+      }
+      continue;
+    }
 
     if (
       currentWordCount + sentenceWordCount > wordsPerChunk &&
@@ -210,8 +219,11 @@ const formatTime = (seconds: number) => {
   return `${String(mins).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
-const getRandomNumber = (): number => {
-  return Math.floor(Math.random() * 10 + 0);
+const getCategoryColourIndex = (id: string, totalColours: number): number => {
+  if (totalColours <= 0) return 0;
+  return (
+    id.split("").reduce((sum, ch) => sum + ch.charCodeAt(0), 0) % totalColours
+  );
 };
 
 const mapCategoryToIconType = (
@@ -319,7 +331,7 @@ export {
   splitByWordCount,
   splitByWordCountPreservingSentences,
   formatTime,
-  getRandomNumber,
+  getCategoryColourIndex,
   mapCategoryToIconType,
   groupNotificationsByDate,
   getRelativeTime,

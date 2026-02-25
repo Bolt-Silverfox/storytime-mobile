@@ -8,9 +8,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { Pressable, Text, View } from "react-native";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
-import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
+import { Animated, Pressable, Text, View } from "react-native";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -19,7 +17,6 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
-import SubscriptionModal from "./modals/SubscriptionModal";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
@@ -29,6 +26,8 @@ type PropTypes = {
   selectedVoice: string | null;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
+  controlsInteractive: boolean;
+  controlsOpacity: Animated.Value;
 };
 
 type DisplayOptions =
@@ -44,20 +43,24 @@ const StoryContentContainer = ({
   activeParagraph,
   onProgress,
   selectedVoice,
+  controlsInteractive,
+  controlsOpacity,
 }: PropTypes) => {
-  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
-  const { data } = useGetUserProfile();
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
-  const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
+
+  // Keep ref in sync so the stable callback always sees the latest value
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    // Reset the advancing guard once React has committed the new page
+    isAdvancingRef.current = false;
+  }, [activeParagraph]);
 
   const paragraphs = useMemo(
     () => splitByWordCountPreservingSentences(story.textContent, 30),
@@ -114,10 +117,7 @@ const StoryContentContainer = ({
     if (direction === "next") {
       if (isLastParagraph) {
         setCurrentlyDisplayed("endOfStoryMessage");
-        return;
-      }
-      if (!isSubscribed) {
-        setIsSubscriptionModalOpen(true);
+        onProgress(paragraphs.length, true);
         return;
       }
       setActiveParagraph((a) => {
@@ -133,62 +133,82 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <StoryAudioPlayer
-          audioUrl={story.audioUrl}
-          textContent={paragraphs[activeParagraph]}
-          nextPageContent={
-            activeParagraph < storyLength
-              ? paragraphs[activeParagraph + 1]
-              : null
-          }
-          selectedVoice={selectedVoice}
-          isSubscribed={isSubscribed}
-          isPlaying={isPlaying}
-          setIsPlaying={setIsPlaying}
-          onPageFinished={handlePageAudioFinished}
-          setIsSubscriptionModalOpen={setIsSubscriptionModalOpen}
-          storyId={story.id}
-        />
-      )}
-      {currentlyDisplayed === "story" && (
-        <BlurView
-          intensity={60}
-          tint="systemMaterialDark"
-          className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
+        <Animated.View
+          style={{ opacity: controlsOpacity }}
+          pointerEvents={controlsInteractive ? "auto" : "none"}
         >
-          <Text className="font-[quilka] text-xl text-white">
-            {paragraphs[activeParagraph]}
-          </Text>
-          <View className="mt-4 flex flex-row items-center justify-between">
-            <Pressable
-              onPress={
-                !isFirstParagraph ? () => handleManualNavigation("prev") : null
-              }
-              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
-            >
-              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
-            </Pressable>
-            <Pressable
-              onPress={() => handleManualNavigation("next")}
-              className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : isSubscribed ? "size-12 rounded-full bg-blue" : "size-12 rounded-full bg-blue/50"}`}
-            >
-              {!isLastParagraph ? (
-                <Icon name="SkipForward" color="white" />
-              ) : (
-                <CustomButton
-                  text="Finish story"
-                  bgColor="#4807EC"
-                  onPress={() => {
-                    setCurrentlyDisplayed("endOfStoryMessage");
-                  }}
-                />
-              )}
-            </Pressable>
-          </View>
-        </BlurView>
+          <StoryAudioPlayer
+            audioUrl={story.audioUrl}
+            textContent={paragraphs[activeParagraph]}
+            nextPageContent={
+              activeParagraph < storyLength
+                ? paragraphs[activeParagraph + 1]
+                : null
+            }
+            selectedVoice={selectedVoice}
+            isPlaying={isPlaying}
+            setIsPlaying={setIsPlaying}
+            onPageFinished={handlePageAudioFinished}
+            storyId={story.id}
+          />
+        </Animated.View>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="rounded-2xl bg-white p-4">
+        <View>
+          <BlurView
+            intensity={60}
+            tint="systemMaterialDark"
+            className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
+          >
+            <Text className="font-[quilka] text-xl text-white">
+              {paragraphs[activeParagraph]}
+            </Text>
+            <Animated.View
+              style={{ opacity: controlsOpacity }}
+              pointerEvents={controlsInteractive ? "auto" : "none"}
+              className="mt-4 flex flex-row items-center justify-between"
+            >
+              <Pressable
+                onPress={
+                  !isFirstParagraph
+                    ? () => handleManualNavigation("prev")
+                    : null
+                }
+                className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
+              >
+                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+              </Pressable>
+              <Pressable
+                onPress={
+                  !isLastParagraph
+                    ? () => handleManualNavigation("next")
+                    : undefined
+                }
+                className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
+              >
+                {!isLastParagraph ? (
+                  <Icon name="SkipForward" color="white" />
+                ) : (
+                  <CustomButton
+                    text="Finish story"
+                    bgColor="#4807EC"
+                    onPress={() => {
+                      setCurrentlyDisplayed("endOfStoryMessage");
+                      onProgress(paragraphs.length, true);
+                    }}
+                  />
+                )}
+              </Pressable>
+            </Animated.View>
+          </BlurView>
+        </View>
+      )}
+      {currentlyDisplayed === "story" && (
+        <Animated.View
+          style={{ opacity: controlsOpacity }}
+          pointerEvents={controlsInteractive ? "auto" : "none"}
+          className="rounded-2xl bg-white p-4"
+        >
           <ProgressBar
             backgroundColor="#4807EC"
             currentStep={activeParagraph + 1}
@@ -196,7 +216,7 @@ const StoryContentContainer = ({
             totalSteps={paragraphs.length}
             height={11}
           />
-        </View>
+        </Animated.View>
       )}
       <EndOfStoryMessage
         isInteractive={isInteractive}
@@ -216,10 +236,6 @@ const StoryContentContainer = ({
         isOpen={currentlyDisplayed === "endOfQuizMessage"}
         readAgain={readAgain}
         storyTitle={story.title}
-      />
-      <SubscriptionModal
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
       />
     </View>
   );
