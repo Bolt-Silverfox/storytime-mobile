@@ -2,10 +2,7 @@ import z from "zod";
 
 const passwordSchema = z
   .string()
-  .min(
-    8,
-    "Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character (!@#$%^&*)"
-  )
+  .min(8, "Password must be at least 8 characters")
   .regex(/(?=.*[a-z])/, "Password must contain at least one lowercase letter")
   .regex(/(?=.*[A-Z])/, "Password must contain at least one uppercase letter")
   .regex(/(?=.*\d)/, "Password must contain at least one number")

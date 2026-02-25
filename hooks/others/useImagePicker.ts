@@ -7,7 +7,7 @@ function validateImageAsset(
   asset: ImagePicker.ImagePickerAsset,
   skipExtensionCheck = false
 ): string | null {
-  if (!asset.fileSize || asset.fileSize > MAX_IMAGE_SIZE) {
+  if (typeof asset.fileSize === "number" && asset.fileSize > MAX_IMAGE_SIZE) {
     return `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`;
   }
 
