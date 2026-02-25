@@ -188,11 +188,7 @@ const StoryContentContainer = ({
                         e.stopPropagation();
                         handleManualNavigation("next");
                       }
-                    : (e) => {
-                        e.stopPropagation();
-                        setCurrentlyDisplayed("endOfStoryMessage");
-                        onProgress(paragraphs.length, true);
-                      }
+                    : undefined
                 }
                 className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
               >
@@ -202,6 +198,10 @@ const StoryContentContainer = ({
                   <CustomButton
                     text="Finish story"
                     bgColor="#4807EC"
+                    onPress={() => {
+                      setCurrentlyDisplayed("endOfStoryMessage");
+                      onProgress(paragraphs.length, true);
+                    }}
                   />
                 )}
               </Pressable>
