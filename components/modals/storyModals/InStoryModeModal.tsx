@@ -71,28 +71,19 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
               Enjoy storytelling without stress.
             </Text>
           </Pressable>
-          <Pressable
-            onPress={() => handleStoryMode("interactive")}
-            className={`flex flex-col gap-y-2 rounded-3xl p-6 ${newMode === "interactive" ? "border-2 border-primary/25 bg-primary" : "border border-border-light bg-white"}`}
-          >
-            {!isPremium && (
-              <View className="flex h-6 items-center justify-center self-start rounded-full bg-[#FFF8D2] px-2">
-                <Text className="font-[abeezee] text-xs text-black">
-                  Premium
-                </Text>
-              </View>
-            )}
-            <Text
-              className={`font-[quilka] text-xl ${newMode === "interactive" ? "text-white" : "text-black"}`}
-            >
+          <View className="flex flex-col gap-y-2 rounded-3xl border border-border-light bg-white p-6 opacity-60">
+            <View className="flex h-6 items-center justify-center self-start rounded-full bg-[#E0F2FE] px-2">
+              <Text className="font-[abeezee] text-xs text-[#0369A1]">
+                Coming Soon
+              </Text>
+            </View>
+            <Text className="font-[quilka] text-xl text-black">
               Interactive story mode
             </Text>
-            <Text
-              className={`font-[abeezee] ${newMode === "interactive" ? "text-[#FED0C1]" : "text-text"}`}
-            >
+            <Text className="font-[abeezee] text-text">
               Listen and answer questions to the story.
             </Text>
-          </Pressable>
+          </View>
         </View>
         <CustomButton
           onPress={handleChangeStoryMode}

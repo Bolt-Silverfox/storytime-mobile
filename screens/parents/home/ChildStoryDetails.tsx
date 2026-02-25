@@ -151,34 +151,19 @@ const ChildStoryDetails = () => {
                     Enjoy storytelling without stress.
                   </Text>
                 </Pressable>
-                <Pressable
-                  onPress={() => {
-                    handleStoryMode("interactive");
-                  }}
-                  className={`flex-1 rounded-lg border p-3 ${storyMode === "interactive" ? "border-primary/20 bg-primary" : "border-border-light bg-white"}`}
-                >
-                  <Text
-                    className={`font-[quilka] text-sm ${storyMode === "interactive" ? "text-white" : "text-black"}`}
-                  >
+                <View className="flex-1 rounded-lg border border-border-light bg-white/60 p-3 opacity-60">
+                  <View className="mb-1 flex h-6 items-center justify-center self-start rounded-full bg-[#E0F2FE] px-2">
+                    <Text className="font-[abeezee] text-xs text-[#0369A1]">
+                      Coming Soon
+                    </Text>
+                  </View>
+                  <Text className="font-[quilka] text-sm text-black">
                     Interactive story mode
                   </Text>
-                  <Text
-                    className={`text-wrap font-[abeezee] text-sm ${
-                      storyMode === "interactive"
-                        ? "text-[#FED0C1]"
-                        : "text-text"
-                    }`}
-                  >
+                  <Text className="text-wrap font-[abeezee] text-sm text-text">
                     Listen, enjoy and answer questions to the stories.
                   </Text>
-                  {!isPremium && (
-                    <View className="flex h-6 items-center justify-center self-end rounded-full bg-[#FFF8D2] px-2">
-                      <Text className="font-[abeezee] text-xs text-black">
-                        Premium
-                      </Text>
-                    </View>
-                  )}
-                </Pressable>
+                </View>
               </View>
             </View>
           </View>
@@ -231,7 +216,6 @@ const ChildStoryDetails = () => {
         <ShareStoryModal
           isOpen={showShareModal}
           onClose={() => setShowShareModal(false)}
-          storyId={id}
           storyTitle={title}
         />
         <SubscriptionModal
