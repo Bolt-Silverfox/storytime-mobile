@@ -197,15 +197,11 @@ const StoryComponent = ({
             className="flex flex-1 flex-col p-4 pt-12"
             style={{ backgroundColor: "#1a1a2e" }}
           >
-            <Pressable onPress={toggleControls} className="flex flex-1 flex-col">
-              {/* Top bar — onStartShouldSetResponder prevents taps on the
-                  bar (including gaps between buttons) from bubbling to the
-                  parent Pressable and triggering controls dismissal. */}
+            <View className="flex flex-1 flex-col">
               <Animated.View
                 style={{ opacity: controlsOpacity }}
                 pointerEvents={controlsInteractive ? "auto" : "none"}
                 className="flex flex-row items-center justify-between"
-                onStartShouldSetResponder={() => true}
               >
                 <Pressable
                   onPress={() => {
@@ -235,8 +231,9 @@ const StoryComponent = ({
                 onProgress={handleProgress}
                 controlsInteractive={controlsInteractive}
                 controlsOpacity={controlsOpacity}
+                onBackgroundTap={toggleControls}
               />
-            </Pressable>
+            </View>
           </ImageBackground>
           <SelectReadingVoiceModal
             isOpen={isVoiceModalOpen}
