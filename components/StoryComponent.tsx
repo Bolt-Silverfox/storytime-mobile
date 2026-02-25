@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ImageBackground, Pressable, View } from "react-native";
 import Animated, {
+  runOnJS,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -66,10 +67,22 @@ const StoryComponent = ({
   }, []);
 
   useEffect(() => {
-    setControlsInteractive(controlsVisible);
-    controlsOpacity.value = withTiming(controlsVisible ? 1 : 0, {
-      duration: 200,
-    });
+    if (!controlsVisible) {
+      // Hiding — disable interaction immediately
+      setControlsInteractive(false);
+    }
+    controlsOpacity.value = withTiming(
+      controlsVisible ? 1 : 0,
+      {
+        duration: 200,
+      },
+      (finished) => {
+        if (controlsVisible && finished) {
+          // Showing — enable interaction after animation completes
+          runOnJS(setControlsInteractive)(true);
+        }
+      }
+    );
   }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();

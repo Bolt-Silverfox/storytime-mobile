@@ -64,6 +64,7 @@ const StoryAudioPlayer = ({
   }, [status.didJustFinish]);
 
   // When the audio URL changes (new voice or new page content), replace audio
+  // When URL goes null (voice switch in progress), pause old audio
   useEffect(() => {
     if (currentUrl && currentUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
@@ -80,6 +81,13 @@ const StoryAudioPlayer = ({
         if (__DEV__) console.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
+    } else if (!currentUrl && prevUrlRef.current) {
+      // Voice switched — stop old audio while new one loads
+      prevUrlRef.current = null;
+      try {
+        player.pause();
+      } catch (_) {}
+      setIsPlaying(false);
     }
   }, [currentUrl, player, setIsPlaying]);
 
