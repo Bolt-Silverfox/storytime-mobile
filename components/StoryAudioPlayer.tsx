@@ -6,7 +6,6 @@ import { VOICE_LABELS } from "../constants/ui";
 import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
 const StoryAudioPlayer = ({
-  audioUrl,
   textContent,
   nextPageContent,
   selectedVoice,
@@ -15,7 +14,6 @@ const StoryAudioPlayer = ({
   onPageFinished,
   storyId,
 }: {
-  audioUrl: string;
   textContent: string;
   nextPageContent: string | null;
   selectedVoice: string | null;
@@ -38,10 +36,10 @@ const StoryAudioPlayer = ({
     storyId,
   });
 
-  const currentUrl = data?.audioUrl ?? audioUrl;
+  const currentUrl = data?.audioUrl ?? null;
   const player = useAudioPlayer(currentUrl);
   const status = useAudioPlayerStatus(player);
-  const prevUrlRef = useRef(currentUrl);
+  const prevUrlRef = useRef<string | null>(currentUrl);
   const prevDidJustFinishRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const onPageFinishedRef = useRef(onPageFinished);
@@ -66,6 +64,7 @@ const StoryAudioPlayer = ({
   }, [status.didJustFinish]);
 
   // When the audio URL changes (new voice or new page content), replace audio
+  // When URL goes null (voice switch in progress), pause old audio
   useEffect(() => {
     if (currentUrl && currentUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
@@ -82,6 +81,15 @@ const StoryAudioPlayer = ({
         if (__DEV__) console.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
+    } else if (!currentUrl && prevUrlRef.current) {
+      // Voice switched — stop old audio while new one loads
+      prevUrlRef.current = null;
+      try {
+        player.pause();
+      } catch (e) {
+        if (__DEV__) console.error("Audio pause failed:", e);
+      }
+      setIsPlaying(false);
     }
   }, [currentUrl, player, setIsPlaying]);
 
@@ -103,7 +111,10 @@ const StoryAudioPlayer = ({
   return (
     <Pressable
       disabled={isPending}
-      onPress={playAudio}
+      onPress={(e) => {
+        e.stopPropagation();
+        playAudio();
+      }}
       className={`${isPending ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
     >
       <View className="flex flex-row items-center gap-x-2">

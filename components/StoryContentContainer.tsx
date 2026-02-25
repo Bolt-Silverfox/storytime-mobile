@@ -8,7 +8,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Animated, Pressable, Text, View } from "react-native";
+import { Pressable, Text, View, ViewStyle } from "react-native";
+import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -27,7 +28,7 @@ type PropTypes = {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
-  controlsOpacity: Animated.Value;
+  animatedControlsStyle: AnimatedStyle<ViewStyle>;
 };
 
 type DisplayOptions =
@@ -44,7 +45,7 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
   controlsInteractive,
-  controlsOpacity,
+  animatedControlsStyle,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -76,13 +77,6 @@ const StoryContentContainer = ({
       onProgress(paragraphs.length, true);
     }
   }, [isLastParagraph, paragraphs.length, onProgress]);
-
-  // Keep ref in sync so the stable callback always sees the latest value
-  useEffect(() => {
-    activeParagraphRef.current = activeParagraph;
-    // Reset the advancing guard once React has committed the new page
-    isAdvancingRef.current = false;
-  }, [activeParagraph]);
 
   const readAgain = () => {
     setCurrentlyDisplayed("story");
@@ -134,11 +128,10 @@ const StoryContentContainer = ({
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={{ opacity: controlsOpacity }}
+          style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
         >
           <StoryAudioPlayer
-            audioUrl={story.audioUrl}
             textContent={paragraphs[activeParagraph]}
             nextPageContent={
               activeParagraph < storyLength
@@ -164,15 +157,25 @@ const StoryContentContainer = ({
               {paragraphs[activeParagraph]}
             </Text>
             <Animated.View
-              style={{ opacity: controlsOpacity }}
+              style={[
+                animatedControlsStyle,
+                {
+                  marginTop: 16,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                },
+              ]}
               pointerEvents={controlsInteractive ? "auto" : "none"}
-              className="mt-4 flex flex-row items-center justify-between"
             >
               <Pressable
                 onPress={
                   !isFirstParagraph
-                    ? () => handleManualNavigation("prev")
-                    : null
+                    ? (e) => {
+                        e.stopPropagation();
+                        handleManualNavigation("prev");
+                      }
+                    : undefined
                 }
                 className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
               >
@@ -181,7 +184,10 @@ const StoryContentContainer = ({
               <Pressable
                 onPress={
                   !isLastParagraph
-                    ? () => handleManualNavigation("next")
+                    ? (e) => {
+                        e.stopPropagation();
+                        handleManualNavigation("next");
+                      }
                     : undefined
                 }
                 className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
@@ -205,7 +211,7 @@ const StoryContentContainer = ({
       )}
       {currentlyDisplayed === "story" && (
         <Animated.View
-          style={{ opacity: controlsOpacity }}
+          style={[animatedControlsStyle]}
           pointerEvents={controlsInteractive ? "auto" : "none"}
           className="rounded-2xl bg-white p-4"
         >
