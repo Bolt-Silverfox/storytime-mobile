@@ -12,7 +12,11 @@ const QUERY_KEYS = {
   GET_USER_PROFILE: "userProfile",
   GET_STORY_QUOTA: "storyQuota",
   GET_LIBRARY_STORIES: "libraryStories",
+  GET_INFINITE_STORIES: "stories",
 } as const;
+
+/** Default page size for cursor-paginated API calls. */
+const DEFAULT_CURSOR_PAGE_SIZE = 20;
 
 /** Maximum image upload size in bytes (5 MB), matching backend limit. */
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
@@ -50,4 +54,5 @@ export {
   READ_STATUS_COLORS,
   DEEP_LINK_BASE_URL,
   CONTROLS_FADE_MS,
+  DEFAULT_CURSOR_PAGE_SIZE,
 };
