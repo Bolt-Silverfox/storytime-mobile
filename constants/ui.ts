@@ -17,16 +17,6 @@ export const SUBSCRIPTION_STATUS = {
 
 // Colors that extend beyond tailwind config
 export const COLORS = {
-  // Badge colors
-  defaultBadge: {
-    background: "#FAEFEB",
-    text: "#EC4007",
-  },
-  premiumBadge: {
-    background: "#FFF8D2",
-    text: "#000000",
-  },
-
   // Primary colors (matching tailwind.config.js)
   primary: "#EC4007",
   blue: "#4807EC",
@@ -81,12 +71,6 @@ export const VOICE_LABELS = {
   loading: "Loading voice",
   play: "Play Voice",
   mute: "Mute Voice",
-} as const;
-
-// Badge labels
-export const BADGE_LABELS = {
-  default: "Default",
-  premium: "Premium",
 } as const;
 
 // Error messages

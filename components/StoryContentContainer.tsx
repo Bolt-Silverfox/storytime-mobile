@@ -14,7 +14,6 @@ import { CONTROLS_FADE_MS } from "../constants";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
-import CustomButton from "./UI/CustomButton";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
@@ -225,14 +224,18 @@ const StoryContentContainer = ({
                 <Icon name="SkipForward" color="white" />
               </Pressable>
             ) : (
-              <CustomButton
-                text="Finish story"
-                bgColor="#4807EC"
-                onPress={() => {
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
                   setCurrentlyDisplayed("endOfStoryMessage");
                   onProgress(paragraphs.length, true);
                 }}
-              />
+                className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
+              >
+                <Text className="font-[abeezee] text-sm text-white">
+                  Finish story
+                </Text>
+              </Pressable>
             )}
           </View>
           <View className="rounded-2xl bg-white p-4">
