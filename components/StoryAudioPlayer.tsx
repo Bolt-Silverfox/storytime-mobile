@@ -90,7 +90,7 @@ const StoryAudioPlayer = ({
 
   return (
     <Pressable
-      disabled={isLoading}
+      disabled={isLoading || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();

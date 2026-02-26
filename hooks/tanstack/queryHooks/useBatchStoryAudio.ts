@@ -15,7 +15,7 @@ export type BatchStoryAudioResponse = {
   totalParagraphs: number;
   wasTruncated: boolean;
   voiceId: string;
-  usedProvider: "elevenlabs" | "deepgram" | "edgetts";
+  usedProvider?: "elevenlabs" | "deepgram" | "edgetts";
   /** Present only when the backend fell back to a different provider */
   preferredProvider?: "elevenlabs" | "deepgram" | "edgetts";
 };
