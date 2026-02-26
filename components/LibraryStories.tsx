@@ -1,5 +1,5 @@
-import { Dispatch, SetStateAction } from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import { ActivityIndicator, FlatList, RefreshControl, Text, View } from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
@@ -30,8 +30,27 @@ const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
 };
 
 const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
-  const { data, isPending, error, refetch } = useGetLibraryStories(storyFilter);
+  const {
+    data,
+    isPending,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetLibraryStories(storyFilter);
   const { refreshing, onRefresh } = useRefreshControl(refetch);
+
+  const stories = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data],
+  );
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isPending) return <LoadingComponent storyFilter={storyFilter} />;
   if (error)
@@ -39,7 +58,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 
   return (
     <FlatList
-      data={data ?? []}
+      data={stories}
       keyExtractor={(item) => item.id}
       contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
       refreshControl={
@@ -48,6 +67,13 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       renderItem={({ item: story }) => (
         <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
       )}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <ActivityIndicator size="small" style={{ paddingVertical: 16 }} />
+        ) : null
+      }
       ListEmptyComponent={
         <CustomEmptyState
           url={require("../assets/images/stories-empty-state.png")}
