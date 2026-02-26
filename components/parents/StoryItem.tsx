@@ -90,9 +90,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     <Pressable
       onPress={navigate}
       key={id}
-      className={`flex flex-col ${isGrouped ? "" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
+      className={`flex flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
     >
-      <View className={`relative w-full rounded-2xl`}>
+      <View className={`relative w-full flex-1 rounded-2xl`}>
         <CustomImage
           className="h-[150px] w-full min-w-full rounded-xl bg-cover"
           source={{ uri: coverImageUrl }}
@@ -129,7 +129,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
             </Text>
           </View>
         </View>
-        <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
+        <Text className="w-full flex-1 text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">
