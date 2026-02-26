@@ -18,7 +18,7 @@ const queryAvailableVoices = queryOptions({
       throw new Error(getErrorMessage(err));
     }
   },
-  staleTime: Infinity,
+  staleTime: 5 * 60 * 1000, // 5 minutes — matches backend cache TTL
   select: (res) => res.data,
 });
 
