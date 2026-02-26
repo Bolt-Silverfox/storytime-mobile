@@ -1,16 +1,11 @@
 import { Dispatch, SetStateAction } from "react";
-import {
-  ActivityIndicator,
-  FlatList,
-  RefreshControl,
-  Text,
-  View,
-} from "react-native";
+import { FlatList, RefreshControl, Text, View } from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LibraryStoryItem from "./LibraryStoryItem";
+import LoadingIcon from "./LoadingIcon";
 import CustomEmptyState from "./emptyState/CustomEmptyState";
 
 type PropTypes = {
@@ -26,7 +21,7 @@ type PropTypes = {
 const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
   return (
     <View className="flex flex-1 flex-col items-center justify-center gap-y-4">
-      <ActivityIndicator size={"large"} />
+      <LoadingIcon />
       <Text className="text-center font-[abeezee] text-xl">
         Loading {storyFilter} stories
       </Text>

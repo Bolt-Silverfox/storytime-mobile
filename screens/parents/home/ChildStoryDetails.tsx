@@ -21,7 +21,6 @@ import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
-import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
@@ -40,7 +39,6 @@ const ChildStoryDetails = () => {
     id,
     createdAt,
   } = params.story;
-  const [storyMode, setStoryMode] = useState<StoryModes>("plain");
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
@@ -50,16 +48,6 @@ const ChildStoryDetails = () => {
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const hasReachedLimit =
     !isPremium && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
-
-  const handleStoryMode = (storyMode: StoryModes) => {
-    if (storyMode === "interactive") {
-      isPremium
-        ? setStoryMode("interactive")
-        : setIsSubscriptionModalOpen(true);
-      return;
-    }
-    setStoryMode("plain");
-  };
 
   const duration = secondsToMinutes(durationSeconds);
   return (
@@ -134,51 +122,27 @@ const ChildStoryDetails = () => {
                 />
               </View>
               <View className="flex flex-row gap-x-2">
-                <Pressable
-                  onPress={() => handleStoryMode("plain")}
-                  className={`flex-1 rounded-lg border p-3 ${storyMode === "plain" ? "border-primary/20 bg-primary" : "border-border-light bg-white"}`}
-                >
-                  <Text
-                    className={`font-[quilka] text-sm ${storyMode === "plain" ? "text-white" : "text-black"}`}
-                  >
+                <View className="flex-1 rounded-lg border border-primary/20 bg-primary p-3">
+                  <Text className="font-[quilka] text-sm text-white">
                     Plain story mode
                   </Text>
-                  <Text
-                    className={`text-wrap font-[abeezee] text-sm ${
-                      storyMode === "plain" ? "text-[#FED0C1]" : "text-text"
-                    }`}
-                  >
+                  <Text className="text-wrap font-[abeezee] text-sm text-[#FED0C1]">
                     Enjoy storytelling without stress.
                   </Text>
-                </Pressable>
-                <Pressable
-                  onPress={() => {
-                    handleStoryMode("interactive");
-                  }}
-                  className={`flex-1 rounded-lg border p-3 ${storyMode === "interactive" ? "border-primary/20 bg-primary" : "border-border-light bg-white"}`}
-                >
-                  <Text
-                    className={`font-[quilka] text-sm ${storyMode === "interactive" ? "text-white" : "text-black"}`}
-                  >
+                </View>
+                <View className="flex-1 rounded-lg border border-border-light bg-white/60 p-3 opacity-60">
+                  <View className="mb-1 flex h-6 items-center justify-center self-start rounded-full bg-[#E0F2FE] px-2">
+                    <Text className="font-[abeezee] text-xs text-[#0369A1]">
+                      Coming Soon
+                    </Text>
+                  </View>
+                  <Text className="font-[quilka] text-sm text-black">
                     Interactive story mode
                   </Text>
-                  <Text
-                    className={`text-wrap font-[abeezee] text-sm ${
-                      storyMode === "interactive"
-                        ? "text-[#FED0C1]"
-                        : "text-text"
-                    }`}
-                  >
+                  <Text className="text-wrap font-[abeezee] text-sm text-text">
                     Listen, enjoy and answer questions to the stories.
                   </Text>
-                  {!isPremium && (
-                    <View className="flex h-6 items-center justify-center self-end rounded-full bg-[#FFF8D2] px-2">
-                      <Text className="font-[abeezee] text-xs text-black">
-                        Premium
-                      </Text>
-                    </View>
-                  )}
-                </Pressable>
+                </View>
               </View>
             </View>
           </View>
@@ -215,7 +179,7 @@ const ChildStoryDetails = () => {
               onPress={() =>
                 navigator.navigate("readStory", {
                   storyId: id,
-                  mode: storyMode,
+                  mode: "plain",
                   page: params.page,
                 })
               }

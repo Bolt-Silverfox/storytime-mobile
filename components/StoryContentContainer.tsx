@@ -10,10 +10,10 @@ import {
 } from "react";
 import { Pressable, Text, View, ViewStyle } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { CONTROLS_FADE_MS } from "../constants";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
-import CustomButton from "./UI/CustomButton";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
@@ -28,7 +28,9 @@ type PropTypes = {
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
+  controlsVisible: boolean;
   animatedControlsStyle: AnimatedStyle<ViewStyle>;
+  isTTSDegraded: boolean;
 };
 
 type DisplayOptions =
@@ -45,11 +47,29 @@ const StoryContentContainer = ({
   onProgress,
   selectedVoice,
   controlsInteractive,
+  controlsVisible,
   animatedControlsStyle,
+  isTTSDegraded,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
+  // Collapse control layout after fade-out so text drops to bottom
+  const [controlsInLayout, setControlsInLayout] = useState(true);
+
+  useEffect(() => {
+    if (controlsVisible) {
+      // Restore layout immediately before fade-in starts
+      setControlsInLayout(true);
+    } else {
+      // Remove from layout after fade-out completes + small buffer
+      const timer = setTimeout(
+        () => setControlsInLayout(false),
+        CONTROLS_FADE_MS + 20,
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [controlsVisible]);
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
     new Array(story.questions.length).fill(null)
   );
@@ -127,24 +147,38 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <Animated.View
-          style={animatedControlsStyle}
-          pointerEvents={controlsInteractive ? "auto" : "none"}
+        <View
+          style={
+            !controlsInLayout ? { height: 0, overflow: "hidden" } : undefined
+          }
         >
-          <StoryAudioPlayer
-            textContent={paragraphs[activeParagraph]}
-            nextPageContent={
-              activeParagraph < storyLength
-                ? paragraphs[activeParagraph + 1]
-                : null
-            }
-            selectedVoice={selectedVoice}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            onPageFinished={handlePageAudioFinished}
-            storyId={story.id}
-          />
-        </Animated.View>
+          <Animated.View
+            style={animatedControlsStyle}
+            pointerEvents={controlsInteractive ? "auto" : "none"}
+          >
+            <StoryAudioPlayer
+              textContent={paragraphs[activeParagraph]}
+              nextPageContent={
+                activeParagraph < storyLength
+                  ? paragraphs[activeParagraph + 1]
+                  : null
+              }
+              selectedVoice={selectedVoice}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              onPageFinished={handlePageAudioFinished}
+              storyId={story.id}
+            />
+          </Animated.View>
+          {isTTSDegraded && (
+            <View className="mt-2 flex flex-row items-center gap-x-2 rounded-lg bg-amber-500/90 px-3 py-2">
+              <Icon name="TriangleAlert" size={16} color="white" />
+              <Text className="flex-1 font-[abeezee] text-xs text-white">
+                Audio quality may be reduced due to service issues.
+              </Text>
+            </View>
+          )}
+        </View>
       )}
       {currentlyDisplayed === "story" && (
         <View>
@@ -156,72 +190,63 @@ const StoryContentContainer = ({
             <Text className="font-[quilka] text-xl text-white">
               {paragraphs[activeParagraph]}
             </Text>
-            <Animated.View
-              style={[
-                animatedControlsStyle,
-                {
-                  marginTop: 16,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                },
-              ]}
-              pointerEvents={controlsInteractive ? "auto" : "none"}
-            >
-              <Pressable
-                onPress={
-                  !isFirstParagraph
-                    ? (e) => {
-                        e.stopPropagation();
-                        handleManualNavigation("prev");
-                      }
-                    : undefined
-                }
-                className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-inherit" : "bg-blue"}`}
-              >
-                {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
-              </Pressable>
-              <Pressable
-                onPress={
-                  !isLastParagraph
-                    ? (e) => {
-                        e.stopPropagation();
-                        handleManualNavigation("next");
-                      }
-                    : undefined
-                }
-                className={`flex items-center justify-center ${isLastParagraph ? "rounded-xl" : "size-12 rounded-full bg-blue"}`}
-              >
-                {!isLastParagraph ? (
-                  <Icon name="SkipForward" color="white" />
-                ) : (
-                  <CustomButton
-                    text="Finish story"
-                    bgColor="#4807EC"
-                    onPress={() => {
-                      setCurrentlyDisplayed("endOfStoryMessage");
-                      onProgress(paragraphs.length, true);
-                    }}
-                  />
-                )}
-              </Pressable>
-            </Animated.View>
           </BlurView>
         </View>
       )}
-      {currentlyDisplayed === "story" && (
+      {currentlyDisplayed === "story" && controlsInLayout && (
         <Animated.View
-          style={[animatedControlsStyle]}
+          style={animatedControlsStyle}
           pointerEvents={controlsInteractive ? "auto" : "none"}
-          className="rounded-2xl bg-white p-4"
+          className="flex flex-col gap-y-3"
         >
-          <ProgressBar
-            backgroundColor="#4807EC"
-            currentStep={activeParagraph + 1}
-            label="Page"
-            totalSteps={paragraphs.length}
-            height={11}
-          />
+          <View className="flex flex-row items-center justify-between">
+            <Pressable
+              onPress={
+                !isFirstParagraph
+                  ? (e) => {
+                      e.stopPropagation();
+                      handleManualNavigation("prev");
+                    }
+                  : undefined
+              }
+              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-transparent" : "bg-blue"}`}
+            >
+              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+            </Pressable>
+            {!isLastParagraph ? (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleManualNavigation("next");
+                }}
+                className="flex size-12 items-center justify-center rounded-full bg-blue"
+              >
+                <Icon name="SkipForward" color="white" />
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setCurrentlyDisplayed("endOfStoryMessage");
+                  onProgress(paragraphs.length, true);
+                }}
+                className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
+              >
+                <Text className="font-[abeezee] text-sm text-white">
+                  Finish story
+                </Text>
+              </Pressable>
+            )}
+          </View>
+          <View className="rounded-2xl bg-white p-4">
+            <ProgressBar
+              backgroundColor="#4807EC"
+              currentStep={activeParagraph + 1}
+              label="Page"
+              totalSteps={paragraphs.length}
+              height={11}
+            />
+          </View>
         </Animated.View>
       )}
       <EndOfStoryMessage

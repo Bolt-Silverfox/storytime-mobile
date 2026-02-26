@@ -25,6 +25,7 @@ import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
+import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
 
 const TOGGLE_DEBOUNCE_MS = 400;
@@ -74,7 +75,7 @@ const StoryComponent = ({
     controlsOpacity.value = withTiming(
       controlsVisible ? 1 : 0,
       {
-        duration: 200,
+        duration: CONTROLS_FADE_MS,
       },
       (finished) => {
         if (controlsVisible && finished) {
@@ -129,12 +130,11 @@ const StoryComponent = ({
   // The current paragraph makes an individual request; backend
   // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
   const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
+  const isTTSDegraded = batchAudio?.providerStatus === "degraded";
 
   useEffect(() => {
     if (!isVoiceFetched) return;
-    setSelectedVoice(
-      preferredVoice?.name ? preferredVoice.name.toUpperCase() : "LILY"
-    );
+    setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
 
   // Seed per-paragraph TanStack Query cache from batch response
@@ -254,7 +254,9 @@ const StoryComponent = ({
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}
                   controlsInteractive={controlsInteractive}
+                  controlsVisible={controlsVisible}
                   animatedControlsStyle={animatedControlsStyle}
+                  isTTSDegraded={isTTSDegraded}
                 />
               </View>
             </ImageBackground>
@@ -269,7 +271,6 @@ const StoryComponent = ({
             handleVoiceModal={setIsVoiceModalOpen}
             isOptionsModalOpen={isOptionsModalOpen}
             setIsOptionsModalOpen={setIsOptionsModalOpen}
-            setActiveParagraph={setActiveParagraph}
           />
         </View>
       ) : null}

@@ -33,7 +33,6 @@ const EndOfStoryMessage = ({
         <CustomButton text="Read story again" transparent onPress={readAgain} />
         <CustomButton
           text="Go home"
-          transparent
           onPress={() =>
             navigator.replace("parents", {
               screen: "home",
