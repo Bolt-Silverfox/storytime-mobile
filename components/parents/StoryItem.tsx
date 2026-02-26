@@ -90,9 +90,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     <Pressable
       onPress={navigate}
       key={id}
-      className={`flex min-h-[230px] flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl  border border-border-light bg-white p-1`}
+      className={`flex flex-col ${isGrouped ? "" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
     >
-      <View className={`relative h-full w-full flex-1 rounded-2xl`}>
+      <View className={`relative w-full rounded-2xl`}>
         <CustomImage
           className="h-[150px] w-full min-w-full rounded-xl bg-cover"
           source={{ uri: coverImageUrl }}
