@@ -2,7 +2,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageBackground, Pressable, View } from "react-native";
 import Animated, {
@@ -125,37 +125,27 @@ const StoryComponent = ({
     prevDebouncedVoice.current = debouncedVoice;
   }, [debouncedVoice, storyId, queryClient]);
 
-  // Note: During debounce window, per-paragraph useTextToAudio fires with
-  // selectedVoice (new) while batch still uses debouncedVoice (old).
-  // The current paragraph makes an individual request; backend
-  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
-  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
-  const isTTSDegraded = batchAudio?.providerStatus === "degraded";
+  const {
+    data: batchAudio,
+    isLoading: isBatchAudioLoading,
+    isError: isBatchAudioError,
+  } = useBatchStoryAudio(storyId, debouncedVoice);
+  // preferredProvider is only present when the backend fell back to a different provider
+  const isTTSDegraded = !!batchAudio?.preferredProvider;
+  const isVoiceTransitioning = selectedVoice !== debouncedVoice;
+
+  const audioUrlMap = useMemo(() => {
+    const map = new Map<number, string | null>();
+    batchAudio?.paragraphs?.forEach((p) => {
+      map.set(p.index, p.audioUrl);
+    });
+    return map;
+  }, [batchAudio?.paragraphs]);
 
   useEffect(() => {
     if (!isVoiceFetched) return;
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
-
-  // Seed per-paragraph TanStack Query cache from batch response
-  // so useTextToAudio in StoryAudioPlayer gets instant cache hits
-  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
-  useEffect(() => {
-    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
-    for (const p of batchAudio.paragraphs) {
-      if (p.audioUrl) {
-        queryClient.setQueryData(
-          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
-          {
-            success: true,
-            message: "Audio generated successfully",
-            statusCode: 200,
-            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
-          }
-        );
-      }
-    }
-  }, [batchAudio, storyId, queryClient]);
 
   const getQuotaReminderKey = () => {
     const now = new Date();
@@ -247,10 +237,16 @@ const StoryComponent = ({
                 </Animated.View>
 
                 <StoryContentContainer
-                  selectedVoice={selectedVoice}
                   isInteractive={storyMode === "interactive"}
                   story={data}
                   activeParagraph={activeParagraph}
+                  audioUrl={
+                    isVoiceTransitioning
+                      ? null
+                      : (audioUrlMap.get(activeParagraph) ?? null)
+                  }
+                  isAudioLoading={isBatchAudioLoading || isVoiceTransitioning}
+                  isAudioError={isBatchAudioError}
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}
                   controlsInteractive={controlsInteractive}

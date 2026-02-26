@@ -1,8 +1,5 @@
 import Netinfo from "@react-native-community/netinfo";
-import {
-  LinkingOptions,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import {
   QueryClient,
   QueryClientProvider,
