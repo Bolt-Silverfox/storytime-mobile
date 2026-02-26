@@ -18,10 +18,8 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
+import { WORDS_PER_CHUNK } from "../constants/tts";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
-
-/** Must match backend WORDS_PER_CHUNK in text-to-speech.service.ts */
-const WORDS_PER_CHUNK = 30;
 
 type PropTypes = {
   story: Story;

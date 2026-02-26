@@ -136,7 +136,9 @@ const StoryComponent = ({
 
   const audioUrlMap = useMemo(() => {
     const map = new Map<number, string | null>();
-    batchAudio?.paragraphs?.forEach((p) => map.set(p.index, p.audioUrl));
+    batchAudio?.paragraphs?.forEach((p) => {
+      map.set(p.index, p.audioUrl);
+    });
     return map;
   }, [batchAudio?.paragraphs]);
 
