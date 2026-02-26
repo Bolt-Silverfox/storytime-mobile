@@ -2,14 +2,13 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
-import { COLORS, SUBSCRIPTION_STATUS, USER_ROLES } from "../constants/ui";
+import { COLORS } from "../constants/ui";
 import { AvailableVoices as VoiceData } from "../types";
 import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
-import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
+import useGetVoiceAccess from "../hooks/tanstack/queryHooks/useGetVoiceAccess";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
-import VoiceBadge from "./UI/VoiceBadge";
 
 const AvailableVoices = ({
   selectedVoice,
@@ -19,24 +18,29 @@ const AvailableVoices = ({
   setSelectedVoice: Dispatch<SetStateAction<string | null>>;
 }) => {
   const { data } = useSuspenseQuery(queryAvailableVoices);
-  const { data: user } = useGetUserProfile();
+  const { data: voiceAccess } = useGetVoiceAccess();
   const [previewingId, setPreviewingId] = useState<string | null>(null);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const player = useAudioPlayer();
   const { mutate: markPreferred } = useSetPreferredVoice();
 
-  const isPremium =
-    user?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    user?.role === USER_ROLES.admin;
+  const isPremium = voiceAccess?.isPremium ?? false;
+  const lockedVoiceId = voiceAccess?.lockedVoiceId ?? null;
 
-  const handlePreview = async (audioUrl: string, voiceId: string) => {
-    if (!isPremium) {
-      setIsSubscriptionModalOpen(true);
-      return;
-    }
+  const isVoiceAllowed = (voice: VoiceData): boolean => {
+    // Fail closed while voice access is loading or errored
+    if (!voiceAccess) return false;
+    if (isPremium) return true;
+    // No voice locked yet — all voices available for the first pick
+    if (!lockedVoiceId) return true;
+    // Only the locked voice is allowed
+    return voice.id === lockedVoiceId;
+  };
+
+  const handlePreview = (audioUrl: string, voiceId: string) => {
     setPreviewingId(voiceId);
     try {
-      await player.replace(audioUrl);
+      player.replace(audioUrl);
       player.play();
     } catch (error) {
       if (__DEV__) {
@@ -47,61 +51,85 @@ const AvailableVoices = ({
   };
 
   const handleSelectVoice = (voice: VoiceData) => {
-    const isDefault = voice.name.toUpperCase() === "LILY";
-    if (!isPremium && !isDefault) {
+    if (!isVoiceAllowed(voice)) {
       setIsSubscriptionModalOpen(true);
       return;
     }
-    const voiceValue =
-      voice.type === "elevenlabs" ? voice.name.toUpperCase() : voice.id;
-    setSelectedVoice(voiceValue);
-    if (isPremium) {
-      markPreferred(voice.id);
-    }
+    setSelectedVoice(voice.id);
+    markPreferred(voice.id);
   };
 
   return (
     <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
       {data.map((voice) => {
-        const isSelected =
-          voice.type === "elevenlabs"
-            ? voice.name.toUpperCase() === selectedVoice
-            : voice.id === selectedVoice;
+        const isSelected = voice.id === selectedVoice;
         const isPreviewing = voice.id === previewingId;
-        const isDefault = voice.name.toUpperCase() === "LILY";
+        const allowed = isVoiceAllowed(voice);
+        const isLocked = !isPremium && lockedVoiceId === voice.id;
 
         return (
           <Pressable
             onPress={() => {
               handleSelectVoice(voice);
-              if (isPremium) {
+              if (allowed) {
                 handlePreview(voice.previewUrl, voice.id);
               }
             }}
             key={voice.id}
-            className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${isSelected ? "border-2 border-primary" : "border border-border-light"}`}
+            className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
+              !allowed
+                ? "border border-border-light opacity-40"
+                : isSelected
+                  ? "border-2 border-primary"
+                  : "border border-border-light"
+            }`}
           >
             <Image
               source={{ uri: voice.voiceAvatar }}
               className="size-[70px] self-center"
             />
-            <VoiceBadge isDefault={isDefault} isPremium={isPremium} />
+            {isLocked && (
+              <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-2">
+                <Text className="font-[abeezee] text-xs text-primary">
+                  Your voice
+                </Text>
+              </View>
+            )}
+            {!isPremium && !allowed && (
+              <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-gray-100 px-2">
+                <Text className="font-[abeezee] text-xs text-gray-500">
+                  Locked
+                </Text>
+              </View>
+            )}
+            {(isPremium || (!isLocked && allowed)) && (
+              <View className="mt-2 h-6" />
+            )}
             <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
               {voice.displayName ?? voice.name}
             </Text>
             <View className="flex flex-row items-center justify-between gap-x-4">
               <Pressable
-                onPress={() => handlePreview(voice.previewUrl, voice.id)}
+                onPress={() => {
+                  if (!allowed) {
+                    setIsSubscriptionModalOpen(true);
+                    return;
+                  }
+                  handlePreview(voice.previewUrl, voice.id);
+                }}
                 className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
               >
                 <Icon
                   name="Volume2"
-                  color={isPreviewing ? COLORS.blue : "black"}
+                  color={
+                    isPreviewing ? COLORS.blue : allowed ? "black" : "#9CA3AF"
+                  }
                 />
               </Pressable>
               <Switch
                 onValueChange={() => handleSelectVoice(voice)}
                 value={isSelected}
+                disabled={!allowed}
               />
             </View>
           </Pressable>

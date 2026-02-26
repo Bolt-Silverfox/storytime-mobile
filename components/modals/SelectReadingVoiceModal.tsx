@@ -1,5 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import { Dispatch, lazy, SetStateAction } from "react";
 import { ScrollView, Text, View } from "react-native";
+import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import Icon from "../Icon";
 import SuspenseWrapper from "../supsense/SuspenseWrapper";
 import CustomModal, { CustomModalProps } from "./CustomModal";
@@ -17,6 +19,11 @@ const SelectReadingVoiceModal = ({
   selectedVoice,
   setSelectedVoice,
 }: PropTypes) => {
+  const { data: voices } = useQuery(queryAvailableVoices);
+  const selectedVoiceDisplay = voices?.find(
+    (v) => v.id === selectedVoice
+  );
+
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="flex flex-1 flex-col gap-y-6">
@@ -35,8 +42,10 @@ const SelectReadingVoiceModal = ({
               <Text className="font-[abeezee] text-text">
                 Selected Story Voice
               </Text>
-              <Text className="font-[quilka] text-2xl capitalize text-black">
-                {selectedVoice?.toLowerCase()}
+              <Text className="font-[quilka] text-2xl text-black">
+                {selectedVoiceDisplay?.displayName ??
+                  selectedVoiceDisplay?.name ??
+                  selectedVoice}
               </Text>
             </View>
             <Icon name="CircleCheck" color="green" />

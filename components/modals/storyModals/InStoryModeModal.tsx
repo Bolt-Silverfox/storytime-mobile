@@ -1,53 +1,11 @@
-import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { Dispatch, SetStateAction, useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../../constants/ui";
-import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
-import {
-  StoryNavigatorParamList,
-  StoryNavigatorProp,
-} from "../../../Navigation/StoryNavigator";
-import { StoryModes } from "../../../types";
+import { Text, View } from "react-native";
 import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
-import SubscriptionModal from "../SubscriptionModal";
 
-interface Props extends Omit<CustomModalProps, "children"> {
-  setActiveParagraph: Dispatch<SetStateAction<number>>;
-}
+type Props = Omit<CustomModalProps, "children">;
 
-type RoutePropTypes = RouteProp<StoryNavigatorParamList, "readStory">;
-
-const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
-  const { params } = useRoute<RoutePropTypes>();
-  const [newMode, setNewMode] = useState<StoryModes>(params.mode);
-  const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
-  const { data } = useGetUserProfile();
-
-  const navigator = useNavigation<StoryNavigatorProp>();
-
-  const isPremium =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
-
-  const handleStoryMode = (storyMode: StoryModes) => {
-    if (storyMode === "interactive") {
-      isPremium ? setNewMode("interactive") : setIsSubscriptionModalOpen(true);
-      return;
-    }
-    setNewMode("plain");
-  };
-
-  const handleChangeStoryMode = () => {
-    if (newMode === params.mode) {
-      onClose();
-      return;
-    }
-    setActiveParagraph(0);
-    navigator.navigate("readStory", { mode: newMode, storyId: params.storyId });
-    onClose();
-  };
+const InStoryModeModal = ({ isOpen, onClose }: Props) => {
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <View className="flex flex-col gap-y-6 bg-white">
@@ -56,54 +14,30 @@ const InStoryModeModal = ({ isOpen, onClose, setActiveParagraph }: Props) => {
           <Icon name="SquareX" onPress={onClose} />
         </View>
         <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
-          <Pressable
-            onPress={() => handleStoryMode("plain")}
-            className={`flex flex-col gap-y-2 rounded-3xl p-6 ${newMode === "plain" ? "border-2 border-[#EC400740] bg-primary" : "border border-border-light bg-white"}`}
-          >
-            <Text
-              className={`font-[quilka] text-xl ${newMode === "plain" ? "text-white" : "text-black"}`}
-            >
+          <View className="flex flex-col gap-y-2 rounded-3xl border-2 border-[#EC400740] bg-primary p-6">
+            <Text className="font-[quilka] text-xl text-white">
               Plain story mode
             </Text>
-            <Text
-              className={`font-[abeezee] ${newMode === "plain" ? "text-[#FED0C1]" : "text-text"}`}
-            >
+            <Text className="font-[abeezee] text-[#FED0C1]">
               Enjoy storytelling without stress.
             </Text>
-          </Pressable>
-          <Pressable
-            onPress={() => handleStoryMode("interactive")}
-            className={`flex flex-col gap-y-2 rounded-3xl p-6 ${newMode === "interactive" ? "border-2 border-primary/25 bg-primary" : "border border-border-light bg-white"}`}
-          >
-            {!isPremium && (
-              <View className="flex h-6 items-center justify-center self-start rounded-full bg-[#FFF8D2] px-2">
-                <Text className="font-[abeezee] text-xs text-black">
-                  Premium
-                </Text>
-              </View>
-            )}
-            <Text
-              className={`font-[quilka] text-xl ${newMode === "interactive" ? "text-white" : "text-black"}`}
-            >
+          </View>
+          <View className="flex flex-col gap-y-2 rounded-3xl border border-border-light bg-white p-6 opacity-60">
+            <View className="flex h-6 items-center justify-center self-start rounded-full bg-[#E0F2FE] px-2">
+              <Text className="font-[abeezee] text-xs text-[#0369A1]">
+                Coming Soon
+              </Text>
+            </View>
+            <Text className="font-[quilka] text-xl text-black">
               Interactive story mode
             </Text>
-            <Text
-              className={`font-[abeezee] ${newMode === "interactive" ? "text-[#FED0C1]" : "text-text"}`}
-            >
+            <Text className="font-[abeezee] text-text">
               Listen and answer questions to the story.
             </Text>
-          </Pressable>
+          </View>
         </View>
-        <CustomButton
-          onPress={handleChangeStoryMode}
-          text="Select preferred story mode"
-          disabled={!newMode}
-        />
+        <CustomButton onPress={onClose} text="Got it" />
       </View>
-      <SubscriptionModal
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
-      />
     </CustomModal>
   );
 };
