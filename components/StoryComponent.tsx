@@ -132,9 +132,7 @@ const StoryComponent = ({
 
   useEffect(() => {
     if (!isVoiceFetched) return;
-    setSelectedVoice(
-      preferredVoice?.name ? preferredVoice.name.toUpperCase() : "LILY"
-    );
+    setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
 
   // Seed per-paragraph TanStack Query cache from batch response
