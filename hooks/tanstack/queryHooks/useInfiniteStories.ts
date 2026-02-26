@@ -29,6 +29,7 @@ const useInfiniteStories = (params: InfiniteStoriesParam) => {
         : undefined,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
+    maxPages: 10,
   });
 };
 
@@ -41,9 +42,10 @@ const fetchStoriesCursor = async (
 ): Promise<CursorPaginatedData<Story>> => {
   const searchParams = new URLSearchParams();
 
-  // Always send cursor to trigger cursor-based response from backend
-  searchParams.set("cursor", cursor ?? "");
   searchParams.set("limit", String(params.limit ?? DEFAULT_LIMIT));
+  // Only send cursor when we have one — first page omits it.
+  // Backend enters cursor mode when cursor param is present and truthy.
+  if (cursor) searchParams.set("cursor", cursor);
 
   if (params.category) searchParams.set("category", params.category);
   if (params.ageGroup && params.ageGroup !== "All") {

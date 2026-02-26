@@ -84,10 +84,10 @@ const GroupedStoriesStoryCarousel = ({
       data={sorted}
       keyExtractor={(item) => item.id}
       className="-mt-4 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex flex-col px-4 pb-5"
+      contentContainerClassName="flex flex-col px-4 py-6 pb-5"
       showsVerticalScrollIndicator={false}
       numColumns={2}
-      columnWrapperClassName="gap-x-3"
+      columnWrapperClassName="gap-x-3 mb-6"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -100,8 +100,8 @@ const GroupedStoriesStoryCarousel = ({
         ) : null
       }
       renderItem={({ item: story }) => (
-        <View className="flex-1 py-3">
-          <StoryItem key={story.id} story={story} isGrouped />
+        <View className="flex-1">
+          <StoryItem story={story} isGrouped />
         </View>
       )}
       onEndReached={handleEndReached}

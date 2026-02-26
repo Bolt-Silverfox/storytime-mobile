@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import CustomButton from "../../../components/UI/CustomButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import queryGetStories from "../../../hooks/tanstack/queryHooks/queryGetStories";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
@@ -51,6 +52,13 @@ const TodaysTopPicksScreen = () => {
           <StoryCarouselSkeleton variant="vertical" />
         ) : error ? (
           <ErrorComponent message={error.message} refetch={refetch} />
+        ) : !stories?.length ? (
+          <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
+            <Text className="font-[abeezee] text-xl text-black">
+              No stories in this category yet
+            </Text>
+            <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+          </View>
         ) : (
           <ScrollView
             className="-mt-4 rounded-t-3xl bg-white pt-5"
@@ -60,7 +68,7 @@ const TodaysTopPicksScreen = () => {
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
           >
-            {(stories ?? []).map((story) => (
+            {stories.map((story) => (
               <StoryItem key={story.id} story={story} isGrouped />
             ))}
           </ScrollView>
