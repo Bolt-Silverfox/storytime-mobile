@@ -58,8 +58,17 @@ const AvailableVoices = ({
   };
 
   return (
-    <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
-      {data.map((voice) => {
+    <>
+      {!isPremium && !lockedVoiceId && (
+        <View className="mx-2 mb-4 rounded-xl bg-blue-50 p-3">
+          <Text className="text-center font-[abeezee] text-sm text-blue-700">
+            Choose your voice carefully — free users can only select one premium
+            voice.
+          </Text>
+        </View>
+      )}
+      <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
+        {data.map((voice) => {
         const isSelected = voice.id === selectedVoice;
         const isPreviewing = voice.id === previewingId;
         const allowed = isVoiceAllowed(voice);
@@ -94,9 +103,9 @@ const AvailableVoices = ({
               </View>
             )}
             {!isPremium && !allowed && (
-              <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-gray-100 px-2">
-                <Text className="font-[abeezee] text-xs text-gray-500">
-                  Locked
+              <View className="mt-2 flex h-6 flex-row items-center justify-center self-center rounded-full bg-amber-50 px-2">
+                <Text className="font-[abeezee] text-xs text-amber-600">
+                  Premium
                 </Text>
               </View>
             )}
@@ -133,11 +142,12 @@ const AvailableVoices = ({
           </Pressable>
         );
       })}
-      <SubscriptionModal
-        isOpen={isSubscriptionModalOpen}
-        onClose={() => setIsSubscriptionModalOpen(false)}
-      />
-    </View>
+        <SubscriptionModal
+          isOpen={isSubscriptionModalOpen}
+          onClose={() => setIsSubscriptionModalOpen(false)}
+        />
+      </View>
+    </>
   );
 };
 
