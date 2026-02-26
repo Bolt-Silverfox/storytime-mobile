@@ -142,24 +142,30 @@ const StoryContentContainer = ({
   return (
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
-        <Animated.View
-          style={animatedControlsStyle}
-          pointerEvents={controlsInteractive ? "auto" : "none"}
+        <View
+          style={
+            !controlsInLayout ? { height: 0, overflow: "hidden" } : undefined
+          }
         >
-          <StoryAudioPlayer
-            textContent={paragraphs[activeParagraph]}
-            nextPageContent={
-              activeParagraph < storyLength
-                ? paragraphs[activeParagraph + 1]
-                : null
-            }
-            selectedVoice={selectedVoice}
-            isPlaying={isPlaying}
-            setIsPlaying={setIsPlaying}
-            onPageFinished={handlePageAudioFinished}
-            storyId={story.id}
-          />
-        </Animated.View>
+          <Animated.View
+            style={animatedControlsStyle}
+            pointerEvents={controlsInteractive ? "auto" : "none"}
+          >
+            <StoryAudioPlayer
+              textContent={paragraphs[activeParagraph]}
+              nextPageContent={
+                activeParagraph < storyLength
+                  ? paragraphs[activeParagraph + 1]
+                  : null
+              }
+              selectedVoice={selectedVoice}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              onPageFinished={handlePageAudioFinished}
+              storyId={story.id}
+            />
+          </Animated.View>
+        </View>
       )}
       {currentlyDisplayed === "story" && (
         <View>
