@@ -34,6 +34,9 @@ const READ_STATUS_COLORS = {
 
 const DEEP_LINK_BASE_URL = "storytime4kids:/";
 
+/** Duration of the story controls fade animation in ms. */
+const CONTROLS_FADE_MS = 200;
+
 export {
   emailRegex,
   BASE_URL,
@@ -46,4 +49,5 @@ export {
   IMAGE_MIME_MAP,
   READ_STATUS_COLORS,
   DEEP_LINK_BASE_URL,
+  CONTROLS_FADE_MS,
 };

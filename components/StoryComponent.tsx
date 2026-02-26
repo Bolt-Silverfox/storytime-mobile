@@ -25,6 +25,7 @@ import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
+import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
 
 const TOGGLE_DEBOUNCE_MS = 400;
@@ -74,7 +75,7 @@ const StoryComponent = ({
     controlsOpacity.value = withTiming(
       controlsVisible ? 1 : 0,
       {
-        duration: 200,
+        duration: CONTROLS_FADE_MS,
       },
       (finished) => {
         if (controlsVisible && finished) {

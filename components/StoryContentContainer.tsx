@@ -10,6 +10,7 @@ import {
 } from "react";
 import { Pressable, Text, View, ViewStyle } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { CONTROLS_FADE_MS } from "../constants";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -60,8 +61,11 @@ const StoryContentContainer = ({
       // Restore layout immediately before fade-in starts
       setControlsInLayout(true);
     } else {
-      // Remove from layout after fade-out completes (200ms animation)
-      const timer = setTimeout(() => setControlsInLayout(false), 220);
+      // Remove from layout after fade-out completes + small buffer
+      const timer = setTimeout(
+        () => setControlsInLayout(false),
+        CONTROLS_FADE_MS + 20,
+      );
       return () => clearTimeout(timer);
     }
   }, [controlsVisible]);
