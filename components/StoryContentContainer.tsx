@@ -18,13 +18,16 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
+import { WORDS_PER_CHUNK } from "../constants/tts";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
   activeParagraph: number;
-  selectedVoice: string | null;
+  audioUrl: string | null;
+  isAudioLoading: boolean;
+  isAudioError: boolean;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
@@ -45,7 +48,9 @@ const StoryContentContainer = ({
   setActiveParagraph,
   activeParagraph,
   onProgress,
-  selectedVoice,
+  audioUrl,
+  isAudioLoading,
+  isAudioError,
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
@@ -65,7 +70,7 @@ const StoryContentContainer = ({
       // Remove from layout after fade-out completes + small buffer
       const timer = setTimeout(
         () => setControlsInLayout(false),
-        CONTROLS_FADE_MS + 20,
+        CONTROLS_FADE_MS + 20
       );
       return () => clearTimeout(timer);
     }
@@ -84,7 +89,8 @@ const StoryContentContainer = ({
   }, [activeParagraph]);
 
   const paragraphs = useMemo(
-    () => splitByWordCountPreservingSentences(story.textContent, 30),
+    () =>
+      splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
     [story.textContent]
   );
 
@@ -157,17 +163,12 @@ const StoryContentContainer = ({
             pointerEvents={controlsInteractive ? "auto" : "none"}
           >
             <StoryAudioPlayer
-              textContent={paragraphs[activeParagraph]}
-              nextPageContent={
-                activeParagraph < storyLength
-                  ? paragraphs[activeParagraph + 1]
-                  : null
-              }
-              selectedVoice={selectedVoice}
+              audioUrl={audioUrl}
+              isLoading={isAudioLoading}
+              isError={isAudioError}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
-              storyId={story.id}
             />
           </Animated.View>
           {isTTSDegraded && (

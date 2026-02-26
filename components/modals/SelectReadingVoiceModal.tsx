@@ -20,9 +20,7 @@ const SelectReadingVoiceModal = ({
   setSelectedVoice,
 }: PropTypes) => {
   const { data: voices } = useQuery(queryAvailableVoices);
-  const selectedVoiceDisplay = voices?.find(
-    (v) => v.id === selectedVoice
-  );
+  const selectedVoiceDisplay = voices?.find((v) => v.id === selectedVoice);
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
