@@ -241,11 +241,9 @@ const StoryComponent = ({
                   audioUrl={
                     isVoiceTransitioning
                       ? null
-                      : audioUrlMap.get(activeParagraph) ?? null
+                      : (audioUrlMap.get(activeParagraph) ?? null)
                   }
-                  isAudioLoading={
-                    isBatchAudioLoading || isVoiceTransitioning
-                  }
+                  isAudioLoading={isBatchAudioLoading || isVoiceTransitioning}
                   isAudioError={isBatchAudioError}
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}

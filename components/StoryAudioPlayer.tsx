@@ -92,7 +92,7 @@ const StoryAudioPlayer = ({
 
   return (
     <Pressable
-      disabled={isLoading || !audioUrl}
+      disabled={isLoading || isError || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
@@ -113,8 +113,8 @@ const StoryAudioPlayer = ({
         <Text className="font-[quilka] text-xl text-black">
           {isLoading
             ? VOICE_LABELS.loading
-            : isError
-              ? "Audio unavailable"
+            : isError || !audioUrl
+              ? VOICE_LABELS.unavailable
               : isPlaying
                 ? VOICE_LABELS.mute
                 : VOICE_LABELS.play}
@@ -124,7 +124,11 @@ const StoryAudioPlayer = ({
         {isLoading ? (
           <ActivityIndicator size={"large"} />
         ) : (
-          <Switch value={isPlaying} onValueChange={playAudio} />
+          <Switch
+            value={isPlaying}
+            onValueChange={playAudio}
+            disabled={isLoading || isError || !audioUrl}
+          />
         )}
       </View>
     </Pressable>

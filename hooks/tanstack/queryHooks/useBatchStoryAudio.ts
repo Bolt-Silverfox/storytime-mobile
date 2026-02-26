@@ -10,15 +10,17 @@ export type BatchParagraph = {
   audioUrl: string | null;
 };
 
+export type AudioProvider = "elevenlabs" | "deepgram" | "edgetts";
+
 export type BatchStoryAudioResponse = {
   paragraphs: BatchParagraph[];
   totalParagraphs: number;
   wasTruncated: boolean;
   voiceId: string;
-  usedProvider?: "elevenlabs" | "deepgram" | "edgetts" | "none";
+  usedProvider?: AudioProvider | "none";
   /** Present only when the backend fell back to a different provider.
    *  Its presence signals degraded audio quality — the requested provider was unavailable. */
-  preferredProvider?: "elevenlabs" | "deepgram" | "edgetts";
+  preferredProvider?: AudioProvider;
 };
 
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {

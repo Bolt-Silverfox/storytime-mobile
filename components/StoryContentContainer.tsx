@@ -72,7 +72,7 @@ const StoryContentContainer = ({
       // Remove from layout after fade-out completes + small buffer
       const timer = setTimeout(
         () => setControlsInLayout(false),
-        CONTROLS_FADE_MS + 20,
+        CONTROLS_FADE_MS + 20
       );
       return () => clearTimeout(timer);
     }
@@ -91,7 +91,8 @@ const StoryContentContainer = ({
   }, [activeParagraph]);
 
   const paragraphs = useMemo(
-    () => splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
+    () =>
+      splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
     [story.textContent]
   );
 
