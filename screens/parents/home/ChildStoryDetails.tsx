@@ -47,10 +47,15 @@ const ChildStoryDetails = () => {
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
-  const { data: storyProgress } = useGetStoryProgress(id);
-  const alreadyRead = !!storyProgress;
+  const { data: storyProgress, isFetching: isProgressFetching } =
+    useGetStoryProgress(id);
+  const alreadyRead = storyProgress?.completed === true;
   const hasReachedLimit =
-    !isPremium && !alreadyRead && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
+    !isPremium &&
+    !alreadyRead &&
+    !isQuotaFetching &&
+    !isProgressFetching &&
+    (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
   return (

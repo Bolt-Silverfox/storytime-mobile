@@ -32,6 +32,7 @@ const useGetStoryProgress = (storyId: string) => {
           method: "GET",
         });
 
+        if (response.status === 404) return null;
         if (!response.ok) {
           const errJson = await response.json().catch(() => null);
           const msg =
@@ -49,6 +50,7 @@ const useGetStoryProgress = (storyId: string) => {
     },
     select: (data) => data?.data,
     enabled: !!user && !!storyId,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

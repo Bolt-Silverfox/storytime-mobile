@@ -2,7 +2,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageBackground, Pressable, View } from "react-native";
 import Animated, {
@@ -125,9 +125,20 @@ const StoryComponent = ({
     prevDebouncedVoice.current = debouncedVoice;
   }, [debouncedVoice, storyId, queryClient]);
 
-  const { data: batchAudio, isPending: isBatchAudioLoading } =
-    useBatchStoryAudio(storyId, debouncedVoice);
+  const {
+    data: batchAudio,
+    isLoading: isBatchAudioLoading,
+    isError: isBatchAudioError,
+  } = useBatchStoryAudio(storyId, debouncedVoice);
+  // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
+  const isVoiceTransitioning = selectedVoice !== debouncedVoice;
+
+  const audioUrlMap = useMemo(() => {
+    const map = new Map<number, string | null>();
+    batchAudio?.paragraphs?.forEach((p) => map.set(p.index, p.audioUrl));
+    return map;
+  }, [batchAudio?.paragraphs]);
 
   useEffect(() => {
     if (!isVoiceFetched) return;
@@ -228,11 +239,14 @@ const StoryComponent = ({
                   story={data}
                   activeParagraph={activeParagraph}
                   audioUrl={
-                    batchAudio?.paragraphs?.find(
-                      (p) => p.index === activeParagraph
-                    )?.audioUrl ?? null
+                    isVoiceTransitioning
+                      ? null
+                      : audioUrlMap.get(activeParagraph) ?? null
                   }
-                  isAudioLoading={isBatchAudioLoading}
+                  isAudioLoading={
+                    isBatchAudioLoading || isVoiceTransitioning
+                  }
+                  isAudioError={isBatchAudioError}
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}
                   controlsInteractive={controlsInteractive}

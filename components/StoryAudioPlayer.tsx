@@ -7,12 +7,14 @@ import { VOICE_LABELS } from "../constants/ui";
 const StoryAudioPlayer = ({
   audioUrl,
   isLoading,
+  isError,
   isPlaying,
   setIsPlaying,
   onPageFinished,
 }: {
   audioUrl: string | null;
   isLoading: boolean;
+  isError: boolean;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
@@ -95,7 +97,14 @@ const StoryAudioPlayer = ({
         e.stopPropagation();
         playAudio();
       }}
-      className={`${isLoading ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      className={`${isLoading || !audioUrl ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      accessibilityHint={
+        isLoading
+          ? "Audio is loading"
+          : !audioUrl
+            ? "Audio is not available"
+            : undefined
+      }
     >
       <View className="flex flex-row items-center gap-x-2">
         <View className="flex size-12 flex-col items-center justify-center rounded-full bg-blue">
@@ -104,9 +113,11 @@ const StoryAudioPlayer = ({
         <Text className="font-[quilka] text-xl text-black">
           {isLoading
             ? VOICE_LABELS.loading
-            : isPlaying
-              ? VOICE_LABELS.mute
-              : VOICE_LABELS.play}
+            : isError
+              ? "Audio unavailable"
+              : isPlaying
+                ? VOICE_LABELS.mute
+                : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">

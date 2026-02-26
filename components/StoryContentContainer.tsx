@@ -20,12 +20,16 @@ import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
 import { splitByWordCountPreservingSentences } from "../utils/utils";
 
+/** Must match backend WORDS_PER_CHUNK in text-to-speech.service.ts */
+const WORDS_PER_CHUNK = 30;
+
 type PropTypes = {
   story: Story;
   isInteractive: boolean;
   activeParagraph: number;
   audioUrl: string | null;
   isAudioLoading: boolean;
+  isAudioError: boolean;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
@@ -48,6 +52,7 @@ const StoryContentContainer = ({
   onProgress,
   audioUrl,
   isAudioLoading,
+  isAudioError,
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
@@ -86,7 +91,7 @@ const StoryContentContainer = ({
   }, [activeParagraph]);
 
   const paragraphs = useMemo(
-    () => splitByWordCountPreservingSentences(story.textContent, 30),
+    () => splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
     [story.textContent]
   );
 
@@ -161,6 +166,7 @@ const StoryContentContainer = ({
             <StoryAudioPlayer
               audioUrl={audioUrl}
               isLoading={isAudioLoading}
+              isError={isAudioError}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
