@@ -53,6 +53,13 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     [data]
   );
 
+  const renderStoryItem = useCallback(
+    ({ item: story }: { item: (typeof stories)[number] }) => (
+      <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
+    ),
+    [setActiveStory]
+  );
+
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -67,19 +74,20 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     <FlatList
       data={stories}
       keyExtractor={(item) => item.id}
-      contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
-      contentContainerStyle={styles.contentContainer}
+      contentContainerClassName="flex grow flex-col gap-y-6 px-4 pb-5"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      renderItem={({ item: story }) => (
-        <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
-      )}
+      renderItem={renderStoryItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator size="small" style={styles.footer} />
+          <ActivityIndicator
+            size="small"
+            style={styles.footer}
+            accessibilityLabel="Loading more stories"
+          />
         ) : null
       }
       ListEmptyComponent={
@@ -96,6 +104,5 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 export default LibraryStories;
 
 const styles = StyleSheet.create({
-  contentContainer: { flexGrow: 1 },
   footer: { paddingVertical: 16 },
 });

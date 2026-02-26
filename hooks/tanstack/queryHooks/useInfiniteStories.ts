@@ -1,6 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import {
+  BASE_URL,
+  DEFAULT_CURSOR_PAGE_SIZE,
+  QUERY_KEYS,
+} from "../../../constants";
 import {
   AgeGroupType,
   CursorPaginatedData,
@@ -16,11 +20,9 @@ type InfiniteStoriesParam = {
   isMostLiked?: boolean;
 };
 
-const DEFAULT_LIMIT = 20;
-
 const useInfiniteStories = (params: InfiniteStoriesParam) => {
   return useInfiniteQuery({
-    queryKey: ["stories", "infinite", params],
+    queryKey: [QUERY_KEYS.GET_INFINITE_STORIES, "infinite", params],
     queryFn: ({ pageParam }) => fetchStoriesCursor(params, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
@@ -42,7 +44,7 @@ const fetchStoriesCursor = async (
 ): Promise<CursorPaginatedData<Story>> => {
   const searchParams = new URLSearchParams();
 
-  searchParams.set("limit", String(params.limit ?? DEFAULT_LIMIT));
+  searchParams.set("limit", String(params.limit ?? DEFAULT_CURSOR_PAGE_SIZE));
   // Only send cursor when we have one — first page omits it.
   // Backend enters cursor mode when cursor param is present and truthy.
   if (cursor) searchParams.set("cursor", cursor);

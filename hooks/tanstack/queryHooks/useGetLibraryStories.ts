@@ -1,6 +1,10 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL, QUERY_KEYS } from "../../../constants";
+import {
+  BASE_URL,
+  DEFAULT_CURSOR_PAGE_SIZE,
+  QUERY_KEYS,
+} from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import {
   CursorPaginatedData,
@@ -13,8 +17,6 @@ const FILTER_PATH: Record<LibraryFilterType, string> = {
   completed: "completed",
   ongoing: "continue-reading",
 };
-
-const DEFAULT_LIMIT = 20;
 
 const useGetLibraryStories = (type: LibraryFilterType) => {
   const { user } = useAuth();
@@ -41,7 +43,7 @@ const getLibraryStories = async (
   cursor: string | undefined
 ): Promise<CursorPaginatedData<LibraryStory>> => {
   const searchParams = new URLSearchParams();
-  searchParams.set("limit", String(DEFAULT_LIMIT));
+  searchParams.set("limit", String(DEFAULT_CURSOR_PAGE_SIZE));
   if (cursor) searchParams.set("cursor", cursor);
 
   const url = `${BASE_URL}/stories/user/library/${FILTER_PATH[type]}?${searchParams.toString()}`;

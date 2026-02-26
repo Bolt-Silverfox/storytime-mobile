@@ -50,6 +50,15 @@ const GroupedStoriesStoryCarousel = ({
     [data]
   );
 
+  const renderStoryItem = useCallback(
+    ({ item: story }: { item: (typeof stories)[number] }) => (
+      <View className="flex-1" style={styles.columnItem}>
+        <StoryItem story={story} isGrouped />
+      </View>
+    ),
+    []
+  );
+
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -103,16 +112,16 @@ const GroupedStoriesStoryCarousel = ({
           />
         ) : null
       }
-      renderItem={({ item: story }) => (
-        <View className="flex-1" style={styles.columnItem}>
-          <StoryItem story={story} isGrouped />
-        </View>
-      )}
+      renderItem={renderStoryItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator size="small" style={styles.footer} />
+          <ActivityIndicator
+            size="small"
+            style={styles.footer}
+            accessibilityLabel="Loading more stories"
+          />
         ) : null
       }
     />
