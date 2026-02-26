@@ -20,7 +20,7 @@ const DEFAULT_LIMIT = 20;
 
 const useInfiniteStories = (params: InfiniteStoriesParam) => {
   return useInfiniteQuery({
-    queryKey: ["infiniteStories", params],
+    queryKey: ["stories", "infinite", params],
     queryFn: ({ pageParam }) => fetchStoriesCursor(params, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>

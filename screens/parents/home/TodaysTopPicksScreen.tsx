@@ -57,7 +57,7 @@ const TodaysTopPicksScreen = () => {
             <Text className="font-[abeezee] text-xl text-black">
               No stories in this category yet
             </Text>
-            <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+            <CustomButton text="Go Back" onPress={() => navigator.canGoBack() && navigator.goBack()} />
           </View>
         ) : (
           <ScrollView

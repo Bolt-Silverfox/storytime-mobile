@@ -61,6 +61,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       data={stories}
       keyExtractor={(item) => item.id}
       contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
+      contentContainerStyle={{ flexGrow: 1 }}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

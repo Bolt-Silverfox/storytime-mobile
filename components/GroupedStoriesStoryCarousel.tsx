@@ -7,7 +7,6 @@ import useInfiniteStories, {
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
 import useRefreshControl from "../hooks/others/useRefreshControl";
-import { sortStoriesByReadStatus } from "../utils/sortStories";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
@@ -44,11 +43,6 @@ const GroupedStoriesStoryCarousel = ({
     [data],
   );
 
-  const sorted = useMemo(
-    () => sortStoriesByReadStatus(stories),
-    [stories],
-  );
-
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) {
       fetchNextPage();
@@ -67,7 +61,7 @@ const GroupedStoriesStoryCarousel = ({
           No stories in this category yet
         </Text>
         {isFilterDefault ? (
-          <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+          <CustomButton text="Go Back" onPress={() => navigator.canGoBack() && navigator.goBack()} />
         ) : (
           <CustomButton
             transparent
@@ -81,10 +75,10 @@ const GroupedStoriesStoryCarousel = ({
 
   return (
     <FlatList
-      data={sorted}
+      data={stories}
       keyExtractor={(item) => item.id}
       className="-mt-4 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex flex-col px-4 py-6 pb-5"
+      contentContainerClassName="flex flex-col px-4 pt-6 pb-5"
       showsVerticalScrollIndicator={false}
       numColumns={2}
       columnWrapperClassName="gap-x-3 mb-6"
@@ -100,7 +94,7 @@ const GroupedStoriesStoryCarousel = ({
         ) : null
       }
       renderItem={({ item: story }) => (
-        <View className="flex-1">
+        <View className="flex-1" style={{ maxWidth: "50%" }}>
           <StoryItem story={story} isGrouped />
         </View>
       )}
