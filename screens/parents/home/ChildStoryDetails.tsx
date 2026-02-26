@@ -15,6 +15,7 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
@@ -46,8 +47,10 @@ const ChildStoryDetails = () => {
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
+  const { data: storyProgress } = useGetStoryProgress(id);
+  const alreadyRead = !!storyProgress;
   const hasReachedLimit =
-    !isPremium && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
+    !isPremium && !alreadyRead && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
   return (
