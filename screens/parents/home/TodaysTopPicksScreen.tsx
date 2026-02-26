@@ -1,6 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import { Pressable, RefreshControl, ScrollView, Text, View } from "react-native";
+import {
+  Pressable,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import CustomButton from "../../../components/UI/CustomButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import queryGetStories from "../../../hooks/tanstack/queryHooks/queryGetStories";
@@ -15,9 +21,12 @@ import ErrorComponent from "../../../components/ErrorComponent";
 const TodaysTopPicksScreen = () => {
   const navigator = useNavigation();
   const insets = useSafeAreaInsets();
-  const { data: stories, isPending, error, refetch } = useQuery(
-    queryGetStories({ topPicksFromUs: true }),
-  );
+  const {
+    data: stories,
+    isPending,
+    error,
+    refetch,
+  } = useQuery(queryGetStories({ topPicksFromUs: true }));
   const { refreshing, onRefresh } = useRefreshControl(refetch);
 
   return (
@@ -55,9 +64,12 @@ const TodaysTopPicksScreen = () => {
         ) : !stories?.length ? (
           <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
             <Text className="font-[abeezee] text-xl text-black">
-              No stories in this category yet
+              No top picks from us yet
             </Text>
-            <CustomButton text="Go Back" onPress={() => navigator.canGoBack() && navigator.goBack()} />
+            <CustomButton
+              text="Go Back"
+              onPress={() => navigator.canGoBack() && navigator.goBack()}
+            />
           </View>
         ) : (
           <ScrollView

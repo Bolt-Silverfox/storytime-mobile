@@ -24,7 +24,7 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
     queryFn: ({ pageParam }) => getLibraryStories(type, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNextPage
+      lastPage.pagination.hasNextPage && lastPage.pagination.nextCursor
         ? lastPage.pagination.nextCursor
         : undefined,
     enabled: !!user,
@@ -38,7 +38,7 @@ export default useGetLibraryStories;
 
 const getLibraryStories = async (
   type: LibraryFilterType,
-  cursor: string | undefined,
+  cursor: string | undefined
 ): Promise<CursorPaginatedData<LibraryStory>> => {
   const searchParams = new URLSearchParams();
   searchParams.set("limit", String(DEFAULT_LIMIT));

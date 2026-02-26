@@ -1,5 +1,12 @@
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
@@ -43,7 +50,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 
   const stories = useMemo(
     () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data],
+    [data]
   );
 
   const handleEndReached = useCallback(() => {
@@ -61,7 +68,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       data={stories}
       keyExtractor={(item) => item.id}
       contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
-      contentContainerStyle={{ flexGrow: 1 }}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -72,7 +79,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator size="small" style={{ paddingVertical: 16 }} />
+          <ActivityIndicator size="small" style={styles.footer} />
         ) : null
       }
       ListEmptyComponent={
@@ -87,3 +94,8 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 };
 
 export default LibraryStories;
+
+const styles = StyleSheet.create({
+  contentContainer: { flexGrow: 1 },
+  footer: { paddingVertical: 16 },
+});

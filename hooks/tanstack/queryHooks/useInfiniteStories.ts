@@ -24,7 +24,7 @@ const useInfiniteStories = (params: InfiniteStoriesParam) => {
     queryFn: ({ pageParam }) => fetchStoriesCursor(params, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNextPage
+      lastPage.pagination.hasNextPage && lastPage.pagination.nextCursor
         ? lastPage.pagination.nextCursor
         : undefined,
     staleTime: 1000 * 60 * 5,
@@ -38,7 +38,7 @@ export default useInfiniteStories;
 
 const fetchStoriesCursor = async (
   params: InfiniteStoriesParam,
-  cursor: string | undefined,
+  cursor: string | undefined
 ): Promise<CursorPaginatedData<Story>> => {
   const searchParams = new URLSearchParams();
 

@@ -1,6 +1,13 @@
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
-import { ActivityIndicator, FlatList, RefreshControl, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import useInfiniteStories, {
   InfiniteStoriesParam,
 } from "../hooks/tanstack/queryHooks/useInfiniteStories";
@@ -40,7 +47,7 @@ const GroupedStoriesStoryCarousel = ({
 
   const stories = useMemo(
     () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data],
+    [data]
   );
 
   const handleEndReached = useCallback(() => {
@@ -61,7 +68,10 @@ const GroupedStoriesStoryCarousel = ({
           No stories in this category yet
         </Text>
         {isFilterDefault ? (
-          <CustomButton text="Go Back" onPress={() => navigator.canGoBack() && navigator.goBack()} />
+          <CustomButton
+            text="Go Back"
+            onPress={() => navigator.canGoBack() && navigator.goBack()}
+          />
         ) : (
           <CustomButton
             transparent
@@ -94,7 +104,7 @@ const GroupedStoriesStoryCarousel = ({
         ) : null
       }
       renderItem={({ item: story }) => (
-        <View className="flex-1" style={{ maxWidth: "50%" }}>
+        <View className="flex-1" style={styles.columnItem}>
           <StoryItem story={story} isGrouped />
         </View>
       )}
@@ -102,7 +112,7 @@ const GroupedStoriesStoryCarousel = ({
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator size="small" style={{ paddingVertical: 16 }} />
+          <ActivityIndicator size="small" style={styles.footer} />
         ) : null
       }
     />
@@ -110,3 +120,8 @@ const GroupedStoriesStoryCarousel = ({
 };
 
 export default GroupedStoriesStoryCarousel;
+
+const styles = StyleSheet.create({
+  columnItem: { maxWidth: "50%" },
+  footer: { paddingVertical: 16 },
+});
