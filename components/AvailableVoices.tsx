@@ -28,10 +28,8 @@ const AvailableVoices = ({
   const lockedVoiceId = voiceAccess?.lockedVoiceId ?? null;
 
   const isVoiceAllowed = (voice: VoiceData): boolean => {
-    // Fail closed while voice access is loading or errored
-    if (!voiceAccess) return false;
     if (isPremium) return true;
-    // No voice locked yet — all voices available for the first pick
+    // While loading or no voice locked yet — allow all (backend enforces the real gate)
     if (!lockedVoiceId) return true;
     // Only the locked voice is allowed
     return voice.id === lockedVoiceId;
