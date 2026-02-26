@@ -14,6 +14,7 @@ type BatchStoryAudioResponse = {
   paragraphs: BatchParagraph[];
   totalParagraphs: number;
   voiceId: string;
+  providerStatus?: "degraded";
 };
 
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {

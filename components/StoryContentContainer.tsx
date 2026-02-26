@@ -31,6 +31,7 @@ type PropTypes = {
   controlsInteractive: boolean;
   controlsVisible: boolean;
   animatedControlsStyle: AnimatedStyle<ViewStyle>;
+  isTTSDegraded: boolean;
 };
 
 type DisplayOptions =
@@ -49,6 +50,7 @@ const StoryContentContainer = ({
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
+  isTTSDegraded,
 }: PropTypes) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -169,6 +171,14 @@ const StoryContentContainer = ({
               storyId={story.id}
             />
           </Animated.View>
+          {isTTSDegraded && (
+            <View className="mt-2 flex flex-row items-center gap-x-2 rounded-lg bg-amber-500/90 px-3 py-2">
+              <Icon name="TriangleAlert" size={16} color="white" />
+              <Text className="flex-1 font-[abeezee] text-xs text-white">
+                Audio quality may be reduced due to service issues.
+              </Text>
+            </View>
+          )}
         </View>
       )}
       {currentlyDisplayed === "story" && (

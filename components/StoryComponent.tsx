@@ -130,6 +130,7 @@ const StoryComponent = ({
   // The current paragraph makes an individual request; backend
   // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
   const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
+  const isTTSDegraded = batchAudio?.providerStatus === "degraded";
 
   useEffect(() => {
     if (!isVoiceFetched) return;
@@ -257,6 +258,7 @@ const StoryComponent = ({
                   controlsInteractive={controlsInteractive}
                   controlsVisible={controlsVisible}
                   animatedControlsStyle={animatedControlsStyle}
+                  isTTSDegraded={isTTSDegraded}
                 />
               </View>
             </ImageBackground>
