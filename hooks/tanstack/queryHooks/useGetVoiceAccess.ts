@@ -10,7 +10,7 @@ type VoiceAccess = {
   defaultVoice: string;
   maxVoices: number;
   lockedVoiceId: string | null;
-  elevenLabsUsed: boolean;
+  elevenLabsTrialStoryId: string | null;
 };
 
 const useGetVoiceAccess = () => {
