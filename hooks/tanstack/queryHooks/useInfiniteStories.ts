@@ -45,9 +45,9 @@ const fetchStoriesCursor = async (
   const searchParams = new URLSearchParams();
 
   searchParams.set("limit", String(params.limit ?? DEFAULT_CURSOR_PAGE_SIZE));
-  // Only send cursor when we have one — first page omits it.
-  // Backend enters cursor mode when cursor param is present and truthy.
-  if (cursor) searchParams.set("cursor", cursor);
+  // Always send cursor param to signal cursor pagination mode to the backend.
+  // First page sends empty string; backend sanitizes to undefined for first-page fetch.
+  searchParams.set("cursor", cursor ?? "");
 
   if (params.category) searchParams.set("category", params.category);
   if (params.ageGroup && params.ageGroup !== "All") {
