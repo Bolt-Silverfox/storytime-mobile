@@ -4,17 +4,20 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-type BatchParagraph = {
+export type BatchParagraph = {
   index: number;
   text: string;
   audioUrl: string | null;
 };
 
-type BatchStoryAudioResponse = {
+export type BatchStoryAudioResponse = {
   paragraphs: BatchParagraph[];
   totalParagraphs: number;
+  wasTruncated: boolean;
   voiceId: string;
-  providerStatus?: "degraded";
+  usedProvider: "elevenlabs" | "deepgram" | "edgetts";
+  /** Present only when the backend fell back to a different provider */
+  preferredProvider?: "elevenlabs" | "deepgram" | "edgetts";
 };
 
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {

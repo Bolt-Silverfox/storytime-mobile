@@ -24,7 +24,8 @@ type PropTypes = {
   story: Story;
   isInteractive: boolean;
   activeParagraph: number;
-  selectedVoice: string | null;
+  audioUrl: string | null;
+  isAudioLoading: boolean;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
@@ -45,7 +46,8 @@ const StoryContentContainer = ({
   setActiveParagraph,
   activeParagraph,
   onProgress,
-  selectedVoice,
+  audioUrl,
+  isAudioLoading,
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
@@ -157,17 +159,11 @@ const StoryContentContainer = ({
             pointerEvents={controlsInteractive ? "auto" : "none"}
           >
             <StoryAudioPlayer
-              textContent={paragraphs[activeParagraph]}
-              nextPageContent={
-                activeParagraph < storyLength
-                  ? paragraphs[activeParagraph + 1]
-                  : null
-              }
-              selectedVoice={selectedVoice}
+              audioUrl={audioUrl}
+              isLoading={isAudioLoading}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
-              storyId={story.id}
             />
           </Animated.View>
           {isTTSDegraded && (

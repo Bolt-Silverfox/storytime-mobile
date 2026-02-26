@@ -3,43 +3,23 @@ import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import { VOICE_LABELS } from "../constants/ui";
-import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
 const StoryAudioPlayer = ({
-  textContent,
-  nextPageContent,
-  selectedVoice,
+  audioUrl,
+  isLoading,
   isPlaying,
   setIsPlaying,
   onPageFinished,
-  storyId,
 }: {
-  textContent: string;
-  nextPageContent: string | null;
-  selectedVoice: string | null;
+  audioUrl: string | null;
+  isLoading: boolean;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
-  storyId: string;
 }) => {
-  const voiceId = selectedVoice || "";
-  const { data, isPending } = useTextToAudio({
-    content: textContent,
-    voiceId,
-    storyId,
-  });
-
-  // Prefetch next page audio so it's cached and ready when we advance
-  useTextToAudio({
-    content: nextPageContent || "",
-    voiceId,
-    storyId,
-  });
-
-  const currentUrl = data?.audioUrl ?? null;
-  const player = useAudioPlayer(currentUrl);
+  const player = useAudioPlayer(audioUrl);
   const status = useAudioPlayerStatus(player);
-  const prevUrlRef = useRef<string | null>(currentUrl);
+  const prevUrlRef = useRef<string | null>(audioUrl);
   const prevDidJustFinishRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const onPageFinishedRef = useRef(onPageFinished);
@@ -66,14 +46,14 @@ const StoryAudioPlayer = ({
   // When the audio URL changes (new voice or new page content), replace audio
   // When URL goes null (voice switch in progress), pause old audio
   useEffect(() => {
-    if (currentUrl && currentUrl !== prevUrlRef.current) {
+    if (audioUrl && audioUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
-      prevUrlRef.current = currentUrl;
+      prevUrlRef.current = audioUrl;
       // Reset edge detection so the next finish is treated as fresh
       prevDidJustFinishRef.current = false;
 
       try {
-        player.replace(currentUrl);
+        player.replace(audioUrl);
         if (wasPlaying) {
           player.play();
         }
@@ -81,7 +61,7 @@ const StoryAudioPlayer = ({
         if (__DEV__) console.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
-    } else if (!currentUrl && prevUrlRef.current) {
+    } else if (!audioUrl && prevUrlRef.current) {
       // Voice switched — stop old audio while new one loads
       prevUrlRef.current = null;
       try {
@@ -91,7 +71,7 @@ const StoryAudioPlayer = ({
       }
       setIsPlaying(false);
     }
-  }, [currentUrl, player, setIsPlaying]);
+  }, [audioUrl, player, setIsPlaying]);
 
   const playAudio = () => {
     try {
@@ -110,19 +90,19 @@ const StoryAudioPlayer = ({
 
   return (
     <Pressable
-      disabled={isPending}
+      disabled={isLoading}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
       }}
-      className={`${isPending ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      className={`${isLoading ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
     >
       <View className="flex flex-row items-center gap-x-2">
         <View className="flex size-12 flex-col items-center justify-center rounded-full bg-blue">
           <Ionicons name="volume-medium-outline" size={24} color="white" />
         </View>
         <Text className="font-[quilka] text-xl text-black">
-          {isPending
+          {isLoading
             ? VOICE_LABELS.loading
             : isPlaying
               ? VOICE_LABELS.mute
@@ -130,7 +110,7 @@ const StoryAudioPlayer = ({
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
-        {isPending ? (
+        {isLoading ? (
           <ActivityIndicator size={"large"} />
         ) : (
           <Switch value={isPlaying} onValueChange={playAudio} />

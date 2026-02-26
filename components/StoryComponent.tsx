@@ -125,37 +125,14 @@ const StoryComponent = ({
     prevDebouncedVoice.current = debouncedVoice;
   }, [debouncedVoice, storyId, queryClient]);
 
-  // Note: During debounce window, per-paragraph useTextToAudio fires with
-  // selectedVoice (new) while batch still uses debouncedVoice (old).
-  // The current paragraph makes an individual request; backend
-  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
-  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
-  const isTTSDegraded = batchAudio?.providerStatus === "degraded";
+  const { data: batchAudio, isPending: isBatchAudioLoading } =
+    useBatchStoryAudio(storyId, debouncedVoice);
+  const isTTSDegraded = !!batchAudio?.preferredProvider;
 
   useEffect(() => {
     if (!isVoiceFetched) return;
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
-
-  // Seed per-paragraph TanStack Query cache from batch response
-  // so useTextToAudio in StoryAudioPlayer gets instant cache hits
-  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
-  useEffect(() => {
-    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
-    for (const p of batchAudio.paragraphs) {
-      if (p.audioUrl) {
-        queryClient.setQueryData(
-          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
-          {
-            success: true,
-            message: "Audio generated successfully",
-            statusCode: 200,
-            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
-          }
-        );
-      }
-    }
-  }, [batchAudio, storyId, queryClient]);
 
   const getQuotaReminderKey = () => {
     const now = new Date();
@@ -247,10 +224,15 @@ const StoryComponent = ({
                 </Animated.View>
 
                 <StoryContentContainer
-                  selectedVoice={selectedVoice}
                   isInteractive={storyMode === "interactive"}
                   story={data}
                   activeParagraph={activeParagraph}
+                  audioUrl={
+                    batchAudio?.paragraphs?.find(
+                      (p) => p.index === activeParagraph
+                    )?.audioUrl ?? null
+                  }
+                  isAudioLoading={isBatchAudioLoading}
                   setActiveParagraph={setActiveParagraph}
                   onProgress={handleProgress}
                   controlsInteractive={controlsInteractive}
