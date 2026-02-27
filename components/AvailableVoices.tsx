@@ -40,9 +40,12 @@ const AvailableVoices = ({
     }
   }, [voiceAccessLoading, isPremium, lockedVoiceId, notify]);
 
+  const isVoiceLocked = !isPremium && !!lockedVoiceId;
+
   const isVoiceAllowed = (voice: VoiceData): boolean => {
     if (isPremium) return true;
-    // While loading or no voice locked yet — allow all (backend enforces the real gate)
+    if (voiceAccessLoading) return false;
+    // No voice locked yet — allow all (backend enforces the real gate)
     if (!lockedVoiceId) return true;
     // Only the locked voice is allowed
     return voice.id === lockedVoiceId;
@@ -104,10 +107,10 @@ const AvailableVoices = ({
                 }
               }}
               key={voice.id}
-              accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${!allowed ? ", premium only" : ""}`}
+              accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${isVoiceLocked && !allowed ? ", premium only" : ""}`}
               accessibilityRole="button"
               className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
-                !allowed
+                isVoiceLocked && !allowed
                   ? "border border-border-light opacity-40"
                   : isSelected
                     ? "border-2 border-primary"
@@ -125,7 +128,7 @@ const AvailableVoices = ({
                   </Text>
                 </View>
               )}
-              {!isPremium && !allowed && (
+              {isVoiceLocked && !allowed && (
                 <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
                   <Icon name="Lock" size={12} color="#D97706" />
                   <Text className="font-[abeezee] text-xs text-amber-600">
@@ -133,7 +136,7 @@ const AvailableVoices = ({
                   </Text>
                 </View>
               )}
-              {(isPremium || (!isLocked && allowed)) && (
+              {(!isVoiceLocked || allowed) && !isLocked && (
                 <View className="mt-2 h-6" />
               )}
               <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
@@ -142,10 +145,11 @@ const AvailableVoices = ({
               <View className="flex flex-row items-center justify-between gap-x-4">
                 <Pressable
                   onPress={() => {
-                    if (!allowed) {
+                    if (isVoiceLocked && !allowed) {
                       setIsSubscriptionModalOpen(true);
                       return;
                     }
+                    if (!allowed) return;
                     handlePreview(voice.previewUrl, voice.id);
                   }}
                   className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
@@ -155,16 +159,16 @@ const AvailableVoices = ({
                     color={
                       isPreviewing
                         ? COLORS.blue
-                        : allowed
-                          ? "black"
-                          : COLORS.skeleton
+                        : isVoiceLocked && !allowed
+                          ? COLORS.skeleton
+                          : "black"
                     }
                   />
                 </Pressable>
                 <Switch
                   onValueChange={() => handleSelectVoice(voice)}
                   value={isSelected}
-                  disabled={!allowed}
+                  disabled={isVoiceLocked && !allowed}
                   accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
                 />
               </View>

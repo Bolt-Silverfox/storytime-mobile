@@ -50,8 +50,7 @@ const useSetStoryProgress = ({
         "Unexpected token",
       ];
       const isFriendly =
-        err.message &&
-        !crypticPatterns.some((p) => err.message.includes(p));
+        err.message && !crypticPatterns.some((p) => err.message.includes(p));
       const message = isFriendly
         ? err.message
         : "Something went wrong saving your progress. Your reading is not affected.";
@@ -67,7 +66,7 @@ const useSetStoryProgress = ({
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
-      queryClient.invalidateQueries({
+      queryClient.refetchQueries({
         queryKey: ["stories"],
       });
       queryClient.invalidateQueries({
