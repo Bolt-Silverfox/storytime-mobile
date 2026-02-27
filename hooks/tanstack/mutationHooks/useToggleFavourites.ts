@@ -30,11 +30,9 @@ const useToggleFavourites = ({
 
   const cachedData = queryClient.getQueryData<FavouritesCache>(queryKey);
   const allFavourites =
-    cachedData?.pages.flatMap((page) => page.data) ?? [];
+    cachedData?.pages.flatMap((page) => page.data).filter(Boolean) ?? [];
 
-  const isLiked = allFavourites.some(
-    (s) => s.storyId === story.storyId
-  );
+  const isLiked = allFavourites.some((s) => s.storyId === story.storyId);
 
   return useMutation({
     mutationFn: async () => {

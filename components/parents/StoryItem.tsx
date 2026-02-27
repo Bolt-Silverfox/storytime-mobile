@@ -72,7 +72,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
 
   const isLiked = useMemo(
     () =>
-      data?.pages.some((page) => page.data.some((s) => s.storyId === id)) ??
+      data?.pages.some((page) => page.data.some((s) => s?.storyId === id)) ??
       false,
     [data, id]
   );
