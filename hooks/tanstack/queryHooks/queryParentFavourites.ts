@@ -1,9 +1,6 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import {
-  BASE_URL,
-  DEFAULT_CURSOR_PAGE_SIZE,
-} from "../../../constants";
+import { BASE_URL, DEFAULT_CURSOR_PAGE_SIZE } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import {
   CursorPaginatedData,
@@ -42,9 +39,19 @@ const fetchFavourites = async (
   const url = `${BASE_URL}/parent-favorites?${searchParams.toString()}`;
   try {
     const request = await apiFetch(url, { method: "GET" });
-    const response: QueryResponse<CursorPaginatedData<FavouriteStory>> =
-      await request.json();
+    const response: QueryResponse<
+      CursorPaginatedData<FavouriteStory> | FavouriteStory[]
+    > = await request.json();
     if (!response.success) throw new Error(response.message);
+
+    // Backend may return a flat array (no pagination) or cursor-paginated shape
+    if (Array.isArray(response.data)) {
+      return {
+        data: response.data,
+        pagination: { nextCursor: null, hasNextPage: false },
+      };
+    }
+
     return response.data;
   } catch (err) {
     throw new Error(getErrorMessage(err));

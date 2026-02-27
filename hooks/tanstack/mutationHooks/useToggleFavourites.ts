@@ -48,9 +48,10 @@ const useToggleFavourites = ({
       // Optimistic update on the first page
       const updatedPages = previousData.pages.map((page, i) => {
         if (i !== 0) return page;
+        const pageData = page.data ?? [];
         const updatedData = isLiked
-          ? page.data.filter((item) => item.storyId !== story.storyId)
-          : [...page.data, story];
+          ? pageData.filter((item) => item.storyId !== story.storyId)
+          : [...pageData, story];
         return { ...page, data: updatedData };
       });
 
