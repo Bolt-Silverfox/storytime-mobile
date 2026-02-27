@@ -136,6 +136,6 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
-  columnItem: { width: "50%" },
+  columnItem: { flex: 1 },
   footer: { paddingVertical: 16 },
 });

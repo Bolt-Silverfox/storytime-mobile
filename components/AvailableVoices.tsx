@@ -85,6 +85,8 @@ const AvailableVoices = ({
                 }
               }}
               key={voice.id}
+              accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${!allowed ? ", premium only" : ""}`}
+              accessibilityRole="button"
               className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
                 !allowed
                   ? "border border-border-light opacity-40"

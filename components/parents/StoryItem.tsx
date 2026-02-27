@@ -129,7 +129,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
             </Text>
           </View>
         </View>
-        <Text className="w-full flex-1 text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
+        <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">

@@ -34,7 +34,8 @@ const SelectReadingVoiceModal = ({
           <Icon name="SquareX" onPress={onClose} />
         </View>
         <ScrollView
-          contentContainerClassName="flex flex-col min-h-full"
+          className="flex-1"
+          contentContainerClassName="flex flex-col pb-6"
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-row items-center justify-between rounded-xl border border-border-lighter p-4">

@@ -41,9 +41,17 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
-      // Don't show cryptic internal errors to the user
+      const crypticPatterns = [
+        "Cannot read prop",
+        "undefined is not",
+        "TypeError",
+        "NetworkError",
+        "SyntaxError",
+        "Unexpected token",
+      ];
       const isFriendly =
-        err.message && !err.message.includes("Cannot read prop");
+        err.message &&
+        !crypticPatterns.some((p) => err.message.includes(p));
       const message = isFriendly
         ? err.message
         : "Something went wrong saving your progress. Your reading is not affected.";
@@ -63,7 +71,7 @@ const useSetStoryProgress = ({
         queryKey: ["stories"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["storyProgress", storyId],
+        queryKey: [QUERY_KEYS.GET_STORY_PROGRESS, storyId],
       });
       onSuccess?.();
     },
