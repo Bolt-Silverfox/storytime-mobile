@@ -19,20 +19,16 @@ type FavouritesCache = InfiniteData<CursorPaginatedData<FavouriteStory>>;
 
 const useToggleFavourites = ({
   story,
+  isLiked,
   onSuccess,
 }: {
   story: FavouriteStory;
+  isLiked: boolean;
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
   const queryKey = [QUERY_KEYS.parentsFavourites, data?.id] as const;
-
-  const cachedData = queryClient.getQueryData<FavouritesCache>(queryKey);
-  const allFavourites =
-    cachedData?.pages.flatMap((page) => page.data).filter(Boolean) ?? [];
-
-  const isLiked = allFavourites.some((s) => s.storyId === story.storyId);
 
   return useMutation({
     mutationFn: async () => {

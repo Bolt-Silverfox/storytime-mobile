@@ -36,19 +36,29 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     durationSeconds,
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const { data } = useQueryParentsFavourites();
+  const { data: favouritesData } = useQueryParentsFavourites();
+
+  const isLiked = useMemo(
+    () =>
+      favouritesData?.pages?.some((page) =>
+        page.data?.some((s) => s?.storyId === id)
+      ) ?? false,
+    [favouritesData, id]
+  );
+
   const { mutate: onToggle, isPending } = useToggleFavourites({
     story: {
       id,
       storyId: id,
-      title: title,
-      description: description,
-      coverImageUrl: coverImageUrl,
-      createdAt: createdAt,
+      title,
+      description,
+      coverImageUrl,
+      createdAt,
       ageRange: `${ageMin}-${ageMax}`,
-      categories: categories,
-      durationSeconds: durationSeconds,
+      categories,
+      durationSeconds,
     },
+    isLiked,
   });
 
   const navigate = () => {
@@ -69,13 +79,6 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
       },
     });
   };
-
-  const isLiked = useMemo(
-    () =>
-      data?.pages.some((page) => page.data.some((s) => s?.storyId === id)) ??
-      false,
-    [data, id]
-  );
 
   const duration = secondsToMinutes(durationSeconds);
 

@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
 import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
@@ -12,17 +12,19 @@ type PropTypes = {
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
   const { data } = useQueryParentsFavourites();
+
+  const isLiked = useMemo(
+    () =>
+      data?.pages?.some((page) =>
+        page.data?.some((s) => s?.storyId === story.id)
+      ) ?? false,
+    [data, story.id]
+  );
+
   const { mutate: onToggle } = useToggleFavourites({
     story,
+    isLiked,
   });
-
-  const isStoryLiked = (storyId: string) => {
-    return (
-      data?.pages.some((page) =>
-        page.data.some((s) => s.storyId === storyId)
-      ) ?? false
-    );
-  };
 
   return (
     <View className="flex flex-row gap-x-3 px-4">
@@ -37,7 +39,7 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
         onPress={() => onToggle()}
         className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
       >
-        {isStoryLiked(story.id) ? (
+        {isLiked ? (
           <FontAwesome name="heart" size={24} color="red" />
         ) : (
           <FontAwesome name="heart-o" size={24} color="black" />
