@@ -20,10 +20,12 @@ const SelectReadingVoiceModal = ({
   setSelectedVoice,
 }: PropTypes) => {
   const { data: voices } = useQuery(queryAvailableVoices);
-  const selectedVoiceDisplay = voices?.find((v) => v.id === selectedVoice);
+  const selectedVoiceDisplay = voices?.find(
+    (v) => v.id === selectedVoice || v.elevenLabsVoiceId === selectedVoice
+  );
 
   return (
-    <CustomModal isOpen={isOpen} onClose={onClose}>
+    <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
       <View className="flex flex-1 flex-col gap-y-6">
         <View className="flex flex-row items-center justify-between border-b border-b-border-lighter pb-6">
           <Text className="font-[abeezee] text-base text-black">
@@ -32,7 +34,8 @@ const SelectReadingVoiceModal = ({
           <Icon name="SquareX" onPress={onClose} />
         </View>
         <ScrollView
-          contentContainerClassName="flex flex-col min-h-full"
+          className="flex-1"
+          contentContainerClassName="flex flex-col pb-6"
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-row items-center justify-between rounded-xl border border-border-lighter p-4">
@@ -43,7 +46,10 @@ const SelectReadingVoiceModal = ({
               <Text className="font-[quilka] text-2xl text-black">
                 {selectedVoiceDisplay?.displayName ??
                   selectedVoiceDisplay?.name ??
-                  selectedVoice}
+                  (selectedVoice
+                    ? selectedVoice.charAt(0).toUpperCase() +
+                      selectedVoice.slice(1).toLowerCase()
+                    : "No voice selected")}
               </Text>
             </View>
             <Icon name="CircleCheck" color="green" />

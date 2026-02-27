@@ -26,7 +26,7 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
     queryFn: ({ pageParam }) => getLibraryStories(type, pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
-      lastPage.pagination.hasNextPage && lastPage.pagination.nextCursor
+      lastPage?.pagination?.hasNextPage && lastPage.pagination.nextCursor
         ? lastPage.pagination.nextCursor
         : undefined,
     enabled: !!user,

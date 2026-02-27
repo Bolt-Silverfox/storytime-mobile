@@ -4,6 +4,7 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -17,6 +18,10 @@ import { CustomImageBackground } from "../../../components/UI/CustomImage";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
 import ErrorComponent from "../../../components/ErrorComponent";
+
+const topPickStyles = StyleSheet.create({
+  columnItem: { width: "47%" },
+});
 
 const TodaysTopPicksScreen = () => {
   const navigator = useNavigation();
@@ -81,7 +86,9 @@ const TodaysTopPicksScreen = () => {
             }
           >
             {stories.map((story) => (
-              <StoryItem key={story.id} story={story} isGrouped />
+              <View key={story.id} style={topPickStyles.columnItem}>
+                <StoryItem story={story} isGrouped />
+              </View>
             ))}
           </ScrollView>
         )}

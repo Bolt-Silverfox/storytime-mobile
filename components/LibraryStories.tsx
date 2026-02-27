@@ -3,7 +3,6 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
-  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -48,10 +47,16 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
   } = useGetLibraryStories(storyFilter);
   const { refreshing, onRefresh } = useRefreshControl(refetch);
 
-  const stories = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data]
-  );
+  const stories = useMemo(() => {
+    const all = data?.pages.flatMap((page) => page.data) ?? [];
+    const seen = new Set<string>();
+    return all.filter((s) => {
+      if (!s?.id) return false;
+      if (seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, [data]);
 
   const renderStoryItem = useCallback(
     ({ item: story }: { item: (typeof stories)[number] }) => (
@@ -83,11 +88,12 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator
-            size="small"
-            style={styles.footer}
-            accessibilityLabel="Loading more stories"
-          />
+          <View className="items-center py-4">
+            <ActivityIndicator size="small" />
+            <Text className="mt-2 font-[abeezee] text-sm text-text">
+              Loading more stories...
+            </Text>
+          </View>
         ) : null
       }
       ListEmptyComponent={
@@ -102,7 +108,3 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 };
 
 export default LibraryStories;
-
-const styles = StyleSheet.create({
-  footer: { paddingVertical: 16 },
-});

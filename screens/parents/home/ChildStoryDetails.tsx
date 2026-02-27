@@ -49,10 +49,10 @@ const ChildStoryDetails = () => {
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const { data: storyProgress, isFetching: isProgressFetching } =
     useGetStoryProgress(id);
-  const alreadyRead = storyProgress?.completed === true;
+  const hasExistingProgress = !!storyProgress;
   const hasReachedLimit =
     !isPremium &&
-    !alreadyRead &&
+    !hasExistingProgress &&
     !isQuotaFetching &&
     !isProgressFetching &&
     (quota?.remaining ?? 0) === 0;

@@ -13,6 +13,7 @@ const QUERY_KEYS = {
   GET_STORY_QUOTA: "storyQuota",
   GET_LIBRARY_STORIES: "libraryStories",
   GET_INFINITE_STORIES: "stories",
+  GET_STORY_PROGRESS: "storyProgress",
 } as const;
 
 /** Default page size for cursor-paginated API calls. */
