@@ -25,7 +25,7 @@ const SelectReadingVoiceModal = ({
   );
 
   return (
-    <CustomModal isOpen={isOpen} onClose={onClose}>
+    <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
       <View className="flex flex-1 flex-col gap-y-6">
         <View className="flex flex-row items-center justify-between border-b border-b-border-lighter pb-6">
           <Text className="font-[abeezee] text-base text-black">

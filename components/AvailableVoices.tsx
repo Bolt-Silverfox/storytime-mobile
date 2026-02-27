@@ -69,6 +69,13 @@ const AvailableVoices = ({
           </Text>
         </View>
       )}
+      {!voiceAccessLoading && !isPremium && lockedVoiceId && (
+        <View className="bg-blue-50 mx-2 mb-4 rounded-xl p-3">
+          <Text className="text-blue-700 text-center font-[abeezee] text-sm">
+            Upgrade to premium to unlock all voices
+          </Text>
+        </View>
+      )}
       <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
         {data.map((voice) => {
           const isSelected = voice.id === selectedVoice;
@@ -107,7 +114,8 @@ const AvailableVoices = ({
                 </View>
               )}
               {!isPremium && !allowed && (
-                <View className="mt-2 flex h-6 flex-row items-center justify-center self-center rounded-full bg-amber-50 px-2">
+                <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                  <Icon name="Lock" size={12} color="#D97706" />
                   <Text className="font-[abeezee] text-xs text-amber-600">
                     Premium
                   </Text>
