@@ -18,6 +18,7 @@ const useSetPreferredVoice = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["preferredVoice"] });
+      queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
     },
     onError: (err) => {
       Alert.alert(err.message ?? "Unexpected error, try again later");
