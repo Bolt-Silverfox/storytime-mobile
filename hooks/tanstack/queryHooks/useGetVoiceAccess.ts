@@ -11,14 +11,19 @@ type VoiceAccess = {
   maxVoices: number;
   lockedVoiceId: string | null;
   elevenLabsTrialStoryId: string | null;
+  usedVoicesForStory: string[];
+  maxVoicesPerStory: number;
 };
 
-const useGetVoiceAccess = () => {
+const useGetVoiceAccess = (storyId?: string) => {
   return useQuery({
-    queryKey: ["voiceAccess"],
+    queryKey: ["voiceAccess", storyId ?? null],
     queryFn: async () => {
       try {
-        const request = await apiFetch(`${BASE_URL}/voice/access`, {
+        const url = storyId
+          ? `${BASE_URL}/voice/access?storyId=${storyId}`
+          : `${BASE_URL}/voice/access`;
+        const request = await apiFetch(url, {
           method: "GET",
         });
         const response: QueryResponse<VoiceAccess> = await request.json();

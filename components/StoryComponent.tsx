@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ImageBackground, Pressable, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   runOnJS,
   useSharedValue,
@@ -152,10 +152,10 @@ const StoryComponent = ({
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
 
-  const getQuotaReminderKey = () => {
+  const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
     return `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
-  };
+  }, [user?.id]);
 
   // Check if we should show the quota reminder modal
   useEffect(() => {
@@ -172,7 +172,7 @@ const StoryComponent = ({
         })
         .catch(() => {});
     }
-  }, [quota, user?.id]);
+  }, [quota, user?.id, getQuotaReminderKey]);
 
   const handleDismissQuotaReminder = () => {
     setShowQuotaReminder(false);
@@ -210,19 +210,16 @@ const StoryComponent = ({
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="flex-1">
-        <Pressable style={{ flex: 1 }} onPress={toggleControls}>
+        <Pressable style={storyStyles.flex1} onPress={toggleControls}>
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
             className="flex flex-1 flex-col p-4 pt-12"
-            style={{ backgroundColor: "#1a1a2e" }}
+            style={storyStyles.storyBackground}
           >
             <View className="flex flex-1 flex-col">
               <Animated.View
-                style={[
-                  animatedControlsStyle,
-                  { flexDirection: "row", justifyContent: "space-between" },
-                ]}
+                style={[animatedControlsStyle, storyStyles.controlsRow]}
                 pointerEvents={controlsInteractive ? "auto" : "none"}
               >
                 <Pressable
@@ -274,6 +271,7 @@ const StoryComponent = ({
           onClose={() => setIsVoiceModalOpen(false)}
           selectedVoice={selectedVoice}
           setSelectedVoice={setSelectedVoice}
+          storyId={storyId}
         />
         <InStoryOptionsModal
           handleVoiceModal={setIsVoiceModalOpen}
@@ -291,5 +289,11 @@ const StoryComponent = ({
     </SafeAreaWrapper>
   );
 };
+
+const storyStyles = StyleSheet.create({
+  flex1: { flex: 1 },
+  storyBackground: { backgroundColor: "#1a1a2e" },
+  controlsRow: { flexDirection: "row", justifyContent: "space-between" },
+});
 
 export default StoryComponent;
