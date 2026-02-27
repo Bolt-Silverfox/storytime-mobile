@@ -153,7 +153,11 @@ const AvailableVoices = ({
                   <Icon
                     name="Volume2"
                     color={
-                      isPreviewing ? COLORS.blue : allowed ? "black" : "#9CA3AF"
+                      isPreviewing
+                        ? COLORS.blue
+                        : allowed
+                          ? "black"
+                          : COLORS.skeleton
                     }
                   />
                 </Pressable>
@@ -161,6 +165,7 @@ const AvailableVoices = ({
                   onValueChange={() => handleSelectVoice(voice)}
                   value={isSelected}
                   disabled={!allowed}
+                  accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
                 />
               </View>
             </Pressable>
