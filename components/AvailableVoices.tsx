@@ -66,6 +66,7 @@ const AvailableVoices = ({
 
   const handleSelectVoice = (voice: VoiceData) => {
     if (voiceAccessLoading) return;
+    if (voice.id === selectedVoice) return;
     if (!isVoiceAllowed(voice)) {
       setIsSubscriptionModalOpen(true);
       return;
@@ -101,6 +102,7 @@ const AvailableVoices = ({
           return (
             <Pressable
               onPress={() => {
+                if (voice.id === selectedVoice) return;
                 handleSelectVoice(voice);
                 if (allowed) {
                   handlePreview(voice.previewUrl, voice.id);
@@ -165,12 +167,13 @@ const AvailableVoices = ({
                     }
                   />
                 </Pressable>
-                <Switch
-                  onValueChange={() => handleSelectVoice(voice)}
-                  value={isSelected}
-                  disabled={isVoiceLocked && !allowed}
-                  accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
-                />
+                <View pointerEvents="none">
+                  <Switch
+                    value={isSelected}
+                    disabled={isVoiceLocked && !allowed}
+                    accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
+                  />
+                </View>
               </View>
             </Pressable>
           );
