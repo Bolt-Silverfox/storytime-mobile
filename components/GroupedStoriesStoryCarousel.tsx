@@ -45,10 +45,15 @@ const GroupedStoriesStoryCarousel = ({
 
   const { refreshing, onRefresh } = useRefreshControl(refetch);
 
-  const stories = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data]
-  );
+  const stories = useMemo(() => {
+    const all = data?.pages.flatMap((page) => page.data) ?? [];
+    const seen = new Set<string>();
+    return all.filter((s) => {
+      if (!s?.id || seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, [data]);
 
   const renderStoryItem = useCallback(
     ({ item: story }: { item: (typeof stories)[number] }) => (
@@ -131,6 +136,6 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
-  columnItem: { maxWidth: "50%" },
+  columnItem: { flex: 1 },
   footer: { paddingVertical: 16 },
 });

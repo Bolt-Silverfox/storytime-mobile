@@ -1,6 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import {
+  ActivityIndicator,
+  FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -15,7 +16,7 @@ import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import FavouriteStoriesModal from "../../components/modals/FavouriteStoryModal";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import useRefreshControl from "../../hooks/others/useRefreshControl";
 import { AgeGroupType, FavouriteStory } from "../../types";
 
@@ -33,9 +34,15 @@ const AGE_FILTERS: readonly AgeRangeFilter[] = [
 ] as const;
 
 const ParentsFavouritesScreen = () => {
-  const { data, isPending, error, refetch } = useQuery(
-    queryParentsFavourites()
-  );
+  const {
+    data,
+    isPending,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useQueryParentsFavourites();
   const { refreshing, onRefresh } = useRefreshControl(refetch);
 
   const [activeItem, setActiveItem] = useState<FavouriteStory | null>(null);
@@ -45,31 +52,55 @@ const ParentsFavouritesScreen = () => {
   >(null);
   const [selectedAge, setSelectedAge] = useState<AgeFilter>("ALL");
 
+  const favourites = useMemo(() => {
+    const all = data?.pages.flatMap((page) => page.data) ?? [];
+    const seen = new Set<string>();
+    return all.filter((s) => {
+      if (!s?.id) return false;
+      if (seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, [data]);
+
+  const filteredStories = useMemo(() => {
+    return favourites.filter((story) => {
+      const q = searchQuery.trim().toLowerCase();
+
+      if (q.length > 0) {
+        return story.title.toLowerCase().includes(q);
+      }
+
+      if (selectedAge === "ALL") return true;
+
+      const filter = AGE_FILTERS.find(
+        (f): f is Extract<AgeRangeFilter, { min: number }> =>
+          f.key === selectedAge && "min" in f && "max" in f
+      );
+
+      if (!filter) return true;
+
+      const [sMin, sMax] = story.ageRange.split("-").map(Number);
+      return sMin <= filter.max && sMax >= filter.min;
+    });
+  }, [favourites, searchQuery, selectedAge]);
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  const renderItem = useCallback(
+    ({ item: story }: { item: FavouriteStory }) => (
+      <FavouriteStoryItem story={story} setActiveStory={setActiveItem} />
+    ),
+    []
+  );
+
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
   if (isPending) return <LoadingOverlay visible />;
-
-  const favourites = data ?? [];
-  const filteredStories = favourites.filter((story) => {
-    const q = searchQuery.trim().toLowerCase();
-
-    if (q.length > 0) {
-      return story.title.toLowerCase().includes(q);
-    }
-
-    if (selectedAge === "ALL") return true;
-
-    const filter = AGE_FILTERS.find(
-      (f): f is Extract<AgeRangeFilter, { min: number }> =>
-        f.key === selectedAge && "min" in f && "max" in f
-    );
-
-    if (!filter) return true;
-
-    const [sMin, sMax] = story.ageRange.split("-").map(Number);
-
-    return sMin <= filter.max && sMax >= filter.min;
-  });
 
   const showNoData = favourites.length === 0;
   const showNoMatches = favourites.length > 0 && filteredStories.length === 0;
@@ -160,35 +191,42 @@ const ParentsFavouritesScreen = () => {
           </View>
         )}
 
-        {/* BODY */}
-        <ScrollView
-          contentContainerClassName="flex flex-col pb-10 gap-y-4 my-6 px-4"
+        <FlatList
+          data={showNoData || showNoMatches ? [] : filteredStories}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerClassName="flex grow flex-col gap-y-4 px-4 pb-10 pt-6"
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-        >
-          {showNoData ? (
-            <CustomEmptyState
-              url={require("../../assets/images/favourites-empty-state.png")}
-              message="No Favourites added yet"
-              secondaryMessage="You do not have any favourite stories added yet"
-            />
-          ) : showNoMatches ? (
-            <CustomEmptyState
-              url={require("../../assets/images/favourites-empty-state.png")}
-              message="No matching favourites"
-              secondaryMessage="Try changing filters or search"
-            />
-          ) : (
-            filteredStories.map((story) => (
-              <FavouriteStoryItem
-                key={story.id}
-                story={story}
-                setActiveStory={setActiveItem}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={
+            isFetchingNextPage ? (
+              <View className="items-center py-4">
+                <ActivityIndicator size="small" />
+                <Text className="mt-2 font-[abeezee] text-sm text-text">
+                  Loading more favourites...
+                </Text>
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            showNoData ? (
+              <CustomEmptyState
+                url={require("../../assets/images/favourites-empty-state.png")}
+                message="No Favourites added yet"
+                secondaryMessage="You do not have any favourite stories added yet"
               />
-            ))
-          )}
-        </ScrollView>
+            ) : showNoMatches ? (
+              <CustomEmptyState
+                url={require("../../assets/images/favourites-empty-state.png")}
+                message="No matching favourites"
+                secondaryMessage="Try changing filters or search"
+              />
+            ) : null
+          }
+        />
         {activeItem && (
           <FavouriteStoriesModal
             isOpen={activeItem !== null}

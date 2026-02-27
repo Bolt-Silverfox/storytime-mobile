@@ -1,12 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { READ_STATUS_COLORS } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { Story } from "../../types";
 import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
@@ -37,19 +36,29 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     durationSeconds,
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const { data } = useQuery(queryParentsFavourites());
+  const { data: favouritesData } = useQueryParentsFavourites();
+
+  const isLiked = useMemo(
+    () =>
+      favouritesData?.pages?.some((page) =>
+        page.data?.some((s) => s?.storyId === id)
+      ) ?? false,
+    [favouritesData, id]
+  );
+
   const { mutate: onToggle, isPending } = useToggleFavourites({
     story: {
       id,
       storyId: id,
-      title: title,
-      description: description,
-      coverImageUrl: coverImageUrl,
-      createdAt: createdAt,
+      title,
+      description,
+      coverImageUrl,
+      createdAt,
       ageRange: `${ageMin}-${ageMax}`,
-      categories: categories,
-      durationSeconds: durationSeconds,
+      categories,
+      durationSeconds,
     },
+    isLiked,
   });
 
   const navigate = () => {
@@ -71,11 +80,6 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     });
   };
 
-  const isLiked = useMemo(
-    () => data?.some((s) => s.storyId === id) ?? false,
-    [data, id]
-  );
-
   const duration = secondsToMinutes(durationSeconds);
 
   const categoryColour =
@@ -90,9 +94,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     <Pressable
       onPress={navigate}
       key={id}
-      className={`flex flex-col ${isGrouped ? "" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
+      className={`flex flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
     >
-      <View className={`relative w-full rounded-2xl`}>
+      <View className={`relative w-full flex-1 rounded-2xl`}>
         <CustomImage
           className="h-[150px] w-full min-w-full rounded-xl bg-cover"
           source={{ uri: coverImageUrl }}
