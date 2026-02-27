@@ -49,7 +49,7 @@ const GroupedStoriesStoryCarousel = ({
     const all = data?.pages.flatMap((page) => page.data) ?? [];
     const seen = new Set<string>();
     return all.filter((s) => {
-      if (seen.has(s.id)) return false;
+      if (!s?.id || seen.has(s.id)) return false;
       seen.add(s.id);
       return true;
     });

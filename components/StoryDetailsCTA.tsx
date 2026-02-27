@@ -16,9 +16,9 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
   const isLiked = useMemo(
     () =>
       data?.pages?.some((page) =>
-        page.data?.some((s) => s?.storyId === story.id)
+        page.data?.some((s) => s?.storyId === story.storyId)
       ) ?? false,
-    [data, story.id]
+    [data, story.storyId]
   );
 
   const { mutate: onToggle } = useToggleFavourites({

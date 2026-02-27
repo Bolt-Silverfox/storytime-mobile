@@ -2,6 +2,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL, DEFAULT_CURSOR_PAGE_SIZE } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { QUERY_KEYS } from "../../../constants/ui";
 import {
   CursorPaginatedData,
   FavouriteStory,
@@ -13,7 +14,7 @@ const useQueryParentsFavourites = () => {
   const { user } = useAuth();
 
   return useInfiniteQuery({
-    queryKey: ["parentsFavourites", user?.id],
+    queryKey: [QUERY_KEYS.parentsFavourites, user?.id],
     queryFn: ({ pageParam }) => fetchFavourites(pageParam),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>

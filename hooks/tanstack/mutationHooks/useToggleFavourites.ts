@@ -32,8 +32,6 @@ const useToggleFavourites = ({
 
   return useMutation({
     mutationFn: async () => {
-      await queryClient.cancelQueries({ queryKey });
-
       if (isLiked) {
         return await deleteFromFavourites(story.storyId);
       }
