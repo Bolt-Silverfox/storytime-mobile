@@ -41,7 +41,13 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
-      Alert.alert("Failed to register story progress", err.message);
+      // Don't show cryptic internal errors to the user
+      const isFriendly =
+        err.message && !err.message.includes("Cannot read prop");
+      const message = isFriendly
+        ? err.message
+        : "Something went wrong saving your progress. Your reading is not affected.";
+      Alert.alert("Story Progress", message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({

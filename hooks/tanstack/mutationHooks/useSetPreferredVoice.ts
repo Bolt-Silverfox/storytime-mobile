@@ -11,9 +11,16 @@ const useSetPreferredVoice = () => {
       const request = await apiFetch(`${BASE_URL}/voice/preferred`, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),
+        passThroughStatuses: [403],
       });
       const response = await request.json();
-      if (!response.success) throw new Error(response.message);
+      if (!response.success) {
+        const msg =
+          request.status === 403
+            ? "You've already selected a voice. Upgrade to premium to switch voices."
+            : (response.message ?? "Unexpected error, try again later");
+        throw new Error(msg);
+      }
       return response;
     },
     onSuccess: () => {
@@ -22,7 +29,7 @@ const useSetPreferredVoice = () => {
     },
     onError: (err) => {
       queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
-      Alert.alert(err.message ?? "Unexpected error, try again later");
+      Alert.alert("Voice Selection", err.message);
     },
   });
 };

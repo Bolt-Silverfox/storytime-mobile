@@ -50,6 +50,7 @@ const AvailableVoices = ({
   };
 
   const handleSelectVoice = (voice: VoiceData) => {
+    if (voiceAccessLoading) return;
     if (!isVoiceAllowed(voice)) {
       setIsSubscriptionModalOpen(true);
       return;
