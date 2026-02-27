@@ -3,6 +3,18 @@ import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 
+const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
+
+const CRYPTIC_PATTERNS = [
+  "request failed",
+  "cannot read prop",
+  "undefined is not",
+  "typeerror",
+  "networkerror",
+  "syntaxerror",
+  "unexpected token",
+];
+
 const useSetPreferredVoice = () => {
   const queryClient = useQueryClient();
 
@@ -18,7 +30,7 @@ const useSetPreferredVoice = () => {
         const msg =
           request.status === 403
             ? "You've already selected a voice. Upgrade to premium to switch voices."
-            : (response.message ?? "Something went wrong. Please try again.");
+            : (response.message ?? GENERIC_VOICE_ERROR);
         throw new Error(msg);
       }
       return response;
@@ -29,21 +41,10 @@ const useSetPreferredVoice = () => {
     },
     onError: (err: Error) => {
       queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
-      const crypticPatterns = [
-        "Request failed",
-        "Cannot read prop",
-        "undefined is not",
-        "TypeError",
-        "NetworkError",
-        "SyntaxError",
-        "Unexpected token",
-      ];
+      const msgLower = (err.message || "").toLowerCase();
       const isFriendly =
-        err.message && !crypticPatterns.some((p) => err.message.includes(p));
-      const message = isFriendly
-        ? err.message
-        : "Something went wrong. Please try again.";
-      Alert.alert("Voice Selection", message);
+        msgLower && !CRYPTIC_PATTERNS.some((p) => msgLower.includes(p));
+      Alert.alert("Voice Selection", isFriendly ? err.message : GENERIC_VOICE_ERROR);
     },
   });
 };

@@ -46,7 +46,11 @@ const SelectReadingVoiceModal = ({
               <Text className="font-[quilka] text-2xl text-black">
                 {selectedVoiceDisplay?.displayName ??
                   selectedVoiceDisplay?.name ??
-                  (selectedVoice ? "Loading..." : "No voice selected")}
+                  (!selectedVoice
+                    ? "No voice selected"
+                    : voices
+                      ? "Unknown voice"
+                      : "Loading...")}
               </Text>
             </View>
             <Icon name="CircleCheck" color="green" />
