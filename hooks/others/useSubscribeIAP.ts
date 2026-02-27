@@ -56,6 +56,7 @@ const useSubscribeIAP = (
         });
         onSubscribed?.();
       } catch (err) {
+        // eslint-disable-next-line no-console
         if (__DEV__)
           console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
@@ -67,7 +68,7 @@ const useSubscribeIAP = (
         setErrorMessage("No worries! You can subscribe anytime.");
       } else {
         setIsUserCancelled(false);
-        if (__DEV__) console.error("Subscription failed", error);
+        if (__DEV__) console.error("Subscription failed", error); // eslint-disable-line no-console
         setErrorMessage(error.message ?? "Unexpected error, try again");
       }
     },
@@ -90,6 +91,7 @@ const useSubscribeIAP = (
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
+        // eslint-disable-next-line no-console
         if (__DEV__)
           console.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));
@@ -122,7 +124,7 @@ const useSubscribeIAP = (
       if (!response.success) throw new Error(response.message);
       return response;
     } catch (err) {
-      if (__DEV__) console.error("purchase verification failed", err);
+      if (__DEV__) console.error("purchase verification failed", err); // eslint-disable-line no-console
       throw new Error(getErrorMessage(err));
     }
   };

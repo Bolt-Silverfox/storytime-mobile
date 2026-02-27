@@ -34,12 +34,13 @@ const MenuItem: FC<PropTypes> = ({
   if (description) {
     return (
       <Pressable onPress={() => setIsOpen((n) => !n)}>
-        <View style={[styles.menuItem, isOpen && { borderBottomWidth: 0 }]}>
+        <View style={[styles.menuItem, isOpen && styles.noBorderBottom]}>
           <View style={styles.menuItemLeft} className="w-[85%]">
             {icon}
             <CustomText
               style={[
                 styles.menuItemLabel,
+                // eslint-disable-next-line react-native/no-inline-styles
                 { color: textColor, fontSize: isTablet ? 18 : 16 },
               ]}
             >
@@ -47,6 +48,7 @@ const MenuItem: FC<PropTypes> = ({
             </CustomText>
           </View>
           <CustomText
+            // eslint-disable-next-line react-native/no-inline-styles
             style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
           >
             {isOpen ? (
@@ -58,12 +60,7 @@ const MenuItem: FC<PropTypes> = ({
         </View>
 
         {isOpen && (
-          <View
-            style={[
-              isOpen && { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
-            ]}
-            className="px-4 pb-4 "
-          >
+          <View style={[isOpen && styles.openBorder]} className="px-4 pb-4 ">
             <Text style={[defaultStyles.defaultText]}>{description}</Text>
           </View>
         )}
@@ -75,6 +72,7 @@ const MenuItem: FC<PropTypes> = ({
       <View
         style={[
           styles.menuItem,
+          // eslint-disable-next-line react-native/no-inline-styles
           {
             borderBottomWidth: isLastItem ? 0 : 1,
             borderBottomColor: "#E5E7EB",
@@ -86,6 +84,7 @@ const MenuItem: FC<PropTypes> = ({
           <CustomText
             style={[
               styles.menuItemLabel,
+              // eslint-disable-next-line react-native/no-inline-styles
               { color: textColor, fontSize: isTablet ? 18 : 16 },
             ]}
           >
@@ -93,6 +92,7 @@ const MenuItem: FC<PropTypes> = ({
           </CustomText>
         </View>
         <CustomText
+          // eslint-disable-next-line react-native/no-inline-styles
           style={[styles.menuItemArrow, { fontSize: isTablet ? 24 : 20 }]}
         >
           <ChevronRight strokeWidth={1.5} />
@@ -112,5 +112,7 @@ const styles = StyleSheet.create({
   menuItemLeft: { flexDirection: "row", alignItems: "center" },
   menuItemLabel: { fontSize: 16, marginLeft: 12 },
   menuItemArrow: { fontSize: 20, color: "#FB923C" },
+  noBorderBottom: { borderBottomWidth: 0 },
+  openBorder: { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
 });
 export default MenuItem;

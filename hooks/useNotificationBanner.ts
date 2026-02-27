@@ -61,7 +61,7 @@ const useNotificationBanner = () => {
       await AsyncStorage.setItem(BANNER_DISMISSED_KEY, Date.now().toString());
     } catch (error) {
       if (__DEV__) {
-        console.error("Failed to save banner dismiss status:", error);
+        console.error("Failed to save banner dismiss status:", error); // eslint-disable-line no-console
       }
     }
   };
@@ -73,7 +73,7 @@ const useNotificationBanner = () => {
       await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
     } catch (error) {
       if (__DEV__) {
-        console.error("Failed to clear banner dismiss status:", error);
+        console.error("Failed to clear banner dismiss status:", error); // eslint-disable-line no-console
       }
     }
   };
