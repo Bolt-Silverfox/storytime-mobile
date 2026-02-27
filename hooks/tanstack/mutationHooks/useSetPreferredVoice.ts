@@ -11,14 +11,14 @@ const useSetPreferredVoice = () => {
       const request = await apiFetch(`${BASE_URL}/voice/preferred`, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),
-        passThroughStatuses: [403],
+        passThroughStatuses: [400, 403, 404],
       });
       const response = await request.json();
       if (!response.success) {
         const msg =
           request.status === 403
             ? "You've already selected a voice. Upgrade to premium to switch voices."
-            : (response.message ?? "Unexpected error, try again later");
+            : (response.message ?? "Something went wrong. Please try again.");
         throw new Error(msg);
       }
       return response;
@@ -27,9 +27,23 @@ const useSetPreferredVoice = () => {
       queryClient.invalidateQueries({ queryKey: ["preferredVoice"] });
       queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
     },
-    onError: (err) => {
+    onError: (err: Error) => {
       queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
-      Alert.alert("Voice Selection", err.message);
+      const crypticPatterns = [
+        "Request failed",
+        "Cannot read prop",
+        "undefined is not",
+        "TypeError",
+        "NetworkError",
+        "SyntaxError",
+        "Unexpected token",
+      ];
+      const isFriendly =
+        err.message && !crypticPatterns.some((p) => err.message.includes(p));
+      const message = isFriendly
+        ? err.message
+        : "Something went wrong. Please try again.";
+      Alert.alert("Voice Selection", message);
     },
   });
 };
