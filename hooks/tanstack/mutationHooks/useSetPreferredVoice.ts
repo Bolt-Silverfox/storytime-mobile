@@ -44,7 +44,10 @@ const useSetPreferredVoice = () => {
       const msgLower = (err.message || "").toLowerCase();
       const isFriendly =
         msgLower && !CRYPTIC_PATTERNS.some((p) => msgLower.includes(p));
-      Alert.alert("Voice Selection", isFriendly ? err.message : GENERIC_VOICE_ERROR);
+      Alert.alert(
+        "Voice Selection",
+        isFriendly ? err.message : GENERIC_VOICE_ERROR
+      );
     },
   });
 };
