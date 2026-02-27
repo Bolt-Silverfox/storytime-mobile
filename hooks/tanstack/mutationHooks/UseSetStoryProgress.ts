@@ -67,7 +67,7 @@ const useSetStoryProgress = ({
         queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
       queryClient.refetchQueries({
-        queryKey: ["stories"],
+        queryKey: [QUERY_KEYS.GET_INFINITE_STORIES],
       });
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_STORY_PROGRESS, storyId],
