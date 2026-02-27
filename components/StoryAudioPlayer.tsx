@@ -45,18 +45,25 @@ const StoryAudioPlayer = ({
     }
   }, [status.didJustFinish]);
 
+  // Track whether URL went through a null transition (voice switch)
+  // vs a direct URL change (page navigation)
+  const wasNullTransitionRef = useRef(false);
+
   // When the audio URL changes (new voice or new page content), replace audio
   // When URL goes null (voice switch in progress), pause old audio
   useEffect(() => {
     if (audioUrl && audioUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
+      const wasVoiceSwitch = wasNullTransitionRef.current;
       prevUrlRef.current = audioUrl;
+      wasNullTransitionRef.current = false;
       // Reset edge detection so the next finish is treated as fresh
       prevDidJustFinishRef.current = false;
 
       try {
         player.replace(audioUrl);
-        if (wasPlaying) {
+        // Only auto-resume for page navigation, not voice switches
+        if (wasPlaying && !wasVoiceSwitch) {
           player.play();
         }
       } catch (e) {
@@ -66,6 +73,7 @@ const StoryAudioPlayer = ({
     } else if (!audioUrl && prevUrlRef.current) {
       // Voice switched — stop old audio while new one loads
       prevUrlRef.current = null;
+      wasNullTransitionRef.current = true;
       try {
         player.pause();
       } catch (e) {

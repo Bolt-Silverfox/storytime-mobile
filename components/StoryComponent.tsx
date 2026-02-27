@@ -142,8 +142,13 @@ const StoryComponent = ({
     return map;
   }, [batchAudio?.paragraphs]);
 
+  // Only sync preferred voice on initial load — user's local selection is
+  // authoritative after that.  Without this guard, the invalidated query
+  // refetch can overwrite the local VoiceType key with a DB UUID.
+  const hasInitializedVoice = useRef(false);
   useEffect(() => {
-    if (!isVoiceFetched) return;
+    if (!isVoiceFetched || hasInitializedVoice.current) return;
+    hasInitializedVoice.current = true;
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
 
