@@ -1,5 +1,4 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Dispatch, SetStateAction } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
@@ -12,13 +11,17 @@ type PropTypes = {
   setShowShareModal: Dispatch<SetStateAction<boolean>>;
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
-  const { data } = useSuspenseQuery(useQueryParentsFavourites());
+  const { data } = useQueryParentsFavourites();
   const { mutate: onToggle } = useToggleFavourites({
     story,
   });
 
   const isStoryLiked = (storyId: string) => {
-    return data.some((stories) => stories.storyId === storyId);
+    return (
+      data?.pages.some((page) =>
+        page.data.some((s) => s.storyId === storyId)
+      ) ?? false
+    );
   };
 
   return (

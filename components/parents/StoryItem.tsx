@@ -1,12 +1,11 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
 import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { READ_STATUS_COLORS } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
-import queryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { Story } from "../../types";
 import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
@@ -37,7 +36,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     durationSeconds,
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const { data } = useQuery(queryParentsFavourites());
+  const { data } = useQueryParentsFavourites();
   const { mutate: onToggle, isPending } = useToggleFavourites({
     story: {
       id,
@@ -72,7 +71,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   };
 
   const isLiked = useMemo(
-    () => data?.some((s) => s.storyId === id) ?? false,
+    () =>
+      data?.pages.some((page) => page.data.some((s) => s.storyId === id)) ??
+      false,
     [data, id]
   );
 
