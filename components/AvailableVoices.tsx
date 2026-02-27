@@ -1,12 +1,13 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import { COLORS } from "../constants/ui";
 import { AvailableVoices as VoiceData } from "../types";
 import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useGetVoiceAccess from "../hooks/tanstack/queryHooks/useGetVoiceAccess";
+import useToast from "../contexts/ToastContext";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
 
@@ -25,8 +26,19 @@ const AvailableVoices = ({
   const player = useAudioPlayer();
   const { mutate: markPreferred } = useSetPreferredVoice();
 
+  const { notify } = useToast();
+  const hasShownTrialToast = useRef(false);
+
   const isPremium = voiceAccess?.isPremium ?? false;
   const lockedVoiceId = voiceAccess?.lockedVoiceId ?? null;
+
+  useEffect(() => {
+    if (voiceAccessLoading || hasShownTrialToast.current) return;
+    if (!isPremium && !lockedVoiceId) {
+      notify("Your first story gets our best voice — choose wisely!");
+      hasShownTrialToast.current = true;
+    }
+  }, [voiceAccessLoading, isPremium, lockedVoiceId, notify]);
 
   const isVoiceAllowed = (voice: VoiceData): boolean => {
     if (isPremium) return true;
