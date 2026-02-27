@@ -21,7 +21,7 @@ const useGetVoiceAccess = (storyId?: string) => {
     queryFn: async () => {
       try {
         const url = storyId
-          ? `${BASE_URL}/voice/access?storyId=${storyId}`
+          ? `${BASE_URL}/voice/access?storyId=${encodeURIComponent(storyId)}`
           : `${BASE_URL}/voice/access`;
         const request = await apiFetch(url, {
           method: "GET",

@@ -34,7 +34,13 @@ const MenuItem: FC<PropTypes> = ({
   if (description) {
     return (
       <Pressable onPress={() => setIsOpen((n) => !n)}>
-        <View style={[styles.menuItem, isOpen && styles.noBorderBottom]}>
+        <View
+          style={[
+            styles.menuItem,
+            !isLastItem && styles.defaultBorderBottom,
+            isOpen && styles.noBorderBottom,
+          ]}
+        >
           <View style={styles.menuItemLeft} className="w-[85%]">
             {icon}
             <CustomText
@@ -60,7 +66,7 @@ const MenuItem: FC<PropTypes> = ({
         </View>
 
         {isOpen && (
-          <View style={[isOpen && styles.openBorder]} className="px-4 pb-4 ">
+          <View style={styles.openBorder} className="px-4 pb-4 ">
             <Text style={[defaultStyles.defaultText]}>{description}</Text>
           </View>
         )}
@@ -112,6 +118,7 @@ const styles = StyleSheet.create({
   menuItemLeft: { flexDirection: "row", alignItems: "center" },
   menuItemLabel: { fontSize: 16, marginLeft: 12 },
   menuItemArrow: { fontSize: 20, color: "#FB923C" },
+  defaultBorderBottom: { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
   noBorderBottom: { borderBottomWidth: 0 },
   openBorder: { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
 });

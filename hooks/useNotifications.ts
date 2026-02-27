@@ -51,10 +51,18 @@ export const useNotifications = (isAuthenticated: boolean) => {
     (data: NotificationData) => {
       const { category, storyId, kidId, screen } = data;
 
+      const goToNotifications = () => {
+        // @ts-expect-error - dynamic navigation
+        navigation.navigate("ParentsNavigator", {
+          screen: "NotificationsNavigator",
+        });
+      };
+
       // If explicit screen is provided, validate and navigate there
       if (screen) {
         if (!ALLOWED_SCREENS.has(screen)) {
           console.warn("Unknown notification screen:", screen); // eslint-disable-line no-console
+          goToNotifications();
           return;
         }
         try {
@@ -62,6 +70,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
           navigation.navigate(screen, data);
         } catch {
           console.warn("Failed to navigate to screen:", screen); // eslint-disable-line no-console
+          goToNotifications();
         }
         return;
       }
@@ -74,6 +83,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
           if (storyId) {
             // @ts-expect-error - dynamic navigation
             navigation.navigate("StoryDetails", { storyId });
+          } else {
+            goToNotifications();
           }
           break;
 
@@ -123,11 +134,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
           break;
 
         default:
-          // Default: go to notifications screen
-          // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentsNavigator", {
-            screen: "NotificationsNavigator",
-          });
+          goToNotifications();
           break;
       }
     },
