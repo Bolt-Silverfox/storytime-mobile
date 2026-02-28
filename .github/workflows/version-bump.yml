@@ -72,9 +72,10 @@ jobs:
           git checkout -b "$BUMP_BRANCH"
           git add package.json app.json
           git commit -m "chore: bump version to ${TARGET_VERSION}"
-          git push origin "$BUMP_BRANCH"
+          git push --force-with-lease origin "$BUMP_BRANCH"
           gh pr create \
             --base "$BRANCH_REF" \
             --head "$BUMP_BRANCH" \
             --title "chore: bump version to ${TARGET_VERSION}" \
-            --body "Automated version bump for \`${BRANCH_REF}\` branch."
+            --body "Automated version bump for \`${BRANCH_REF}\` branch." \
+            || echo "PR already exists for $BUMP_BRANCH"
