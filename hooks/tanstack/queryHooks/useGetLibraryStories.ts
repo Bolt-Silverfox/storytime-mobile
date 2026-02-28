@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import {
   BASE_URL,
@@ -33,6 +33,7 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     maxPages: 10,
+    placeholderData: keepPreviousData,
   });
 };
 

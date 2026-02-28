@@ -191,7 +191,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(JSON.parse(localStoredSession));
           const accessToken = await secureTokenStorage.getAccessToken();
           if (__DEV__) {
-            console.log("access token", accessToken);
+            console.log("access token", accessToken); // eslint-disable-line no-console
           }
         } catch {
           // Corrupted user data - clear it and reset
@@ -249,7 +249,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       ]);
     } catch (error) {
       if (__DEV__) {
-        console.error("Logout storage clear failed:", error);
+        console.error("Logout storage clear failed:", error); // eslint-disable-line no-console
       }
     } finally {
       // Always reset state even if storage clear fails

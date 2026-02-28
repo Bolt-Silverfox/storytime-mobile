@@ -8,7 +8,13 @@ import {
   useRef,
   useState,
 } from "react";
-import { Pressable, Text, View, ViewStyle } from "react-native";
+import {
+  Pressable,
+  StyleSheet as RNStyleSheet,
+  Text,
+  View,
+  ViewStyle,
+} from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { CONTROLS_FADE_MS } from "../constants";
 import { Story } from "../types";
@@ -154,9 +160,7 @@ const StoryContentContainer = ({
     <View className="flex flex-1 flex-col justify-end gap-y-3">
       {currentlyDisplayed === "story" && (
         <View
-          style={
-            !controlsInLayout ? { height: 0, overflow: "hidden" } : undefined
-          }
+          style={!controlsInLayout ? contentContainerStyles.hidden : undefined}
         >
           <Animated.View
             style={animatedControlsStyle}
@@ -272,5 +276,9 @@ const StoryContentContainer = ({
     </View>
   );
 };
+
+const contentContainerStyles = RNStyleSheet.create({
+  hidden: { height: 0, overflow: "hidden" },
+});
 
 export default StoryContentContainer;

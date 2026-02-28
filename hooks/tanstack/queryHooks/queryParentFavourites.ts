@@ -1,4 +1,4 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { keepPreviousData, useInfiniteQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL, DEFAULT_CURSOR_PAGE_SIZE } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
@@ -25,6 +25,7 @@ const useQueryParentsFavourites = () => {
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     maxPages: 10,
+    placeholderData: keepPreviousData,
   });
 };
 

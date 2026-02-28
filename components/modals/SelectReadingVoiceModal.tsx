@@ -11,6 +11,7 @@ const AvailableVoices = lazy(() => import("../AvailableVoices"));
 type PropTypes = {
   selectedVoice: string | null;
   setSelectedVoice: Dispatch<SetStateAction<string | null>>;
+  storyId: string;
 } & Omit<CustomModalProps, "children">;
 
 const SelectReadingVoiceModal = ({
@@ -18,10 +19,14 @@ const SelectReadingVoiceModal = ({
   onClose,
   selectedVoice,
   setSelectedVoice,
+  storyId,
 }: PropTypes) => {
   const { data: voices } = useQuery(queryAvailableVoices);
   const selectedVoiceDisplay = voices?.find(
-    (v) => v.id === selectedVoice || v.elevenLabsVoiceId === selectedVoice
+    (v) =>
+      v.id === selectedVoice ||
+      v.elevenLabsVoiceId === selectedVoice ||
+      v.name === selectedVoice
   );
 
   return (
@@ -59,6 +64,7 @@ const SelectReadingVoiceModal = ({
             <AvailableVoices
               selectedVoice={selectedVoice}
               setSelectedVoice={setSelectedVoice}
+              storyId={storyId}
             />
           </SuspenseWrapper>
         </ScrollView>
