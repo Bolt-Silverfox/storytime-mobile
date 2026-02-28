@@ -39,6 +39,7 @@ jobs:
     type: submit
     params:
       platform: ios
+      profile: production
 
   submit-android:
     name: Submit Android to Play Store
@@ -46,3 +47,4 @@ jobs:
     type: submit
     params:
       platform: android
+      profile: production
