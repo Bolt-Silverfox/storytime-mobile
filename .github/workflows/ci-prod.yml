@@ -1,12 +1,12 @@
-name: Dev CI
+name: Production CI
 
 on:
   pull_request:
-    branches: ['dev-v1.0.0']
+    branches: ['main']
     types: [opened, synchronize]
 
 concurrency:
-  group: dev-${{ github.head_ref || github.ref }}
+  group: prod-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -33,20 +33,16 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: TypeScript check
-        continue-on-error: true
         run: npm run type-check
 
       - name: Lint
-        continue-on-error: true
         run: npm run lint
 
       - name: Format check
-        continue-on-error: true
         run: npm run format:check
 
       - name: Security audit
-        continue-on-error: true
-        run: npm audit --audit-level=high || true
+        run: npm audit --audit-level=high
 
   auto-format:
     name: Auto-fix Formatting
