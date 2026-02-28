@@ -5,18 +5,25 @@ concurrency:
   group: ${{ workflow.filename }}-${{ github.ref }}
 
 on:
-  push:
-    branches: [dev-v1.0.0]
-    paths:
-      - '**'
-      - '!**.md'
-      - '!docs/**'
-      - '!.eas/workflows/**'
+  workflow_dispatch:
+    inputs:
+      channel:
+        type: choice
+        description: Update channel
+        options:
+          - development
+          - production
+        default: development
+        required: true
+      message:
+        type: string
+        description: Update message
+        required: true
 
 jobs:
-  update-dev:
-    name: OTA Update (dev)
+  ota-update:
+    name: OTA Update (${{ inputs.channel }})
     type: update
     params:
-      branch: development
-      message: ${{ github.event.head_commit.message || 'OTA update from dev' }}
+      branch: ${{ inputs.channel }}
+      message: ${{ inputs.message }}
