@@ -70,7 +70,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BUMP_BRANCH"
-          git add package.json app.json
+          git add package.json package-lock.json app.json
           git commit -m "chore: bump version to ${TARGET_VERSION}"
           git push --force-with-lease origin "$BUMP_BRANCH"
           EXISTING_PR=$(gh pr list --head "$BUMP_BRANCH" --base "$BRANCH_REF" --json number --jq '.[0].number')
