@@ -91,11 +91,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
         case "ACHIEVEMENT_UNLOCKED":
         case "BADGE_EARNED":
         case "STREAK_MILESTONE":
-          // Navigate to achievements/progress screen
-          // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentsNavigator", {
-            screen: "NotificationsNavigator",
-          });
+          goToNotifications();
           break;
 
         case "SCREEN_TIME_LIMIT":
@@ -105,8 +101,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
             // @ts-expect-error - dynamic navigation
             navigation.navigate("ParentControls", { kidId });
           } else {
-            // @ts-expect-error - dynamic navigation
-            navigation.navigate("ParentsNavigator");
+            goToNotifications();
           }
           break;
 

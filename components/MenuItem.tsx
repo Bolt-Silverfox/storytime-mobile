@@ -78,11 +78,7 @@ const MenuItem: FC<PropTypes> = ({
       <View
         style={[
           styles.menuItem,
-          // eslint-disable-next-line react-native/no-inline-styles
-          {
-            borderBottomWidth: isLastItem ? 0 : 1,
-            borderBottomColor: "#E5E7EB",
-          },
+          !isLastItem && styles.defaultBorderBottom,
         ]}
       >
         <View style={styles.menuItemLeft} className="w-[85%]">
