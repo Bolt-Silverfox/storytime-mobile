@@ -48,7 +48,7 @@ jobs:
         env:
           TARGET_VERSION: ${{ steps.version.outputs.version }}
         run: |
-          npm version "$TARGET_VERSION" --no-git-tag-version
+          npm version "$TARGET_VERSION" --no-git-tag-version --ignore-scripts
 
       - name: Bump app.json version
         if: steps.check.outputs.needed == 'true'
@@ -73,9 +73,13 @@ jobs:
           git add package.json app.json
           git commit -m "chore: bump version to ${TARGET_VERSION}"
           git push --force-with-lease origin "$BUMP_BRANCH"
-          gh pr create \
-            --base "$BRANCH_REF" \
-            --head "$BUMP_BRANCH" \
-            --title "chore: bump version to ${TARGET_VERSION}" \
-            --body "Automated version bump for \`${BRANCH_REF}\` branch." \
-            || echo "PR already exists for $BUMP_BRANCH"
+          EXISTING_PR=$(gh pr list --head "$BUMP_BRANCH" --base "$BRANCH_REF" --json number --jq '.[0].number')
+          if [ -n "$EXISTING_PR" ]; then
+            echo "PR #$EXISTING_PR already exists for $BUMP_BRANCH — skipping creation"
+          else
+            gh pr create \
+              --base "$BRANCH_REF" \
+              --head "$BUMP_BRANCH" \
+              --title "chore: bump version to ${TARGET_VERSION}" \
+              --body "Automated version bump for \`${BRANCH_REF}\` branch."
+          fi
