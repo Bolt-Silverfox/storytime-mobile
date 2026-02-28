@@ -56,7 +56,7 @@ const useSubscribeIAP = (
         });
         onSubscribed?.();
       } catch (err) {
-        // eslint-disable-next-line no-console
+         
         if (__DEV__)
           console.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
@@ -91,7 +91,7 @@ const useSubscribeIAP = (
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        // eslint-disable-next-line no-console
+         
         if (__DEV__)
           console.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));
