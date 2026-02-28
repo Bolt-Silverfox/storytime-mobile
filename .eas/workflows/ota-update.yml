@@ -6,7 +6,7 @@ concurrency:
 
 on:
   push:
-    branches: [dev-v1.0.0, main]
+    branches: [dev-v1.0.0]
     paths:
       - '**'
       - '!**.md'
@@ -16,16 +16,7 @@ on:
 jobs:
   update-dev:
     name: OTA Update (dev)
-    if: ${{ github.ref == 'refs/heads/dev-v1.0.0' }}
     type: update
     params:
       branch: development
       message: ${{ github.event.head_commit.message || 'OTA update from dev' }}
-
-  update-production:
-    name: OTA Update (production)
-    if: ${{ github.ref == 'refs/heads/main' }}
-    type: update
-    params:
-      branch: production
-      message: ${{ github.event.head_commit.message || 'OTA update from main' }}
