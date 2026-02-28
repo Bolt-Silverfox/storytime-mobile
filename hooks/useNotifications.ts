@@ -68,8 +68,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
         try {
           // @ts-expect-error - dynamic navigation
           navigation.navigate(screen, data);
-        } catch {
-          console.warn("Failed to navigate to screen:", screen); // eslint-disable-line no-console
+        } catch (err) {
+          console.warn("Failed to navigate to screen:", screen, err); // eslint-disable-line no-console
           goToNotifications();
         }
         return;
