@@ -23,7 +23,7 @@ const useCancelSubscription = (onSuccessCb?: () => void) => {
     },
     onError: (err) => {
       Alert.alert("Payment cancellation failed", err.message);
-      if (__DEV__) console.error("Cancel payment error", err);
+      if (__DEV__) console.error("Cancel payment error", err); // eslint-disable-line no-console
     },
   });
 };

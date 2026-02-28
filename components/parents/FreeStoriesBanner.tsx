@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
@@ -40,71 +40,69 @@ const FreeStoriesBanner = () => {
   };
 
   return (
-    <View
-      style={{
-        backgroundColor: "#4807EC",
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 16,
-        padding: 16,
-        borderRadius: 12,
-      }}
-    >
-      <View style={{ flex: 1, gap: 6 }}>
-        <Text
-          style={{
-            fontFamily: "abeezee",
-            fontSize: 12,
-            color: "#D3C9FA",
-          }}
-        >
-          {getDescription()}
-        </Text>
+    <View style={bannerStyles.container}>
+      <View style={bannerStyles.contentWrapper}>
+        <Text style={bannerStyles.description}>{getDescription()}</Text>
         {showUpgrade ? (
           <Pressable onPress={() => navigator.navigate("getPremium")}>
-            <Text
-              style={{
-                fontFamily: "quilka",
-                fontSize: 12,
-                fontWeight: "700",
-                lineHeight: 20,
-                color: "#FFFFFF",
-                textDecorationLine: "underline",
-              }}
-            >
-              {getBoldText()}
-            </Text>
+            <Text style={bannerStyles.boldTextUnderlined}>{getBoldText()}</Text>
           </Pressable>
         ) : (
-          <Text
-            style={{
-              fontFamily: "quilka",
-              fontSize: 12,
-              fontWeight: "700",
-              lineHeight: 20,
-              color: "#FFFFFF",
-            }}
-          >
-            {getBoldText()}
-          </Text>
+          <Text style={bannerStyles.boldText}>{getBoldText()}</Text>
         )}
       </View>
       <Pressable
         onPress={() => setDismissed(true)}
         accessibilityRole="button"
         accessibilityLabel="Dismiss banner"
-        style={{
-          backgroundColor: "#E2D6FE",
-          borderWidth: 0.5,
-          borderColor: "#804FFB",
-          borderRadius: 28,
-          padding: 6,
-        }}
+        style={bannerStyles.dismissButton}
       >
         <Ionicons name="close" size={16} color="#4807EC" />
       </Pressable>
     </View>
   );
 };
+
+const bannerStyles = StyleSheet.create({
+  container: {
+    backgroundColor: "#4807EC",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    padding: 16,
+    borderRadius: 12,
+  },
+  contentWrapper: {
+    flex: 1,
+    gap: 6,
+  },
+  description: {
+    fontFamily: "abeezee",
+    fontSize: 12,
+    color: "#D3C9FA",
+  },
+  boldTextUnderlined: {
+    fontFamily: "quilka",
+    fontSize: 12,
+    fontWeight: "700",
+    lineHeight: 20,
+    color: "#FFFFFF",
+    textDecorationLine: "underline",
+  },
+  boldText: {
+    fontFamily: "quilka",
+    fontSize: 12,
+    fontWeight: "700",
+    lineHeight: 20,
+    color: "#FFFFFF",
+  },
+  dismissButton: {
+    backgroundColor: "#E2D6FE",
+    borderWidth: 0.5,
+    borderColor: "#804FFB",
+    borderRadius: 28,
+    padding: 6,
+  },
+});
 
 export default FreeStoriesBanner;
