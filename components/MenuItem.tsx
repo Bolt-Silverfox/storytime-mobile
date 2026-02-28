@@ -76,10 +76,7 @@ const MenuItem: FC<PropTypes> = ({
   return (
     <TouchableOpacity onPress={onPress}>
       <View
-        style={[
-          styles.menuItem,
-          !isLastItem && styles.defaultBorderBottom,
-        ]}
+        style={[styles.menuItem, !isLastItem && styles.defaultBorderBottom]}
       >
         <View style={styles.menuItemLeft} className="w-[85%]">
           {icon}

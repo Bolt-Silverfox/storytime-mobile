@@ -14,8 +14,31 @@ on:
       - '!.eas/workflows/**'
 
 jobs:
+  fingerprint:
+    name: Fingerprint
+    type: fingerprint
+    environment: production
+
+  get-ios-build:
+    name: Check for existing iOS build
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.ios_fingerprint_hash }}
+      profile: production
+
+  get-android-build:
+    name: Check for existing Android build
+    needs: [fingerprint]
+    type: get-build
+    params:
+      fingerprint_hash: ${{ needs.fingerprint.outputs.android_fingerprint_hash }}
+      profile: production
+
   build-ios:
     name: Build iOS
+    needs: [get-ios-build]
+    if: ${{ !needs.get-ios-build.outputs.build_id }}
     type: build
     params:
       platform: ios
@@ -23,6 +46,8 @@ jobs:
 
   build-android:
     name: Build Android
+    needs: [get-android-build]
+    if: ${{ !needs.get-android-build.outputs.build_id }}
     type: build
     params:
       platform: android
@@ -38,13 +63,29 @@ jobs:
     needs: [build-ios, approve-release]
     type: submit
     params:
-      platform: ios
-      profile: production
+      build_id: ${{ needs.build-ios.outputs.build_id }}
 
   submit-android:
     name: Submit Android to Play Store
     needs: [build-android, approve-release]
     type: submit
     params:
+      build_id: ${{ needs.build-android.outputs.build_id }}
+
+  ota-ios:
+    name: OTA Update iOS
+    needs: [get-ios-build]
+    if: ${{ needs.get-ios-build.outputs.build_id }}
+    type: update
+    params:
+      branch: production
+      platform: ios
+
+  ota-android:
+    name: OTA Update Android
+    needs: [get-android-build]
+    if: ${{ needs.get-android-build.outputs.build_id }}
+    type: update
+    params:
+      branch: production
       platform: android
-      profile: production
