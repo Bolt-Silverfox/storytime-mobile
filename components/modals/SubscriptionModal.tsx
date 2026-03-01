@@ -26,7 +26,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <ScrollView
-        contentContainerClassName="flex flex-col gap-y-10 bg-white"
+        contentContainerClassName="flex-col gap-y-10 bg-white"
         showsVerticalScrollIndicator={false}
       >
         <View

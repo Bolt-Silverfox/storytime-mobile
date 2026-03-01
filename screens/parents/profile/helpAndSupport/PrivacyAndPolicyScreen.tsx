@@ -15,7 +15,7 @@ export default function PrivacyAndPolicyScreen() {
         <PageTitle title="Privacy Policy" goBack={() => navigator.goBack()} />
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerClassName="flex flex-col gap-y-8"
+          contentContainerClassName="flex-col gap-y-8"
           className="mx-4 mb-5 mt-8"
         >
           {privacy.map((term, i) => (
