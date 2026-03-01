@@ -432,12 +432,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!response.success) {
         throw new Error(response.message);
       }
-      await secureTokenStorage.setTokens(
-        response.data.jwt,
-        response.data.refreshToken
-      );
-      await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
+
+      if (response.data && response.data.jwt) {
+        await secureTokenStorage.setTokens(
+          response.data.jwt,
+          response.data.refreshToken
+        );
+        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
+        setUser(response.data.user);
+      } else if (response.jwt) {
+        await secureTokenStorage.setTokens(response.jwt, response.refreshToken);
+        await AsyncStorage.setItem("user", JSON.stringify(response.user));
+        setUser(response.user);
+      }
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
