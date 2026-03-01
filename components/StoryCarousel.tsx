@@ -6,6 +6,8 @@ import StoryItem from "./parents/StoryItem";
 type PropTypes = {
   stories: Story[];
 };
+const keyExtractor = (item: Story) => item.id;
+
 const StoryCarousel = memo(({ stories }: PropTypes) => {
   const filtered = stories.filter((story) => story?.id);
 
@@ -19,11 +21,10 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
       <FlatList
         horizontal
         data={filtered}
-        keyExtractor={(item) => item.id}
+        keyExtractor={keyExtractor}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          flexDirection: "row",
           gap: 12,
           paddingVertical: 4,
         }}

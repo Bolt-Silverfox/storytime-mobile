@@ -14,7 +14,18 @@ import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
 
-type SectionItem = { key: string };
+type SectionKey =
+  | "freeStoriesBanner"
+  | "storiesByAge"
+  | "topRecommendations"
+  | "todaysTopPicks"
+  | "seasonalStories"
+  | "funAndAdventures"
+  | "storyCategoriesList";
+
+type SectionItem = { key: SectionKey };
+
+const sectionKeyExtractor = (item: SectionItem) => item.key;
 
 const SECTIONS: SectionItem[] = [
   { key: "freeStoriesBanner" },
@@ -63,8 +74,6 @@ const ParentHomeScreen = () => {
         return <FunAndAdventuresComponent />;
       case "storyCategoriesList":
         return <StoryCategoriesList />;
-      default:
-        return null;
     }
   }, []);
 
@@ -86,7 +95,7 @@ const ParentHomeScreen = () => {
         <ParentsHomeScreenHeader />
         <FlatList
           data={SECTIONS}
-          keyExtractor={(item) => item.key}
+          keyExtractor={sectionKeyExtractor}
           renderItem={renderSection}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
