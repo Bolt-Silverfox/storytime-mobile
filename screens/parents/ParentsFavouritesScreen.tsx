@@ -195,7 +195,17 @@ const ParentsFavouritesScreen = () => {
           data={showNoData || showNoMatches ? [] : filteredStories}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
-          contentContainerClassName="flex grow flex-col gap-y-4 px-4 pb-10 pt-6"
+          contentContainerStyle={{
+            flexGrow: 1,
+            gap: 16,
+            paddingHorizontal: 16,
+            paddingBottom: 40,
+            paddingTop: 24,
+          }}
+          removeClippedSubviews={false}
+          windowSize={10}
+          initialNumToRender={6}
+          maxToRenderPerBatch={4}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -203,7 +213,7 @@ const ParentsFavouritesScreen = () => {
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <View className="items-center py-4">
+              <View style={{ height: 60, alignItems: "center", justifyContent: "center" }}>
                 <ActivityIndicator size="small" />
                 <Text className="mt-2 font-[abeezee] text-sm text-text">
                   Loading more favourites...

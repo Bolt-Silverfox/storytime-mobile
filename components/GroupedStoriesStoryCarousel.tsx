@@ -105,10 +105,14 @@ const GroupedStoriesStoryCarousel = ({
       data={stories}
       keyExtractor={(item) => item.id}
       className="-mt-4 flex-1 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex-col px-4 pt-6 pb-5"
+      contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
       columnWrapperClassName="gap-x-3 mb-6"
+      removeClippedSubviews={false}
+      windowSize={10}
+      initialNumToRender={6}
+      maxToRenderPerBatch={4}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -143,6 +147,11 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 20,
+  },
   columnItem: { flex: 1 },
-  footer: { paddingVertical: 16, alignItems: "center" },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });

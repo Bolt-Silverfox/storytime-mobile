@@ -27,9 +27,10 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
           gap: 12,
           paddingVertical: 4,
         }}
+        removeClippedSubviews={false}
         initialNumToRender={3}
         maxToRenderPerBatch={3}
-        windowSize={5}
+        windowSize={7}
       />
     </View>
   );

@@ -90,9 +90,10 @@ const ParentHomeScreen = () => {
           renderItem={renderSection}
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
-          initialNumToRender={3}
-          maxToRenderPerBatch={2}
-          windowSize={5}
+          removeClippedSubviews={false}
+          initialNumToRender={4}
+          maxToRenderPerBatch={3}
+          windowSize={10}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

@@ -79,7 +79,16 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     <FlatList
       data={stories}
       keyExtractor={(item) => item.id}
-      contentContainerClassName="grow flex-col gap-y-6 px-4 pb-5"
+      contentContainerStyle={{
+        flexGrow: 1,
+        gap: 24,
+        paddingHorizontal: 16,
+        paddingBottom: 20,
+      }}
+      removeClippedSubviews={false}
+      windowSize={10}
+      initialNumToRender={6}
+      maxToRenderPerBatch={4}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -88,7 +97,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <View className="items-center py-4">
+          <View style={{ height: 60, alignItems: "center", justifyContent: "center" }}>
             <ActivityIndicator size="small" />
             <Text className="mt-2 font-[abeezee] text-sm text-text">
               Loading more stories...
