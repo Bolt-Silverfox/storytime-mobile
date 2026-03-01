@@ -8,7 +8,12 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const FunAndAdventuresComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
-  const { data: categories } = useQuery(queryStoryCategories());
+  const {
+    data: categories,
+    isPending: categoriesPending,
+    error: categoriesError,
+    refetch: refetchCategories,
+  } = useQuery(queryStoryCategories());
 
   const category = categories?.[0];
 
@@ -17,7 +22,17 @@ const FunAndAdventuresComponent = () => {
     enabled: !!category?.id,
   });
 
-  if (!category) return null;
+  if (!category) {
+    return (
+      <HomeScreenCarouselComponent
+        isPending={categoriesPending}
+        error={categoriesError}
+        refetch={refetchCategories}
+      >
+        <>{null}</>
+      </HomeScreenCarouselComponent>
+    );
+  }
 
   return (
     <HomeScreenCarouselComponent
