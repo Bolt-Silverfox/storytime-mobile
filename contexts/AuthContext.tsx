@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { User } from "../types";
-import auth from "../utils/auth";
+import auth, { publicHeaders } from "../utils/auth";
 import {
   BASE_URL,
   emailRegex,
@@ -424,9 +424,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       const { idToken } = googleResponse.data;
       const request = await fetch(`${BASE_URL}/auth/google`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: publicHeaders,
         body: JSON.stringify({ id_token: idToken }),
         method: "POST",
       });
@@ -498,9 +496,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const request = await fetch(`${BASE_URL}/auth/apple`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: publicHeaders,
         body: JSON.stringify({
           id_token: idToken,
           firstName: firstName || undefined,
