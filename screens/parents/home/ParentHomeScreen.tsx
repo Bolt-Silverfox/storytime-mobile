@@ -37,7 +37,7 @@ const ParentHomeScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1 bg-bgLight px-4">
+      <View className="flex-1 bg-bgLight px-4">
         <ParentsHomeScreenHeader />
         <ScrollView
           showsVerticalScrollIndicator={false}

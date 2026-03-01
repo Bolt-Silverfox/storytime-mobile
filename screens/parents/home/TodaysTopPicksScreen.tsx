@@ -79,7 +79,7 @@ const TodaysTopPicksScreen = () => {
         ) : (
           <ScrollView
             className="-mt-4 rounded-t-3xl bg-white pt-5"
-            contentContainerClassName="flex flex-row flex-wrap gap-x-3 gap-y-6 px-4 py-6 pb-5"
+            contentContainerClassName="flex-row flex-wrap gap-x-3 gap-y-6 px-4 py-6 pb-5"
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
