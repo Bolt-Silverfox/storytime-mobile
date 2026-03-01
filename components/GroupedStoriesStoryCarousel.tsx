@@ -13,6 +13,7 @@ import useInfiniteStories, {
 } from "../hooks/tanstack/queryHooks/useInfiniteStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
+import useAdaptiveColumns from "../hooks/others/useAdaptiveColumns";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
@@ -33,6 +34,7 @@ const GroupedStoriesStoryCarousel = ({
   params,
 }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const numColumns = useAdaptiveColumns();
   const {
     data,
     isPending,
@@ -99,12 +101,13 @@ const GroupedStoriesStoryCarousel = ({
 
   return (
     <FlatList
+      key={numColumns}
       data={stories}
       keyExtractor={(item) => item.id}
       className="-mt-4 rounded-t-3xl bg-white pt-5"
       contentContainerClassName="flex flex-col px-4 pt-6 pb-5"
       showsVerticalScrollIndicator={false}
-      numColumns={2}
+      numColumns={numColumns}
       columnWrapperClassName="gap-x-3 mb-6"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />

@@ -1,6 +1,14 @@
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+
+/** Headers for unauthenticated endpoints that still require the API key. */
+const publicHeaders: Record<string, string> = {
+  "Content-Type": "application/json",
+  ...(API_KEY ? { "X-API-Key": API_KEY } : {}),
+};
+
 const auth = {
   logout: async () => {
     const response = await apiFetch(`${BASE_URL}/auth/logout`, {
@@ -12,9 +20,7 @@ const auth = {
   login: async (email: string, password: string) => {
     const response = await fetch(`${BASE_URL}/auth/login`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ email, password }),
     });
     return await response.json();
@@ -28,9 +34,7 @@ const auth = {
   }) => {
     const response = await fetch(`${BASE_URL}/auth/register`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify(data),
     });
     return response.json();
@@ -39,9 +43,7 @@ const auth = {
   verifyEmail: async (token: string) => {
     const response = await fetch(`${BASE_URL}/auth/verify-email`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ token }),
     });
     return await response.json();
@@ -50,9 +52,7 @@ const auth = {
   resendVerificationEmail: async (email: string) => {
     const response = await fetch(`${BASE_URL}/auth/send-verification`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ email }),
     });
     const data = await response.json();
@@ -62,9 +62,7 @@ const auth = {
   requestPasswordReset: async (email: string) => {
     const response = await fetch(`${BASE_URL}/auth/request-password-reset`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ email }),
     });
     return await response.json();
@@ -73,9 +71,7 @@ const auth = {
   vaildateResetToken: async (email: string, token: string) => {
     const response = await fetch(`${BASE_URL}/auth/validate-reset-token`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ email, token }),
     });
     return await response.json();
@@ -83,9 +79,7 @@ const auth = {
   resetpassword: async (email: string, token: string, newPassword: string) => {
     const response = await fetch(`${BASE_URL}/auth/reset-password`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: publicHeaders,
       body: JSON.stringify({ email, token, newPassword }),
     });
     return await response.json();
@@ -160,4 +154,5 @@ const auth = {
   },
 };
 
+export { publicHeaders };
 export default auth;
