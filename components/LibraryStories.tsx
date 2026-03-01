@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
-import { ActivityIndicator, RefreshControl, Text, View } from "react-native";
+import { ActivityIndicator, RefreshControl, StyleSheet, Text, View } from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
@@ -8,6 +8,8 @@ import ErrorComponent from "./ErrorComponent";
 import LibraryStoryItem from "./LibraryStoryItem";
 import LoadingIcon from "./LoadingIcon";
 import CustomEmptyState from "./emptyState/CustomEmptyState";
+
+const storyKeyExtractor = (item: { id: string }) => item.id;
 
 type PropTypes = {
   storyFilter: LibraryFilterType;
@@ -73,11 +75,9 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
   return (
     <FlashList
       data={stories}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={{
-        paddingHorizontal: 16,
-        paddingBottom: 20,
-      }}
+      keyExtractor={storyKeyExtractor}
+      drawDistance={500}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -87,13 +87,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
       ItemSeparatorComponent={VerticalSeparator}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <View
-            style={{
-              height: 60,
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
+          <View style={styles.footer}>
             <ActivityIndicator size="small" />
             <Text className="mt-2 font-[abeezee] text-sm text-text">
               Loading more stories...
@@ -112,6 +106,11 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
   );
 };
 
-const VerticalSeparator = () => <View style={{ height: 24 }} />;
+const styles = StyleSheet.create({
+  contentContainer: { paddingHorizontal: 16, paddingBottom: 20 },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
+  separator: { height: 24 },
+});
+const VerticalSeparator = () => <View style={styles.separator} />;
 
 export default LibraryStories;

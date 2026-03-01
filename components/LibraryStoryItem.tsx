@@ -54,7 +54,7 @@ const LibraryStoryItem = ({
           },
         })
       }
-      className="flex flex-col rounded-xl border border-border-light p-1"
+      className="flex flex-col rounded-xl border border-border-light bg-white p-1"
     >
       <Image
         source={{ uri: story.coverImageUrl }}

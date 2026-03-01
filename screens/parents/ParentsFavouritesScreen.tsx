@@ -5,6 +5,7 @@ import {
   Pressable,
   RefreshControl,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   View,
@@ -19,6 +20,8 @@ import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import useRefreshControl from "../../hooks/others/useRefreshControl";
 import { AgeGroupType, FavouriteStory } from "../../types";
+
+const favouriteKeyExtractor = (item: FavouriteStory) => item.id;
 
 type AgeFilter = AgeGroupType | "ALL";
 type AgeRangeFilter =
@@ -193,13 +196,10 @@ const ParentsFavouritesScreen = () => {
 
         <FlashList
           data={showNoData || showNoMatches ? [] : filteredStories}
-          keyExtractor={(item) => item.id}
+          keyExtractor={favouriteKeyExtractor}
           renderItem={renderItem}
-          contentContainerStyle={{
-            paddingHorizontal: 16,
-            paddingBottom: 40,
-            paddingTop: 24,
-          }}
+          drawDistance={500}
+          contentContainerStyle={styles.contentContainer}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
@@ -208,13 +208,7 @@ const ParentsFavouritesScreen = () => {
           ItemSeparatorComponent={FavouritesSeparator}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <View
-                style={{
-                  height: 60,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <View style={styles.footer}>
                 <ActivityIndicator size="small" />
                 <Text className="mt-2 font-[abeezee] text-sm text-text">
                   Loading more favourites...
@@ -250,6 +244,11 @@ const ParentsFavouritesScreen = () => {
   );
 };
 
-const FavouritesSeparator = () => <View style={{ height: 16 }} />;
+const styles = StyleSheet.create({
+  contentContainer: { paddingHorizontal: 16, paddingBottom: 40, paddingTop: 24 },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
+  separator: { height: 16 },
+});
+const FavouritesSeparator = () => <View style={styles.separator} />;
 
 export default ParentsFavouritesScreen;

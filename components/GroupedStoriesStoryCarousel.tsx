@@ -21,6 +21,8 @@ import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
 
+const storyKeyExtractor = (item: { id: string }) => item.id;
+
 type PropTypes = {
   showAges: boolean;
   setSelectedAgeGroup: Dispatch<SetStateAction<AgeGroupType>>;
@@ -103,9 +105,10 @@ const GroupedStoriesStoryCarousel = ({
     <FlashList
       key={numColumns}
       data={stories}
-      keyExtractor={(item) => item.id}
+      keyExtractor={storyKeyExtractor}
       className="-mt-4 flex-1 rounded-t-3xl bg-white pt-5"
       contentContainerStyle={styles.contentContainer}
+      drawDistance={500}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
       refreshControl={

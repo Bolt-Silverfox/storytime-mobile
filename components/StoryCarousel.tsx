@@ -1,6 +1,6 @@
 import { FlashList } from "@shopify/flash-list";
 import { memo, useCallback } from "react";
-import { View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import { Story } from "../types";
 import StoryItem from "./parents/StoryItem";
 
@@ -24,16 +24,20 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
         data={filtered}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
+        drawDistance={500}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{
-          paddingVertical: 4,
-        }}
+        contentContainerStyle={styles.contentContainer}
         ItemSeparatorComponent={HorizontalSeparator}
       />
     </View>
   );
 });
 
-const HorizontalSeparator = () => <View style={{ width: 12 }} />;
+const HorizontalSeparator = () => <View style={styles.separator} />;
+
+const styles = StyleSheet.create({
+  separator: { width: 12 },
+  contentContainer: { paddingVertical: 4 },
+});
 
 export default StoryCarousel;
