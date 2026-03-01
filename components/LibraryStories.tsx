@@ -1,8 +1,9 @@
+import { FlashList } from "@shopify/flash-list";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   RefreshControl,
+  StyleSheet,
   Text,
   View,
 } from "react-native";
@@ -13,6 +14,8 @@ import ErrorComponent from "./ErrorComponent";
 import LibraryStoryItem from "./LibraryStoryItem";
 import LoadingIcon from "./LoadingIcon";
 import CustomEmptyState from "./emptyState/CustomEmptyState";
+
+const storyKeyExtractor = (item: { id: string }) => item.id;
 
 type PropTypes = {
   storyFilter: LibraryFilterType;
@@ -76,19 +79,21 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   return (
-    <FlatList
+    <FlashList
       data={stories}
-      keyExtractor={(item) => item.id}
-      contentContainerClassName="grow flex-col gap-y-6 px-4 pb-5"
+      keyExtractor={storyKeyExtractor}
+      drawDistance={500}
+      contentContainerStyle={styles.contentContainer}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       renderItem={renderStoryItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
+      ItemSeparatorComponent={VerticalSeparator}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <View className="items-center py-4">
+          <View style={styles.footer}>
             <ActivityIndicator size="small" />
             <Text className="mt-2 font-[abeezee] text-sm text-text">
               Loading more stories...
@@ -106,5 +111,12 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     />
   );
 };
+
+const styles = StyleSheet.create({
+  contentContainer: { paddingHorizontal: 16, paddingBottom: 20 },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
+  separator: { height: 24 },
+});
+const VerticalSeparator = () => <View style={styles.separator} />;
 
 export default LibraryStories;

@@ -1,8 +1,8 @@
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   RefreshControl,
   StyleSheet,
   Text,
@@ -20,6 +20,8 @@ import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
+
+const storyKeyExtractor = (item: { id: string }) => item.id;
 
 type PropTypes = {
   showAges: boolean;
@@ -59,7 +61,7 @@ const GroupedStoriesStoryCarousel = ({
 
   const renderStoryItem = useCallback(
     ({ item: story }: { item: (typeof stories)[number] }) => (
-      <View className="flex-1" style={styles.columnItem}>
+      <View style={styles.columnItem}>
         <StoryItem story={story} isGrouped />
       </View>
     ),
@@ -100,15 +102,15 @@ const GroupedStoriesStoryCarousel = ({
   }
 
   return (
-    <FlatList
+    <FlashList
       key={numColumns}
       data={stories}
-      keyExtractor={(item) => item.id}
-      className="-mt-4 flex-1 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex-col px-4 pt-6 pb-5"
+      keyExtractor={storyKeyExtractor}
+      style={styles.carouselContainer}
+      contentContainerStyle={styles.contentContainer}
+      drawDistance={500}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
-      columnWrapperClassName="gap-x-3 mb-6"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -143,6 +145,19 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
-  columnItem: { flex: 1 },
-  footer: { paddingVertical: 16, alignItems: "center" },
+  carouselContainer: {
+    marginTop: -16,
+    flex: 1,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: "#ffffff",
+    paddingTop: 20,
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 20,
+  },
+  columnItem: { flex: 1, marginHorizontal: 6, marginBottom: 24 },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });
