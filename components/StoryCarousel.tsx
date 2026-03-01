@@ -1,5 +1,6 @@
+import { FlashList } from "@shopify/flash-list";
 import { memo, useCallback } from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { Story } from "../types";
 import StoryItem from "./parents/StoryItem";
 
@@ -18,23 +19,21 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
 
   return (
     <View className="mx-auto w-full max-w-screen-md">
-      <FlatList
+      <FlashList
         horizontal
         data={filtered}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={{
-          gap: 12,
           paddingVertical: 4,
         }}
-        removeClippedSubviews={false}
-        initialNumToRender={3}
-        maxToRenderPerBatch={3}
-        windowSize={7}
+        ItemSeparatorComponent={HorizontalSeparator}
       />
     </View>
   );
 });
+
+const HorizontalSeparator = () => <View style={{ width: 12 }} />;
 
 export default StoryCarousel;

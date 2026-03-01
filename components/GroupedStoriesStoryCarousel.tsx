@@ -1,8 +1,8 @@
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   RefreshControl,
   StyleSheet,
   Text,
@@ -100,7 +100,7 @@ const GroupedStoriesStoryCarousel = ({
   }
 
   return (
-    <FlatList
+    <FlashList
       key={numColumns}
       data={stories}
       keyExtractor={(item) => item.id}
@@ -108,11 +108,6 @@ const GroupedStoriesStoryCarousel = ({
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
-      columnWrapperStyle={styles.columnWrapper}
-      removeClippedSubviews={false}
-      windowSize={10}
-      initialNumToRender={6}
-      maxToRenderPerBatch={4}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -152,10 +147,6 @@ const styles = StyleSheet.create({
     paddingTop: 24,
     paddingBottom: 20,
   },
-  columnWrapper: {
-    gap: 12,
-    marginBottom: 24,
-  },
-  columnItem: { flex: 1 },
+  columnItem: { flex: 1, marginHorizontal: 6, marginBottom: 24 },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });

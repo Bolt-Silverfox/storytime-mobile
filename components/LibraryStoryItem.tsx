@@ -35,7 +35,6 @@ const LibraryStoryItem = ({
   const storyDuration = secondsToMinutes(story.durationSeconds);
   return (
     <Pressable
-      key={story.id}
       onPress={() =>
         navigator.navigate("stories", {
           screen: "childStoryDetails",

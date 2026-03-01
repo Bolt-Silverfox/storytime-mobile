@@ -93,7 +93,6 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   return (
     <Pressable
       onPress={navigate}
-      key={id}
       className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
     >
       <View className={`relative w-full rounded-2xl`}>

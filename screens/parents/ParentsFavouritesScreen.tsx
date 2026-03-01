@@ -1,7 +1,7 @@
+import { FlashList } from "@shopify/flash-list";
 import { useCallback, useMemo, useState } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   Pressable,
   RefreshControl,
   ScrollView,
@@ -191,26 +191,21 @@ const ParentsFavouritesScreen = () => {
           </View>
         )}
 
-        <FlatList
+        <FlashList
           data={showNoData || showNoMatches ? [] : filteredStories}
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={{
-            flexGrow: 1,
-            gap: 16,
             paddingHorizontal: 16,
             paddingBottom: 40,
             paddingTop: 24,
           }}
-          removeClippedSubviews={false}
-          windowSize={10}
-          initialNumToRender={6}
-          maxToRenderPerBatch={4}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
           onEndReached={handleEndReached}
           onEndReachedThreshold={0.5}
+          ItemSeparatorComponent={FavouritesSeparator}
           ListFooterComponent={
             isFetchingNextPage ? (
               <View
@@ -254,5 +249,7 @@ const ParentsFavouritesScreen = () => {
     </SafeAreaWrapper>
   );
 };
+
+const FavouritesSeparator = () => <View style={{ height: 16 }} />;
 
 export default ParentsFavouritesScreen;

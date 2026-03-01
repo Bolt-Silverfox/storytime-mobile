@@ -1,7 +1,7 @@
+import { FlashList } from "@shopify/flash-list";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
   ActivityIndicator,
-  FlatList,
   RefreshControl,
   Text,
   View,
@@ -76,25 +76,20 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
   return (
-    <FlatList
+    <FlashList
       data={stories}
       keyExtractor={(item) => item.id}
       contentContainerStyle={{
-        flexGrow: 1,
-        gap: 24,
         paddingHorizontal: 16,
         paddingBottom: 20,
       }}
-      removeClippedSubviews={false}
-      windowSize={10}
-      initialNumToRender={6}
-      maxToRenderPerBatch={4}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
       renderItem={renderStoryItem}
       onEndReached={handleEndReached}
       onEndReachedThreshold={0.5}
+      ItemSeparatorComponent={VerticalSeparator}
       ListFooterComponent={
         isFetchingNextPage ? (
           <View
@@ -121,5 +116,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     />
   );
 };
+
+const VerticalSeparator = () => <View style={{ height: 24 }} />;
 
 export default LibraryStories;
