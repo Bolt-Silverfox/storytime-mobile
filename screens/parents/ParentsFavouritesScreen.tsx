@@ -245,7 +245,11 @@ const ParentsFavouritesScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  contentContainer: { paddingHorizontal: 16, paddingBottom: 40, paddingTop: 24 },
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 40,
+    paddingTop: 24,
+  },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
   separator: { height: 16 },
 });
