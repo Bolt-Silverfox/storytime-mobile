@@ -1,5 +1,5 @@
-import { memo } from "react";
-import { ScrollView, View } from "react-native";
+import { memo, useCallback } from "react";
+import { FlatList, View } from "react-native";
 import { Story } from "../types";
 import StoryItem from "./parents/StoryItem";
 
@@ -7,19 +7,23 @@ type PropTypes = {
   stories: Story[];
 };
 const StoryCarousel = memo(({ stories }: PropTypes) => {
+  const filtered = stories.filter((story) => story?.id);
+
+  const renderItem = useCallback(
+    ({ item }: { item: Story }) => <StoryItem story={item} />,
+    []
+  );
+
   return (
     <View className="mx-auto w-full max-w-screen-md">
-      <ScrollView
+      <FlatList
         horizontal
+        data={filtered}
+        keyExtractor={(item) => item.id}
+        renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex-row gap-x-3"
-      >
-        {stories
-          .filter((story) => story?.id)
-          .map((story) => (
-            <StoryItem key={story.id} story={story} />
-          ))}
-      </ScrollView>
+        contentContainerStyle={{ flexDirection: "row", gap: 12, paddingVertical: 4 }}
+      />
     </View>
   );
 });

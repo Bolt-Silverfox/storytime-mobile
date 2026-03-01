@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback } from "react";
-import { RefreshControl, ScrollView, View } from "react-native";
+import { useCallback, useMemo } from "react";
+import { FlatList, RefreshControl, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
@@ -13,6 +13,18 @@ import StoryCategoriesList from "../../../components/parents/StoryCategoriesList
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
+
+type SectionItem = { key: string };
+
+const SECTIONS: SectionItem[] = [
+  { key: "freeStoriesBanner" },
+  { key: "storiesByAge" },
+  { key: "topRecommendations" },
+  { key: "todaysTopPicks" },
+  { key: "seasonalStories" },
+  { key: "funAndAdventures" },
+  { key: "storyCategoriesList" },
+];
 
 const ParentHomeScreen = () => {
   const {
@@ -35,32 +47,57 @@ const ParentHomeScreen = () => {
   );
   const { refreshing, onRefresh } = useRefreshControl(invalidateAll);
 
+  const renderSection = useCallback(
+    ({ item }: { item: SectionItem }) => {
+      switch (item.key) {
+        case "freeStoriesBanner":
+          return <FreeStoriesBanner />;
+        case "storiesByAge":
+          return <StoriesByAgeComponent />;
+        case "topRecommendations":
+          return <ParentsTopRecommendations />;
+        case "todaysTopPicks":
+          return <TodaysTopPicksComponent />;
+        case "seasonalStories":
+          return <SeasonalStoriesComponent />;
+        case "funAndAdventures":
+          return <FunAndAdventuresComponent />;
+        case "storyCategoriesList":
+          return <StoryCategoriesList />;
+        default:
+          return null;
+      }
+    },
+    []
+  );
+
+  const listHeader = useMemo(
+    () =>
+      showBanner ? (
+        <NotificationPermissionBanner
+          permissionStatus={permissionStatus}
+          onDismiss={handleDismiss}
+          onPermissionGranted={handlePermissionGranted}
+        />
+      ) : null,
+    [showBanner, permissionStatus, handleDismiss, handlePermissionGranted]
+  );
+
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bgLight px-4">
         <ParentsHomeScreenHeader />
-        <ScrollView
+        <FlatList
+          data={SECTIONS}
+          keyExtractor={(item) => item.key}
+          renderItem={renderSection}
           showsVerticalScrollIndicator={false}
-          contentContainerClassName="flex-col gap-y-8 pb-8"
+          contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
-        >
-          {showBanner && (
-            <NotificationPermissionBanner
-              permissionStatus={permissionStatus}
-              onDismiss={handleDismiss}
-              onPermissionGranted={handlePermissionGranted}
-            />
-          )}
-          <FreeStoriesBanner />
-          <StoriesByAgeComponent />
-          <ParentsTopRecommendations />
-          <TodaysTopPicksComponent />
-          <SeasonalStoriesComponent />
-          <FunAndAdventuresComponent />
-          <StoryCategoriesList />
-        </ScrollView>
+          ListHeaderComponent={listHeader}
+        />
       </View>
     </SafeAreaWrapper>
   );
