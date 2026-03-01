@@ -213,7 +213,13 @@ const ParentsFavouritesScreen = () => {
           onEndReachedThreshold={0.5}
           ListFooterComponent={
             isFetchingNextPage ? (
-              <View style={{ height: 60, alignItems: "center", justifyContent: "center" }}>
+              <View
+                style={{
+                  height: 60,
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 <ActivityIndicator size="small" />
                 <Text className="mt-2 font-[abeezee] text-sm text-text">
                   Loading more favourites...
