@@ -35,7 +35,6 @@ const LibraryStoryItem = ({
   const storyDuration = secondsToMinutes(story.durationSeconds);
   return (
     <Pressable
-      key={story.id}
       onPress={() =>
         navigator.navigate("stories", {
           screen: "childStoryDetails",
@@ -55,7 +54,7 @@ const LibraryStoryItem = ({
           },
         })
       }
-      className="flex flex-col rounded-xl border border-border-light p-1"
+      className="flex flex-col rounded-xl border border-border-light bg-white p-1"
     >
       <Image
         source={{ uri: story.coverImageUrl }}
