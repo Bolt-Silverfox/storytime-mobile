@@ -33,11 +33,9 @@ jobs:
         run: npm ci --legacy-peer-deps
 
       - name: TypeScript check
-        continue-on-error: true
         run: npm run type-check
 
       - name: Lint
-        continue-on-error: true
         run: npm run lint
 
       - name: Format check

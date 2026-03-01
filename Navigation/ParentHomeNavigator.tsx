@@ -2,7 +2,6 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import FunAndADventureStoriesScreen from "../screens/parents/home/FunAndAdventureStoriesScreen";
 import ParentHomeScreen from "../screens/parents/home/ParentHomeScreen";
 import TodaysTopPicksScreen from "../screens/parents/home/TodaysTopPicksScreen";
 import ParentsTopRecommendationsScreen from "../screens/parents/home/ParentsTopRecommendationsScreen";
@@ -16,7 +15,6 @@ type ParentHomeNavigatorParamList = {
   storiesByCategory: { category: string; id: string; imageUrl: string };
   topRecommendations: undefined;
   seasonalStories: undefined;
-  funAndAdventureStories: undefined;
   todaysTopPicks: undefined;
   storiesByAge: { ageGroup: AgeGroupType };
 };
@@ -39,10 +37,6 @@ const ParentHomeNavigator = () => {
         component={ParentsTopRecommendationsScreen}
       />
       <Stack.Screen name="seasonalStories" component={SeasonalStoriesScreen} />
-      <Stack.Screen
-        name="funAndAdventureStories"
-        component={FunAndADventureStoriesScreen}
-      />
       <Stack.Screen name="storiesByAge" component={StoriesByAgeScreen} />
     </Stack.Navigator>
   );

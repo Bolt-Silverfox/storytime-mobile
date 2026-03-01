@@ -105,7 +105,7 @@ const GroupedStoriesStoryCarousel = ({
       data={stories}
       keyExtractor={(item) => item.id}
       className="-mt-4 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex flex-col px-4 pt-6 pb-5"
+      contentContainerClassName="flex-col px-4 pt-6 pb-5"
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
       columnWrapperClassName="gap-x-3 mb-6"
@@ -125,11 +125,15 @@ const GroupedStoriesStoryCarousel = ({
       onEndReachedThreshold={0.5}
       ListFooterComponent={
         isFetchingNextPage ? (
-          <ActivityIndicator
-            size="small"
-            style={styles.footer}
-            accessibilityLabel="Loading more stories"
-          />
+          <View style={styles.footer}>
+            <ActivityIndicator
+              size="small"
+              accessibilityLabel="Loading more stories"
+            />
+            <Text className="mt-2 text-center font-[abeezee] text-sm text-text">
+              Loading more stories...
+            </Text>
+          </View>
         ) : null
       }
     />
@@ -140,5 +144,5 @@ export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
   columnItem: { flex: 1 },
-  footer: { paddingVertical: 16 },
+  footer: { paddingVertical: 16, alignItems: "center" },
 });
