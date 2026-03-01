@@ -2,6 +2,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
+import { setSentryUser, clearSentryUser } from "../utils/sentry";
+import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
 import {
   createContext,
   Dispatch,
@@ -189,8 +191,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
         try {
-          setUser(JSON.parse(localStoredSession));
+          const restoredUser = JSON.parse(localStoredSession) as User;
+          setUser(restoredUser);
           await secureTokenStorage.getAccessToken();
+          setSentryUser(restoredUser.id, restoredUser.email);
+          setCrashlyticsUser(restoredUser.id);
         } catch {
           // Corrupted user data - clear it and reset
           await AsyncStorage.removeItem("user");
@@ -251,6 +256,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
+      clearSentryUser();
+      clearCrashlyticsUser();
     }
   }, []);
 
@@ -282,6 +289,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
     setUser(loginData.data.user);
+    setSentryUser(loginData.data.user.id, loginData.data.user.email);
+    setCrashlyticsUser(loginData.data.user.id);
   };
 
   const signUp: AuthFnTypes["signUp"] = async ({
@@ -421,7 +430,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       authData.refreshToken as string
     );
     await AsyncStorage.setItem("user", JSON.stringify(authData.user));
-    setUser(authData.user as User);
+    const oauthUser = authData.user as User;
+    setUser(oauthUser);
+    setSentryUser(oauthUser.id, oauthUser.email);
+    setCrashlyticsUser(oauthUser.id);
   };
 
   const handleGoogleAuth = async () => {

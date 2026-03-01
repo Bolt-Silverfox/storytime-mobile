@@ -19,10 +19,14 @@
       "icon": "./assets/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": ["remote-notification"]
+        "UIBackgroundModes": [
+          "remote-notification"
+        ]
       },
       "entitlements": {
-        "com.apple.developer.applesignin": ["Default"],
+        "com.apple.developer.applesignin": [
+          "Default"
+        ],
         "aps-environment": "production"
       },
       "googleServicesFile": "./GoogleService-Info.plist"
@@ -79,12 +83,21 @@
         {
           "ios": {
             "useFrameworks": "static",
-            "forceStaticLinking": ["RNFBApp", "RNFBMessaging"]
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBMessaging",
+              "RNFBCrashlytics"
+            ]
           }
         }
       ],
       "expo-iap",
-      "./plugins/withFirebaseMessagingManifestFix"
+      "./plugins/withFirebaseMessagingManifestFix",
+      ["@sentry/react-native/expo", {
+        "organization": "emerj",
+        "project": "storytime-mobile"
+      }],
+      "@react-native-firebase/crashlytics"
     ],
     "extra": {
       "eas": {
@@ -97,6 +110,9 @@
     "updates": {
       "url": "https://u.expo.dev/b117024d-5005-477f-8eae-03dce4fd8e45"
     },
-    "platforms": ["ios", "android"]
+    "platforms": [
+      "ios",
+      "android"
+    ]
   }
 }

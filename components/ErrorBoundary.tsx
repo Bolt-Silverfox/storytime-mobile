@@ -1,6 +1,8 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import log from "../utils/logger";
+import { Sentry } from "../utils/sentry";
+import { logNonFatal } from "../utils/crashlytics";
 
 interface Props {
   children: ReactNode;
@@ -21,6 +23,10 @@ class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     log.error("ErrorBoundary caught:", error, errorInfo);
+    Sentry.captureException(error, {
+      extra: { componentStack: errorInfo.componentStack },
+    });
+    logNonFatal(error);
   }
 
   handleRetry = () => {

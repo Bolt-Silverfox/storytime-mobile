@@ -1,4 +1,44 @@
-import { logger, consoleTransport } from "react-native-logs";
+import {
+  logger,
+  consoleTransport,
+  transportFunctionType,
+} from "react-native-logs";
+import * as Sentry from "@sentry/react-native";
+import crashlytics from "@react-native-firebase/crashlytics";
+
+const sentryTransport: transportFunctionType<object> = (props) => {
+  if (__DEV__) return;
+
+  const message =
+    typeof props.msg === "string" ? props.msg : JSON.stringify(props.msg);
+
+  if (props.level.text === "error") {
+    Sentry.captureException(
+      props.rawMsg instanceof Error ? props.rawMsg : new Error(message)
+    );
+  } else {
+    Sentry.addBreadcrumb({
+      category: "log",
+      message,
+      level: props.level.text as Sentry.SeverityLevel,
+    });
+  }
+};
+
+const crashlyticsTransport: transportFunctionType<object> = (props) => {
+  if (__DEV__) return;
+
+  const message =
+    typeof props.msg === "string" ? props.msg : JSON.stringify(props.msg);
+
+  if (props.level.text === "error") {
+    crashlytics().recordError(
+      props.rawMsg instanceof Error ? props.rawMsg : new Error(message)
+    );
+  } else {
+    crashlytics().log(message);
+  }
+};
 
 const log = logger.createLogger({
   levels: {
@@ -8,7 +48,9 @@ const log = logger.createLogger({
     error: 3,
   },
   severity: __DEV__ ? "debug" : "warn",
-  transport: consoleTransport,
+  transport: __DEV__
+    ? consoleTransport
+    : [consoleTransport, sentryTransport, crashlyticsTransport],
   transportOptions: {
     colors: {
       info: "blueBright",
