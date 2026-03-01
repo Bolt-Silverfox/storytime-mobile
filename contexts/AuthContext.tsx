@@ -435,7 +435,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       const authData = response.data ?? response;
       if (!authData.jwt || !authData.refreshToken || !authData.user) {
-        throw new Error("Invalid auth response: missing jwt, refreshToken, or user");
+        throw new Error(
+          "Invalid auth response: missing jwt, refreshToken, or user"
+        );
       }
       await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
       await AsyncStorage.setItem("user", JSON.stringify(authData.user));
@@ -515,7 +517,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Store tokens and user
       const authData = response.data ?? response;
       if (!authData.jwt || !authData.refreshToken || !authData.user) {
-        throw new Error("Invalid auth response: missing jwt, refreshToken, or user");
+        throw new Error(
+          "Invalid auth response: missing jwt, refreshToken, or user"
+        );
       }
       await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
       await AsyncStorage.setItem("user", JSON.stringify(authData.user));
