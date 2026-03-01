@@ -94,7 +94,7 @@ const NotificationsScreen = () => {
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerClassName=" flex-col gap-y-8 px-4 pb-5"
+              contentContainerClassName="flex-col gap-y-8 px-4 pb-5"
             >
               <View className="flex flex-col gap-y-6">
                 {grouped.map((group) => (
