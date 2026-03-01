@@ -94,7 +94,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
         <View className="mx-auto w-full max-w-screen-md flex-1">
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerClassName=" flex-col gap-y-8 pb-5 px-4 pt-8"
+            contentContainerClassName="flex-col gap-y-8 pb-5 px-4 pt-8"
           >
             {SECTIONS.map((section) => (
               <View key={section.title} className="flex flex-col gap-y-4">
