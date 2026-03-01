@@ -22,17 +22,19 @@ const FunAndAdventuresComponent = () => {
     enabled: !!category?.id,
   });
 
-  if (!category) {
+  if (categoriesPending || categoriesError) {
     return (
       <HomeScreenCarouselComponent
         isPending={categoriesPending}
         error={categoriesError}
         refetch={refetchCategories}
       >
-        <>{null}</>
+        {null}
       </HomeScreenCarouselComponent>
     );
   }
+
+  if (!category) return null;
 
   return (
     <HomeScreenCarouselComponent

@@ -410,6 +410,24 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
+  const processOAuthResponse = async (response: Record<string, unknown>) => {
+    if (!response.success) {
+      throw new Error((response.message as string) || "Authentication failed");
+    }
+    const authData = (response.data as Record<string, unknown>) ?? response;
+    if (!authData.jwt || !authData.refreshToken || !authData.user) {
+      throw new Error(
+        "Invalid auth response: missing jwt, refreshToken, or user"
+      );
+    }
+    await secureTokenStorage.setTokens(
+      authData.jwt as string,
+      authData.refreshToken as string
+    );
+    await AsyncStorage.setItem("user", JSON.stringify(authData.user));
+    setUser(authData.user as User);
+  };
+
   const handleGoogleAuth = async () => {
     try {
       setIsLoading(true);
@@ -429,19 +447,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
       });
       const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message);
-      }
-
-      const authData = response.data ?? response;
-      if (!authData.jwt || !authData.refreshToken || !authData.user) {
-        throw new Error(
-          "Invalid auth response: missing jwt, refreshToken, or user"
-        );
-      }
-      await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
-      await AsyncStorage.setItem("user", JSON.stringify(authData.user));
-      setUser(authData.user);
+      await processOAuthResponse(response);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
@@ -510,20 +516,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message);
-      }
-
-      // Store tokens and user
-      const authData = response.data ?? response;
-      if (!authData.jwt || !authData.refreshToken || !authData.user) {
-        throw new Error(
-          "Invalid auth response: missing jwt, refreshToken, or user"
-        );
-      }
-      await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
-      await AsyncStorage.setItem("user", JSON.stringify(authData.user));
-      setUser(authData.user);
+      await processOAuthResponse(response);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
