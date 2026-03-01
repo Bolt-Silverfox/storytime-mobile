@@ -144,5 +144,5 @@ export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
   columnItem: { flex: 1 },
-  footer: { paddingVertical: 16 },
+  footer: { paddingVertical: 16, alignItems: "center" },
 });
