@@ -79,7 +79,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
     <FlatList
       data={stories}
       keyExtractor={(item) => item.id}
-      contentContainerClassName="flex grow flex-col gap-y-6 px-4 pb-5"
+      contentContainerClassName="grow flex-col gap-y-6 px-4 pb-5"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }

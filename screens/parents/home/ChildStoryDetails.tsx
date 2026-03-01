@@ -61,7 +61,7 @@ const ChildStoryDetails = () => {
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
-        <ScrollView contentContainerClassName="flex pb-10 bg-bgLight flex-col">
+        <ScrollView contentContainerClassName="pb-10 bg-bgLight flex-col">
           <ImageBackground
             source={{ uri: coverImageUrl }}
             resizeMode="cover"

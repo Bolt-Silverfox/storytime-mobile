@@ -11,7 +11,7 @@ const StoryCarouselSkeleton = ({ variant }: PropTypes) => {
       <View className="flex">
         <ScrollView
           className="-mt-4 rounded-t-3xl bg-white pt-5"
-          contentContainerClassName="flex flex-col px-4 pb-5"
+          contentContainerClassName="flex-col px-4 pb-5"
           showsVerticalScrollIndicator={false}
         >
           <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">

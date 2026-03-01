@@ -12,7 +12,7 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerClassName="flex bg-bg-light flex-row gap-x-3"
+        contentContainerClassName="flex-row gap-x-3"
       >
         {stories
           .filter((story) => story?.id)
