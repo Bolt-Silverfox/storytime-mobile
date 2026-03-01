@@ -152,6 +152,32 @@ const auth = {
     });
     return await request.json();
   },
+  getLinkedAccounts: async () => {
+    const response = await apiFetch(`${BASE_URL}/auth/linked-accounts`, {
+      method: "GET",
+    });
+    return await response.json();
+  },
+  linkGoogle: async (idToken: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/link/google`, {
+      method: "POST",
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    return await response.json();
+  },
+  linkApple: async (idToken: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/link/apple`, {
+      method: "POST",
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    return await response.json();
+  },
+  unlinkProvider: async (provider: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/unlink/${provider}`, {
+      method: "DELETE",
+    });
+    return await response.json();
+  },
 };
 
 export { publicHeaders };
