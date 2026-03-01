@@ -19,7 +19,7 @@ const UnsubscribedUserComponent = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerClassName="flex flex-col gap-y-8"
+      contentContainerClassName="flex-col gap-y-8"
     >
       <View className="flex flex-col items-center justify-center">
         <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
