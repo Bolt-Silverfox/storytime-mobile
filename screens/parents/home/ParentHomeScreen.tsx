@@ -41,7 +41,7 @@ const ParentHomeScreen = () => {
         <ParentsHomeScreenHeader />
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerClassName="flex-col gap-y-8 pb-8"
+          contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }

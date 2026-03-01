@@ -105,7 +105,7 @@ const GroupedStoriesStoryCarousel = ({
       data={stories}
       keyExtractor={(item) => item.id}
       className="-mt-4 flex-1 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex-col px-4 pt-6 pb-5"
+      contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 24, paddingBottom: 20 }}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
       columnWrapperClassName="gap-x-3 mb-6"
