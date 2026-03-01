@@ -31,7 +31,7 @@ const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
     onError: (err) => {
       Alert.alert("Error", "Failed to update profile. Please try again.");
       if (__DEV__) {
-        console.error("Profile update failed:", err);
+        console.error("Profile update failed:", err); // eslint-disable-line no-console
       }
     },
   });

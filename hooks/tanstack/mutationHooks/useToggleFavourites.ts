@@ -1,35 +1,37 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { ERROR_MESSAGES, QUERY_KEYS } from "../../../constants/ui";
-import { FavouriteStory, QueryResponse } from "../../../types";
+import {
+  CursorPaginatedData,
+  FavouriteStory,
+  QueryResponse,
+} from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
+type FavouritesCache = InfiniteData<CursorPaginatedData<FavouriteStory>>;
+
 const useToggleFavourites = ({
   story,
+  isLiked,
   onSuccess,
 }: {
   story: FavouriteStory;
+  isLiked: boolean;
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
   const { data } = useGetUserProfile();
   const queryKey = [QUERY_KEYS.parentsFavourites, data?.id] as const;
 
-  const previousData =
-    queryClient.getQueryData<QueryResponse<FavouriteStory[]>>(queryKey);
-  const cachedData = previousData?.data ?? [];
-
-  const isLiked = cachedData.some(
-    (stories) => stories.storyId === story.storyId
-  );
-
   return useMutation({
     mutationFn: async () => {
-      await queryClient.cancelQueries({ queryKey });
-
       if (isLiked) {
         return await deleteFromFavourites(story.storyId);
       }
@@ -38,15 +40,22 @@ const useToggleFavourites = ({
     },
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey });
-      if (!previousData?.data) return { previousData };
+      const previousData = queryClient.getQueryData<FavouritesCache>(queryKey);
+      if (!previousData?.pages?.length) return { previousData };
 
-      const newFavourites = isLiked
-        ? cachedData.filter((item) => item.storyId !== story.storyId)
-        : [...cachedData, story];
+      // Optimistic update on the first page
+      const updatedPages = previousData.pages.map((page, i) => {
+        if (i !== 0) return page;
+        const pageData = page.data ?? [];
+        const updatedData = isLiked
+          ? pageData.filter((item) => item.storyId !== story.storyId)
+          : [...pageData, story];
+        return { ...page, data: updatedData };
+      });
 
-      queryClient.setQueryData<QueryResponse<FavouriteStory[]>>(queryKey, {
+      queryClient.setQueryData<FavouritesCache>(queryKey, {
         ...previousData,
-        data: newFavourites,
+        pages: updatedPages,
       });
 
       return { previousData };

@@ -245,6 +245,14 @@ type PaginatedData<T> = {
   };
 };
 
+type CursorPaginatedData<T> = {
+  data: T[];
+  pagination: {
+    nextCursor: string | null;
+    hasNextPage: boolean;
+  };
+};
+
 const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
@@ -364,6 +372,7 @@ export type {
   FavouriteStory,
   AvailableVoices,
   PaginatedData,
+  CursorPaginatedData,
   SubscriptionPlan,
   SubscriptionStatus,
   NotificationCategory,

@@ -4,17 +4,23 @@ import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-type BatchParagraph = {
+export type BatchParagraph = {
   index: number;
   text: string;
   audioUrl: string | null;
 };
 
-type BatchStoryAudioResponse = {
+export type AudioProvider = "elevenlabs" | "deepgram" | "edgetts";
+
+export type BatchStoryAudioResponse = {
   paragraphs: BatchParagraph[];
   totalParagraphs: number;
+  wasTruncated: boolean;
   voiceId: string;
-  providerStatus?: "degraded";
+  usedProvider?: AudioProvider | "none";
+  /** Present only when the backend fell back to a different provider.
+   *  Its presence signals degraded audio quality — the requested provider was unavailable. */
+  preferredProvider?: AudioProvider;
 };
 
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {

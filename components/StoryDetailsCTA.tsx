@@ -1,6 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
 import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
@@ -12,14 +11,20 @@ type PropTypes = {
   setShowShareModal: Dispatch<SetStateAction<boolean>>;
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
-  const { data } = useSuspenseQuery(useQueryParentsFavourites());
+  const { data } = useQueryParentsFavourites();
+
+  const isLiked = useMemo(
+    () =>
+      data?.pages?.some((page) =>
+        page.data?.some((s) => s?.storyId === story.storyId)
+      ) ?? false,
+    [data, story.storyId]
+  );
+
   const { mutate: onToggle } = useToggleFavourites({
     story,
+    isLiked,
   });
-
-  const isStoryLiked = (storyId: string) => {
-    return data.some((stories) => stories.storyId === storyId);
-  };
 
   return (
     <View className="flex flex-row gap-x-3 px-4">
@@ -34,7 +39,7 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
         onPress={() => onToggle()}
         className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
       >
-        {isStoryLiked(story.id) ? (
+        {isLiked ? (
           <FontAwesome name="heart" size={24} color="red" />
         ) : (
           <FontAwesome name="heart-o" size={24} color="black" />

@@ -1,8 +1,5 @@
 import Netinfo from "@react-native-community/netinfo";
-import {
-  LinkingOptions,
-  NavigationContainer,
-} from "@react-navigation/native";
+import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
 import {
   QueryClient,
   QueryClientProvider,
@@ -49,9 +46,9 @@ SplashScreen.preventAutoHideAsync();
 setAudioModeAsync({
   playsInSilentMode: true,
   shouldPlayInBackground: false,
-  ...(Platform.OS === "ios" && { interruptionMode: "duckOthers" }),
+  interruptionMode: "mixWithOthers",
 }).catch((e) => {
-  if (__DEV__) console.warn("setAudioModeAsync failed:", e);
+  if (__DEV__) console.warn("setAudioModeAsync failed:", e); // eslint-disable-line no-console
 });
 
 const queryClient = new QueryClient({

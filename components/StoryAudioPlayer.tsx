@@ -3,43 +3,25 @@ import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import { VOICE_LABELS } from "../constants/ui";
-import useTextToAudio from "../hooks/tanstack/mutationHooks/useTextToAudio";
 
 const StoryAudioPlayer = ({
-  textContent,
-  nextPageContent,
-  selectedVoice,
+  audioUrl,
+  isLoading,
+  isError,
   isPlaying,
   setIsPlaying,
   onPageFinished,
-  storyId,
 }: {
-  textContent: string;
-  nextPageContent: string | null;
-  selectedVoice: string | null;
+  audioUrl: string | null;
+  isLoading: boolean;
+  isError: boolean;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
-  storyId: string;
 }) => {
-  const voiceId = selectedVoice || "";
-  const { data, isPending } = useTextToAudio({
-    content: textContent,
-    voiceId,
-    storyId,
-  });
-
-  // Prefetch next page audio so it's cached and ready when we advance
-  useTextToAudio({
-    content: nextPageContent || "",
-    voiceId,
-    storyId,
-  });
-
-  const currentUrl = data?.audioUrl ?? null;
-  const player = useAudioPlayer(currentUrl);
+  const player = useAudioPlayer(audioUrl);
   const status = useAudioPlayerStatus(player);
-  const prevUrlRef = useRef<string | null>(currentUrl);
+  const prevUrlRef = useRef<string | null>(audioUrl);
   const prevDidJustFinishRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const onPageFinishedRef = useRef(onPageFinished);
@@ -63,35 +45,43 @@ const StoryAudioPlayer = ({
     }
   }, [status.didJustFinish]);
 
+  // Track whether URL went through a null transition (voice switch)
+  // vs a direct URL change (page navigation)
+  const wasNullTransitionRef = useRef(false);
+
   // When the audio URL changes (new voice or new page content), replace audio
   // When URL goes null (voice switch in progress), pause old audio
   useEffect(() => {
-    if (currentUrl && currentUrl !== prevUrlRef.current) {
+    if (audioUrl && audioUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
-      prevUrlRef.current = currentUrl;
+      const wasVoiceSwitch = wasNullTransitionRef.current;
+      prevUrlRef.current = audioUrl;
+      wasNullTransitionRef.current = false;
       // Reset edge detection so the next finish is treated as fresh
       prevDidJustFinishRef.current = false;
 
       try {
-        player.replace(currentUrl);
-        if (wasPlaying) {
+        player.replace(audioUrl);
+        // Only auto-resume for page navigation, not voice switches
+        if (wasPlaying && !wasVoiceSwitch) {
           player.play();
         }
       } catch (e) {
-        if (__DEV__) console.error("Audio replace failed:", e);
+        if (__DEV__) console.error("Audio replace failed:", e); // eslint-disable-line no-console
         setIsPlaying(false);
       }
-    } else if (!currentUrl && prevUrlRef.current) {
+    } else if (!audioUrl && prevUrlRef.current) {
       // Voice switched — stop old audio while new one loads
       prevUrlRef.current = null;
+      wasNullTransitionRef.current = true;
       try {
         player.pause();
       } catch (e) {
-        if (__DEV__) console.error("Audio pause failed:", e);
+        if (__DEV__) console.error("Audio pause failed:", e); // eslint-disable-line no-console
       }
       setIsPlaying(false);
     }
-  }, [currentUrl, player, setIsPlaying]);
+  }, [audioUrl, player, setIsPlaying]);
 
   const playAudio = () => {
     try {
@@ -103,37 +93,50 @@ const StoryAudioPlayer = ({
       setIsPlaying(true);
       player.play();
     } catch (e) {
-      if (__DEV__) console.error("Audio playback failed:", e);
+      if (__DEV__) console.error("Audio playback failed:", e); // eslint-disable-line no-console
       setIsPlaying(false);
     }
   };
 
   return (
     <Pressable
-      disabled={isPending}
+      disabled={isLoading || isError || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
       }}
-      className={`${isPending ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      className={`${isLoading || !audioUrl ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      accessibilityHint={
+        isLoading
+          ? "Audio is loading"
+          : !audioUrl
+            ? "Audio is not available"
+            : undefined
+      }
     >
       <View className="flex flex-row items-center gap-x-2">
         <View className="flex size-12 flex-col items-center justify-center rounded-full bg-blue">
           <Ionicons name="volume-medium-outline" size={24} color="white" />
         </View>
         <Text className="font-[quilka] text-xl text-black">
-          {isPending
+          {isLoading
             ? VOICE_LABELS.loading
-            : isPlaying
-              ? VOICE_LABELS.mute
-              : VOICE_LABELS.play}
+            : isError || !audioUrl
+              ? VOICE_LABELS.unavailable
+              : isPlaying
+                ? VOICE_LABELS.mute
+                : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
-        {isPending ? (
+        {isLoading ? (
           <ActivityIndicator size={"large"} />
         ) : (
-          <Switch value={isPlaying} onValueChange={playAudio} />
+          <Switch
+            value={isPlaying}
+            onValueChange={playAudio}
+            disabled={isLoading || isError || !audioUrl}
+          />
         )}
       </View>
     </Pressable>

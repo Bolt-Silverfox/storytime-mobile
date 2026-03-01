@@ -1,5 +1,11 @@
-import { Dispatch, SetStateAction } from "react";
-import { FlatList, RefreshControl, Text, View } from "react-native";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  View,
+} from "react-native";
 import useGetLibraryStories from "../hooks/tanstack/queryHooks/useGetLibraryStories";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import { LibraryFilterType } from "../types";
@@ -30,8 +36,40 @@ const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
 };
 
 const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
-  const { data, isPending, error, refetch } = useGetLibraryStories(storyFilter);
+  const {
+    data,
+    isPending,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetLibraryStories(storyFilter);
   const { refreshing, onRefresh } = useRefreshControl(refetch);
+
+  const stories = useMemo(() => {
+    const all = data?.pages.flatMap((page) => page.data) ?? [];
+    const seen = new Set<string>();
+    return all.filter((s) => {
+      if (!s?.id) return false;
+      if (seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, [data]);
+
+  const renderStoryItem = useCallback(
+    ({ item: story }: { item: (typeof stories)[number] }) => (
+      <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
+    ),
+    [setActiveStory]
+  );
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isPending) return <LoadingComponent storyFilter={storyFilter} />;
   if (error)
@@ -39,15 +77,25 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
 
   return (
     <FlatList
-      data={data ?? []}
+      data={stories}
       keyExtractor={(item) => item.id}
-      contentContainerClassName="flex flex-col gap-y-6 px-4 pb-5"
+      contentContainerClassName="flex grow flex-col gap-y-6 px-4 pb-5"
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-      renderItem={({ item: story }) => (
-        <LibraryStoryItem story={story} setActiveStory={setActiveStory} />
-      )}
+      renderItem={renderStoryItem}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <View className="items-center py-4">
+            <ActivityIndicator size="small" />
+            <Text className="mt-2 font-[abeezee] text-sm text-text">
+              Loading more stories...
+            </Text>
+          </View>
+        ) : null
+      }
       ListEmptyComponent={
         <CustomEmptyState
           url={require("../assets/images/stories-empty-state.png")}
