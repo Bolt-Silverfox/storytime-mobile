@@ -106,7 +106,7 @@ const GroupedStoriesStoryCarousel = ({
       key={numColumns}
       data={stories}
       keyExtractor={storyKeyExtractor}
-      className="-mt-4 flex-1 rounded-t-3xl bg-white pt-5"
+      style={styles.carouselContainer}
       contentContainerStyle={styles.contentContainer}
       drawDistance={500}
       showsVerticalScrollIndicator={false}
@@ -145,6 +145,14 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
+  carouselContainer: {
+    marginTop: -16,
+    flex: 1,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: "#ffffff",
+    paddingTop: 20,
+  },
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 24,
