@@ -59,7 +59,7 @@ const GroupedStoriesStoryCarousel = ({
 
   const renderStoryItem = useCallback(
     ({ item: story }: { item: (typeof stories)[number] }) => (
-      <View className="flex-1" style={styles.columnItem}>
+      <View style={styles.columnItem}>
         <StoryItem story={story} isGrouped />
       </View>
     ),
@@ -108,7 +108,7 @@ const GroupedStoriesStoryCarousel = ({
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
       numColumns={numColumns}
-      columnWrapperClassName="gap-x-3 mb-6"
+      columnWrapperStyle={styles.columnWrapper}
       removeClippedSubviews={false}
       windowSize={10}
       initialNumToRender={6}
@@ -151,6 +151,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 20,
+  },
+  columnWrapper: {
+    gap: 12,
+    marginBottom: 24,
   },
   columnItem: { flex: 1 },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
