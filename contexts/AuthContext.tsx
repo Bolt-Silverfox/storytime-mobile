@@ -433,18 +433,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(response.message);
       }
 
-      if (response.data && response.data.jwt) {
-        await secureTokenStorage.setTokens(
-          response.data.jwt,
-          response.data.refreshToken
-        );
-        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-        setUser(response.data.user);
-      } else if (response.jwt) {
-        await secureTokenStorage.setTokens(response.jwt, response.refreshToken);
-        await AsyncStorage.setItem("user", JSON.stringify(response.user));
-        setUser(response.user);
+      const authData = response.data ?? response;
+      if (!authData.jwt || !authData.refreshToken || !authData.user) {
+        throw new Error("Invalid auth response: missing jwt, refreshToken, or user");
       }
+      await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(authData.user));
+      setUser(authData.user);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
@@ -518,18 +513,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // Store tokens and user
-      if (response.data && response.data.jwt) {
-        await secureTokenStorage.setTokens(
-          response.data.jwt,
-          response.data.refreshToken
-        );
-        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-        setUser(response.data.user);
-      } else if (response.jwt) {
-        await secureTokenStorage.setTokens(response.jwt, response.refreshToken);
-        await AsyncStorage.setItem("user", JSON.stringify(response.user));
-        setUser(response.user);
+      const authData = response.data ?? response;
+      if (!authData.jwt || !authData.refreshToken || !authData.user) {
+        throw new Error("Invalid auth response: missing jwt, refreshToken, or user");
       }
+      await secureTokenStorage.setTokens(authData.jwt, authData.refreshToken);
+      await AsyncStorage.setItem("user", JSON.stringify(authData.user));
+      setUser(authData.user);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
