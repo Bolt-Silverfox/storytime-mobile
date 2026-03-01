@@ -22,7 +22,11 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ flexDirection: "row", gap: 12, paddingVertical: 4 }}
+        contentContainerStyle={{
+          flexDirection: "row",
+          gap: 12,
+          paddingVertical: 4,
+        }}
       />
     </View>
   );

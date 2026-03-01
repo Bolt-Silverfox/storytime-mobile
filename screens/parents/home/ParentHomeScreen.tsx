@@ -47,29 +47,26 @@ const ParentHomeScreen = () => {
   );
   const { refreshing, onRefresh } = useRefreshControl(invalidateAll);
 
-  const renderSection = useCallback(
-    ({ item }: { item: SectionItem }) => {
-      switch (item.key) {
-        case "freeStoriesBanner":
-          return <FreeStoriesBanner />;
-        case "storiesByAge":
-          return <StoriesByAgeComponent />;
-        case "topRecommendations":
-          return <ParentsTopRecommendations />;
-        case "todaysTopPicks":
-          return <TodaysTopPicksComponent />;
-        case "seasonalStories":
-          return <SeasonalStoriesComponent />;
-        case "funAndAdventures":
-          return <FunAndAdventuresComponent />;
-        case "storyCategoriesList":
-          return <StoryCategoriesList />;
-        default:
-          return null;
-      }
-    },
-    []
-  );
+  const renderSection = useCallback(({ item }: { item: SectionItem }) => {
+    switch (item.key) {
+      case "freeStoriesBanner":
+        return <FreeStoriesBanner />;
+      case "storiesByAge":
+        return <StoriesByAgeComponent />;
+      case "topRecommendations":
+        return <ParentsTopRecommendations />;
+      case "todaysTopPicks":
+        return <TodaysTopPicksComponent />;
+      case "seasonalStories":
+        return <SeasonalStoriesComponent />;
+      case "funAndAdventures":
+        return <FunAndAdventuresComponent />;
+      case "storyCategoriesList":
+        return <StoryCategoriesList />;
+      default:
+        return null;
+    }
+  }, []);
 
   const listHeader = useMemo(
     () =>
