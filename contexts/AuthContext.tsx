@@ -1,6 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { cleanupPushNotifications } from "../utils/notifications";
+import { authLogger } from "../utils/logger";
 import {
   createContext,
   Dispatch,
@@ -189,10 +190,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         try {
           setUser(JSON.parse(localStoredSession));
-          const accessToken = await secureTokenStorage.getAccessToken();
-          if (__DEV__) {
-            console.log("access token", accessToken); // eslint-disable-line no-console
-          }
+          await secureTokenStorage.getAccessToken();
         } catch {
           // Corrupted user data - clear it and reset
           await AsyncStorage.removeItem("user");
@@ -248,9 +246,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         AsyncStorage.removeItem("user"),
       ]);
     } catch (error) {
-      if (__DEV__) {
-        console.error("Logout storage clear failed:", error); // eslint-disable-line no-console
-      }
+      authLogger.error("Logout storage clear failed:", error);
     } finally {
       // Always reset state even if storage clear fails
       setUser(null);

@@ -3,6 +3,7 @@ import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
+import { notifLogger } from "../utils/logger";
 import {
   initializePushNotifications,
   addNotificationReceivedListener,
@@ -61,7 +62,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
       // If explicit screen is provided, validate and navigate there
       if (screen) {
         if (!ALLOWED_SCREENS.has(screen)) {
-          console.warn("Unknown notification screen:", screen); // eslint-disable-line no-console
+          notifLogger.warn("Unknown notification screen:", screen);
           goToNotifications();
           return;
         }
@@ -69,7 +70,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
           // @ts-expect-error - dynamic navigation
           navigation.navigate(screen, data);
         } catch (err) {
-          console.warn("Failed to navigate to screen:", screen, err); // eslint-disable-line no-console
+          notifLogger.warn("Failed to navigate to screen:", screen, err);
           goToNotifications();
         }
         return;
@@ -178,9 +179,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
     // Listener for notifications received while app is foregrounded
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
-        if (__DEV__) {
-          console.log("Notification received in foreground:", notification); // eslint-disable-line no-console
-        }
+        notifLogger.debug("Notification received in foreground:", notification);
       }
     );
 
@@ -189,9 +188,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
       const data = response.notification.request.content
         .data as NotificationData;
 
-      if (__DEV__) {
-        console.log("Notification tapped:", data); // eslint-disable-line no-console
-      }
+      notifLogger.debug("Notification tapped:", data);
 
       handleNotificationNavigation(data);
     });
@@ -207,9 +204,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
         const data = response.notification.request.content
           .data as NotificationData;
 
-        if (__DEV__) {
-          console.log("App opened from notification:", data); // eslint-disable-line no-console
-        }
+        notifLogger.debug("App opened from notification:", data);
 
         // Small delay to ensure navigation is ready
         setTimeout(() => {
