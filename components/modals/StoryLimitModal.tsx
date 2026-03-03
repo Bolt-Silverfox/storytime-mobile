@@ -2,7 +2,15 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Image, Modal, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  Image,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { QUERY_KEYS } from "../../constants";
 import { subscriptionBenefits } from "../../data";
@@ -74,152 +82,62 @@ const StoryLimitModal = ({
     >
       <Pressable
         onPress={isDismissible ? handleCancel : undefined}
-        style={{
-          flex: 1,
-          backgroundColor: "rgba(33, 33, 33, 0.6)",
-          justifyContent: "flex-end",
-        }}
+        style={modalStyles.overlay}
       >
-        <Pressable
-          style={{
-            backgroundColor: "white",
-            borderTopLeftRadius: 32,
-            borderTopRightRadius: 32,
-            paddingHorizontal: 16,
-            paddingTop: 32,
-            paddingBottom: 32,
-            maxHeight: "90%",
-          }}
-        >
+        <Pressable style={modalStyles.sheet}>
           <ScrollView
             showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              alignItems: "center",
-              gap: 20,
-            }}
+            contentContainerStyle={modalStyles.scrollContent}
           >
             {/* Icon */}
-            <View
-              style={{
-                width: 100,
-                height: 100,
-                borderRadius: 50,
-                borderWidth: 2.5,
-                borderColor: "#F96B3C",
-                backgroundColor: "white",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
+            <View style={modalStyles.iconCircle}>
               <FontAwesome5 name="book-reader" size={44} color="#F4845F" />
             </View>
 
             {/* Title */}
-            <Text
-              style={{
-                fontFamily: "quilka",
-                fontSize: 24,
-                fontWeight: "700",
-                color: "#212121",
-                textAlign: "center",
-              }}
-            >
-              {title}
-            </Text>
+            <Text style={modalStyles.title}>{title}</Text>
 
             {/* Subtitle */}
-            <Text
-              style={{
-                fontFamily: "abeezee",
-                fontSize: 14,
-                color: "#616161",
-                textAlign: "center",
-                paddingHorizontal: 8,
-              }}
-            >
-              {subtitle}
-            </Text>
+            <Text style={modalStyles.subtitle}>{subtitle}</Text>
 
             {/* Divider */}
-            <View
-              style={{
-                height: 0.5,
-                backgroundColor: "#E0E0E0",
-                width: "100%",
-              }}
-            />
+            <View style={modalStyles.divider} />
 
             {/* Benefits section */}
-            <View style={{ width: "100%", gap: 16 }}>
-              <Text
-                style={{
-                  fontFamily: "quilka",
-                  fontSize: 18,
-                  fontWeight: "700",
-                  color: "#212121",
-                }}
-              >
+            <View style={modalStyles.fullWidthGap16}>
+              <Text style={modalStyles.benefitsTitle}>
                 What you'll enjoy as a premium user
               </Text>
-              <View style={{ gap: 12 }}>
+              <View style={modalStyles.gap12}>
                 {subscriptionBenefits.map((benefit) => (
-                  <View
-                    key={benefit}
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "center",
-                      gap: 6,
-                    }}
-                  >
+                  <View key={benefit} style={modalStyles.benefitRow}>
                     <Image
                       source={require("../../assets/icons/tick.png")}
-                      style={{ width: 17, height: 14 }}
+                      style={modalStyles.tickIcon}
                     />
-                    <Text
-                      style={{
-                        fontFamily: "abeezee",
-                        fontSize: 16,
-                        color: "#212121",
-                        flex: 1,
-                      }}
-                    >
-                      {benefit}
-                    </Text>
+                    <Text style={modalStyles.benefitText}>{benefit}</Text>
                   </View>
                 ))}
               </View>
             </View>
 
             {/* Summary text */}
-            <Text
-              style={{
-                fontFamily: "abeezee",
-                fontSize: 16,
-                color: "#212121",
-              }}
-            >
+            <Text style={modalStyles.summaryText}>
               Your child won't just listen, they'll have an unlimited learning
               experience, with the voice type you choose for them.
             </Text>
 
             {/* Divider */}
-            <View
-              style={{
-                height: 0.5,
-                backgroundColor: "#E0E0E0",
-                width: "100%",
-              }}
-            />
+            <View style={modalStyles.divider} />
 
             {/* Plan selection */}
             {errorMessage ? (
               <Text
-                style={{
-                  fontFamily: "abeezee",
-                  fontSize: 14,
-                  color: isUserCancelled ? "#616161" : "#B71C1C",
-                  textAlign: "center",
-                }}
+                style={[
+                  modalStyles.errorText,
+                  // eslint-disable-next-line react-native/no-inline-styles
+                  { color: isUserCancelled ? "#616161" : "#B71C1C" },
+                ]}
               >
                 {errorMessage}
               </Text>
@@ -234,59 +152,31 @@ const StoryLimitModal = ({
             />
 
             {/* Divider */}
-            <View
-              style={{
-                height: 0.5,
-                backgroundColor: "#E0E0E0",
-                width: "100%",
-              }}
-            />
+            <View style={modalStyles.divider} />
 
             {/* Buttons */}
-            <View style={{ width: "100%", gap: 12 }}>
+            <View style={modalStyles.fullWidthGap12}>
               <Pressable
                 onPress={handlePurchase}
                 disabled={!selectedPlan || isLoading}
-                style={{
-                  backgroundColor:
-                    selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
-                  borderRadius: 99,
-                  height: 46,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                style={[
+                  modalStyles.subscribeButton,
+                  // eslint-disable-next-line react-native/no-inline-styles
+                  {
+                    backgroundColor:
+                      selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
+                  },
+                ]}
               >
-                <Text
-                  style={{
-                    fontFamily: "abeezee",
-                    fontSize: 16,
-                    color: "white",
-                    fontWeight: "600",
-                  }}
-                >
+                <Text style={modalStyles.subscribeButtonText}>
                   Subscribe to Premium
                 </Text>
               </Pressable>
               <Pressable
                 onPress={handleCancel}
-                style={{
-                  borderWidth: 0.5,
-                  borderColor: "#212121",
-                  borderRadius: 99,
-                  height: 46,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                style={modalStyles.cancelButton}
               >
-                <Text
-                  style={{
-                    fontFamily: "abeezee",
-                    fontSize: 16,
-                    color: "#212121",
-                  }}
-                >
-                  Cancel
-                </Text>
+                <Text style={modalStyles.cancelButtonText}>Cancel</Text>
               </Pressable>
             </View>
           </ScrollView>
@@ -295,5 +185,122 @@ const StoryLimitModal = ({
     </Modal>
   );
 };
+
+const modalStyles = StyleSheet.create({
+  overlay: {
+    flex: 1,
+    backgroundColor: "rgba(33, 33, 33, 0.6)",
+    justifyContent: "flex-end",
+  },
+  sheet: {
+    backgroundColor: "white",
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingHorizontal: 16,
+    paddingTop: 32,
+    paddingBottom: 32,
+    maxHeight: "90%",
+  },
+  scrollContent: {
+    alignItems: "center",
+    gap: 20,
+  },
+  iconCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    borderWidth: 2.5,
+    borderColor: "#F96B3C",
+    backgroundColor: "white",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  title: {
+    fontFamily: "quilka",
+    fontSize: 24,
+    fontWeight: "700",
+    color: "#212121",
+    textAlign: "center",
+  },
+  subtitle: {
+    fontFamily: "abeezee",
+    fontSize: 14,
+    color: "#616161",
+    textAlign: "center",
+    paddingHorizontal: 8,
+  },
+  divider: {
+    height: 0.5,
+    backgroundColor: "#E0E0E0",
+    width: "100%",
+  },
+  fullWidthGap16: {
+    width: "100%",
+    gap: 16,
+  },
+  benefitsTitle: {
+    fontFamily: "quilka",
+    fontSize: 18,
+    fontWeight: "700",
+    color: "#212121",
+  },
+  gap12: {
+    gap: 12,
+  },
+  benefitRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  tickIcon: {
+    width: 17,
+    height: 14,
+  },
+  benefitText: {
+    fontFamily: "abeezee",
+    fontSize: 16,
+    color: "#212121",
+    flex: 1,
+  },
+  summaryText: {
+    fontFamily: "abeezee",
+    fontSize: 16,
+    color: "#212121",
+  },
+  errorText: {
+    fontFamily: "abeezee",
+    fontSize: 14,
+    textAlign: "center",
+  },
+  fullWidthGap12: {
+    width: "100%",
+    gap: 12,
+  },
+  subscribeButton: {
+    borderRadius: 99,
+    height: 46,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  subscribeButtonText: {
+    fontFamily: "abeezee",
+    fontSize: 16,
+    color: "white",
+    fontWeight: "600",
+  },
+  cancelButton: {
+    borderWidth: 0.5,
+    borderColor: "#212121",
+    borderRadius: 99,
+    height: 46,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  cancelButtonText: {
+    fontFamily: "abeezee",
+    fontSize: 16,
+    color: "#212121",
+  },
+});
 
 export default StoryLimitModal;

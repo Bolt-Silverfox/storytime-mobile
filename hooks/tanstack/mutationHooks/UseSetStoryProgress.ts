@@ -41,7 +41,20 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
-      Alert.alert("Failed to register story progress", err.message);
+      const crypticPatterns = [
+        "Cannot read prop",
+        "undefined is not",
+        "TypeError",
+        "NetworkError",
+        "SyntaxError",
+        "Unexpected token",
+      ];
+      const isFriendly =
+        err.message && !crypticPatterns.some((p) => err.message.includes(p));
+      const message = isFriendly
+        ? err.message
+        : "Something went wrong saving your progress. Your reading is not affected.";
+      Alert.alert("Story Progress", message);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -53,8 +66,11 @@ const useSetStoryProgress = ({
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
       });
+      queryClient.refetchQueries({
+        queryKey: [QUERY_KEYS.GET_INFINITE_STORIES],
+      });
       queryClient.invalidateQueries({
-        queryKey: ["stories"],
+        queryKey: [QUERY_KEYS.GET_STORY_PROGRESS, storyId],
       });
       onSuccess?.();
     },

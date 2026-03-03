@@ -21,7 +21,7 @@ const PrivacyScreen = () => {
           data={privacyPolicyData}
           showsVerticalScrollIndicator={false}
           keyExtractor={(data) => data.number}
-          contentContainerClassName="px-4 flex flex-col gap-y-8 pt-8 mx-auto max-w-[600px]"
+          contentContainerClassName="px-4 flex-col gap-y-8 pt-8 mx-auto max-w-[600px]"
           ListFooterComponent={<View style={styles.listFooter} />}
           renderItem={({ item }) => (
             <View className="flex flex-col gap-y-3 ">

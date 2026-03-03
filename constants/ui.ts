@@ -71,6 +71,7 @@ export const VOICE_LABELS = {
   loading: "Loading voice",
   play: "Play Voice",
   mute: "Mute Voice",
+  unavailable: "Audio unavailable",
 } as const;
 
 // Error messages

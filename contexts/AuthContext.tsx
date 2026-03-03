@@ -12,7 +12,7 @@ import {
   useState,
 } from "react";
 import { User } from "../types";
-import auth from "../utils/auth";
+import auth, { publicHeaders } from "../utils/auth";
 import {
   BASE_URL,
   emailRegex,
@@ -191,7 +191,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           setUser(JSON.parse(localStoredSession));
           const accessToken = await secureTokenStorage.getAccessToken();
           if (__DEV__) {
-            console.log("access token", accessToken);
+            console.log("access token", accessToken); // eslint-disable-line no-console
           }
         } catch {
           // Corrupted user data - clear it and reset
@@ -249,7 +249,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       ]);
     } catch (error) {
       if (__DEV__) {
-        console.error("Logout storage clear failed:", error);
+        console.error("Logout storage clear failed:", error); // eslint-disable-line no-console
       }
     } finally {
       // Always reset state even if storage clear fails
@@ -410,6 +410,24 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     onSuccess();
   };
 
+  const processOAuthResponse = async (response: Record<string, unknown>) => {
+    if (!response.success) {
+      throw new Error((response.message as string) || "Authentication failed");
+    }
+    const authData = (response.data as Record<string, unknown>) ?? response;
+    if (!authData.jwt || !authData.refreshToken || !authData.user) {
+      throw new Error(
+        "Invalid auth response: missing jwt, refreshToken, or user"
+      );
+    }
+    await secureTokenStorage.setTokens(
+      authData.jwt as string,
+      authData.refreshToken as string
+    );
+    await AsyncStorage.setItem("user", JSON.stringify(authData.user));
+    setUser(authData.user as User);
+  };
+
   const handleGoogleAuth = async () => {
     try {
       setIsLoading(true);
@@ -424,22 +442,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       const { idToken } = googleResponse.data;
       const request = await fetch(`${BASE_URL}/auth/google`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: publicHeaders,
         body: JSON.stringify({ id_token: idToken }),
         method: "POST",
       });
       const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message);
-      }
-      await secureTokenStorage.setTokens(
-        response.data.jwt,
-        response.data.refreshToken
-      );
-      await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-      setUser(response.data.user);
+      await processOAuthResponse(response);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";
@@ -498,9 +506,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
 
       const request = await fetch(`${BASE_URL}/auth/apple`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: publicHeaders,
         body: JSON.stringify({
           id_token: idToken,
           firstName: firstName || undefined,
@@ -510,23 +516,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const response = await request.json();
-      if (!response.success) {
-        throw new Error(response.message);
-      }
-
-      // Store tokens and user
-      if (response.data && response.data.jwt) {
-        await secureTokenStorage.setTokens(
-          response.data.jwt,
-          response.data.refreshToken
-        );
-        await AsyncStorage.setItem("user", JSON.stringify(response.data.user));
-        setUser(response.data.user);
-      } else if (response.jwt) {
-        await secureTokenStorage.setTokens(response.jwt, response.refreshToken);
-        await AsyncStorage.setItem("user", JSON.stringify(response.user));
-        setUser(response.user);
-      }
+      await processOAuthResponse(response);
     } catch (error) {
       const message =
         error instanceof Error ? error.message : "Unexpected error, try again";

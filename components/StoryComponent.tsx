@@ -2,9 +2,9 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
-import { ImageBackground, Pressable, View } from "react-native";
+import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
   runOnJS,
   useSharedValue,
@@ -125,42 +125,37 @@ const StoryComponent = ({
     prevDebouncedVoice.current = debouncedVoice;
   }, [debouncedVoice, storyId, queryClient]);
 
-  // Note: During debounce window, per-paragraph useTextToAudio fires with
-  // selectedVoice (new) while batch still uses debouncedVoice (old).
-  // The current paragraph makes an individual request; backend
-  // ParagraphAudioCache deduplicates, so no wasted TTS provider calls.
-  const { data: batchAudio } = useBatchStoryAudio(storyId, debouncedVoice);
-  const isTTSDegraded = batchAudio?.providerStatus === "degraded";
+  const {
+    data: batchAudio,
+    isLoading: isBatchAudioLoading,
+    isError: isBatchAudioError,
+  } = useBatchStoryAudio(storyId, debouncedVoice);
+  // preferredProvider is only present when the backend fell back to a different provider
+  const isTTSDegraded = !!batchAudio?.preferredProvider;
+  const isVoiceTransitioning = selectedVoice !== debouncedVoice;
 
+  const audioUrlMap = useMemo(() => {
+    const map = new Map<number, string | null>();
+    batchAudio?.paragraphs?.forEach((p) => {
+      map.set(p.index, p.audioUrl);
+    });
+    return map;
+  }, [batchAudio?.paragraphs]);
+
+  // Only sync preferred voice on initial load — user's local selection is
+  // authoritative after that.  Without this guard, the invalidated query
+  // refetch can overwrite the local VoiceType key with a DB UUID.
+  const hasInitializedVoice = useRef(false);
   useEffect(() => {
-    if (!isVoiceFetched) return;
+    if (!isVoiceFetched || hasInitializedVoice.current) return;
+    hasInitializedVoice.current = true;
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
   }, [preferredVoice, isVoiceFetched]);
 
-  // Seed per-paragraph TanStack Query cache from batch response
-  // so useTextToAudio in StoryAudioPlayer gets instant cache hits
-  // Uses batchAudio.voiceId (from response) to ensure cache keys match the actual audio data
-  useEffect(() => {
-    if (!batchAudio?.paragraphs || !batchAudio.voiceId) return;
-    for (const p of batchAudio.paragraphs) {
-      if (p.audioUrl) {
-        queryClient.setQueryData(
-          ["textToSpeech", storyId, p.text, batchAudio.voiceId],
-          {
-            success: true,
-            message: "Audio generated successfully",
-            statusCode: 200,
-            data: { audioUrl: p.audioUrl, voiceId: batchAudio.voiceId },
-          }
-        );
-      }
-    }
-  }, [batchAudio, storyId, queryClient]);
-
-  const getQuotaReminderKey = () => {
+  const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
     return `quotaReminder:${user?.id ?? "anon"}:${now.getFullYear()}-${now.getMonth() + 1}`;
-  };
+  }, [user?.id]);
 
   // Check if we should show the quota reminder modal
   useEffect(() => {
@@ -177,7 +172,7 @@ const StoryComponent = ({
         })
         .catch(() => {});
     }
-  }, [quota, user?.id]);
+  }, [quota, user?.id, getQuotaReminderKey]);
 
   const handleDismissQuotaReminder = () => {
     setShowQuotaReminder(false);
@@ -203,77 +198,87 @@ const StoryComponent = ({
   if (error) {
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }
+  if (!data) {
+    return (
+      <ErrorComponent
+        message="This story is not available right now."
+        refetch={refetch}
+      />
+    );
+  }
 
   return (
     <SafeAreaWrapper variant="transparent">
-      {data ? (
-        <View className="flex-1">
-          <Pressable style={{ flex: 1 }} onPress={toggleControls}>
-            <ImageBackground
-              source={{ uri: data.coverImageUrl }}
-              resizeMode="cover"
-              className="flex flex-1 flex-col p-4 pt-12"
-              style={{ backgroundColor: "#1a1a2e" }}
-            >
-              <View className="flex flex-1 flex-col">
-                <Animated.View
-                  style={[
-                    animatedControlsStyle,
-                    { flexDirection: "row", justifyContent: "space-between" },
-                  ]}
-                  pointerEvents={controlsInteractive ? "auto" : "none"}
+      <View className="flex-1">
+        <Pressable style={storyStyles.flex1} onPress={toggleControls}>
+          <ImageBackground
+            source={{ uri: data.coverImageUrl }}
+            resizeMode="cover"
+            className="flex flex-1 flex-col p-4 pt-12"
+            style={storyStyles.storyBackground}
+          >
+            <View className="flex flex-1 flex-col">
+              <Animated.View
+                style={[animatedControlsStyle, storyStyles.controlsRow]}
+                pointerEvents={controlsInteractive ? "auto" : "none"}
+              >
+                <Pressable
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    navigator.reset({
+                      index: 0,
+                      routes: [{ name: "parents" }],
+                    });
+                  }}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
-                  <Pressable
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      navigator.reset({
-                        index: 0,
-                        routes: [{ name: "parents" }],
-                      });
-                    }}
-                    className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-                  >
-                    <FontAwesome6 name="house" size={20} color="white" />
-                  </Pressable>
-                  <Pressable
-                    onPress={(e) => {
-                      e.stopPropagation();
-                      setIsOptionsModalOpen(true);
-                    }}
-                    className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
-                  >
-                    <FontAwesome6 name="ellipsis" size={20} color="white" />
-                  </Pressable>
-                </Animated.View>
+                  <FontAwesome6 name="house" size={20} color="white" />
+                </Pressable>
+                <Pressable
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    setIsOptionsModalOpen(true);
+                  }}
+                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                >
+                  <FontAwesome6 name="ellipsis" size={20} color="white" />
+                </Pressable>
+              </Animated.View>
 
-                <StoryContentContainer
-                  selectedVoice={selectedVoice}
-                  isInteractive={storyMode === "interactive"}
-                  story={data}
-                  activeParagraph={activeParagraph}
-                  setActiveParagraph={setActiveParagraph}
-                  onProgress={handleProgress}
-                  controlsInteractive={controlsInteractive}
-                  controlsVisible={controlsVisible}
-                  animatedControlsStyle={animatedControlsStyle}
-                  isTTSDegraded={isTTSDegraded}
-                />
-              </View>
-            </ImageBackground>
-          </Pressable>
-          <SelectReadingVoiceModal
-            isOpen={isVoiceModalOpen}
-            onClose={() => setIsVoiceModalOpen(false)}
-            selectedVoice={selectedVoice}
-            setSelectedVoice={setSelectedVoice}
-          />
-          <InStoryOptionsModal
-            handleVoiceModal={setIsVoiceModalOpen}
-            isOptionsModalOpen={isOptionsModalOpen}
-            setIsOptionsModalOpen={setIsOptionsModalOpen}
-          />
-        </View>
-      ) : null}
+              <StoryContentContainer
+                isInteractive={storyMode === "interactive"}
+                story={data}
+                activeParagraph={activeParagraph}
+                audioUrl={
+                  isVoiceTransitioning
+                    ? null
+                    : (audioUrlMap.get(activeParagraph) ?? null)
+                }
+                isAudioLoading={isBatchAudioLoading || isVoiceTransitioning}
+                isAudioError={isBatchAudioError}
+                setActiveParagraph={setActiveParagraph}
+                onProgress={handleProgress}
+                controlsInteractive={controlsInteractive}
+                controlsVisible={controlsVisible}
+                animatedControlsStyle={animatedControlsStyle}
+                isTTSDegraded={isTTSDegraded}
+              />
+            </View>
+          </ImageBackground>
+        </Pressable>
+        <SelectReadingVoiceModal
+          isOpen={isVoiceModalOpen}
+          onClose={() => setIsVoiceModalOpen(false)}
+          selectedVoice={selectedVoice}
+          setSelectedVoice={setSelectedVoice}
+          storyId={storyId}
+        />
+        <InStoryOptionsModal
+          handleVoiceModal={setIsVoiceModalOpen}
+          isOptionsModalOpen={isOptionsModalOpen}
+          setIsOptionsModalOpen={setIsOptionsModalOpen}
+        />
+      </View>
       <StoryLimitModal
         visible={showQuotaReminder}
         storyId={storyId}
@@ -284,5 +289,11 @@ const StoryComponent = ({
     </SafeAreaWrapper>
   );
 };
+
+const storyStyles = StyleSheet.create({
+  flex1: { flex: 1 },
+  storyBackground: { backgroundColor: "#1a1a2e" },
+  controlsRow: { flexDirection: "row", justifyContent: "space-between" },
+});
 
 export default StoryComponent;

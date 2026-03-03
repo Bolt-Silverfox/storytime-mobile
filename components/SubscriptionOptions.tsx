@@ -51,12 +51,12 @@ const SubscriptionOptions = ({
               )}
             </View>
             <Text
-              className={`mb-1 mt-4 font-[quilka] text-2xl ${isSelected ? "text-purple" : "text-black"}`}
+              className={`mb-1 mt-4 font-[quilka] text-lg ${isSelected ? "text-purple" : "text-black"}`}
             >
               {sub.displayPrice}
             </Text>
             <Text
-              className={`font-[abeezee] text-[18px] leading-6 ${isSelected ? "text-purple" : "text-black"}`}
+              className={`font-[abeezee] text-sm leading-5 ${isSelected ? "text-purple" : "text-black"}`}
             >
               {planName} Plan
             </Text>

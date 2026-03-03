@@ -31,6 +31,8 @@ class ApiError extends Error {
   }
 }
 
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+
 const buildHeaders = (
   token: string | null,
   options: FetchOptions
@@ -39,6 +41,9 @@ const buildHeaders = (
   const headers: Record<string, string> = {
     ...options.headers,
   };
+  if (API_KEY) {
+    headers["X-API-Key"] = API_KEY;
+  }
   if (token) {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -127,6 +132,7 @@ const refreshTokens = async (): Promise<boolean> => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(API_KEY ? { "X-API-Key": API_KEY } : {}),
         },
         body: JSON.stringify({ token }),
       }

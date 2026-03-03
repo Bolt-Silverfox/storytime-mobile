@@ -1,25 +1,33 @@
+import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { Dispatch, SetStateAction, useMemo } from "react";
-import { RefreshControl, ScrollView, Text, View } from "react-native";
-import queryGetStories, {
-  GetStoriesParam,
-} from "../hooks/tanstack/queryHooks/queryGetStories";
+import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import useInfiniteStories, {
+  InfiniteStoriesParam,
+} from "../hooks/tanstack/queryHooks/useInfiniteStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
+import useAdaptiveColumns from "../hooks/others/useAdaptiveColumns";
 import useRefreshControl from "../hooks/others/useRefreshControl";
-import { sortStoriesByReadStatus } from "../utils/sortStories";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
 
+const storyKeyExtractor = (item: { id: string }) => item.id;
+
 type PropTypes = {
   showAges: boolean;
   setSelectedAgeGroup: Dispatch<SetStateAction<AgeGroupType>>;
   selectedAgeGroup: AgeGroupType;
-  params: GetStoriesParam;
+  params: InfiniteStoriesParam;
 };
 const GroupedStoriesStoryCarousel = ({
   showAges,
@@ -28,24 +36,49 @@ const GroupedStoriesStoryCarousel = ({
   params,
 }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const numColumns = useAdaptiveColumns();
   const {
-    data: stories,
+    data,
     isPending,
     refetch,
     error,
-  } = useQuery(queryGetStories({ ...params, ageGroup: selectedAgeGroup }));
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteStories({ ...params, ageGroup: selectedAgeGroup });
 
   const { refreshing, onRefresh } = useRefreshControl(refetch);
-  const sorted = useMemo(
-    () => sortStoriesByReadStatus(stories ?? []),
-    [stories]
+
+  const stories = useMemo(() => {
+    const all = data?.pages.flatMap((page) => page.data) ?? [];
+    const seen = new Set<string>();
+    return all.filter((s) => {
+      if (!s?.id || seen.has(s.id)) return false;
+      seen.add(s.id);
+      return true;
+    });
+  }, [data]);
+
+  const renderStoryItem = useCallback(
+    ({ item: story }: { item: (typeof stories)[number] }) => (
+      <View style={styles.columnItem}>
+        <StoryItem story={story} isGrouped />
+      </View>
+    ),
+    []
   );
+
+  const handleEndReached = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage();
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
   if (error)
     return <ErrorComponent message={error.message} refetch={refetch} />;
 
-  if (!stories?.length) {
+  if (!stories.length) {
     const isFilterDefault = selectedAgeGroup === "All";
     return (
       <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
@@ -53,7 +86,10 @@ const GroupedStoriesStoryCarousel = ({
           No stories in this category yet
         </Text>
         {isFilterDefault ? (
-          <CustomButton text="Go Back" onPress={() => navigator.goBack()} />
+          <CustomButton
+            text="Go Back"
+            onPress={() => navigator.canGoBack() && navigator.goBack()}
+          />
         ) : (
           <CustomButton
             transparent
@@ -66,27 +102,62 @@ const GroupedStoriesStoryCarousel = ({
   }
 
   return (
-    <ScrollView
-      className="-mt-4 rounded-t-3xl bg-white pt-5"
-      contentContainerClassName="flex flex-col px-4 pb-5"
+    <FlashList
+      key={numColumns}
+      data={stories}
+      keyExtractor={storyKeyExtractor}
+      style={styles.carouselContainer}
+      contentContainerStyle={styles.contentContainer}
+      drawDistance={500}
       showsVerticalScrollIndicator={false}
+      numColumns={numColumns}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
-    >
-      {showAges && (
-        <AgeSelectionComponent
-          selectedGroupProp={selectedAgeGroup}
-          setSelectedCallback={setSelectedAgeGroup}
-        />
-      )}
-      <View className="flex flex-row flex-wrap gap-x-3 gap-y-6 rounded-t-3xl py-6">
-        {sorted.map((story) => (
-          <StoryItem key={story.id} story={story} isGrouped />
-        ))}
-      </View>
-    </ScrollView>
+      ListHeaderComponent={
+        showAges ? (
+          <AgeSelectionComponent
+            selectedGroupProp={selectedAgeGroup}
+            setSelectedCallback={setSelectedAgeGroup}
+          />
+        ) : null
+      }
+      renderItem={renderStoryItem}
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
+      ListFooterComponent={
+        isFetchingNextPage ? (
+          <View style={styles.footer}>
+            <ActivityIndicator
+              size="small"
+              accessibilityLabel="Loading more stories"
+            />
+            <Text className="mt-2 text-center font-[abeezee] text-sm text-text">
+              Loading more stories...
+            </Text>
+          </View>
+        ) : null
+      }
+    />
   );
 };
 
 export default GroupedStoriesStoryCarousel;
+
+const styles = StyleSheet.create({
+  carouselContainer: {
+    marginTop: -16,
+    flex: 1,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    backgroundColor: "#ffffff",
+    paddingTop: 20,
+  },
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingTop: 24,
+    paddingBottom: 20,
+  },
+  columnItem: { flex: 1, marginHorizontal: 6, marginBottom: 24 },
+  footer: { height: 60, alignItems: "center", justifyContent: "center" },
+});

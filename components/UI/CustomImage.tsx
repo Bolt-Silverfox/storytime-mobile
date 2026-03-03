@@ -4,6 +4,7 @@ import {
   Image,
   ImageBackground,
   ImageSourcePropType,
+  StyleSheet,
   View,
 } from "react-native";
 
@@ -36,7 +37,7 @@ const CustomImage = ({
       <Image
         {...rest}
         source={source}
-        style={[{ width: "100%", height: "100%" }, _style]}
+        style={[customImageStyles.fullSize, _style]}
         resizeMode="cover"
         onLoadStart={() => setIsLoading(true)}
         onLoadEnd={() => setIsLoading(false)}
@@ -78,6 +79,10 @@ const CustomImageBackground = memo(
     );
   }
 );
+
+const customImageStyles = StyleSheet.create({
+  fullSize: { width: "100%", height: "100%" },
+});
 
 export { CustomImageBackground };
 export default CustomImage;

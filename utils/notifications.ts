@@ -24,7 +24,7 @@ Notifications.setNotificationHandler({
 // Request notification permissions
 export const requestNotificationPermissions = async (): Promise<boolean> => {
   if (!Device.isDevice) {
-    console.warn("Push notifications require a physical device");
+    console.warn("Push notifications require a physical device"); // eslint-disable-line no-console
     return false;
   }
 
@@ -38,7 +38,7 @@ export const requestNotificationPermissions = async (): Promise<boolean> => {
   }
 
   if (finalStatus !== "granted") {
-    console.warn("Notification permission not granted");
+    console.warn("Notification permission not granted"); // eslint-disable-line no-console
     return false;
   }
 
@@ -73,7 +73,7 @@ export const getDevicePushToken = async (): Promise<string | null> => {
     const tokenResponse = await Notifications.getDevicePushTokenAsync();
     return tokenResponse.data;
   } catch (error) {
-    console.error("Failed to get device push token:", error);
+    console.error("Failed to get device push token:", error); // eslint-disable-line no-console
     return null;
   }
 };
@@ -101,10 +101,10 @@ export const registerDeviceToken = async (
       return data.data;
     }
 
-    console.error("Failed to register device token:", data.message);
+    console.error("Failed to register device token:", data.message); // eslint-disable-line no-console
     return null;
   } catch (error) {
-    console.error("Error registering device token:", error);
+    console.error("Error registering device token:", error); // eslint-disable-line no-console
     return null;
   }
 };
@@ -122,7 +122,7 @@ export const unregisterDeviceToken = async (
     // Backend returns 204 No Content on success
     return response.ok;
   } catch (error) {
-    console.error("Error unregistering device token:", error);
+    console.error("Error unregistering device token:", error); // eslint-disable-line no-console
     return false;
   }
 };
@@ -132,7 +132,7 @@ const storePushToken = async (token: string): Promise<void> => {
   try {
     await AsyncStorage.setItem(PUSH_TOKEN_KEY, token);
   } catch (error) {
-    console.error("Failed to store push token:", error);
+    console.error("Failed to store push token:", error); // eslint-disable-line no-console
   }
 };
 
@@ -141,7 +141,7 @@ export const getStoredPushToken = async (): Promise<string | null> => {
   try {
     return await AsyncStorage.getItem(PUSH_TOKEN_KEY);
   } catch (error) {
-    console.error("Failed to get stored push token:", error);
+    console.error("Failed to get stored push token:", error); // eslint-disable-line no-console
     return null;
   }
 };
@@ -151,7 +151,7 @@ export const clearStoredPushToken = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem(PUSH_TOKEN_KEY);
   } catch (error) {
-    console.error("Failed to clear stored push token:", error);
+    console.error("Failed to clear stored push token:", error); // eslint-disable-line no-console
   }
 };
 
@@ -266,7 +266,7 @@ export const addTokenRefreshListener = (
       const storedToken = await getStoredPushToken();
 
       if (newToken !== storedToken) {
-        console.log("FCM token refreshed, re-registering with backend");
+        console.log("FCM token refreshed, re-registering with backend"); // eslint-disable-line no-console
         const result = await registerDeviceToken(newToken);
         if (result) {
           await storePushToken(newToken);
@@ -288,7 +288,7 @@ export const addTokenRefreshListener = (
     const storedToken = await getStoredPushToken();
 
     if (newToken !== storedToken) {
-      console.log("FCM token refreshed, re-registering with backend");
+      console.log("FCM token refreshed, re-registering with backend"); // eslint-disable-line no-console
       const result = await registerDeviceToken(newToken);
       if (result) {
         await storePushToken(newToken);
