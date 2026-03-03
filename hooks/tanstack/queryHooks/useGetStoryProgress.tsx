@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { QueryResponse } from "../../../types";
 
 export type StoryProgress = {
   id: string;
@@ -10,13 +11,6 @@ export type StoryProgress = {
   completed: boolean;
   lastAccessed: string;
   totalTimeSpent: number;
-};
-
-type Response = {
-  data: StoryProgress;
-  message: string;
-  statusCode: number;
-  success: boolean;
 };
 
 const useGetStoryProgress = (storyId: string) => {
@@ -39,7 +33,7 @@ const useGetStoryProgress = (storyId: string) => {
           throw new Error(msg);
         }
 
-        const progress: Response = await response.json();
+        const progress: QueryResponse<StoryProgress> = await response.json();
         return progress;
       } catch (err) {
         const message =
@@ -49,6 +43,7 @@ const useGetStoryProgress = (storyId: string) => {
     },
     select: (data) => data?.data,
     enabled: !!user && !!storyId,
+    staleTime: 1000 * 60 * 5,
   });
 };
 

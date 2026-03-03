@@ -1,6 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../constants/ui";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
@@ -53,13 +59,7 @@ const ParentsHomeScreenHeader = () => {
               colors={["#3608AB", "#2651D3", "#976FFC"]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 6,
-                paddingHorizontal: 16,
-                paddingVertical: 12,
-              }}
+              style={headerStyles.gradientContent}
             >
               <Icon name="Crown" color="white" />
               <Text className="font-[abeezee] text-white">Get Premium</Text>
@@ -78,5 +78,15 @@ const ParentsHomeScreenHeader = () => {
     </View>
   );
 };
+
+const headerStyles = StyleSheet.create({
+  gradientContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+});
 
 export default ParentsHomeScreenHeader;

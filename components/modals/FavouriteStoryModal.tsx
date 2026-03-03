@@ -15,6 +15,7 @@ const FavouriteStoriesModal = ({
 }) => {
   const { mutate } = useToggleFavourites({
     story,
+    isLiked: true,
   });
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>

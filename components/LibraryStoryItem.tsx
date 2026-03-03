@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction } from "react";
 import { Image, Pressable, Text, View } from "react-native";
+import { WORDS_PER_CHUNK } from "../constants/tts";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { LibraryStory } from "../types";
 import {
@@ -23,7 +24,10 @@ const LibraryStoryItem = ({
   >;
 }) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const paragraphs = splitByWordCountPreservingSentences(story.textContent, 30);
+  const paragraphs = splitByWordCountPreservingSentences(
+    story.textContent,
+    WORDS_PER_CHUNK
+  );
 
   const totalSteps = paragraphs.length;
   const progressRatio =
@@ -31,7 +35,6 @@ const LibraryStoryItem = ({
   const storyDuration = secondsToMinutes(story.durationSeconds);
   return (
     <Pressable
-      key={story.id}
       onPress={() =>
         navigator.navigate("stories", {
           screen: "childStoryDetails",
@@ -51,7 +54,7 @@ const LibraryStoryItem = ({
           },
         })
       }
-      className="flex flex-col rounded-xl border border-border-light p-1"
+      className="flex flex-col rounded-xl border border-border-light bg-white p-1"
     >
       <Image
         source={{ uri: story.coverImageUrl }}

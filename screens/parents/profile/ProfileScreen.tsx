@@ -65,22 +65,20 @@ const ProfileScreen: FC = () => {
 
           <View style={styles.nameContainer}>
             <CustomText
-              style={{
-                fontFamily: "quilka",
-                fontSize: isTablet ? 32 : 24,
-                textAlign: "center",
-                color: colours.black,
-              }}
+              style={[
+                styles.profileName,
+                // eslint-disable-next-line react-native/no-inline-styles
+                { fontSize: isTablet ? 32 : 24 },
+              ]}
             >
               {user?.name}
             </CustomText>
             <CustomText
-              style={{
-                fontSize: isTablet ? 18 : 14,
-                color: "#6B7280",
-                textAlign: "center",
-                marginTop: 4,
-              }}
+              style={[
+                styles.profileEmail,
+                // eslint-disable-next-line react-native/no-inline-styles
+                { fontSize: isTablet ? 18 : 14 },
+              ]}
             >
               {user?.email}
             </CustomText>
@@ -176,5 +174,15 @@ const styles = StyleSheet.create({
   avatar: {
     bottom: -60,
     alignSelf: "center",
+  },
+  profileName: {
+    fontFamily: "quilka",
+    textAlign: "center",
+    color: colours.black,
+  },
+  profileEmail: {
+    color: "#6B7280",
+    textAlign: "center",
+    marginTop: 4,
   },
 });

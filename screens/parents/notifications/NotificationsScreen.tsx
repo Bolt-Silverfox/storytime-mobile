@@ -76,7 +76,7 @@ const NotificationsScreen = () => {
           showsHorizontalScrollIndicator={false}
           className="max-h-20"
           horizontal
-          contentContainerClassName="flex flex-row items-center  gap-x-2 p-5 justify-center"
+          contentContainerClassName="flex-row items-center  gap-x-2 p-5 justify-center"
         >
           {notificationsLabel.map((notification) => (
             <Text
@@ -94,7 +94,7 @@ const NotificationsScreen = () => {
           ) : (
             <ScrollView
               showsVerticalScrollIndicator={false}
-              contentContainerClassName=" flex flex-col gap-y-8 px-4 pb-5"
+              contentContainerClassName="flex-col gap-y-8 px-4 pb-5"
             >
               <View className="flex flex-col gap-y-6">
                 {grouped.map((group) => (

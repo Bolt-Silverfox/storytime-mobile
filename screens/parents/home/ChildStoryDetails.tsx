@@ -15,6 +15,7 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import {
@@ -46,14 +47,21 @@ const ChildStoryDetails = () => {
   const isPremium =
     user?.subscriptionStatus === "active" || user?.role === "admin";
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
+  const { data: storyProgress, isFetching: isProgressFetching } =
+    useGetStoryProgress(id);
+  const hasExistingProgress = !!storyProgress;
   const hasReachedLimit =
-    !isPremium && !isQuotaFetching && (quota?.remaining ?? 0) === 0;
+    !isPremium &&
+    !hasExistingProgress &&
+    !isQuotaFetching &&
+    !isProgressFetching &&
+    (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
-        <ScrollView contentContainerClassName="flex pb-10 bg-bgLight flex-col">
+        <ScrollView contentContainerClassName="pb-10 bg-bgLight flex-col">
           <ImageBackground
             source={{ uri: coverImageUrl }}
             resizeMode="cover"

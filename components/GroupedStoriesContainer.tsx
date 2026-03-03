@@ -1,11 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ImageSourcePropType, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import queryGetStories, {
-  GetStoriesParam,
-} from "../hooks/tanstack/queryHooks/queryGetStories";
+import { InfiniteStoriesParam } from "../hooks/tanstack/queryHooks/useInfiniteStories";
 import { AgeGroupType } from "../types";
 import GroupedStoriesStoryCarousel from "./GroupedStoriesStoryCarousel";
 import Icon from "./Icon";
@@ -17,7 +14,7 @@ type PropTypes = {
   title: string;
   description: string;
   showAges?: boolean;
-  params: GetStoriesParam;
+  params: InfiniteStoriesParam;
 };
 
 const GroupedStoriesContainer = ({
@@ -32,9 +29,6 @@ const GroupedStoriesContainer = ({
   const [selectedAgeGroup, setSelectedAgeGroup] = useState<AgeGroupType>(
     params.ageGroup ?? "All"
   );
-  const { data: stories } = useQuery(
-    queryGetStories({ ...params, ageGroup: selectedAgeGroup })
-  );
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -42,9 +36,7 @@ const GroupedStoriesContainer = ({
         <CustomImageBackground
           source={
             imageSource ?? {
-              uri:
-                stories?.[0]?.coverImageUrl ??
-                "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__3_1_b57i6x.jpg",
+              uri: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__3_1_b57i6x.jpg",
             }
           }
           className="flex h-[30vh] max-h-[500px] w-full flex-col justify-end px-4 pb-8"

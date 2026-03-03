@@ -2,7 +2,6 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
-import { ChevronLeft } from "lucide-react-native";
 import React from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";

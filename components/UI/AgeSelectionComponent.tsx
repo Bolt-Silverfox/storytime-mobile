@@ -22,7 +22,7 @@ const AgeSelectionComponent = ({
     <ScrollView
       horizontal
       showsHorizontalScrollIndicator={false}
-      contentContainerClassName="flex flex-row gap-x-2 items-center h-full"
+      contentContainerClassName="flex-row gap-x-2 items-center h-full"
     >
       {ageGroups.map((age) => {
         const isSelected = selectedGroupProp

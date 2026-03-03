@@ -73,6 +73,7 @@ const Item = ({
         navigator.navigate("storiesByCategory", { category, id, imageUrl })
       }
       className="br flex h-16 w-[47%] items-center justify-center rounded-xl px-5"
+      // eslint-disable-next-line react-native/no-inline-styles
       style={{
         backgroundColor: `${colour}33`,
         borderBottomColor: `${colour}33`,

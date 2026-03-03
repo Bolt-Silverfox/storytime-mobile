@@ -20,7 +20,7 @@ const queryRecommendedStories = (userId: string | null | undefined) => {
         throw new Error(message);
       }
     },
-    staleTime: Infinity,
+    staleTime: 1000 * 60 * 5,
     select: (res) => res.data.data,
     gcTime: 1000 * 60 * 60 * 10,
     enabled: !!userId,

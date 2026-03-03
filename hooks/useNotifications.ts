@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AppState } from "react-native";
 import * as Notifications from "expo-notifications";
 import { useNavigation } from "@react-navigation/native";
@@ -21,6 +21,15 @@ type NotificationData = {
   [key: string]: unknown;
 };
 
+// Allowed screens for notification-driven navigation
+const ALLOWED_SCREENS = new Set([
+  "StoryDetails",
+  "ParentsNavigator",
+  "ParentControls",
+  "NotificationsNavigator",
+  "ParentProfileNavigator",
+]);
+
 export const useNotifications = (isAuthenticated: boolean) => {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
@@ -37,99 +46,95 @@ export const useNotifications = (isAuthenticated: boolean) => {
   > | null>(null);
   const tokenRefreshUnsubscribe = useRef<(() => void) | null>(null);
 
-  // Allowed screens for notification-driven navigation
-  const ALLOWED_SCREENS = new Set([
-    "StoryDetails",
-    "ParentsNavigator",
-    "ParentControls",
-    "NotificationsNavigator",
-    "ParentProfileNavigator",
-  ]);
-
   // Handle notification navigation based on category/data
-  const handleNotificationNavigation = (data: NotificationData) => {
-    const { category, storyId, kidId, screen } = data;
+  const handleNotificationNavigation = useCallback(
+    (data: NotificationData) => {
+      const { category, storyId, kidId, screen } = data;
 
-    // If explicit screen is provided, validate and navigate there
-    if (screen) {
-      if (!ALLOWED_SCREENS.has(screen)) {
-        console.warn("Unknown notification screen:", screen);
+      const goToNotifications = () => {
+        // @ts-expect-error - dynamic navigation
+        navigation.navigate("ParentsNavigator", {
+          screen: "NotificationsNavigator",
+        });
+      };
+
+      // If explicit screen is provided, validate and navigate there
+      if (screen) {
+        if (!ALLOWED_SCREENS.has(screen)) {
+          console.warn("Unknown notification screen:", screen); // eslint-disable-line no-console
+          goToNotifications();
+          return;
+        }
+        try {
+          // @ts-expect-error - dynamic navigation
+          navigation.navigate(screen, data);
+        } catch (err) {
+          console.warn("Failed to navigate to screen:", screen, err); // eslint-disable-line no-console
+          goToNotifications();
+        }
         return;
       }
-      try {
-        // @ts-expect-error - dynamic navigation
-        navigation.navigate(screen, data);
-      } catch {
-        console.warn("Failed to navigate to screen:", screen);
+
+      // Handle navigation based on notification category
+      switch (category) {
+        case "NEW_STORY":
+        case "STORY_RECOMMENDATION":
+        case "STORY_FINISHED":
+          if (storyId) {
+            // @ts-expect-error - dynamic navigation
+            navigation.navigate("StoryDetails", { storyId });
+          } else {
+            goToNotifications();
+          }
+          break;
+
+        case "ACHIEVEMENT_UNLOCKED":
+        case "BADGE_EARNED":
+        case "STREAK_MILESTONE":
+          goToNotifications();
+          break;
+
+        case "SCREEN_TIME_LIMIT":
+        case "BEDTIME_REMINDER":
+        case "WEEKLY_REPORT":
+          if (kidId) {
+            // @ts-expect-error - dynamic navigation
+            navigation.navigate("ParentControls", { kidId });
+          } else {
+            goToNotifications();
+          }
+          break;
+
+        case "NEW_LOGIN":
+        case "PASSWORD_CHANGED":
+        case "PASSWORD_RESET_ALERT":
+          // Navigate to security settings
+          // @ts-expect-error - dynamic navigation
+          navigation.navigate("ParentsNavigator", {
+            screen: "ParentProfileNavigator",
+            params: { screen: "Security" },
+          });
+          break;
+
+        case "SUBSCRIPTION_ALERT":
+        case "SUBSCRIPTION_REMINDER":
+        case "PAYMENT_SUCCESS":
+        case "PAYMENT_FAILED":
+          // Navigate to subscription screen
+          // @ts-expect-error - dynamic navigation
+          navigation.navigate("ParentsNavigator", {
+            screen: "ParentProfileNavigator",
+            params: { screen: "Subscriptions" },
+          });
+          break;
+
+        default:
+          goToNotifications();
+          break;
       }
-      return;
-    }
-
-    // Handle navigation based on notification category
-    switch (category) {
-      case "NEW_STORY":
-      case "STORY_RECOMMENDATION":
-      case "STORY_FINISHED":
-        if (storyId) {
-          // @ts-expect-error - dynamic navigation
-          navigation.navigate("StoryDetails", { storyId });
-        }
-        break;
-
-      case "ACHIEVEMENT_UNLOCKED":
-      case "BADGE_EARNED":
-      case "STREAK_MILESTONE":
-        // Navigate to achievements/progress screen
-        // @ts-expect-error - dynamic navigation
-        navigation.navigate("ParentsNavigator", {
-          screen: "NotificationsNavigator",
-        });
-        break;
-
-      case "SCREEN_TIME_LIMIT":
-      case "BEDTIME_REMINDER":
-      case "WEEKLY_REPORT":
-        if (kidId) {
-          // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentControls", { kidId });
-        } else {
-          // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentsNavigator");
-        }
-        break;
-
-      case "NEW_LOGIN":
-      case "PASSWORD_CHANGED":
-      case "PASSWORD_RESET_ALERT":
-        // Navigate to security settings
-        // @ts-expect-error - dynamic navigation
-        navigation.navigate("ParentsNavigator", {
-          screen: "ParentProfileNavigator",
-          params: { screen: "Security" },
-        });
-        break;
-
-      case "SUBSCRIPTION_ALERT":
-      case "SUBSCRIPTION_REMINDER":
-      case "PAYMENT_SUCCESS":
-      case "PAYMENT_FAILED":
-        // Navigate to subscription screen
-        // @ts-expect-error - dynamic navigation
-        navigation.navigate("ParentsNavigator", {
-          screen: "ParentProfileNavigator",
-          params: { screen: "Subscriptions" },
-        });
-        break;
-
-      default:
-        // Default: go to notifications screen
-        // @ts-expect-error - dynamic navigation
-        navigation.navigate("ParentsNavigator", {
-          screen: "NotificationsNavigator",
-        });
-        break;
-    }
-  };
+    },
+    [navigation]
+  );
 
   // Initialize push notifications when authenticated
   useEffect(() => {
@@ -174,7 +179,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
         if (__DEV__) {
-          console.log("Notification received in foreground:", notification);
+          console.log("Notification received in foreground:", notification); // eslint-disable-line no-console
         }
       }
     );
@@ -185,7 +190,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
         .data as NotificationData;
 
       if (__DEV__) {
-        console.log("Notification tapped:", data);
+        console.log("Notification tapped:", data); // eslint-disable-line no-console
       }
 
       handleNotificationNavigation(data);
@@ -203,7 +208,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
           .data as NotificationData;
 
         if (__DEV__) {
-          console.log("App opened from notification:", data);
+          console.log("App opened from notification:", data); // eslint-disable-line no-console
         }
 
         // Small delay to ensure navigation is ready
@@ -224,7 +229,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
         tokenRefreshUnsubscribe.current();
       }
     };
-  }, [isAuthenticated, navigation]);
+  }, [isAuthenticated, navigation, handleNotificationNavigation]);
 
   // Clear badge count and refresh notifications when app becomes active
   useEffect(() => {

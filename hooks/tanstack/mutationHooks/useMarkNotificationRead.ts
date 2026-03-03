@@ -27,7 +27,7 @@ const useMarkNotificationRead = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: (err) => {
-      if (__DEV__) console.log("Mark read error:", getErrorMessage(err));
+      if (__DEV__) console.log("Mark read error:", getErrorMessage(err)); // eslint-disable-line no-console
     },
   });
 };
