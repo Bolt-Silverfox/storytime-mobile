@@ -86,11 +86,13 @@ const RedeemCouponScreen = () => {
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
               <Text className="text-center font-[abeezee] text-sm text-green-700">
-                Premium access until:{" "}
-                {new Date(redeemResult.premiumAccessUntil).toLocaleDateString(
-                  "en-US",
-                  { year: "numeric", month: "long", day: "numeric" },
-                )}
+                {(() => {
+                  const d = new Date(redeemResult.premiumAccessUntil);
+                  const dateStr = Number.isNaN(d.getTime())
+                    ? redeemResult.premiumAccessUntil
+                    : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                  return `Premium access until: ${dateStr}`;
+                })()}
               </Text>
             </View>
             <TouchableOpacity

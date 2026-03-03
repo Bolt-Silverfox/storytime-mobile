@@ -41,6 +41,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
     typeof Notifications.addNotificationResponseReceivedListener
   > | null>(null);
   const tokenRefreshUnsubscribe = useRef<(() => void) | null>(null);
+  const coldStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = useCallback(
@@ -60,8 +61,10 @@ export const useNotifications = (isAuthenticated: boolean) => {
           return;
         }
         try {
+          // Only forward storyId as a safe, known param — never pass raw data
+          const safeParams = storyId ? { storyId } : undefined;
           // @ts-expect-error - dynamic navigation
-          navigation.navigate(screen, data);
+          navigation.navigate(screen, safeParams);
         } catch (err) {
           notifLogger.warn("Failed to navigate to screen:", screen, err);
           goToNotifications();
@@ -196,7 +199,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
         notifLogger.debug("App opened from notification:", data);
 
         // Small delay to ensure navigation is ready
-        setTimeout(() => {
+        coldStartTimeoutRef.current = setTimeout(() => {
           handleNotificationNavigation(data);
         }, 500);
       }
@@ -211,6 +214,9 @@ export const useNotifications = (isAuthenticated: boolean) => {
       }
       if (tokenRefreshUnsubscribe.current) {
         tokenRefreshUnsubscribe.current();
+      }
+      if (coldStartTimeoutRef.current) {
+        clearTimeout(coldStartTimeoutRef.current);
       }
     };
   }, [isAuthenticated, navigation, handleNotificationNavigation]);

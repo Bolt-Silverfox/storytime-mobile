@@ -39,8 +39,6 @@ const ProfileScreen: FC = () => {
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
 
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
-
   return (
     <SafeAreaWrapper variant="transparent">
       <View style={styles.container}>

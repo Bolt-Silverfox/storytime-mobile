@@ -170,7 +170,7 @@ const UnsubscribedUserComponent = () => {
                     <TouchableOpacity
                       onPress={handleValidate}
                       disabled={
-                        !couponCode.trim() || validateMutation.isPending
+                        !couponCode.trim() || validateMutation.isPending || redeemMutation.isPending
                       }
                       className="rounded-xl bg-gray-100 px-3 py-2"
                       activeOpacity={0.7}
