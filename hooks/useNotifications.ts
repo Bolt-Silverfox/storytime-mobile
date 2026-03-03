@@ -24,7 +24,8 @@ type NotificationData = {
 
 // Allowed screens for notification-driven navigation
 const ALLOWED_SCREENS = new Set([
-  "StoryDetails",
+  "stories",
+  "storyDeepLink",
   "ParentsNavigator",
   "ParentControls",
   "NotificationsNavigator",
@@ -82,8 +83,12 @@ export const useNotifications = (isAuthenticated: boolean) => {
         case "STORY_RECOMMENDATION":
         case "STORY_FINISHED":
           if (storyId) {
+            // Navigate to story deep link screen via nested navigator
             // @ts-expect-error - dynamic navigation
-            navigation.navigate("StoryDetails", { storyId });
+            navigation.navigate("stories", {
+              screen: "storyDeepLink",
+              params: { storyId },
+            });
           } else {
             goToNotifications();
           }
