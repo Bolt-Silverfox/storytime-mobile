@@ -31,7 +31,7 @@ export const useValidateCoupon = () => {
   });
 };
 
-export const useRedeemCoupon = (onSuccess?: (result: CouponRedeemResult) => void) => {
+export const useRedeemCoupon = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -46,10 +46,9 @@ export const useRedeemCoupon = (onSuccess?: (result: CouponRedeemResult) => void
       }
       return data;
     },
-    onSuccess: (result) => {
+    onSuccess: () => {
       // Refresh user profile so premium status is up to date
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_PROFILE] });
-      onSuccess?.(result);
     },
   });
 };

@@ -30,11 +30,7 @@ const RedeemCouponScreen = () => {
   } | null>(null);
 
   const validateMutation = useValidateCoupon();
-  const redeemMutation = useRedeemCoupon((result) => {
-    setRedeemResult(result);
-    setCouponCode("");
-    setValidationResult(null);
-  });
+  const redeemMutation = useRedeemCoupon();
 
   const handleValidate = () => {
     if (!couponCode.trim()) return;
@@ -49,6 +45,11 @@ const RedeemCouponScreen = () => {
   const handleRedeem = () => {
     if (!couponCode.trim()) return;
     redeemMutation.mutate(couponCode.trim(), {
+      onSuccess: (result) => {
+        setRedeemResult(result);
+        setCouponCode("");
+        setValidationResult(null);
+      },
       onError: (err) =>
         setValidationResult({ valid: false, message: err.message }),
     });
@@ -176,8 +177,8 @@ const RedeemCouponScreen = () => {
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
                   <Text className="text-center font-[abeezee] text-base text-white">
-                    Redeem {validationResult.freeDays} Day
-                    {validationResult.freeDays === 1 ? "" : "s"} Free
+                    Redeem {validationResult.freeDays ?? 0} Day
+                    {(validationResult.freeDays ?? 0) === 1 ? "" : "s"} Free
                   </Text>
                 )}
               </TouchableOpacity>

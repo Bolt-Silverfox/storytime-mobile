@@ -36,11 +36,7 @@ const UnsubscribedUserComponent = () => {
   } = useSubscribeIAP(selectedPlan);
 
   const validateMutation = useValidateCoupon();
-  const redeemMutation = useRedeemCoupon((result) => {
-    setRedeemSuccess(result.message);
-    setCouponCode("");
-    setCouponMessage(null);
-  });
+  const redeemMutation = useRedeemCoupon();
 
   const handleValidate = () => {
     if (!couponCode.trim()) return;
@@ -58,6 +54,11 @@ const UnsubscribedUserComponent = () => {
   const handleRedeem = () => {
     if (!couponCode.trim()) return;
     redeemMutation.mutate(couponCode.trim(), {
+      onSuccess: (result) => {
+        setRedeemSuccess(result.message);
+        setCouponCode("");
+        setCouponMessage(null);
+      },
       onError: (err) => {
         setCouponMessage({ text: err.message, valid: false });
       },
@@ -66,7 +67,7 @@ const UnsubscribedUserComponent = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerClassName="flex-col gap-y-8"
+      contentContainerStyle={{ gap: 32 }}
     >
       <View className="flex flex-col items-center justify-center">
         <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">

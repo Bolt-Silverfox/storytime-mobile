@@ -22,15 +22,9 @@ type NotificationData = {
   [key: string]: unknown;
 };
 
-// Allowed screens for notification-driven navigation
-const ALLOWED_SCREENS = new Set([
-  "stories",
-  "storyDeepLink",
-  "ParentsNavigator",
-  "ParentControls",
-  "NotificationsNavigator",
-  "ParentProfileNavigator",
-]);
+// Allowed top-level screens for notification-driven navigation.
+// Only registered ProtectedRoutesParamList screen names should appear here.
+const ALLOWED_SCREENS = new Set(["stories", "notification", "getPremium"]);
 
 export const useNotifications = (isAuthenticated: boolean) => {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
@@ -51,13 +45,11 @@ export const useNotifications = (isAuthenticated: boolean) => {
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = useCallback(
     (data: NotificationData) => {
-      const { category, storyId, kidId, screen } = data;
+      const { category, storyId, screen } = data;
 
       const goToNotifications = () => {
         // @ts-expect-error - dynamic navigation
-        navigation.navigate("ParentsNavigator", {
-          screen: "NotificationsNavigator",
-        });
+        navigation.navigate("notification");
       };
 
       // If explicit screen is provided, validate and navigate there
@@ -103,22 +95,17 @@ export const useNotifications = (isAuthenticated: boolean) => {
         case "SCREEN_TIME_LIMIT":
         case "BEDTIME_REMINDER":
         case "WEEKLY_REPORT":
-          if (kidId) {
-            // @ts-expect-error - dynamic navigation
-            navigation.navigate("ParentControls", { kidId });
-          } else {
-            goToNotifications();
-          }
+          goToNotifications();
           break;
 
         case "NEW_LOGIN":
         case "PASSWORD_CHANGED":
         case "PASSWORD_RESET_ALERT":
-          // Navigate to security settings
+          // Navigate to the profile tab → password reset screen
           // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentsNavigator", {
-            screen: "ParentProfileNavigator",
-            params: { screen: "Security" },
+          navigation.navigate("parents", {
+            screen: "profile",
+            params: { screen: "resetParentPassword" },
           });
           break;
 
@@ -126,12 +113,9 @@ export const useNotifications = (isAuthenticated: boolean) => {
         case "SUBSCRIPTION_REMINDER":
         case "PAYMENT_SUCCESS":
         case "PAYMENT_FAILED":
-          // Navigate to subscription screen
+          // Navigate to the premium/subscription screen
           // @ts-expect-error - dynamic navigation
-          navigation.navigate("ParentsNavigator", {
-            screen: "ParentProfileNavigator",
-            params: { screen: "Subscriptions" },
-          });
+          navigation.navigate("getPremium");
           break;
 
         default:
