@@ -87,10 +87,10 @@ const RedeemCouponScreen = () => {
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
               <Text className="text-center font-[abeezee] text-sm text-green-700">
                 {(() => {
-                  const raw = redeemResult.premiumAccessUntil;
-                  const dateStr = Number.isNaN(new Date(raw).getTime())
-                    ? raw
-                    : raw.slice(0, 10);
+                  const date = new Date(redeemResult.premiumAccessUntil);
+                  const dateStr = Number.isNaN(date.getTime())
+                    ? redeemResult.premiumAccessUntil
+                    : date.toISOString().slice(0, 10);
                   return `Premium access until: ${dateStr}`;
                 })()}
               </Text>
