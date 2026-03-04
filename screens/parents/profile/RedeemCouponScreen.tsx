@@ -86,7 +86,13 @@ const RedeemCouponScreen = () => {
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
               <Text className="text-center font-[abeezee] text-sm text-green-700">
-                {`Premium access until: ${redeemResult.premiumAccessUntil.slice(0, 10)}`}
+                {(() => {
+                  const raw = redeemResult.premiumAccessUntil;
+                  const dateStr = Number.isNaN(new Date(raw).getTime())
+                    ? raw
+                    : raw.slice(0, 10);
+                  return `Premium access until: ${dateStr}`;
+                })()}
               </Text>
             </View>
             <TouchableOpacity
