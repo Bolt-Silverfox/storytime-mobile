@@ -15,6 +15,12 @@ export type CouponRedeemResult = {
   message: string;
 };
 
+const extractMessage = (message: unknown, fallback: string): string => {
+  if (Array.isArray(message)) return message.join(", ");
+  if (typeof message === "string" && message) return message;
+  return fallback;
+};
+
 export const useValidateCoupon = () => {
   return useMutation({
     mutationFn: async (code: string): Promise<CouponValidateResult> => {
@@ -24,7 +30,7 @@ export const useValidateCoupon = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message ?? "Failed to validate coupon");
+        throw new Error(extractMessage(data.message, "Failed to validate coupon"));
       }
       return data;
     },
@@ -42,7 +48,7 @@ export const useRedeemCoupon = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.message ?? "Failed to redeem coupon");
+        throw new Error(extractMessage(data.message, "Failed to redeem coupon"));
       }
       return data;
     },
