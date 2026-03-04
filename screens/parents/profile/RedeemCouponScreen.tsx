@@ -86,13 +86,7 @@ const RedeemCouponScreen = () => {
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
               <Text className="text-center font-[abeezee] text-sm text-green-700">
-                {(() => {
-                  const d = new Date(redeemResult.premiumAccessUntil);
-                  const dateStr = Number.isNaN(d.getTime())
-                    ? redeemResult.premiumAccessUntil
-                    : `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                  return `Premium access until: ${dateStr}`;
-                })()}
+                {`Premium access until: ${redeemResult.premiumAccessUntil.slice(0, 10)}`}
               </Text>
             </View>
             <TouchableOpacity
@@ -152,7 +146,7 @@ const RedeemCouponScreen = () => {
               <TouchableOpacity
                 onPress={handleValidate}
                 disabled={
-                  !couponCode.trim() || validateMutation.isPending
+                  !couponCode.trim() || validateMutation.isPending || redeemMutation.isPending
                 }
                 className="w-full rounded-full bg-gray-100 py-4"
                 activeOpacity={0.8}
