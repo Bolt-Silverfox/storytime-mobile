@@ -202,7 +202,7 @@ const UnsubscribedUserComponent = () => {
                       text={
                         redeemMutation.isPending ? "Redeeming…" : "Redeem"
                       }
-                      disabled={redeemMutation.isPending}
+                      disabled={redeemMutation.isPending || validateMutation.isPending}
                       onPress={handleRedeem}
                     />
                   )}
