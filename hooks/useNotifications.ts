@@ -171,7 +171,10 @@ export const useNotifications = (isAuthenticated: boolean) => {
     // Listener for notifications received while app is foregrounded
     notificationListener.current = addNotificationReceivedListener(
       (notification) => {
-        notifLogger.debug("Notification received in foreground:", notification);
+        notifLogger.debug("Notification received in foreground", {
+          notificationId: notification.request.identifier,
+          category: notification.request.content.categoryIdentifier,
+        });
       }
     );
 
@@ -180,7 +183,12 @@ export const useNotifications = (isAuthenticated: boolean) => {
       const data = response.notification.request.content
         .data as NotificationData;
 
-      notifLogger.debug("Notification tapped:", data);
+      notifLogger.debug("Notification tapped", {
+        category: data.category,
+        screen: data.screen,
+        hasStoryId: Boolean(data.storyId),
+        hasKidId: Boolean(data.kidId),
+      });
 
       handleNotificationNavigation(data);
     });
@@ -196,7 +204,12 @@ export const useNotifications = (isAuthenticated: boolean) => {
         const data = response.notification.request.content
           .data as NotificationData;
 
-        notifLogger.debug("App opened from notification:", data);
+        notifLogger.debug("App opened from notification", {
+          category: data.category,
+          screen: data.screen,
+          hasStoryId: Boolean(data.storyId),
+          hasKidId: Boolean(data.kidId),
+        });
 
         // Small delay to ensure navigation is ready
         coldStartTimeoutRef.current = setTimeout(() => {
