@@ -1,6 +1,11 @@
 import Netinfo from "@react-native-community/netinfo";
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  LinkingOptions,
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import { audioLogger } from "./utils/logger";
+import { reactNavigationIntegration } from "./utils/sentry";
 import {
   QueryClient,
   QueryClientProvider,
@@ -74,6 +79,7 @@ const onAppStateChange = (status: AppStateStatus) => {
 };
 
 export default function App() {
+  const navigationRef = useNavigationContainerRef<RootNavigatorParamList>();
   const [loaded, error] = useFonts({
     quilka: require("./assets/fonts/Qilkabold-DO6BR.otf"),
     abeezee: require("./assets/fonts/ABeeZee-Regular.ttf"),
@@ -98,7 +104,15 @@ export default function App() {
       <AuthProvider>
         <ToastProvider>
           <QueryClientProvider client={queryClient}>
-            <NavigationContainer linking={linking}>
+            <NavigationContainer
+              ref={navigationRef}
+              linking={linking}
+              onReady={() => {
+                reactNavigationIntegration.registerNavigationContainer(
+                  navigationRef
+                );
+              }}
+            >
               <NotificationHandler>
                 <RootNavigator />
               </NotificationHandler>
