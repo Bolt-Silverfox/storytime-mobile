@@ -2,7 +2,12 @@ import { Sentry } from "./sentry";
 import { logNonFatal } from "./crashlytics";
 import log from "./logger";
 
+let installed = false;
+
 export function setupGlobalErrorHandlers() {
+  if (installed) return;
+  installed = true;
+
   // Catch unhandled JS errors
   const previousHandler = ErrorUtils.getGlobalHandler();
   ErrorUtils.setGlobalHandler((error: Error, isFatal?: boolean) => {

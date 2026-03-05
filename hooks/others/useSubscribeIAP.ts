@@ -90,7 +90,7 @@ const useSubscribeIAP = (
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        iapLogger.error("Failed to fetch products from google play store");
+        iapLogger.error("Failed to fetch products from google play store", err);
         setErrorMessage(getErrorMessage(err));
       } finally {
         setIsLoading(false);

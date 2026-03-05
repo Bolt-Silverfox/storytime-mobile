@@ -188,6 +188,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         const hasToken = await secureTokenStorage.hasAccessToken();
         if (!localStoredSession || !hasToken) {
           setUser(null);
+          clearSentryUser();
+          clearCrashlyticsUser();
           return;
         }
         try {
@@ -200,6 +202,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           // Corrupted user data - clear it and reset
           await AsyncStorage.removeItem("user");
           setUser(null);
+          clearSentryUser();
+          clearCrashlyticsUser();
           return;
         }
       } catch (err) {
