@@ -20,7 +20,11 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    log.error("ErrorBoundary caught:", error, errorInfo);
+    // log.error already forwards to Sentry (captureException) and Crashlytics (recordError)
+    // via the logger transports, so no explicit calls needed here.
+    log.error("ErrorBoundary caught:", error, {
+      componentStack: errorInfo.componentStack,
+    });
   }
 
   handleRetry = () => {
