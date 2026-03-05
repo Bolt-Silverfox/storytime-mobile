@@ -38,8 +38,10 @@ export function initSentry() {
               string,
               unknown
             >;
-            if ("Authorization" in headers) {
-              headers["Authorization"] = "[REDACTED]";
+            for (const key of Object.keys(headers)) {
+              if (key.toLowerCase() === "authorization") {
+                headers[key] = "[REDACTED]";
+              }
             }
             return { ...breadcrumb, data: { ...breadcrumb.data, headers } };
           }

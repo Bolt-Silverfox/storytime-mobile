@@ -6,11 +6,28 @@ import {
 import * as Sentry from "@sentry/react-native";
 import crashlytics from "@react-native-firebase/crashlytics";
 
+/** Map react-native-logs level names to valid Sentry SeverityLevel values */
+const SENTRY_LEVEL_MAP: Record<string, Sentry.SeverityLevel> = {
+  debug: "debug",
+  info: "info",
+  warn: "warning",
+  error: "error",
+};
+
+/** Safely serialize a message, handling circular references */
+function safeSerialize(msg: unknown): string {
+  if (typeof msg === "string") return msg;
+  try {
+    return JSON.stringify(msg);
+  } catch {
+    return String(msg);
+  }
+}
+
 const sentryTransport: transportFunctionType<object> = (props) => {
   if (__DEV__) return;
 
-  const message =
-    typeof props.msg === "string" ? props.msg : JSON.stringify(props.msg);
+  const message = safeSerialize(props.msg);
 
   if (props.level.text === "error") {
     Sentry.captureException(
@@ -20,7 +37,7 @@ const sentryTransport: transportFunctionType<object> = (props) => {
     Sentry.addBreadcrumb({
       category: "log",
       message,
-      level: props.level.text as Sentry.SeverityLevel,
+      level: SENTRY_LEVEL_MAP[props.level.text] ?? "info",
     });
   }
 };
@@ -28,8 +45,7 @@ const sentryTransport: transportFunctionType<object> = (props) => {
 const crashlyticsTransport: transportFunctionType<object> = (props) => {
   if (__DEV__) return;
 
-  const message =
-    typeof props.msg === "string" ? props.msg : JSON.stringify(props.msg);
+  const message = safeSerialize(props.msg);
 
   if (props.level.text === "error") {
     crashlytics().recordError(
