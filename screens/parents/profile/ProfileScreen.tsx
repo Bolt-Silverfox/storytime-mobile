@@ -7,6 +7,7 @@ import {
   Gift,
   HelpCircle,
   KeyRound,
+  Link2,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -98,6 +99,12 @@ const ProfileScreen: FC = () => {
               icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
               label="Change Password"
               onPress={() => navigator.navigate("resetParentPassword")}
+              isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Link2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Linked Accounts"
+              onPress={() => navigator.navigate("linkedAccounts")}
               isTablet={isTablet}
             />
             <MenuItem

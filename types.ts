@@ -257,6 +257,14 @@ const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 
+type AuthProvider = "email" | "google" | "apple";
+
+type LinkedAccount = {
+  provider: AuthProvider;
+  email: string | null;
+  linkedAt: string;
+};
+
 type SubscriptionPlan = "Monthly" | "Yearly" | null;
 
 type SubscriptionStatus = {
@@ -382,6 +390,8 @@ export type {
   StoryQuota,
   LibraryStory,
   LibraryFilterType,
+  AuthProvider,
+  LinkedAccount,
 };
 
 export { ageGroups, libraryFilters };
