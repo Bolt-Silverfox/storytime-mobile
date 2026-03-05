@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import {
   BellRing,
   CreditCard,
+  Gift,
   HelpCircle,
   KeyRound,
 } from "lucide-react-native";
@@ -37,8 +38,6 @@ const ProfileScreen: FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
-
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -106,6 +105,12 @@ const ProfileScreen: FC = () => {
               label="Subscription"
               isTablet={isTablet}
               onPress={() => protectedNavigator.navigate("getPremium")}
+            />
+            <MenuItem
+              icon={<Gift color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Redeem Coupon"
+              isTablet={isTablet}
+              onPress={() => navigator.navigate("redeemCoupon")}
             />
             <MenuItem
               icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
