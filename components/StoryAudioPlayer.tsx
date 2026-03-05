@@ -3,6 +3,7 @@ import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import { VOICE_LABELS } from "../constants/ui";
+import { audioLogger } from "../utils/logger";
 
 const StoryAudioPlayer = ({
   audioUrl,
@@ -67,7 +68,7 @@ const StoryAudioPlayer = ({
           player.play();
         }
       } catch (e) {
-        if (__DEV__) console.error("Audio replace failed:", e); // eslint-disable-line no-console
+        audioLogger.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
     } else if (!audioUrl && prevUrlRef.current) {
@@ -77,7 +78,7 @@ const StoryAudioPlayer = ({
       try {
         player.pause();
       } catch (e) {
-        if (__DEV__) console.error("Audio pause failed:", e); // eslint-disable-line no-console
+        audioLogger.error("Audio pause failed:", e);
       }
       setIsPlaying(false);
     }
@@ -93,7 +94,7 @@ const StoryAudioPlayer = ({
       setIsPlaying(true);
       player.play();
     } catch (e) {
-      if (__DEV__) console.error("Audio playback failed:", e); // eslint-disable-line no-console
+      audioLogger.error("Audio playback failed:", e);
       setIsPlaying(false);
     }
   };

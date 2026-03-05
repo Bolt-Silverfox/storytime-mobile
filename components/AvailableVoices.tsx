@@ -3,6 +3,7 @@ import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Image, Pressable, Switch, Text, View } from "react-native";
 import { COLORS } from "../constants/ui";
+import { audioLogger } from "../utils/logger";
 import { AvailableVoices as VoiceData } from "../types";
 import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
@@ -70,9 +71,7 @@ const AvailableVoices = ({
       player.replace(audioUrl);
       player.play();
     } catch (error) {
-      if (__DEV__) {
-        console.error("Failed to load audio preview:", error); // eslint-disable-line no-console
-      }
+      audioLogger.error("Failed to load audio preview:", error);
       setPreviewingId(null);
     }
   };

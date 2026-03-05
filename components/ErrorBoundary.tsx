@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
+import log from "../utils/logger";
 
 interface Props {
   children: ReactNode;
@@ -19,9 +20,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo) {
-    if (__DEV__) {
-      console.error("ErrorBoundary caught:", error, errorInfo); // eslint-disable-line no-console
-    }
+    log.error("ErrorBoundary caught:", error, errorInfo);
   }
 
   handleRetry = () => {

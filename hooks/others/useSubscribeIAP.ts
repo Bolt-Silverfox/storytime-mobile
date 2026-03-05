@@ -11,6 +11,7 @@ import { QueryResponse, SubscriptionPlan } from "../../types";
 import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../contexts/AuthContext";
+import { iapLogger } from "../../utils/logger";
 
 const useSubscribeIAP = (
   selectedPlan: SubscriptionPlan,
@@ -56,8 +57,7 @@ const useSubscribeIAP = (
         });
         onSubscribed?.();
       } catch (err) {
-        if (__DEV__)
-          console.error("Verification failed, NOT finishing transaction", err);
+        iapLogger.error("Verification failed, NOT finishing transaction", err);
         setErrorMessage(getErrorMessage(err));
       }
     },
@@ -67,7 +67,7 @@ const useSubscribeIAP = (
         setErrorMessage("No worries! You can subscribe anytime.");
       } else {
         setIsUserCancelled(false);
-        if (__DEV__) console.error("Subscription failed", error); // eslint-disable-line no-console
+        iapLogger.error("Subscription failed", error);
         setErrorMessage(error.message ?? "Unexpected error, try again");
       }
     },
@@ -90,8 +90,7 @@ const useSubscribeIAP = (
         setIsLoading(true);
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        if (__DEV__)
-          console.error("Failed to fetch products from google play store");
+        iapLogger.error("Failed to fetch products from google play store");
         setErrorMessage(getErrorMessage(err));
       } finally {
         setIsLoading(false);
@@ -122,7 +121,7 @@ const useSubscribeIAP = (
       if (!response.success) throw new Error(response.message);
       return response;
     } catch (err) {
-      if (__DEV__) console.error("purchase verification failed", err); // eslint-disable-line no-console
+      iapLogger.error("purchase verification failed", err);
       throw new Error(getErrorMessage(err));
     }
   };

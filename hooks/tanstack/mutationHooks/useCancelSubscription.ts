@@ -5,6 +5,7 @@ import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { Alert } from "react-native";
 import useAuth from "../../../contexts/AuthContext";
+import { iapLogger } from "../../../utils/logger";
 
 const useCancelSubscription = (onSuccessCb?: () => void) => {
   const { user } = useAuth();
@@ -23,7 +24,7 @@ const useCancelSubscription = (onSuccessCb?: () => void) => {
     },
     onError: (err) => {
       Alert.alert("Payment cancellation failed", err.message);
-      if (__DEV__) console.error("Cancel payment error", err); // eslint-disable-line no-console
+      iapLogger.error("Cancel payment error", err);
     },
   });
 };

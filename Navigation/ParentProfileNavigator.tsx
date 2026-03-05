@@ -8,6 +8,7 @@ import DeleteAccountConfirmation from "../screens/parents/profile/DeleteAccountC
 import EditParentImage from "../screens/parents/profile/EditParentImage";
 import NotificationSettingsScreen from "../screens/parents/profile/NotificationSettingsScreen";
 import ProfileScreen from "../screens/parents/profile/ProfileScreen";
+import RedeemCouponScreen from "../screens/parents/profile/RedeemCouponScreen";
 import ResetParentPassword from "../screens/parents/profile/ResetParentPassword";
 import HelpAndSupportNavigator, {
   HelpAndSupportNavigatorParamList,
@@ -17,6 +18,7 @@ type ParentProfileNavigatorParamList = {
   indexPage: undefined;
   notificationSettings: undefined;
   resetParentPassword: undefined;
+  redeemCoupon: undefined;
   helpAndSupport: NavigatorScreenParams<HelpAndSupportNavigatorParamList>;
   deleteAccount: undefined;
   deleteAccountConfirmation: undefined;
@@ -46,6 +48,7 @@ const ParentProfileNavigator = () => {
         component={DeleteAccountConfirmation}
       />
       <Stack.Screen name="editParentImage" component={EditParentImage} />
+      <Stack.Screen name="redeemCoupon" component={RedeemCouponScreen} />
     </Stack.Navigator>
   );
 };

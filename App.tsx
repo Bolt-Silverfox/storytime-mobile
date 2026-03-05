@@ -1,5 +1,6 @@
 import Netinfo from "@react-native-community/netinfo";
 import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import { audioLogger } from "./utils/logger";
 import {
   QueryClient,
   QueryClientProvider,
@@ -48,7 +49,7 @@ setAudioModeAsync({
   shouldPlayInBackground: false,
   interruptionMode: "mixWithOthers",
 }).catch((e) => {
-  if (__DEV__) console.warn("setAudioModeAsync failed:", e); // eslint-disable-line no-console
+  audioLogger.warn("setAudioModeAsync failed:", e);
 });
 
 const queryClient = new QueryClient({
