@@ -14,6 +14,7 @@ const QUERY_KEYS = {
   GET_LIBRARY_STORIES: "libraryStories",
   GET_INFINITE_STORIES: "stories",
   GET_STORY_PROGRESS: "storyProgress",
+  GET_LINKED_ACCOUNTS: "linkedAccounts",
 } as const;
 
 /** Default page size for cursor-paginated API calls. */

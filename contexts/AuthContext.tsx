@@ -459,6 +459,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
       });
       const response = await request.json();
+      if (
+        request.status === 409 &&
+        response.error === "ACCOUNT_EXISTS_LINK_REQUIRED"
+      ) {
+        Alert.alert(
+          "Account Already Exists",
+          "An account with this email already exists. Please log in with your original method first, then link Google from Profile → Linked Accounts."
+        );
+        return;
+      }
       await processOAuthResponse(response);
     } catch (error) {
       const message =
@@ -528,6 +538,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const response = await request.json();
+      if (
+        request.status === 409 &&
+        response.error === "ACCOUNT_EXISTS_LINK_REQUIRED"
+      ) {
+        Alert.alert(
+          "Account Already Exists",
+          "An account with this email already exists. Please log in with your original method first, then link Apple from Profile → Linked Accounts."
+        );
+        return;
+      }
       await processOAuthResponse(response);
     } catch (error) {
       const message =
