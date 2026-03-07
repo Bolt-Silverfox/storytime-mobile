@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
@@ -36,6 +36,7 @@ export type BatchStatusResponse = {
 };
 
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
+  const queryClient = useQueryClient();
   const [batchJobId, setBatchJobId] = useState<string | null>(null);
   const [mergedParagraphs, setMergedParagraphs] = useState<
     BatchParagraph[] | null
@@ -65,7 +66,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
   // When batch response arrives, capture batchJobId and initialize merged paragraphs
   // Only seed once per unique batch response — use ref to prevent re-initialization
-  // after batchJobId is cleared on completion
+  // after batchJobId is cleared on completion. Gate on dataUpdatedAt to avoid
+  // re-seeding stale cached data after retryFailed() clears local state.
   useEffect(() => {
     if (batchQuery.data) {
       const newJobId = batchQuery.data.batchJobId ?? null;
@@ -78,7 +80,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         lastInitializedBatchIdRef.current = newJobId;
       }
     }
-  }, [batchQuery.data, mergedParagraphs]);
+  }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs]);
 
   // Phase 2: Poll for completed paragraphs
   const pollingQuery = useQuery({
@@ -139,19 +141,47 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     [batchQuery.data?.paragraphs],
   );
 
+  // Sync merged paragraphs back to query cache so remounts get complete data
+  const syncToCache = useCallback(
+    (paragraphs: BatchParagraph[]) => {
+      const queryKey = ["batchStoryAudio", storyId, voiceId];
+      queryClient.setQueryData<QueryResponse<BatchStoryAudioResponse>>(
+        queryKey,
+        (old) => {
+          if (!old?.data) return old;
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              paragraphs,
+              batchJobId: undefined,
+              pendingParagraphs: 0,
+            },
+          };
+        },
+      );
+    },
+    [queryClient, storyId, voiceId],
+  );
+
   useEffect(() => {
     if (pollingQuery.data) {
       mergeParagraphs(pollingQuery.data);
 
-      // Stop polling when batch is done
+      // Stop polling when batch is done and sync final state to cache
       if (
         pollingQuery.data.status === "completed" ||
         pollingQuery.data.status === "failed"
       ) {
         setBatchJobId(null);
+        // Sync merged paragraphs to query cache after final merge
+        setMergedParagraphs((current) => {
+          if (current) syncToCache(current);
+          return current;
+        });
       }
     }
-  }, [pollingQuery.data, mergeParagraphs]);
+  }, [pollingQuery.data, mergeParagraphs, syncToCache]);
 
   // Stop polling only on terminal errors (404 = expired batch)
   // Transient failures (5xx, network) are retried by TanStack Query
