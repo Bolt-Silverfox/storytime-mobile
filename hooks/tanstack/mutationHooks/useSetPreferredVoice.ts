@@ -27,10 +27,11 @@ const useSetPreferredVoice = () => {
       });
       const response = await request.json();
       if (!response.success) {
-        const msg =
+        const fallbackMsg =
           request.status === 403
             ? "You've already selected a voice. Upgrade to premium to switch voices."
-            : (response.message ?? GENERIC_VOICE_ERROR);
+            : GENERIC_VOICE_ERROR;
+        const msg = response.message ?? fallbackMsg;
         throw new Error(msg);
       }
       return response;

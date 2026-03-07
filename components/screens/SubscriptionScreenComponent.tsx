@@ -1,7 +1,6 @@
 import Feather from "@expo/vector-icons/Feather";
-import { Pressable, Text, View } from "react-native";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../constants/ui";
-import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
+import useIsPremium from "../../hooks/useIsPremium";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 import SubscribedUserComponent from "./SubscribedUserComponent";
 import UnsubscribedUserComponent from "./UnsubscribedUserComponent";
@@ -11,11 +10,7 @@ type PropTypes = {
 };
 
 const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
-  const { data } = useGetUserProfile();
-
-  const isSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
+  const { isPremium: isSubscribed, isLoading } = useIsPremium();
 
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
@@ -29,7 +24,11 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
           </Text>
         </View>
 
-        {isSubscribed ? (
+        {isLoading ? (
+          <View className="flex flex-1 items-center justify-center">
+            <ActivityIndicator size="large" color="white" />
+          </View>
+        ) : isSubscribed ? (
           <SubscribedUserComponent />
         ) : (
           <UnsubscribedUserComponent />

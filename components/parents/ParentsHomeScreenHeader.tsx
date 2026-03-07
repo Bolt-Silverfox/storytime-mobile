@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../constants/ui";
+import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
@@ -19,10 +19,7 @@ const ParentsHomeScreenHeader = () => {
   const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
 
   const { data, isPending } = useGetUserProfile();
-
-  const isUserSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
+  const { isPremium: isUserSubscribed } = useIsPremium();
   if (isPending) return <ActivityIndicator size={"large"} />;
 
   return (
