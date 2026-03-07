@@ -4,4 +4,4 @@ const { withSentryConfig } = require("@sentry/react-native/metro");
 
 const config = getDefaultConfig(__dirname);
 
-module.exports = withSentryConfig(withNativeWind(config, { input: "./global.css" }));
+module.exports = withNativeWind(withSentryConfig(config), { input: "./global.css" });

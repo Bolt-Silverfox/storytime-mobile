@@ -7,14 +7,14 @@ export const reactNavigationIntegration = Sentry.reactNavigationIntegration({
 });
 
 export function initSentry() {
-  if (__DEV__ || !SENTRY_DSN) return;
+  if (!SENTRY_DSN) return;
 
   Sentry.init({
     dsn: SENTRY_DSN,
-    environment: "production",
+    environment: __DEV__ ? "development" : "production",
 
-    tracesSampleRate: 0.2,
-    profilesSampleRate: 0.1,
+    tracesSampleRate: __DEV__ ? 1.0 : 0.2,
+    profilesSampleRate: __DEV__ ? 0 : 0.1,
 
     enableNative: true,
     enableNativeCrashHandling: true,
@@ -54,12 +54,10 @@ export function initSentry() {
 }
 
 export function setSentryUser(id: string, email?: string) {
-  if (__DEV__) return;
   Sentry.setUser({ id, email });
 }
 
 export function clearSentryUser() {
-  if (__DEV__) return;
   Sentry.setUser(null);
 }
 
