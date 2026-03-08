@@ -10,7 +10,7 @@ type PropTypes = {
 };
 
 const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
-  const { isPremium: isSubscribed, isLoading } = useIsPremium();
+  const { isPremium: isSubscribed, isLoading, isError } = useIsPremium();
 
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
@@ -27,6 +27,15 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
         {isLoading ? (
           <View className="flex flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="white" />
+          </View>
+        ) : isError ? (
+          <View className="flex flex-1 items-center justify-center px-6">
+            <Text className="text-center font-[abeezee] text-base text-white">
+              Unable to load subscription info. Please try again.
+            </Text>
+            <Pressable onPress={goBack} className="mt-4 rounded-lg bg-white/20 px-6 py-3">
+              <Text className="font-[abeezee] text-white">Go Back</Text>
+            </Pressable>
           </View>
         ) : isSubscribed ? (
           <SubscribedUserComponent />

@@ -66,11 +66,12 @@ const AvailableVoices = ({
   };
 
   const notifyVoiceLimitReached = () => {
+    const usedCount = usedVoicesForStory.length;
     const usedNames = data
       .filter((v) => usedVoicesForStory.includes(v.id))
       .map((v) => v.displayName ?? v.name);
     notify(
-      `You've used ${maxVoicesPerStory} voices on this story. Switch between ${usedNames.join(", ")}.`
+      `You've used ${usedCount} ${usedCount === 1 ? "voice" : "voices"} on this story. Switch between ${usedNames.join(", ")}.`
     );
   };
 

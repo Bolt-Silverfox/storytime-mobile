@@ -41,6 +41,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     BatchParagraph[] | null
   >(null);
   const prevVoiceRef = useRef<string | null>(voiceId);
+  const lastInitializedBatchIdRef = useRef<string | null>(null);
 
   // Reset state when voice changes
   useEffect(() => {
@@ -48,6 +49,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       prevVoiceRef.current = voiceId;
       setBatchJobId(null);
       setMergedParagraphs(null);
+      lastInitializedBatchIdRef.current = null;
     }
   }, [voiceId]);
 
@@ -62,16 +64,21 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   });
 
   // When batch response arrives, capture batchJobId and initialize merged paragraphs
-  // Only reset if this is initial load or a genuinely new batch (prevents refetch overwrites)
+  // Only seed once per unique batch response — use ref to prevent re-initialization
+  // after batchJobId is cleared on completion
   useEffect(() => {
     if (batchQuery.data) {
       const newJobId = batchQuery.data.batchJobId ?? null;
-      if (mergedParagraphs === null || newJobId !== batchJobId) {
+      if (
+        mergedParagraphs === null ||
+        (newJobId && newJobId !== lastInitializedBatchIdRef.current)
+      ) {
         setMergedParagraphs(batchQuery.data.paragraphs);
         setBatchJobId(newJobId);
+        lastInitializedBatchIdRef.current = newJobId;
       }
     }
-  }, [batchQuery.data, mergedParagraphs, batchJobId]);
+  }, [batchQuery.data, mergedParagraphs]);
 
   // Phase 2: Poll for completed paragraphs
   const pollingQuery = useQuery({
@@ -141,12 +148,17 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     }
   }, [pollingQuery.data, mergeParagraphs]);
 
-  // Stop polling on 404 (expired batch)
+  // Stop polling only on terminal errors (404 = expired batch)
+  // Transient failures (5xx, network) are retried by TanStack Query
   useEffect(() => {
-    if (pollingQuery.isError) {
-      setBatchJobId(null);
+    if (pollingQuery.isError && pollingQuery.error) {
+      const message = pollingQuery.error.message ?? "";
+      const isTerminal = message.includes("404") || message.includes("not found");
+      if (isTerminal) {
+        setBatchJobId(null);
+      }
     }
-  }, [pollingQuery.isError]);
+  }, [pollingQuery.isError, pollingQuery.error]);
 
   // Build the final data object with merged paragraphs
   const data = batchQuery.data
@@ -185,15 +197,13 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
 const fetchBatchStatus = async (
   batchJobId: string,
 ): Promise<BatchStatusResponse> => {
-  try {
-    const request = await apiFetch(
-      `${BASE_URL}/voice/story/audio/batch/status/${batchJobId}`,
-    );
-    const response: QueryResponse<BatchStatusResponse> =
-      await request.json();
-    if (!response.success) throw new Error(response.message);
-    return response.data;
-  } catch (err) {
-    throw new Error(getErrorMessage(err));
+  const request = await apiFetch(
+    `${BASE_URL}/voice/story/audio/batch/status/${batchJobId}`,
+  );
+  if (!request.ok) {
+    throw new Error(`${request.status}: ${request.statusText}`);
   }
+  const response: QueryResponse<BatchStatusResponse> = await request.json();
+  if (!response.success) throw new Error(response.message);
+  return response.data;
 };
