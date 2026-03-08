@@ -119,6 +119,11 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
             const originalParagraph = batchQuery.data?.paragraphs.find(
               (p) => p.index === completed.index,
             );
+            if (!originalParagraph) {
+              console.warn(
+                `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`,
+              );
+            }
             updated.push({
               index: completed.index,
               text: originalParagraph?.text ?? "",
@@ -153,7 +158,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   useEffect(() => {
     if (pollingQuery.isError && pollingQuery.error) {
       const message = pollingQuery.error.message ?? "";
-      const isTerminal = message.includes("404") || message.includes("not found");
+      const lower = message.toLowerCase();
+      const isTerminal = lower.includes("404") || lower.includes("not found");
       if (isTerminal) {
         setBatchJobId(null);
       }
