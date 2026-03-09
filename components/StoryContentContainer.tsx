@@ -17,6 +17,7 @@ import {
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { CONTROLS_FADE_MS } from "../constants";
+import useIsPremium from "../hooks/useIsPremium";
 import { Story } from "../types";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
@@ -34,6 +35,7 @@ type PropTypes = {
   audioUrl: string | null;
   isAudioLoading: boolean;
   isAudioError: boolean;
+  isStillGenerating: boolean;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
@@ -57,11 +59,13 @@ const StoryContentContainer = ({
   audioUrl,
   isAudioLoading,
   isAudioError,
+  isStillGenerating,
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
   isTTSDegraded,
 }: PropTypes) => {
+  const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
@@ -170,12 +174,13 @@ const StoryContentContainer = ({
               audioUrl={audioUrl}
               isLoading={isAudioLoading}
               isError={isAudioError}
+              isStillGenerating={isStillGenerating}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
             />
           </Animated.View>
-          {isTTSDegraded && (
+          {isTTSDegraded && isPremium && (
             <View className="mt-2 flex flex-row items-center gap-x-2 rounded-lg bg-amber-500/90 px-3 py-2">
               <Icon name="TriangleAlert" size={16} color="white" />
               <Text className="flex-1 font-[abeezee] text-xs text-white">

@@ -4,16 +4,14 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
-import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useIsPremium from "../../hooks/useIsPremium";
+
 
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: quota } = useGetStoryQuota();
-  const { data: profile } = useGetUserProfile();
-
-  const isPremium =
-    profile?.subscriptionStatus === "active" || profile?.role === "admin";
+  const { isPremium } = useIsPremium();
 
   if (dismissed || isPremium || !quota) return null;
 
