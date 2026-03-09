@@ -58,7 +58,18 @@ const useRestorePurchases = (onRestored?: () => void) => {
             },
           );
           const response: QueryResponse = await request.json();
-          if (response.success) verified++;
+          if (response.success) {
+            verified++;
+            try {
+              const { finishTransaction } = await import("expo-iap");
+              await finishTransaction({ purchase });
+            } catch (finishErr) {
+              iapLogger.error(
+                `Failed to finish restored transaction ${purchase.productId}`,
+                finishErr,
+              );
+            }
+          }
         } catch (err) {
           iapLogger.error(
             `Failed to verify restored purchase ${purchase.productId}`,
@@ -70,15 +81,17 @@ const useRestorePurchases = (onRestored?: () => void) => {
       setRestoredCount(verified);
 
       if (verified > 0) {
-        queryClient.refetchQueries({
-          queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
-        });
-        queryClient.refetchQueries({
-          queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
-        });
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
-        });
+        await Promise.all([
+          queryClient.refetchQueries({
+            queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
+          }),
+          queryClient.refetchQueries({
+            queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
+          }),
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
+          }),
+        ]);
         onRestored?.();
       } else {
         setError("Purchases found but verification failed. Please try again.");

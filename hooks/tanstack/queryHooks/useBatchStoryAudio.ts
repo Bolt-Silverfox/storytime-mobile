@@ -41,10 +41,17 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   const [mergedParagraphs, setMergedParagraphs] = useState<
     BatchParagraph[] | null
   >(null);
+  const mergedParagraphsRef = useRef<BatchParagraph[] | null>(null);
   const [failedParagraphs, setFailedParagraphs] = useState<number[]>([]);
   const [batchError, setBatchError] = useState<string | null>(null);
+  // Keep ref in sync with state for reading outside setters
+  useEffect(() => {
+    mergedParagraphsRef.current = mergedParagraphs;
+  }, [mergedParagraphs]);
+
   const prevVoiceRef = useRef<string | null>(voiceId);
   const lastInitializedBatchIdRef = useRef<string | null>(null);
+  const lastDataUpdatedAtRef = useRef<number>(0);
 
   // Reset state when voice changes
   useEffect(() => {
@@ -55,6 +62,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       setFailedParagraphs([]);
       setBatchError(null);
       lastInitializedBatchIdRef.current = null;
+      lastDataUpdatedAtRef.current = 0;
     }
   }, [voiceId]);
 
@@ -73,12 +81,13 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   // after batchJobId is cleared on completion. Gate on dataUpdatedAt to avoid
   // re-seeding stale cached data after retryFailed() clears local state.
   useEffect(() => {
-    if (batchQuery.data) {
+    if (batchQuery.data && batchQuery.dataUpdatedAt > lastDataUpdatedAtRef.current) {
       const newJobId = batchQuery.data.batchJobId ?? null;
       if (
         mergedParagraphs === null ||
         (newJobId && newJobId !== lastInitializedBatchIdRef.current)
       ) {
+        lastDataUpdatedAtRef.current = batchQuery.dataUpdatedAt;
         setMergedParagraphs(batchQuery.data.paragraphs);
         setBatchJobId(newJobId);
         lastInitializedBatchIdRef.current = newJobId;
@@ -189,10 +198,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       ) {
         setBatchJobId(null);
         // Sync merged paragraphs to query cache after final merge
-        setMergedParagraphs((current) => {
-          if (current) syncToCache(current);
-          return current;
-        });
+        if (mergedParagraphsRef.current) {
+          syncToCache(mergedParagraphsRef.current);
+        }
       }
     }
   }, [pollingQuery.data, mergeParagraphs, syncToCache]);
@@ -216,6 +224,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     setMergedParagraphs(null);
     setBatchJobId(null);
     lastInitializedBatchIdRef.current = null;
+    lastDataUpdatedAtRef.current = 0;
     queryClient.invalidateQueries({
       queryKey: ["batchStoryAudio", storyId, voiceId],
     });
