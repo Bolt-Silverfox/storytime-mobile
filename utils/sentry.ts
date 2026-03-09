@@ -9,9 +9,14 @@ export const reactNavigationIntegration = Sentry.reactNavigationIntegration({
 export function initSentry() {
   if (!SENTRY_DSN) return;
 
+  const environment =
+    process.env.EXPO_PUBLIC_SENTRY_ENV ??
+    (__DEV__ ? "development" : "production");
+
   Sentry.init({
     dsn: SENTRY_DSN,
-    environment: __DEV__ ? "development" : "production",
+    environment,
+    debug: __DEV__,
 
     tracesSampleRate: __DEV__ ? 1.0 : 0.2,
     profilesSampleRate: __DEV__ ? 0 : 0.1,
