@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
+import useRestorePurchases from "../../hooks/others/useRestorePurchases";
 import { useRedeemCoupon, useValidateCoupon } from "../../hooks/tanstack/mutationHooks/useCoupon";
 import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
@@ -34,6 +35,13 @@ const UnsubscribedUserComponent = () => {
     handlePurchase,
     getPlanName,
   } = useSubscribeIAP(selectedPlan);
+
+  const {
+    handleRestore,
+    isRestoring,
+    error: restoreError,
+    restoredCount,
+  } = useRestorePurchases();
 
   const validateMutation = useValidateCoupon();
   const redeemMutation = useRedeemCoupon();
@@ -216,6 +224,30 @@ const UnsubscribedUserComponent = () => {
             disabled={!selectedPlan}
             onPress={handlePurchase}
           />
+
+          <TouchableOpacity
+            onPress={handleRestore}
+            disabled={isRestoring}
+            activeOpacity={0.7}
+            className="items-center py-2"
+          >
+            {isRestoring ? (
+              <ActivityIndicator size="small" color="#866EFF" />
+            ) : (
+              <Text className="font-[abeezee] text-sm text-primary">
+                Restore Purchases
+              </Text>
+            )}
+          </TouchableOpacity>
+          {restoredCount > 0 ? (
+            <Text className="text-center font-[abeezee] text-sm text-green-600">
+              Subscription restored successfully!
+            </Text>
+          ) : restoreError ? (
+            <Text className="text-center font-[abeezee] text-sm text-red-500">
+              {restoreError}
+            </Text>
+          ) : null}
         </View>
       </View>
     </ScrollView>

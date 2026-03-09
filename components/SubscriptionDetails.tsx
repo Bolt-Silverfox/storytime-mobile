@@ -6,6 +6,18 @@ import useAuth from "../contexts/AuthContext";
 import ErrorComponent from "./ErrorComponent";
 import { BUNDLE_IDENTIFIER } from "../constants";
 
+const formatPrice = (amount: number | string, currencyCode: string) => {
+  const num = typeof amount === "string" ? parseFloat(amount) : amount;
+  try {
+    return new Intl.NumberFormat(undefined, {
+      style: "currency",
+      currency: currencyCode,
+    }).format(num);
+  } catch {
+    return `${currencyCode} ${num}`;
+  }
+};
+
 const SubscriptionDetails = () => {
   const { user } = useAuth();
   const { isPending, data, error, refetch } = useQuery(
@@ -41,8 +53,7 @@ const SubscriptionDetails = () => {
               {data.plan} plan
             </Text>
             <Text className="font-[quilka] text-[50px] text-[#333333]">
-              {data.currency}
-              {data.price}
+              {formatPrice(data.price, data.currency)}
             </Text>
           </View>
         </View>
@@ -54,8 +65,7 @@ const SubscriptionDetails = () => {
               {new Date(data.endsAt).toLocaleDateString()}.
             </Text>
             <Text className="font-[abeezee] text-base text-black">
-              You'll be charged {data.currency}
-              {data.price}/{data.plan}.
+              You'll be charged {formatPrice(data.price, data.currency)}/{data.plan}.
             </Text>
           </View>
           <CustomButton
