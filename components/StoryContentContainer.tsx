@@ -12,9 +12,11 @@ import {
   Pressable,
   StyleSheet as RNStyleSheet,
   Text,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
+import Feather from "@expo/vector-icons/Feather";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { CONTROLS_FADE_MS } from "../constants";
 import useIsPremium from "../hooks/useIsPremium";
@@ -42,6 +44,9 @@ type PropTypes = {
   controlsVisible: boolean;
   animatedControlsStyle: AnimatedStyle<ViewStyle>;
   isTTSDegraded: boolean;
+  failedParagraphs: number[];
+  onRetryFailed: () => void;
+  batchError: string | null;
 };
 
 type DisplayOptions =
@@ -64,6 +69,9 @@ const StoryContentContainer = ({
   controlsVisible,
   animatedControlsStyle,
   isTTSDegraded,
+  failedParagraphs,
+  onRetryFailed,
+  batchError,
 }: PropTypes) => {
   const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -103,6 +111,8 @@ const StoryContentContainer = ({
       splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
     [story.textContent]
   );
+
+  const isCurrentParagraphFailed = failedParagraphs.includes(activeParagraph);
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -175,6 +185,7 @@ const StoryContentContainer = ({
               isLoading={isAudioLoading}
               isError={isAudioError}
               isStillGenerating={isStillGenerating}
+              isFailed={isCurrentParagraphFailed}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
@@ -186,6 +197,19 @@ const StoryContentContainer = ({
               <Text className="flex-1 font-[abeezee] text-xs text-white">
                 Audio quality may be reduced due to service issues.
               </Text>
+            </View>
+          )}
+          {failedParagraphs.length > 0 && !isStillGenerating && (
+            <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
+              <View className="flex-1 flex-row items-center gap-x-2">
+                <Feather name="alert-circle" size={16} color="#dc2626" />
+                <Text className="flex-1 font-[abeezee] text-sm text-red-700">
+                  {failedParagraphs.length} paragraph{failedParagraphs.length > 1 ? "s" : ""} failed to generate
+                </Text>
+              </View>
+              <TouchableOpacity onPress={onRetryFailed} activeOpacity={0.7} className="ml-2 rounded-lg bg-red-100 px-3 py-1.5">
+                <Text className="font-[abeezee] text-sm font-medium text-red-700">Retry</Text>
+              </TouchableOpacity>
             </View>
           )}
         </View>

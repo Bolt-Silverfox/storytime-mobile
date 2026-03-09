@@ -41,6 +41,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   const [mergedParagraphs, setMergedParagraphs] = useState<
     BatchParagraph[] | null
   >(null);
+  const [failedParagraphs, setFailedParagraphs] = useState<number[]>([]);
+  const [batchError, setBatchError] = useState<string | null>(null);
   const prevVoiceRef = useRef<string | null>(voiceId);
   const lastInitializedBatchIdRef = useRef<string | null>(null);
 
@@ -50,6 +52,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       prevVoiceRef.current = voiceId;
       setBatchJobId(null);
       setMergedParagraphs(null);
+      setFailedParagraphs([]);
+      setBatchError(null);
       lastInitializedBatchIdRef.current = null;
     }
   }, [voiceId]);
@@ -168,6 +172,16 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     if (pollingQuery.data) {
       mergeParagraphs(pollingQuery.data);
 
+      // Capture failed paragraphs from status response
+      if (pollingQuery.data.failedParagraphs?.length > 0) {
+        setFailedParagraphs(pollingQuery.data.failedParagraphs);
+      }
+
+      // Capture error message on failure
+      if (pollingQuery.data.status === "failed" && pollingQuery.data.error) {
+        setBatchError(pollingQuery.data.error);
+      }
+
       // Stop polling when batch is done and sync final state to cache
       if (
         pollingQuery.data.status === "completed" ||
@@ -196,6 +210,17 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     }
   }, [pollingQuery.isError, pollingQuery.error]);
 
+  const retryFailed = useCallback(() => {
+    setFailedParagraphs([]);
+    setBatchError(null);
+    setMergedParagraphs(null);
+    setBatchJobId(null);
+    lastInitializedBatchIdRef.current = null;
+    queryClient.invalidateQueries({
+      queryKey: ["batchStoryAudio", storyId, voiceId],
+    });
+  }, [queryClient, storyId, voiceId]);
+
   // Build the final data object with merged paragraphs
   const data = batchQuery.data
     ? {
@@ -210,6 +235,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     isError: batchQuery.isError,
     isStillGenerating: !!batchJobId,
     pollingError: pollingQuery.error,
+    failedParagraphs,
+    retryFailed,
+    batchError,
   };
 };
 
