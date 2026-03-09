@@ -65,6 +65,16 @@ const AvailableVoices = ({
     return voice.id === lockedVoiceId;
   };
 
+  const notifyVoiceLimitReached = () => {
+    const usedCount = usedVoicesForStory.length;
+    const usedNames = data
+      .filter((v) => usedVoicesForStory.includes(v.id))
+      .map((v) => v.displayName ?? v.name);
+    notify(
+      `You've used ${usedCount} ${usedCount === 1 ? "voice" : "voices"} on this story. Switch between ${usedNames.join(", ")}.`
+    );
+  };
+
   const handlePreview = (audioUrl: string, voiceId: string) => {
     setPreviewingId(voiceId);
     try {
@@ -81,9 +91,7 @@ const AvailableVoices = ({
     if (voice.id === selectedVoice) return;
     if (!isVoiceAllowed(voice)) {
       if (isPremium && isStoryAtVoiceLimit) {
-        notify(
-          `This story already uses ${maxVoicesPerStory} voices. Pick one of the voices already used.`
-        );
+        notifyVoiceLimitReached();
       } else {
         setIsSubscriptionModalOpen(true);
       }
@@ -185,9 +193,7 @@ const AvailableVoices = ({
                     if (voiceAccessLoading) return;
                     if (!allowed) {
                       if (isPremium && isStoryAtVoiceLimit) {
-                        notify(
-                          `This story already uses ${maxVoicesPerStory} voices. Pick one of the voices already used.`
-                        );
+                        notifyVoiceLimitReached();
                       } else {
                         setIsSubscriptionModalOpen(true);
                       }

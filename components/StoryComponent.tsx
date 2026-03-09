@@ -129,6 +129,7 @@ const StoryComponent = ({
     data: batchAudio,
     isLoading: isBatchAudioLoading,
     isError: isBatchAudioError,
+    isStillGenerating,
   } = useBatchStoryAudio(storyId, debouncedVoice);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
@@ -256,6 +257,7 @@ const StoryComponent = ({
                 }
                 isAudioLoading={isBatchAudioLoading || isVoiceTransitioning}
                 isAudioError={isBatchAudioError}
+                isStillGenerating={isStillGenerating}
                 setActiveParagraph={setActiveParagraph}
                 onProgress={handleProgress}
                 controlsInteractive={controlsInteractive}

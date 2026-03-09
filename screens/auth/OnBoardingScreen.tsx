@@ -8,6 +8,7 @@ import {
   Pressable,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import React, { useRef, useState } from "react";
 import defaultStyles from "../../styles";
@@ -16,6 +17,7 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import { Sentry } from "../../utils/sentry";
 
 type SlideItems = {
   id: string;
@@ -92,9 +94,24 @@ function OnboardingItem({ item }: { item: SlideItems }) {
         <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
           <Pagination data={item} />
           <View>
-            <Text style={styles.titleText} className="text-center text-[28px]">
-              {item.title}
-            </Text>
+            <Pressable
+              onLongPress={() => {
+                if (__DEV__) {
+                  Sentry.captureException(
+                    new Error("Sentry test error from onboarding")
+                  );
+                  Alert.alert("Debug", "Sentry test error sent!");
+                }
+              }}
+              delayLongPress={1000}
+            >
+              <Text
+                style={styles.titleText}
+                className="text-center text-[28px]"
+              >
+                {item.title}
+              </Text>
+            </Pressable>
             <Text
               style={styles.descriptionText}
               className="mb-8 mt-4 text-center text-[18px] text-text"

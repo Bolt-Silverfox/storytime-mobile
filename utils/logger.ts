@@ -25,7 +25,6 @@ function safeSerialize(msg: unknown): string {
 }
 
 const sentryTransport: transportFunctionType<object> = (props) => {
-  if (__DEV__) return;
 
   const message = safeSerialize(props.msg);
 
@@ -43,7 +42,6 @@ const sentryTransport: transportFunctionType<object> = (props) => {
 };
 
 const crashlyticsTransport: transportFunctionType<object> = (props) => {
-  if (__DEV__) return;
 
   const message = safeSerialize(props.msg);
 
@@ -64,9 +62,7 @@ const log = logger.createLogger({
     error: 3,
   },
   severity: __DEV__ ? "debug" : "warn",
-  transport: __DEV__
-    ? consoleTransport
-    : [consoleTransport, sentryTransport, crashlyticsTransport],
+  transport: [consoleTransport, sentryTransport, crashlyticsTransport],
   transportOptions: {
     colors: {
       info: "blueBright",
