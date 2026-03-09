@@ -104,7 +104,7 @@ const UnsubscribedUserComponent = () => {
             subscriptions={subscriptions}
           />
 
-          <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10">
+          <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10">
             <Text className="font-[quilka] text-[18px] text-black ">
               What you'll enjoy
             </Text>
@@ -129,7 +129,7 @@ const UnsubscribedUserComponent = () => {
             experience, with the voice type you choose for them.
           </Text>
 
-          <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5">
+          <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5">
             <Image
               className="size-6"
               source={require("../../assets/icons/caution.png")}

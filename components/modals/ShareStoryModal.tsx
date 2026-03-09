@@ -19,7 +19,7 @@ const ShareStoryModal = ({
 
   return (
     <CustomModal onClose={onClose} isOpen={isOpen}>
-      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4">
+      <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-4">
         <View className="flex flex-row items-center justify-between">
           <Text className="font-[abeezee] text-xl">Share story</Text>
           <Icon name="SquareX" onPress={onClose} />

@@ -88,7 +88,7 @@ const NotificationsScreen = () => {
             </Text>
           ))}
         </ScrollView>
-        <View className="mx-auto w-full max-w-screen-md flex-1">
+        <View className="mx-auto w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-1">
           {notifications.length === 0 ? (
             <CustomEmptyState message="No notifications yet" />
           ) : (
