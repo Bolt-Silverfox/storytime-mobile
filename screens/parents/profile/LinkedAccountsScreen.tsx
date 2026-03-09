@@ -32,7 +32,9 @@ import { AuthProvider, LinkedAccount } from "../../../types";
 const PROVIDERS: { key: AuthProvider; label: string }[] = [
   { key: "email", label: "Email & Password" },
   { key: "google", label: "Google" },
-  { key: "apple", label: "Apple" },
+  ...(Platform.OS === "ios"
+    ? [{ key: "apple" as AuthProvider, label: "Apple" }]
+    : []),
 ];
 
 export default function LinkedAccountsScreen() {
