@@ -42,8 +42,9 @@ export default function LinkedAccountsScreen() {
   const linkApple = useLinkApple();
   const unlinkProvider = useUnlinkProvider();
 
+  const accounts = Array.isArray(linkedAccounts) ? linkedAccounts : [];
   const linkedProviders = new Set(
-    linkedAccounts?.map((a: LinkedAccount) => a.provider)
+    accounts.map((a: LinkedAccount) => a.provider)
   );
   const linkedCount = linkedProviders.size;
 
@@ -155,7 +156,7 @@ export default function LinkedAccountsScreen() {
         ) : (
           PROVIDERS.map((provider) => {
             const isLinked = linkedProviders.has(provider.key);
-            const account = linkedAccounts?.find(
+            const account = accounts.find(
               (a: LinkedAccount) => a.provider === provider.key
             );
             const isEmail = provider.key === "email";
