@@ -46,7 +46,7 @@ type PropTypes = {
   isTTSDegraded: boolean;
   failedParagraphs: number[];
   onRetryFailed: () => void;
-  batchError: string | null;
+  batchError?: string | null;
 };
 
 type DisplayOptions =
@@ -199,12 +199,14 @@ const StoryContentContainer = ({
               </Text>
             </View>
           )}
-          {failedParagraphs.length > 0 && !isStillGenerating && (
+          {(failedParagraphs.length > 0 || batchError) && !isStillGenerating && (
             <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
               <View className="flex-1 flex-row items-center gap-x-2">
                 <Feather name="alert-circle" size={16} color="#dc2626" />
                 <Text className="flex-1 font-[abeezee] text-sm text-red-700">
-                  {failedParagraphs.length} paragraph{failedParagraphs.length > 1 ? "s" : ""} failed to generate
+                  {batchError
+                    ? batchError
+                    : `${failedParagraphs.length} paragraph${failedParagraphs.length > 1 ? "s" : ""} failed to generate`}
                 </Text>
               </View>
               <TouchableOpacity onPress={onRetryFailed} activeOpacity={0.7} className="ml-2 rounded-lg bg-red-100 px-3 py-1.5">

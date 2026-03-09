@@ -32,9 +32,7 @@ import { AuthProvider, LinkedAccount } from "../../../types";
 const PROVIDERS: { key: AuthProvider; label: string }[] = [
   { key: "email", label: "Email & Password" },
   { key: "google", label: "Google" },
-  ...(Platform.OS === "ios"
-    ? [{ key: "apple" as AuthProvider, label: "Apple" }]
-    : []),
+  { key: "apple", label: "Apple" },
 ];
 
 export default function LinkedAccountsScreen() {
@@ -162,6 +160,14 @@ export default function LinkedAccountsScreen() {
               (a: LinkedAccount) => a.provider === provider.key
             );
             const isEmail = provider.key === "email";
+            const isApple = provider.key === "apple";
+            const isAndroid = Platform.OS !== "ios";
+
+            // On Android, hide Apple row entirely if not already linked
+            if (isApple && isAndroid && !isLinked) return null;
+
+            // On Android, Apple row is read-only (no link/unlink button)
+            const showActionButton = !isEmail && !(isApple && isAndroid);
 
             return (
               <View key={provider.key} style={styles.providerRow}>
@@ -174,7 +180,7 @@ export default function LinkedAccountsScreen() {
                     <Text style={styles.providerNotLinked}>Not linked</Text>
                   )}
                 </View>
-                {!isEmail && (
+                {showActionButton && (
                   <Pressable
                     style={[
                       styles.actionButton,

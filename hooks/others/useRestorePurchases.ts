@@ -1,4 +1,3 @@
-import { useIAP } from "expo-iap";
 import { useState } from "react";
 import { Platform } from "react-native";
 import apiFetch from "../../apiFetch";
@@ -15,7 +14,6 @@ const useRestorePurchases = (onRestored?: () => void) => {
   const [restoredCount, setRestoredCount] = useState(0);
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { restorePurchases } = useIAP();
 
   const handleRestore = async () => {
     setIsRestoring(true);

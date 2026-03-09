@@ -8,6 +8,9 @@ import { BUNDLE_IDENTIFIER } from "../constants";
 
 const formatPrice = (amount: number | string, currencyCode: string) => {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
+  if (Number.isNaN(num)) {
+    return typeof amount === "string" ? amount : "N/A";
+  }
   try {
     return new Intl.NumberFormat(undefined, {
       style: "currency",

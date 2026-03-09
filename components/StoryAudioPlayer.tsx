@@ -161,7 +161,7 @@ const StoryAudioPlayer = ({
           <Switch
             value={isPlaying}
             onValueChange={playAudio}
-            disabled={isLoading || isError || isFailed || !audioUrl}
+            disabled={isError || isFailed || !audioUrl}
           />
         )}
       </View>
