@@ -146,7 +146,7 @@ export default function LinkedAccountsScreen() {
     linkGoogle.isPending || linkApple.isPending || unlinkProvider.isPending;
 
   return (
-    <SafeAreaWrapper variant="transparent">
+    <SafeAreaWrapper variant="solid">
       <PageTitle title="Linked Accounts" goBack={() => navigator.goBack()} />
       <View style={styles.container}>
         {isLoading ? (
