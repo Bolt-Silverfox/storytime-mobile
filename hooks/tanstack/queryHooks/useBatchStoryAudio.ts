@@ -203,10 +203,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     if (pollingQuery.data) {
       mergeParagraphs(pollingQuery.data);
 
-      // Capture failed paragraphs from status response
-      if (pollingQuery.data.failedParagraphs?.length > 0) {
-        setFailedParagraphs(pollingQuery.data.failedParagraphs);
-      }
+      // Always sync failed paragraphs from poll (clears if backend retries succeeded)
+      setFailedParagraphs(pollingQuery.data.failedParagraphs ?? []);
 
       // Capture error message on failure
       if (pollingQuery.data.status === "failed" && pollingQuery.data.error) {
