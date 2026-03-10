@@ -8,7 +8,7 @@ import { BUNDLE_IDENTIFIER } from "../constants";
 
 const formatPrice = (amount: number | string, currencyCode: string) => {
   const num = typeof amount === "string" ? parseFloat(amount) : amount;
-  if (Number.isNaN(num)) {
+  if (!Number.isFinite(num)) {
     return typeof amount === "string" ? amount : "N/A";
   }
   try {
@@ -68,7 +68,8 @@ const SubscriptionDetails = () => {
               {new Date(data.endsAt).toLocaleDateString()}.
             </Text>
             <Text className="font-[abeezee] text-base text-black">
-              You'll be charged {formatPrice(data.price, data.currency)}/{data.plan}.
+              You'll be charged {formatPrice(data.price, data.currency)}/
+              {data.plan}.
             </Text>
           </View>
           <CustomButton

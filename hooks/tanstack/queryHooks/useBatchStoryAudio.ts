@@ -125,51 +125,48 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     structuralSharing: false,
   });
 
-  // Merge newly completed paragraphs into the list
+  // Merge newly completed paragraphs into the list.
+  // Returns the merged result synchronously so callers can pass it to syncToCache.
   const mergeParagraphs = useCallback(
-    (statusData: BatchStatusResponse) => {
-      setMergedParagraphs((prev) => {
-        if (!prev) return prev;
+    (statusData: BatchStatusResponse): BatchParagraph[] | null => {
+      const prev = mergedParagraphsRef.current;
+      if (!prev) return null;
 
-        const updated = [...prev];
-        let changed = false;
+      const updated = [...prev];
+      let changed = false;
 
-        for (const completed of statusData.completedParagraphs) {
-          const existingIdx = updated.findIndex(
+      for (const completed of statusData.completedParagraphs) {
+        const existingIdx = updated.findIndex(
+          (p) => p.index === completed.index
+        );
+        if (existingIdx !== -1 && !updated[existingIdx].audioUrl) {
+          updated[existingIdx] = {
+            ...updated[existingIdx],
+            audioUrl: completed.audioUrl,
+          };
+          changed = true;
+        } else if (existingIdx === -1) {
+          const originalParagraph = batchQuery.data?.paragraphs.find(
             (p) => p.index === completed.index
           );
-          if (existingIdx !== -1 && !updated[existingIdx].audioUrl) {
-            updated[existingIdx] = {
-              ...updated[existingIdx],
-              audioUrl: completed.audioUrl,
-            };
-            changed = true;
-          } else if (existingIdx === -1) {
-            // Look up original text from the initial batch response
-            const originalParagraph = batchQuery.data?.paragraphs.find(
-              (p) => p.index === completed.index
+          if (!originalParagraph) {
+            console.warn(
+              `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`
             );
-            if (!originalParagraph) {
-              console.warn(
-                `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`
-              );
-            }
-            updated.push({
-              index: completed.index,
-              text: originalParagraph?.text ?? "",
-              audioUrl: completed.audioUrl,
-            });
-            changed = true;
           }
+          updated.push({
+            index: completed.index,
+            text: originalParagraph?.text ?? "",
+            audioUrl: completed.audioUrl,
+          });
+          changed = true;
         }
+      }
 
-        const result = changed
-          ? updated.sort((a, b) => a.index - b.index)
-          : prev;
-        // Eagerly update ref so syncToCache reads the latest merged state
-        mergedParagraphsRef.current = result;
-        return result;
-      });
+      const result = changed ? updated.sort((a, b) => a.index - b.index) : prev;
+      mergedParagraphsRef.current = result;
+      setMergedParagraphs(result);
+      return result;
     },
     [batchQuery.data?.paragraphs]
   );
@@ -201,7 +198,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
   useEffect(() => {
     if (pollingQuery.data) {
-      mergeParagraphs(pollingQuery.data);
+      const merged = mergeParagraphs(pollingQuery.data);
 
       // Always sync failed paragraphs from poll (clears if backend retries succeeded)
       setFailedParagraphs(pollingQuery.data.failedParagraphs ?? []);
@@ -217,10 +214,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         pollingQuery.data.status === "failed"
       ) {
         setBatchJobId(null);
-        // Sync merged paragraphs, failures, and errors to query cache after final merge
-        if (mergedParagraphsRef.current) {
+        if (merged) {
           syncToCache(
-            mergedParagraphsRef.current,
+            merged,
             pollingQuery.data.failedParagraphs ?? [],
             pollingQuery.data.status === "failed"
               ? (pollingQuery.data.error ?? null)
