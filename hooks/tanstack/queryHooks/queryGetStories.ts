@@ -21,7 +21,7 @@ type GetStoriesParam = {
 
 const queryGetStories = (params: GetStoriesParam) =>
   queryOptions({
-    queryKey: ["stories", { ...params, shuffle: params.shuffle || undefined }],
+    queryKey: ["stories", { ...params, shuffle: params.shuffle ? true : undefined }],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (params.category) searchParams.set("category", params.category);
