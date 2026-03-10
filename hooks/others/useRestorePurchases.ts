@@ -56,7 +56,7 @@ const useRestorePurchases = (onRestored?: () => void) => {
                 purchaseToken: token,
                 packageName: BUNDLE_IDENTIFIER,
               }),
-            },
+            }
           );
           const response: QueryResponse = await request.json();
           if (response.success) {
@@ -66,14 +66,14 @@ const useRestorePurchases = (onRestored?: () => void) => {
             } catch (finishErr) {
               iapLogger.error(
                 `Failed to finish restored transaction ${purchase.productId}`,
-                finishErr,
+                finishErr
               );
             }
           }
         } catch (err) {
           iapLogger.error(
             `Failed to verify restored purchase ${purchase.productId}`,
-            err,
+            err
           );
         }
       }

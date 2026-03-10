@@ -87,7 +87,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   // after batchJobId is cleared on completion. Gate on dataUpdatedAt to avoid
   // re-seeding stale cached data after retryFailed() clears local state.
   useEffect(() => {
-    if (batchQuery.data && batchQuery.dataUpdatedAt > lastDataUpdatedAtRef.current) {
+    if (
+      batchQuery.data &&
+      batchQuery.dataUpdatedAt > lastDataUpdatedAtRef.current
+    ) {
       const newJobId = batchQuery.data.batchJobId ?? null;
       if (
         mergedParagraphs === null ||
@@ -99,7 +102,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         lastInitializedBatchIdRef.current = newJobId;
         // Rehydrate or clear failed paragraphs and batch error from cache
         const cached = batchQuery.data as CachedBatchData;
-        setFailedParagraphs(cached._failedParagraphs?.length ? cached._failedParagraphs : []);
+        setFailedParagraphs(
+          cached._failedParagraphs?.length ? cached._failedParagraphs : []
+        );
         setBatchError(cached._batchError ?? null);
       }
     }
@@ -131,7 +136,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
         for (const completed of statusData.completedParagraphs) {
           const existingIdx = updated.findIndex(
-            (p) => p.index === completed.index,
+            (p) => p.index === completed.index
           );
           if (existingIdx !== -1 && !updated[existingIdx].audioUrl) {
             updated[existingIdx] = {
@@ -142,11 +147,11 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
           } else if (existingIdx === -1) {
             // Look up original text from the initial batch response
             const originalParagraph = batchQuery.data?.paragraphs.find(
-              (p) => p.index === completed.index,
+              (p) => p.index === completed.index
             );
             if (!originalParagraph) {
               console.warn(
-                `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`,
+                `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`
               );
             }
             updated.push({
@@ -158,22 +163,20 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
           }
         }
 
-        const result = changed ? updated.sort((a, b) => a.index - b.index) : prev;
+        const result = changed
+          ? updated.sort((a, b) => a.index - b.index)
+          : prev;
         // Eagerly update ref so syncToCache reads the latest merged state
         mergedParagraphsRef.current = result;
         return result;
       });
     },
-    [batchQuery.data?.paragraphs],
+    [batchQuery.data?.paragraphs]
   );
 
   // Sync merged paragraphs back to query cache so remounts get complete data
   const syncToCache = useCallback(
-    (
-      paragraphs: BatchParagraph[],
-      failed: number[],
-      error: string | null,
-    ) => {
+    (paragraphs: BatchParagraph[], failed: number[], error: string | null) => {
       const queryKey = ["batchStoryAudio", storyId, voiceId];
       queryClient.setQueryData<QueryResponse<CachedBatchData>>(
         queryKey,
@@ -190,10 +193,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
               _batchError: error ?? undefined,
             },
           };
-        },
+        }
       );
     },
-    [queryClient, storyId, voiceId],
+    [queryClient, storyId, voiceId]
   );
 
   useEffect(() => {
@@ -223,7 +226,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
             pollingQuery.data.failedParagraphs ?? [],
             pollingQuery.data.status === "failed"
               ? (pollingQuery.data.error ?? null)
-              : null,
+              : null
           );
         }
       }
@@ -295,10 +298,10 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
 };
 
 const fetchBatchStatus = async (
-  batchJobId: string,
+  batchJobId: string
 ): Promise<BatchStatusResponse> => {
   const request = await apiFetch(
-    `${BASE_URL}/voice/story/audio/batch/status/${batchJobId}`,
+    `${BASE_URL}/voice/story/audio/batch/status/${batchJobId}`
   );
   if (!request.ok) {
     throw new Error(`${request.status}: ${request.statusText}`);

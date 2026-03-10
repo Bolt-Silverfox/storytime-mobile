@@ -13,7 +13,10 @@ import {
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 import useRestorePurchases from "../../hooks/others/useRestorePurchases";
-import { useRedeemCoupon, useValidateCoupon } from "../../hooks/tanstack/mutationHooks/useCoupon";
+import {
+  useRedeemCoupon,
+  useValidateCoupon,
+} from "../../hooks/tanstack/mutationHooks/useCoupon";
 import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
@@ -104,7 +107,7 @@ const UnsubscribedUserComponent = () => {
             subscriptions={subscriptions}
           />
 
-          <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10">
+          <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl">
             <Text className="font-[quilka] text-[18px] text-black ">
               What you'll enjoy
             </Text>
@@ -129,7 +132,7 @@ const UnsubscribedUserComponent = () => {
             experience, with the voice type you choose for them.
           </Text>
 
-          <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5">
+          <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
             <Image
               className="size-6"
               source={require("../../assets/icons/caution.png")}
@@ -178,7 +181,9 @@ const UnsubscribedUserComponent = () => {
                     <TouchableOpacity
                       onPress={handleValidate}
                       disabled={
-                        !couponCode.trim() || validateMutation.isPending || redeemMutation.isPending
+                        !couponCode.trim() ||
+                        validateMutation.isPending ||
+                        redeemMutation.isPending
                       }
                       className="rounded-xl bg-gray-100 px-3 py-2"
                       activeOpacity={0.7}
@@ -196,9 +201,7 @@ const UnsubscribedUserComponent = () => {
                   {couponMessage && (
                     <Text
                       className={`font-[abeezee] text-xs ${
-                        couponMessage.valid
-                          ? "text-green-600"
-                          : "text-red-500"
+                        couponMessage.valid ? "text-green-600" : "text-red-500"
                       }`}
                     >
                       {couponMessage.text}
@@ -207,10 +210,10 @@ const UnsubscribedUserComponent = () => {
 
                   {couponMessage?.valid && (
                     <CustomButton
-                      text={
-                        redeemMutation.isPending ? "Redeeming…" : "Redeem"
+                      text={redeemMutation.isPending ? "Redeeming…" : "Redeem"}
+                      disabled={
+                        redeemMutation.isPending || validateMutation.isPending
                       }
-                      disabled={redeemMutation.isPending || validateMutation.isPending}
                       onPress={handleRedeem}
                     />
                   )}
