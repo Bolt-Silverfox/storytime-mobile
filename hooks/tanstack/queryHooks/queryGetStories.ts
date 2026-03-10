@@ -16,11 +16,12 @@ type GetStoriesParam = {
   isSeasonal?: boolean;
   isMostLiked?: boolean;
   topPicksFromUs?: boolean;
+  shuffle?: boolean;
 };
 
 const queryGetStories = (params: GetStoriesParam) =>
   queryOptions({
-    queryKey: ["stories", { ...params }],
+    queryKey: ["stories", { ...params, shuffle: params.shuffle ? true : undefined }],
     queryFn: async () => {
       const searchParams = new URLSearchParams();
       if (params.category) searchParams.set("category", params.category);
@@ -39,6 +40,7 @@ const queryGetStories = (params: GetStoriesParam) =>
           "topPicksFromUs",
           `"${String(params.topPicksFromUs)}"`
         );
+      if (params.shuffle) searchParams.set("shuffle", "true");
       if (params.limit) {
         searchParams.set("limit", String(params.limit));
       } else {
@@ -54,7 +56,7 @@ const queryGetStories = (params: GetStoriesParam) =>
       if (!response.success) throw new Error(response.message);
       return response.data;
     },
-    staleTime: 1000 * 60 * 5,
+    staleTime: params.shuffle ? 1000 * 60 * 30 : 1000 * 60 * 5,
     select: (res) => res.data,
     gcTime: 1000 * 60 * 60,
   });
