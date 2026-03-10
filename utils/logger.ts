@@ -24,16 +24,23 @@ function safeSerialize(msg: unknown): string {
   }
 }
 
+/**
+ * Lazy Sentry transport — defers access to the Sentry SDK until the first log
+ * call, so the transport can be registered before `Sentry.init()` runs.
+ */
 const sentryTransport: transportFunctionType<object> = (props) => {
+  const SentrySDK = require("@sentry/react-native") as typeof Sentry;
+  const client = SentrySDK.getClient();
+  if (!client) return; // SDK not initialised yet — silently skip
 
   const message = safeSerialize(props.msg);
 
   if (props.level.text === "error") {
-    Sentry.captureException(
+    SentrySDK.captureException(
       props.rawMsg instanceof Error ? props.rawMsg : new Error(message)
     );
   } else {
-    Sentry.addBreadcrumb({
+    SentrySDK.addBreadcrumb({
       category: "log",
       message,
       level: SENTRY_LEVEL_MAP[props.level.text] ?? "info",
@@ -41,16 +48,22 @@ const sentryTransport: transportFunctionType<object> = (props) => {
   }
 };
 
+/**
+ * Lazy Crashlytics transport — defers the `crashlytics()` call so Firebase
+ * has time to initialise before the transport is first invoked.
+ */
 const crashlyticsTransport: transportFunctionType<object> = (props) => {
+  const crash = require("@react-native-firebase/crashlytics")
+    .default as typeof crashlytics;
 
   const message = safeSerialize(props.msg);
 
   if (props.level.text === "error") {
-    crashlytics().recordError(
+    crash().recordError(
       props.rawMsg instanceof Error ? props.rawMsg : new Error(message)
     );
   } else {
-    crashlytics().log(message);
+    crash().log(message);
   }
 };
 

@@ -32,7 +32,7 @@ export const useValidateCoupon = () => {
       if (!response.ok) {
         throw new Error(extractMessage(data.message, "Failed to validate coupon"));
       }
-      return data;
+      return data.data ?? data;
     },
   });
 };
@@ -50,7 +50,7 @@ export const useRedeemCoupon = () => {
       if (!response.ok) {
         throw new Error(extractMessage(data.message, "Failed to redeem coupon"));
       }
-      return data;
+      return data.data ?? data;
     },
     onSuccess: () => {
       // Refresh user profile so premium status is up to date
