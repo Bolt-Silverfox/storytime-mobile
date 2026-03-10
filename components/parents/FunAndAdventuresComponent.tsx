@@ -18,7 +18,7 @@ const FunAndAdventuresComponent = () => {
   const category = categories?.[0];
 
   const { data, isPending, error, refetch } = useQuery({
-    ...queryGetStories({ category: category?.id }),
+    ...queryGetStories({ category: category?.id, shuffle: true }),
     enabled: !!category?.id,
   });
 

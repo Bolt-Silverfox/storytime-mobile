@@ -13,9 +13,7 @@ const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("All");
   const { data, error, refetch, isPending } = useQuery(
-    queryGetStories({
-      ageGroup: selectedGroup,
-    })
+    queryGetStories({ ageGroup: selectedGroup, shuffle: true })
   );
   return (
     <HomeScreenCarouselComponent
