@@ -42,8 +42,9 @@ export default function LinkedAccountsScreen() {
   const linkApple = useLinkApple();
   const unlinkProvider = useUnlinkProvider();
 
+  const accounts = Array.isArray(linkedAccounts) ? linkedAccounts : [];
   const linkedProviders = new Set(
-    linkedAccounts?.map((a: LinkedAccount) => a.provider)
+    accounts.map((a: LinkedAccount) => a.provider)
   );
   const linkedCount = linkedProviders.size;
 
@@ -143,7 +144,7 @@ export default function LinkedAccountsScreen() {
     linkGoogle.isPending || linkApple.isPending || unlinkProvider.isPending;
 
   return (
-    <SafeAreaWrapper variant="transparent">
+    <SafeAreaWrapper variant="solid">
       <PageTitle title="Linked Accounts" goBack={() => navigator.goBack()} />
       <View style={styles.container}>
         {isLoading ? (
@@ -155,10 +156,18 @@ export default function LinkedAccountsScreen() {
         ) : (
           PROVIDERS.map((provider) => {
             const isLinked = linkedProviders.has(provider.key);
-            const account = linkedAccounts?.find(
+            const account = accounts.find(
               (a: LinkedAccount) => a.provider === provider.key
             );
             const isEmail = provider.key === "email";
+            const isApple = provider.key === "apple";
+            const isAndroid = Platform.OS !== "ios";
+
+            // On Android, hide Apple row entirely if not already linked
+            if (isApple && isAndroid && !isLinked) return null;
+
+            // On Android, Apple row is read-only (no link/unlink button)
+            const showActionButton = !isEmail && !(isApple && isAndroid);
 
             return (
               <View key={provider.key} style={styles.providerRow}>
@@ -171,7 +180,7 @@ export default function LinkedAccountsScreen() {
                     <Text style={styles.providerNotLinked}>Not linked</Text>
                   )}
                 </View>
-                {!isEmail && (
+                {showActionButton && (
                   <Pressable
                     style={[
                       styles.actionButton,

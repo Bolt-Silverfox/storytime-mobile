@@ -10,6 +10,7 @@ const StoryAudioPlayer = ({
   isLoading,
   isError,
   isStillGenerating,
+  isFailed,
   isPlaying,
   setIsPlaying,
   onPageFinished,
@@ -18,6 +19,7 @@ const StoryAudioPlayer = ({
   isLoading: boolean;
   isError: boolean;
   isStillGenerating: boolean;
+  isFailed: boolean;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
@@ -112,7 +114,7 @@ const StoryAudioPlayer = ({
 
   return (
     <Pressable
-      disabled={isLoading || isError || !audioUrl}
+      disabled={isLoading || isError || isFailed || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
@@ -121,23 +123,35 @@ const StoryAudioPlayer = ({
       accessibilityHint={
         isLoading
           ? "Audio is loading"
-          : !audioUrl
-            ? "Audio is not available"
-            : undefined
+          : isFailed
+            ? "Audio failed to generate"
+            : !audioUrl
+              ? "Audio is not available"
+              : undefined
       }
     >
       <View className="flex flex-row items-center gap-x-2">
-        <View className="flex size-12 flex-col items-center justify-center rounded-full bg-blue">
-          <Ionicons name="volume-medium-outline" size={24} color="white" />
+        <View
+          className={`flex size-12 flex-col items-center justify-center rounded-full ${isFailed ? "bg-red-500" : "bg-blue"}`}
+        >
+          <Ionicons
+            name={isFailed ? "close-circle-outline" : "volume-medium-outline"}
+            size={24}
+            color="white"
+          />
         </View>
-        <Text className="font-[quilka] text-xl text-black">
+        <Text
+          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : "text-black"}`}
+        >
           {isLoading
             ? VOICE_LABELS.loading
-            : isError || !audioUrl
-              ? VOICE_LABELS.unavailable
-              : isPlaying
-                ? VOICE_LABELS.mute
-                : VOICE_LABELS.play}
+            : isFailed
+              ? "Audio failed"
+              : isError || !audioUrl
+                ? VOICE_LABELS.unavailable
+                : isPlaying
+                  ? VOICE_LABELS.mute
+                  : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
@@ -147,7 +161,7 @@ const StoryAudioPlayer = ({
           <Switch
             value={isPlaying}
             onValueChange={playAudio}
-            disabled={isLoading || isError || !audioUrl}
+            disabled={isError || isFailed || !audioUrl}
           />
         )}
       </View>

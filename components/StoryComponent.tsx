@@ -130,6 +130,9 @@ const StoryComponent = ({
     isLoading: isBatchAudioLoading,
     isError: isBatchAudioError,
     isStillGenerating,
+    failedParagraphs,
+    retryFailed,
+    batchError,
   } = useBatchStoryAudio(storyId, debouncedVoice);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
@@ -264,6 +267,9 @@ const StoryComponent = ({
                 controlsVisible={controlsVisible}
                 animatedControlsStyle={animatedControlsStyle}
                 isTTSDegraded={isTTSDegraded}
+                failedParagraphs={failedParagraphs}
+                onRetryFailed={retryFailed}
+                batchError={batchError}
               />
             </View>
           </ImageBackground>

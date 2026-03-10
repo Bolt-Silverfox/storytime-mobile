@@ -23,7 +23,7 @@ const StoriesByAgeComponent = () => {
       error={error}
       refetch={refetch}
     >
-      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-6 border-b border-b-border-light py-8">
+      <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-6 border-b border-b-border-light py-8">
         <AgeSelectionComponent
           selectedGroupProp={selectedGroup}
           setSelectedCallback={setSelectedGroup}

@@ -18,7 +18,7 @@ const StoryCarousel = memo(({ stories }: PropTypes) => {
   );
 
   return (
-    <View className="mx-auto w-full max-w-screen-md">
+    <View className="mx-auto w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl">
       <FlashList
         horizontal
         data={filtered}

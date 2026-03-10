@@ -154,13 +154,13 @@ const RedeemCouponScreen = () => {
                 disabled={
                   !couponCode.trim() || validateMutation.isPending || redeemMutation.isPending
                 }
-                className="w-full rounded-full bg-gray-100 py-4"
+                className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
               >
                 {validateMutation.isPending ? (
-                  <ActivityIndicator size="small" color="#666" />
+                  <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text className="text-center font-[abeezee] text-base text-gray-700">
+                  <Text className="text-center font-[abeezee] text-base text-white">
                     Check Code
                   </Text>
                 )}
