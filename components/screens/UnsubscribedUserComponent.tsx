@@ -230,6 +230,8 @@ const UnsubscribedUserComponent = () => {
             disabled={isRestoring}
             activeOpacity={0.7}
             className="items-center py-2"
+            accessibilityLabel="Restore Purchases"
+            accessibilityRole="button"
           >
             {isRestoring ? (
               <ActivityIndicator size="small" color="#866EFF" />

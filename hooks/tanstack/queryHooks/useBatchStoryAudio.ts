@@ -35,6 +35,12 @@ export type BatchStatusResponse = {
   error?: string;
 };
 
+/** Extended cache type with failure metadata for remount rehydration */
+type CachedBatchData = BatchStoryAudioResponse & {
+  _failedParagraphs?: number[];
+  _batchError?: string | null;
+};
+
 const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   const queryClient = useQueryClient();
   const [batchJobId, setBatchJobId] = useState<string | null>(null);
@@ -91,6 +97,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         setMergedParagraphs(batchQuery.data.paragraphs);
         setBatchJobId(newJobId);
         lastInitializedBatchIdRef.current = newJobId;
+        // Rehydrate or clear failed paragraphs and batch error from cache
+        const cached = batchQuery.data as CachedBatchData;
+        setFailedParagraphs(cached._failedParagraphs?.length ? cached._failedParagraphs : []);
+        setBatchError(cached._batchError ?? null);
       }
     }
   }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs]);
@@ -148,7 +158,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
           }
         }
 
-        return changed ? updated.sort((a, b) => a.index - b.index) : prev;
+        const result = changed ? updated.sort((a, b) => a.index - b.index) : prev;
+        // Eagerly update ref so syncToCache reads the latest merged state
+        mergedParagraphsRef.current = result;
+        return result;
       });
     },
     [batchQuery.data?.paragraphs],
@@ -156,9 +169,13 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
   // Sync merged paragraphs back to query cache so remounts get complete data
   const syncToCache = useCallback(
-    (paragraphs: BatchParagraph[]) => {
+    (
+      paragraphs: BatchParagraph[],
+      failed: number[],
+      error: string | null,
+    ) => {
       const queryKey = ["batchStoryAudio", storyId, voiceId];
-      queryClient.setQueryData<QueryResponse<BatchStoryAudioResponse>>(
+      queryClient.setQueryData<QueryResponse<CachedBatchData>>(
         queryKey,
         (old) => {
           if (!old?.data) return old;
@@ -169,6 +186,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
               paragraphs,
               batchJobId: undefined,
               pendingParagraphs: 0,
+              _failedParagraphs: failed.length > 0 ? failed : undefined,
+              _batchError: error ?? undefined,
             },
           };
         },
@@ -197,9 +216,15 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         pollingQuery.data.status === "failed"
       ) {
         setBatchJobId(null);
-        // Sync merged paragraphs to query cache after final merge
+        // Sync merged paragraphs, failures, and errors to query cache after final merge
         if (mergedParagraphsRef.current) {
-          syncToCache(mergedParagraphsRef.current);
+          syncToCache(
+            mergedParagraphsRef.current,
+            pollingQuery.data.failedParagraphs ?? [],
+            pollingQuery.data.status === "failed"
+              ? (pollingQuery.data.error ?? null)
+              : null,
+          );
         }
       }
     }
@@ -224,7 +249,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     setMergedParagraphs(null);
     setBatchJobId(null);
     lastInitializedBatchIdRef.current = null;
-    lastDataUpdatedAtRef.current = 0;
+    // Don't reset lastDataUpdatedAtRef — invalidateQueries will trigger a fresh
+    // fetch with a new dataUpdatedAt, which naturally passes the guard in the
+    // seeding effect. Resetting to 0 would cause stale cached data to re-seed.
     queryClient.invalidateQueries({
       queryKey: ["batchStoryAudio", storyId, voiceId],
     });

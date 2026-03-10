@@ -24,7 +24,8 @@ const useRestorePurchases = (onRestored?: () => void) => {
       // restorePurchases updates availablePurchases state internally,
       // but we need the raw return from getAvailablePurchases.
       // Use the top-level API instead.
-      const { getAvailablePurchases } = await import("expo-iap");
+      const { getAvailablePurchases, finishTransaction } =
+        await import("expo-iap");
       const purchases = await getAvailablePurchases({
         alsoPublishToEventListenerIOS: false,
         onlyIncludeActiveItemsIOS: true,
@@ -61,7 +62,6 @@ const useRestorePurchases = (onRestored?: () => void) => {
           if (response.success) {
             verified++;
             try {
-              const { finishTransaction } = await import("expo-iap");
               await finishTransaction({ purchase });
             } catch (finishErr) {
               iapLogger.error(
