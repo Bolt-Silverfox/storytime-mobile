@@ -17,6 +17,7 @@ const ParentsTopRecommendations = () => {
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title="Top recommendations"

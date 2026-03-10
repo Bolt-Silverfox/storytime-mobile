@@ -64,7 +64,7 @@ const TodaysTopPicksScreen = () => {
 
         {isPending ? (
           <StoryCarouselSkeleton variant="vertical" />
-        ) : error ? (
+        ) : error && !stories ? (
           <ErrorComponent message={error.message} refetch={refetch} />
         ) : !stories?.length ? (
           <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
