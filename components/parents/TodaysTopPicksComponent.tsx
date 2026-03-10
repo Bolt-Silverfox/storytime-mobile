@@ -15,6 +15,7 @@ const TodaysTopPicksComponent = () => {
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title="Today's top picks"

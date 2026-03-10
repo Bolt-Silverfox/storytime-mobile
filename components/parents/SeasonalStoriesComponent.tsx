@@ -18,6 +18,7 @@ const SeasonalStoriesComponent = () => {
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title="Seasonal stories"

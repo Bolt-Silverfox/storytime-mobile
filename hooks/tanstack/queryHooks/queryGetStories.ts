@@ -54,8 +54,7 @@ const queryGetStories = (params: GetStoriesParam) =>
       if (!response.success) throw new Error(response.message);
       return response.data;
     },
-    staleTime: 1000 * 60 * 1,
-    refetchOnWindowFocus: true,
+    staleTime: 1000 * 60 * 5,
     select: (res) => res.data,
     gcTime: 1000 * 60 * 60,
   });
