@@ -18,7 +18,7 @@ const StoryCategoriesList = () => {
       hasData={!!data}
     >
       <View className="flex flex-col gap-y-4 pb-5">
-        <View className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-1.5">
+        <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5 lg:max-w-screen-lg xl:max-w-screen-xl">
           <Text className="font-[abeezee] text-[18px] text-black">
             All categories
           </Text>
@@ -26,9 +26,9 @@ const StoryCategoriesList = () => {
             Gain access to all our stories
           </Text>
         </View>
-        <View className="mx-auto w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-1">
+        <View className="mx-auto w-full max-w-screen-md flex-1 lg:max-w-screen-lg xl:max-w-screen-xl">
           <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
-            {data.map((category) => (
+            {data?.map((category) => (
               <Item
                 imageUrl={
                   category.image ??
