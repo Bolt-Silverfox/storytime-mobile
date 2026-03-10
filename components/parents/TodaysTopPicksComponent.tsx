@@ -8,7 +8,7 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 const TodaysTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
-    queryGetStories({ topPicksFromUs: true })
+    queryGetStories({ topPicksFromUs: true, shuffle: true })
   );
   return (
     <HomeScreenCarouselComponent

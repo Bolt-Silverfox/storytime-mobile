@@ -8,9 +8,7 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 const SeasonalStoriesComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
-    queryGetStories({
-      isSeasonal: true,
-    })
+    queryGetStories({ isSeasonal: true, shuffle: true })
   );
 
   return (
