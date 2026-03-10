@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Platform } from "react-native";
 import apiFetch from "../../apiFetch";
 import { BASE_URL, BUNDLE_IDENTIFIER, QUERY_KEYS } from "../../constants";
@@ -12,10 +12,13 @@ const useRestorePurchases = (onRestored?: () => void) => {
   const [isRestoring, setIsRestoring] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [restoredCount, setRestoredCount] = useState(0);
+  const restoreInFlightRef = useRef(false);
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
   const handleRestore = async () => {
+    if (restoreInFlightRef.current) return;
+    restoreInFlightRef.current = true;
     setIsRestoring(true);
     setError(null);
     setRestoredCount(0);
@@ -100,6 +103,7 @@ const useRestorePurchases = (onRestored?: () => void) => {
       iapLogger.error("Restore purchases failed", err);
       setError(getErrorMessage(err));
     } finally {
+      restoreInFlightRef.current = false;
       setIsRestoring(false);
     }
   };
