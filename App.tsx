@@ -12,6 +12,7 @@ import {
   focusManager,
   onlineManager,
 } from "@tanstack/react-query";
+import { ApiError } from "./apiFetch";
 import { useFonts } from "expo-font";
 import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
@@ -63,6 +64,28 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
+      retry: (failureCount, error) => {
+        // Retry 429s with backoff up to 3 times
+        if (error instanceof ApiError && error.status === 429) {
+          return failureCount < 3;
+        }
+        // Default: retry non-4xx errors up to 3 times
+        if (
+          error instanceof ApiError &&
+          error.status >= 400 &&
+          error.status < 500
+        ) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex, error) => {
+        // Longer backoff for 429s
+        if (error instanceof ApiError && error.status === 429) {
+          return Math.min(1000 * 2 ** attemptIndex, 10000);
+        }
+        return Math.min(1000 * 2 ** attemptIndex, 30000);
+      },
     },
   },
 });

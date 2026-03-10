@@ -60,6 +60,11 @@ const buildHeaders = (
   return headers;
 };
 
+const buildErrorMessage = (status: number): string =>
+  status === 429
+    ? "Too many requests. Please wait a moment and try again."
+    : `Request failed with status ${status}`;
+
 const apiFetch = async (url: string, options: FetchOptions = {}) => {
   const token = await secureTokenStorage.getAccessToken();
   const headers = buildHeaders(token, options);
@@ -72,10 +77,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(
-        `Request failed with status ${response.status}`,
-        response.status
-      );
+      throw new ApiError(buildErrorMessage(response.status), response.status);
     }
     return response;
   }
@@ -98,7 +100,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     !options.passThroughStatuses?.includes(retryResponse.status)
   ) {
     throw new ApiError(
-      `Request failed with status ${retryResponse.status}`,
+      buildErrorMessage(retryResponse.status),
       retryResponse.status
     );
   }

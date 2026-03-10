@@ -28,6 +28,7 @@ const FunAndAdventuresComponent = () => {
         isPending={categoriesPending}
         error={categoriesError}
         refetch={refetchCategories}
+        hasData={!!categories}
       >
         {null}
       </HomeScreenCarouselComponent>
@@ -41,6 +42,7 @@ const FunAndAdventuresComponent = () => {
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title={category.name}
