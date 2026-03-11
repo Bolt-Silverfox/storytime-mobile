@@ -50,7 +50,10 @@ const useSubscriptionSync = () => {
             }),
           });
           const data = await res.json();
-          if (data.success) synced = true;
+          if (data.success) {
+            synced = true;
+            break;
+          }
         }
 
         // 4. Refresh cached subscription status
