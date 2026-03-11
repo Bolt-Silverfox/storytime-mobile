@@ -3,6 +3,7 @@ import type { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import CustomSplashScreen from "../components/CustomSplashScreen";
 import useAuth from "../contexts/AuthContext";
+import useSubscriptionSync from "../hooks/others/useSubscriptionSync";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
 import GetPremiumScreen from "../screens/parents/home/GetPremiumScreen";
 import NotificationsNavigator, {
@@ -28,6 +29,7 @@ const Stack = createNativeStackNavigator<ProtectedRoutesParamList>();
 const ProtectedRoutesNavigator = () => {
   const { isPending, error } = useGetUserProfile();
   const { logout } = useAuth();
+  useSubscriptionSync();
 
   if (isPending) return <CustomSplashScreen />;
   if (error) {
