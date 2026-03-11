@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
-import { FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
@@ -98,7 +98,7 @@ const ParentHomeScreen = () => {
           keyExtractor={sectionKeyExtractor}
           renderItem={renderSection}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
+          contentContainerStyle={styles.listContent}
           removeClippedSubviews={false}
           initialNumToRender={4}
           maxToRenderPerBatch={3}
@@ -112,5 +112,9 @@ const ParentHomeScreen = () => {
     </SafeAreaWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  listContent: { gap: 32, paddingBottom: 32 },
+});
 
 export default ParentHomeScreen;

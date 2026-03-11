@@ -150,6 +150,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
             (p) => p.index === completed.index
           );
           if (!originalParagraph) {
+            // eslint-disable-next-line no-console -- legitimate runtime diagnostic for missing paragraph data
             console.warn(
               `[useBatchStoryAudio] No original paragraph found for index ${completed.index}`
             );
