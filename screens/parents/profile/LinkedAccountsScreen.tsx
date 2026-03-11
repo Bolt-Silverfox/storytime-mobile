@@ -184,9 +184,7 @@ export default function LinkedAccountsScreen() {
                   <Pressable
                     style={[
                       styles.actionButton,
-                      isLinked
-                        ? styles.unlinkButton
-                        : styles.linkButton,
+                      isLinked ? styles.unlinkButton : styles.linkButton,
                     ]}
                     onPress={() =>
                       isLinked

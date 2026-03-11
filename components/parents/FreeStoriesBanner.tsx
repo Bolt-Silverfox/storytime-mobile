@@ -6,7 +6,6 @@ import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigat
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../hooks/useIsPremium";
 
-
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();

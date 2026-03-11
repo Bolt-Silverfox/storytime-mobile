@@ -38,7 +38,7 @@ const NotificationDetailsModal = ({
 
         <Text
           onPress={closeModal}
-          className="mx-5 max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl rounded-full border border-border py-2 text-center font-[abeezee] text-base text-text sm:mx-auto sm:w-full"
+          className="mx-5 max-w-screen-md rounded-full border border-border py-2 text-center font-[abeezee] text-base text-text sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           Close
         </Text>
