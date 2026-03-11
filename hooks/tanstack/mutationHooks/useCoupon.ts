@@ -30,7 +30,9 @@ export const useValidateCoupon = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(extractMessage(data.message, "Failed to validate coupon"));
+        throw new Error(
+          extractMessage(data.message, "Failed to validate coupon")
+        );
       }
       return data.data ?? data;
     },
@@ -48,13 +50,17 @@ export const useRedeemCoupon = () => {
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(extractMessage(data.message, "Failed to redeem coupon"));
+        throw new Error(
+          extractMessage(data.message, "Failed to redeem coupon")
+        );
       }
       return data.data ?? data;
     },
     onSuccess: () => {
       // Refresh user profile so premium status is up to date
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_PROFILE] });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_USER_PROFILE],
+      });
     },
   });
 };

@@ -1,25 +1,35 @@
 import crashlytics from "@react-native-firebase/crashlytics";
 
+function getCrashlytics() {
+  try {
+    return crashlytics();
+  } catch {
+    return null;
+  }
+}
+
 export function initCrashlytics() {
-  crashlytics().setCrashlyticsCollectionEnabled(true);
+  getCrashlytics()?.setCrashlyticsCollectionEnabled(true);
 }
 
 export function setCrashlyticsUser(id: string) {
-  crashlytics().setUserId(id);
+  getCrashlytics()?.setUserId(id);
 }
 
 export function clearCrashlyticsUser() {
-  crashlytics().setUserId("");
+  getCrashlytics()?.setUserId("");
 }
 
 export function logNonFatal(error: unknown) {
+  const instance = getCrashlytics();
+  if (!instance) return;
   if (error instanceof Error) {
-    crashlytics().recordError(error);
+    instance.recordError(error);
   } else {
-    crashlytics().recordError(new Error(String(error)));
+    instance.recordError(new Error(String(error)));
   }
 }
 
 export function crashlyticsLog(message: string) {
-  crashlytics().log(message);
+  getCrashlytics()?.log(message);
 }

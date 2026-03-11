@@ -41,7 +41,9 @@ export const useNotifications = (isAuthenticated: boolean) => {
     typeof Notifications.addNotificationResponseReceivedListener
   > | null>(null);
   const tokenRefreshUnsubscribe = useRef<(() => void) | null>(null);
-  const coldStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const coldStartTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null
+  );
 
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = useCallback(

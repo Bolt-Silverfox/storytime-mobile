@@ -33,7 +33,10 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
             <Text className="text-center font-[abeezee] text-base text-white">
               Unable to load subscription info. Please try again.
             </Text>
-            <Pressable onPress={goBack} className="mt-4 rounded-lg bg-white/20 px-6 py-3">
+            <Pressable
+              onPress={goBack}
+              className="mt-4 rounded-lg bg-white/20 px-6 py-3"
+            >
               <Text className="font-[abeezee] text-white">Go Back</Text>
             </Pressable>
           </View>

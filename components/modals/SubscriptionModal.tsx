@@ -63,7 +63,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         <View
           aria-labelledby="subscription plans"
-          className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10"
+          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           <Text className="font-[quilka] text-[18px] text-black ">
             What you'll enjoy
@@ -90,7 +90,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         <View
           aria-labelledby="subscription disclaimer"
-          className="mx-auto flex w-full max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5"
+          className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           <Image
             className="size-6"
