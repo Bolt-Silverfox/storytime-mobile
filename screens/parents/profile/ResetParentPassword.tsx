@@ -75,7 +75,7 @@ export default function ResetParentPassword() {
           title="Reset your password"
           goBack={() => navigator.goBack()}
         />
-        <View className="mx-[17] max-w-screen-md lg:max-w-screen-lg xl:max-w-screen-xl md:mx-auto md:w-full">
+        <View className="mx-[17] max-w-screen-md md:mx-auto md:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
           <View className="mt-[60] gap-[16px]">
             {error && <ErrorMessageDisplay errorMessage={error} />}
             <PasswordInput

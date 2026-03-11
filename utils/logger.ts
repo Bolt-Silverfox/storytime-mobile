@@ -4,7 +4,7 @@ import {
   transportFunctionType,
 } from "react-native-logs";
 import * as Sentry from "@sentry/react-native";
-import crashlytics from "@react-native-firebase/crashlytics";
+import { logNonFatal, crashlyticsLog } from "./crashlytics";
 
 /** Map react-native-logs level names to valid Sentry SeverityLevel values */
 const SENTRY_LEVEL_MAP: Record<string, Sentry.SeverityLevel> = {
@@ -49,21 +49,18 @@ const sentryTransport: transportFunctionType<object> = (props) => {
 };
 
 /**
- * Lazy Crashlytics transport — defers the `crashlytics()` call so Firebase
- * has time to initialise before the transport is first invoked.
+ * Crashlytics transport — routes logs through the safe wrappers in
+ * crashlytics.ts that handle missing native modules (e.g. emulators).
  */
 const crashlyticsTransport: transportFunctionType<object> = (props) => {
-  const crash = require("@react-native-firebase/crashlytics")
-    .default as typeof crashlytics;
-
   const message = safeSerialize(props.msg);
 
   if (props.level.text === "error") {
-    crash().recordError(
+    logNonFatal(
       props.rawMsg instanceof Error ? props.rawMsg : new Error(message)
     );
   } else {
-    crash().log(message);
+    crashlyticsLog(message);
   }
 };
 

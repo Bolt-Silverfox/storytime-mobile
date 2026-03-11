@@ -92,10 +92,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
         <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
           <Pagination data={item} />
           <View>
-            <Text
-              style={styles.titleText}
-              className="text-center text-[28px]"
-            >
+            <Text style={styles.titleText} className="text-center text-[28px]">
               {item.title}
             </Text>
             <Text

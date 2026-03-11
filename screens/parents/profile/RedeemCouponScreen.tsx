@@ -4,6 +4,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -59,12 +60,15 @@ const RedeemCouponScreen = () => {
     <SafeAreaWrapper variant="solid">
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1, padding: 20 }}
+        contentContainerStyle={styles.scrollContent}
         keyboardShouldPersistTaps="handled"
       >
         {/* Header */}
         <View className="mb-8 flex-row items-center gap-x-3">
-          <TouchableOpacity onPress={() => navigation.goBack()} activeOpacity={0.7}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            activeOpacity={0.7}
+          >
             <Feather name="arrow-left" size={22} color="#1a1a1a" />
           </TouchableOpacity>
           <Text className="font-[quilka] text-2xl text-black">
@@ -152,7 +156,9 @@ const RedeemCouponScreen = () => {
               <TouchableOpacity
                 onPress={handleValidate}
                 disabled={
-                  !couponCode.trim() || validateMutation.isPending || redeemMutation.isPending
+                  !couponCode.trim() ||
+                  validateMutation.isPending ||
+                  redeemMutation.isPending
                 }
                 className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
@@ -191,5 +197,9 @@ const RedeemCouponScreen = () => {
     </SafeAreaWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollContent: { flexGrow: 1, padding: 20 },
+});
 
 export default RedeemCouponScreen;

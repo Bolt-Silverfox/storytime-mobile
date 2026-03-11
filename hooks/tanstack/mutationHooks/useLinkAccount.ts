@@ -5,7 +5,9 @@ import useAuth from "../../../contexts/AuthContext";
 import { AuthProvider } from "../../../types";
 import auth from "../../../utils/auth";
 
-export const useLinkGoogle = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+export const useLinkGoogle = ({
+  onSuccess,
+}: { onSuccess?: () => void } = {}) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({
@@ -26,7 +28,9 @@ export const useLinkGoogle = ({ onSuccess }: { onSuccess?: () => void } = {}) =>
   });
 };
 
-export const useLinkApple = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
+export const useLinkApple = ({
+  onSuccess,
+}: { onSuccess?: () => void } = {}) => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
   return useMutation({

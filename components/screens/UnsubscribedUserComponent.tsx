@@ -5,6 +5,7 @@ import {
   Image,
   Pressable,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -78,7 +79,7 @@ const UnsubscribedUserComponent = () => {
   return (
     <ScrollView
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={{ gap: 32 }}
+      contentContainerStyle={styles.scrollContent}
     >
       <View className="flex flex-col items-center justify-center">
         <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
@@ -258,5 +259,9 @@ const UnsubscribedUserComponent = () => {
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollContent: { gap: 32 },
+});
 
 export default UnsubscribedUserComponent;
