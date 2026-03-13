@@ -159,14 +159,18 @@ const StoryComponent = ({
 
     // Auto-show voice selection modal for first-time users (no preferred voice).
     // Only show once — if dismissed, don't nag on subsequent stories.
+    let mounted = true;
     if (!preferredVoice) {
       AsyncStorage.getItem("voiceModalDismissed").then((dismissed) => {
-        if (!dismissed) {
+        if (!dismissed && mounted) {
           isFirstTimeVoiceSetup.current = true;
           setIsVoiceModalOpen(true);
         }
       });
     }
+    return () => {
+      mounted = false;
+    };
   }, [preferredVoice, isVoiceFetched]);
 
   const getQuotaReminderKey = useCallback(() => {

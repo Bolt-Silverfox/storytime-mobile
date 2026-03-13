@@ -39,9 +39,12 @@ const DefaultVoiceScreen = () => {
 
   const handleSave = () => {
     if (selectedVoice) {
-      markPreferred(selectedVoice);
+      markPreferred(selectedVoice, {
+        onSuccess: () => navigation.goBack(),
+      });
+    } else {
+      navigation.goBack();
     }
-    navigation.goBack();
   };
 
   return (
@@ -92,6 +95,8 @@ const DefaultVoiceScreen = () => {
           <Pressable
             onPress={handleSave}
             className="mx-4 mt-2 items-center rounded-full bg-primary px-2 py-3"
+            accessibilityLabel="Save default voice"
+            accessibilityRole="button"
           >
             <Text className="font-[abeezee] text-base text-white">
               Save default voice

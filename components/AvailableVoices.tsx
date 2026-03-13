@@ -237,6 +237,7 @@ const AvailableVoices = ({
                       }
                     />
                   </Pressable>
+                  {/* Visual-only toggle; actual selection handled by card press */}
                   <View pointerEvents="none">
                     <Switch
                       value={isSelected}

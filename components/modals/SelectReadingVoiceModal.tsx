@@ -36,9 +36,12 @@ const SelectReadingVoiceModal = ({
 
   const handleSave = () => {
     if (selectedVoice) {
-      markPreferred(selectedVoice);
+      markPreferred(selectedVoice, {
+        onSuccess: () => onClose(),
+      });
+    } else {
+      onClose();
     }
-    onClose();
   };
 
   return (

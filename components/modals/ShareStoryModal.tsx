@@ -13,11 +13,11 @@ type ShareStoryModalProps = Omit<CustomModalProps, "children"> & {
 };
 
 const SOCIAL_ICONS = [
-  { name: "facebook" as const, color: "#1877F2" },
-  { name: "instagram" as const, color: "#E4405F" },
-  { name: "linkedin" as const, color: "#0A66C2" },
-  { name: "whatsapp" as const, color: "#25D366" },
-  { name: "x-twitter" as const, color: "#14171A" },
+  { name: "facebook" as const, color: "#1877F2", label: "Facebook" },
+  { name: "instagram" as const, color: "#E4405F", label: "Instagram" },
+  { name: "linkedin" as const, color: "#0A66C2", label: "LinkedIn" },
+  { name: "whatsapp" as const, color: "#25D366", label: "WhatsApp" },
+  { name: "x-twitter" as const, color: "#14171A", label: "X" },
 ];
 
 const ShareStoryModal = ({
@@ -90,7 +90,7 @@ const ShareStoryModal = ({
               key={icon.name}
               onPress={handleShare}
               style={styles.socialButton}
-              accessibilityLabel={`Share on ${icon.name}`}
+              accessibilityLabel={`Share on ${icon.label}`}
               accessibilityRole="button"
             >
               <FontAwesome6 name={icon.name} size={28} color={icon.color} />
