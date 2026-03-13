@@ -151,6 +151,11 @@ const StoryComponent = ({
   // Only sync preferred voice on initial load — user's local selection is
   // authoritative after that.  Without this guard, the invalidated query
   // refetch can overwrite the local VoiceType key with a DB UUID.
+  const getVoiceModalDismissedKey = useCallback(
+    () => `voiceModalDismissed:${user?.id ?? "anon"}`,
+    [user?.id]
+  );
+
   const hasInitializedVoice = useRef(false);
   useEffect(() => {
     if (!isVoiceFetched || hasInitializedVoice.current) return;
@@ -161,7 +166,7 @@ const StoryComponent = ({
     // Only show once — if dismissed, don't nag on subsequent stories.
     let mounted = true;
     if (!preferredVoice) {
-      AsyncStorage.getItem("voiceModalDismissed").then((dismissed) => {
+      AsyncStorage.getItem(getVoiceModalDismissedKey()).then((dismissed) => {
         if (!dismissed && mounted) {
           isFirstTimeVoiceSetup.current = true;
           setIsVoiceModalOpen(true);
@@ -171,7 +176,7 @@ const StoryComponent = ({
     return () => {
       mounted = false;
     };
-  }, [preferredVoice, isVoiceFetched]);
+  }, [preferredVoice, isVoiceFetched, getVoiceModalDismissedKey]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
@@ -297,7 +302,7 @@ const StoryComponent = ({
             setIsVoiceModalOpen(false);
             // Mark as dismissed so we don't re-show on next story
             if (isFirstTimeVoiceSetup.current) {
-              AsyncStorage.setItem("voiceModalDismissed", "true");
+              AsyncStorage.setItem(getVoiceModalDismissedKey(), "true");
               isFirstTimeVoiceSetup.current = false;
             }
           }}
