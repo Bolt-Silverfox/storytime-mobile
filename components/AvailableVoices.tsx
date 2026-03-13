@@ -1,7 +1,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
-import { Image, Pressable, Switch, Text, View } from "react-native";
+import { Image, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { COLORS } from "../constants/ui";
 import { audioLogger } from "../utils/logger";
 import { AvailableVoices as VoiceData } from "../types";
@@ -16,10 +16,13 @@ const AvailableVoices = ({
   selectedVoice,
   setSelectedVoice,
   storyId,
+  deferSave = false,
 }: {
   selectedVoice: string | null;
   setSelectedVoice: Dispatch<SetStateAction<string | null>>;
-  storyId: string;
+  storyId?: string;
+  /** When true, card taps only update local selection — caller handles persistence */
+  deferSave?: boolean;
 }) => {
   const { data } = useSuspenseQuery(queryAvailableVoices);
   const { data: voiceAccess, isLoading: voiceAccessLoading } =
@@ -98,23 +101,28 @@ const AvailableVoices = ({
       return;
     }
     setSelectedVoice(voice.id);
-    markPreferred(voice.id);
+    if (!deferSave) {
+      markPreferred(voice.id);
+    }
   };
 
   return (
     <>
       {!voiceAccessLoading && !isPremium && !lockedVoiceId && (
-        <View className="bg-blue-50 mx-2 mb-4 rounded-xl p-3">
-          <Text className="text-blue-700 text-center font-[abeezee] text-sm">
-            Choose your voice carefully — free users can only select one premium
-            voice.
+        <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
+          <Icon name="TriangleAlert" size={20} color="#212121" />
+          <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+            {
+              "Selecting a voice sets it as your default. To change it later, you'll need to subscribe."
+            }
           </Text>
         </View>
       )}
       {!voiceAccessLoading && !isPremium && lockedVoiceId && (
-        <View className="bg-blue-50 mx-2 mb-4 rounded-xl p-3">
-          <Text className="text-blue-700 text-center font-[abeezee] text-sm">
-            Upgrade to premium to unlock all voices
+        <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
+          <Icon name="TriangleAlert" size={20} color="#212121" />
+          <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+            Upgrade to premium to unlock all voices.
           </Text>
         </View>
       )}
@@ -146,11 +154,12 @@ const AvailableVoices = ({
               key={voice.id}
               accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${!allowed ? ", locked" : ""}`}
               accessibilityRole="button"
+              style={isSelected ? voiceStyles.selectedShadow : undefined}
               className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
                 !allowed
                   ? "border border-border-light opacity-40"
                   : isSelected
-                    ? "border-2 border-primary"
+                    ? "border border-primary"
                     : "border border-border-light"
               }`}
             >
@@ -159,9 +168,9 @@ const AvailableVoices = ({
                 className="size-[70px] self-center"
               />
               {isFreeUserLocked && (
-                <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-2">
-                  <Text className="font-[abeezee] text-xs text-primary">
-                    Your voice
+                <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
+                  <Text className="font-[abeezee] text-[8px] text-primary">
+                    Default
                   </Text>
                 </View>
               )}
@@ -187,41 +196,56 @@ const AvailableVoices = ({
               <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
                 {voice.displayName ?? voice.name}
               </Text>
-              <View className="flex flex-row items-center justify-between gap-x-4">
+              {isSelected ? (
                 <Pressable
                   onPress={() => {
                     if (voiceAccessLoading) return;
-                    if (!allowed) {
-                      if (isPremium && isStoryAtVoiceLimit) {
-                        notifyVoiceLimitReached();
-                      } else {
-                        setIsSubscriptionModalOpen(true);
-                      }
-                      return;
-                    }
                     handlePreview(voice.previewUrl, voice.id);
                   }}
-                  className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
+                  className="mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border border-border-lighter bg-white px-4 py-2"
                 >
-                  <Icon
-                    name="Volume2"
-                    color={
-                      isPreviewing
-                        ? COLORS.blue
-                        : !allowed
-                          ? COLORS.skeleton
-                          : "black"
-                    }
-                  />
+                  <Icon name="Volume2" size={18} color="black" />
+                  <Text className="font-[abeezee] text-sm text-black">
+                    Listen
+                  </Text>
                 </Pressable>
-                <View pointerEvents="none">
-                  <Switch
-                    value={isSelected}
-                    disabled={!allowed}
-                    accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
-                  />
+              ) : (
+                <View className="flex flex-row items-center justify-between gap-x-4">
+                  <Pressable
+                    onPress={() => {
+                      if (voiceAccessLoading) return;
+                      if (!allowed) {
+                        if (isPremium && isStoryAtVoiceLimit) {
+                          notifyVoiceLimitReached();
+                        } else {
+                          setIsSubscriptionModalOpen(true);
+                        }
+                        return;
+                      }
+                      handlePreview(voice.previewUrl, voice.id);
+                    }}
+                    className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
+                  >
+                    <Icon
+                      name="Volume2"
+                      color={
+                        isPreviewing
+                          ? COLORS.blue
+                          : !allowed
+                            ? COLORS.skeleton
+                            : "black"
+                      }
+                    />
+                  </Pressable>
+                  <View pointerEvents="none">
+                    <Switch
+                      value={isSelected}
+                      disabled={!allowed}
+                      accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
+                    />
+                  </View>
                 </View>
-              </View>
+              )}
             </Pressable>
           );
         })}
@@ -233,5 +257,15 @@ const AvailableVoices = ({
     </>
   );
 };
+
+const voiceStyles = StyleSheet.create({
+  selectedShadow: {
+    shadowColor: "#FCCDBD",
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+});
 
 export default AvailableVoices;
