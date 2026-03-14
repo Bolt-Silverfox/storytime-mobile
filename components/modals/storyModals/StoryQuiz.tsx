@@ -2,16 +2,19 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
 import { Story } from "../../../types";
+import useSubmitQuizAnswer from "../../../hooks/tanstack/mutationHooks/useSubmitQuizAnswer";
 
 type StoryQuizProps = {
   isOpen: boolean;
   onClose: () => void;
+  storyId: string;
   questions: Story["questions"];
   setQuizResults: Dispatch<SetStateAction<Array<boolean | null>>>;
 };
 const StoryQuiz = ({
   isOpen,
   onClose,
+  storyId,
   questions,
   setQuizResults,
 }: StoryQuizProps) => {
@@ -20,6 +23,7 @@ const StoryQuiz = ({
   const [results, setResults] = useState<Array<boolean | null>>(
     new Array(questions.length).fill(null)
   );
+  const { mutate: submitAnswer } = useSubmitQuizAnswer();
 
   const isLastQuestion = activeTab === questions.length - 1;
   const currentQuestion = questions[activeTab];
@@ -29,6 +33,12 @@ const StoryQuiz = ({
       Alert.alert("Select a valid option");
       return;
     }
+
+    submitAnswer({
+      questionId: currentQuestion.id,
+      storyId,
+      selectedOption,
+    });
 
     if (isLastQuestion) {
       setActiveTab(0);
