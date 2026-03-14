@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
 import { Story } from "../../../types";
@@ -24,6 +24,7 @@ const StoryQuiz = ({
     new Array(questions.length).fill(null)
   );
   const { mutate: submitAnswer } = useSubmitQuizAnswer();
+  const submittedRef = useRef<Set<number>>(new Set());
 
   const isLastQuestion = activeTab === questions.length - 1;
   const currentQuestion = questions[activeTab];
@@ -34,6 +35,9 @@ const StoryQuiz = ({
       return;
     }
 
+    if (submittedRef.current.has(activeTab)) return;
+    submittedRef.current.add(activeTab);
+
     submitAnswer({
       questionId: currentQuestion.id,
       storyId,
@@ -41,6 +45,7 @@ const StoryQuiz = ({
     });
 
     if (isLastQuestion) {
+      submittedRef.current.clear();
       setActiveTab(0);
       setSelectedOption(null);
       onClose();

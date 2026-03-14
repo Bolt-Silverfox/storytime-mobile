@@ -37,7 +37,6 @@ const InStoryModeModal = ({
         <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
           <Pressable
             onPress={() => setPendingMode("plain")}
-            disabled={!hasQuiz}
             className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
               pendingMode === "plain"
                 ? "border-[#EC400740] bg-primary"
