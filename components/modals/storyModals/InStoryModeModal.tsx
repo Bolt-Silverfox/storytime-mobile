@@ -20,6 +20,13 @@ const InStoryModeModal = ({
 }: Props) => {
   const [pendingMode, setPendingMode] = useState<StoryModes>(currentMode);
 
+  const handleClose = () => {
+    if (!hasQuiz && currentMode !== "plain") {
+      onModeChange("plain");
+    }
+    onClose();
+  };
+
   // Sync pendingMode when modal opens with a new currentMode
   useEffect(() => {
     if (isOpen) {
@@ -28,11 +35,11 @@ const InStoryModeModal = ({
   }, [isOpen, currentMode]);
 
   return (
-    <CustomModal isOpen={isOpen} onClose={onClose}>
+    <CustomModal isOpen={isOpen} onClose={handleClose}>
       <View className="flex flex-col gap-y-6 bg-white">
         <View className="flex flex-row items-center justify-between border-b border-b-border-light pb-6">
           <Text className="font-[abeezee] text-base">Change story mode</Text>
-          <Icon name="SquareX" onPress={onClose} />
+          <Icon name="SquareX" onPress={handleClose} />
         </View>
         <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
           <Pressable
@@ -95,15 +102,7 @@ const InStoryModeModal = ({
             text="Switch mode"
           />
         ) : (
-          <CustomButton
-            onPress={() => {
-              if (currentMode !== "plain") {
-                onModeChange("plain");
-              }
-              onClose();
-            }}
-            text="Got it"
-          />
+          <CustomButton onPress={handleClose} text="Got it" />
         )}
       </View>
     </CustomModal>
