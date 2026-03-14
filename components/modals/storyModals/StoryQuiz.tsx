@@ -35,14 +35,22 @@ const StoryQuiz = ({
       return;
     }
 
-    if (submittedRef.current.has(activeTab)) return;
-    submittedRef.current.add(activeTab);
+    const questionIndex = activeTab;
+    if (submittedRef.current.has(questionIndex)) return;
+    submittedRef.current.add(questionIndex);
 
-    submitAnswer({
-      questionId: currentQuestion.id,
-      storyId,
-      selectedOption,
-    });
+    submitAnswer(
+      {
+        questionId: currentQuestion.id,
+        storyId,
+        selectedOption,
+      },
+      {
+        onError: () => {
+          submittedRef.current.delete(questionIndex);
+        },
+      }
+    );
 
     if (isLastQuestion) {
       submittedRef.current.clear();

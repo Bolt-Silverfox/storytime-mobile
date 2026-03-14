@@ -95,7 +95,15 @@ const InStoryModeModal = ({
             text="Switch mode"
           />
         ) : (
-          <CustomButton onPress={onClose} text="Got it" />
+          <CustomButton
+            onPress={() => {
+              if (currentMode !== "plain") {
+                onModeChange("plain");
+              }
+              onClose();
+            }}
+            text="Got it"
+          />
         )}
       </View>
     </CustomModal>
