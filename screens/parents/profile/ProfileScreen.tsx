@@ -8,6 +8,7 @@ import {
   HelpCircle,
   KeyRound,
   Link2,
+  Volume2,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -106,6 +107,12 @@ const ProfileScreen: FC = () => {
               label="Linked Accounts"
               onPress={() => navigator.navigate("linkedAccounts")}
               isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Volume2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Default Voice"
+              isTablet={isTablet}
+              onPress={() => navigator.navigate("defaultVoice")}
             />
             <MenuItem
               icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}

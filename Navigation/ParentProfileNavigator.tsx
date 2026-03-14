@@ -11,6 +11,7 @@ import ProfileScreen from "../screens/parents/profile/ProfileScreen";
 import RedeemCouponScreen from "../screens/parents/profile/RedeemCouponScreen";
 import ResetParentPassword from "../screens/parents/profile/ResetParentPassword";
 import LinkedAccountsScreen from "../screens/parents/profile/LinkedAccountsScreen";
+import DefaultVoiceScreen from "../screens/parents/profile/DefaultVoiceScreen";
 import HelpAndSupportNavigator, {
   HelpAndSupportNavigatorParamList,
 } from "./HelpAndSupportNavigator";
@@ -25,6 +26,7 @@ type ParentProfileNavigatorParamList = {
   deleteAccountConfirmation: undefined;
   editParentImage: undefined;
   linkedAccounts: undefined;
+  defaultVoice: undefined;
 };
 
 type ParentProfileNavigatorProp =
@@ -52,6 +54,7 @@ const ParentProfileNavigator = () => {
       <Stack.Screen name="editParentImage" component={EditParentImage} />
       <Stack.Screen name="redeemCoupon" component={RedeemCouponScreen} />
       <Stack.Screen name="linkedAccounts" component={LinkedAccountsScreen} />
+      <Stack.Screen name="defaultVoice" component={DefaultVoiceScreen} />
     </Stack.Navigator>
   );
 };
