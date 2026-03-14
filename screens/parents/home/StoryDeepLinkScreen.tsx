@@ -32,6 +32,8 @@ const StoryDeepLinkScreen = () => {
         durationSeconds: data.durationSeconds,
         categories: data.categories,
         createdAt: data.createdAt,
+        isInteractive: data.isInteractive,
+        questions: data.questions,
       },
     });
   }, [data, navigator]);

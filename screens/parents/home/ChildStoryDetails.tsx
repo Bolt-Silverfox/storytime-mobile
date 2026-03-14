@@ -22,6 +22,7 @@ import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
+import { StoryModes } from "../../../types";
 import { secondsToMinutes } from "../../../utils/utils";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
@@ -39,7 +40,11 @@ const ChildStoryDetails = () => {
     coverImageUrl,
     id,
     createdAt,
+    isInteractive,
+    questions,
   } = params.story;
+  const [selectedMode, setSelectedMode] = useState<StoryModes>("plain");
+  const hasQuiz = isInteractive && questions && questions.length > 0;
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
@@ -128,27 +133,66 @@ const ChildStoryDetails = () => {
                 />
               </View>
               <View className="flex flex-row gap-x-2">
-                <View className="flex-1 rounded-lg border border-primary/20 bg-primary p-3">
-                  <Text className="font-[quilka] text-sm text-white">
+                <Pressable
+                  onPress={() => setSelectedMode("plain")}
+                  accessibilityRole="button"
+                  accessibilityLabel="Select plain story mode"
+                  accessibilityState={{ selected: selectedMode === "plain" }}
+                  className={`flex-1 rounded-lg border p-3 ${
+                    selectedMode === "plain"
+                      ? "border-primary/20 bg-primary"
+                      : "border-border-light bg-white/60"
+                  }`}
+                >
+                  <Text
+                    className={`font-[quilka] text-sm ${
+                      selectedMode === "plain" ? "text-white" : "text-black"
+                    }`}
+                  >
                     Plain story mode
                   </Text>
-                  <Text className="text-wrap font-[abeezee] text-sm text-[#FED0C1]">
+                  <Text
+                    className={`text-wrap font-[abeezee] text-sm ${
+                      selectedMode === "plain" ? "text-[#FED0C1]" : "text-text"
+                    }`}
+                  >
                     Enjoy storytelling without stress.
                   </Text>
-                </View>
-                <View className="flex-1 rounded-lg border border-border-light bg-white/60 p-3 opacity-60">
-                  <View className="mb-1 flex h-6 items-center justify-center self-start rounded-full bg-[#E0F2FE] px-2">
-                    <Text className="font-[abeezee] text-xs text-[#0369A1]">
-                      Coming Soon
+                </Pressable>
+                {hasQuiz && (
+                  <Pressable
+                    onPress={() => setSelectedMode("interactive")}
+                    accessibilityRole="button"
+                    accessibilityLabel="Select interactive story mode"
+                    accessibilityState={{
+                      selected: selectedMode === "interactive",
+                    }}
+                    className={`flex-1 rounded-lg border p-3 ${
+                      selectedMode === "interactive"
+                        ? "border-primary/20 bg-primary"
+                        : "border-border-light bg-white/60"
+                    }`}
+                  >
+                    <Text
+                      className={`font-[quilka] text-sm ${
+                        selectedMode === "interactive"
+                          ? "text-white"
+                          : "text-black"
+                      }`}
+                    >
+                      Interactive story mode
                     </Text>
-                  </View>
-                  <Text className="font-[quilka] text-sm text-black">
-                    Interactive story mode
-                  </Text>
-                  <Text className="text-wrap font-[abeezee] text-sm text-text">
-                    Listen, enjoy and answer questions to the stories.
-                  </Text>
-                </View>
+                    <Text
+                      className={`text-wrap font-[abeezee] text-sm ${
+                        selectedMode === "interactive"
+                          ? "text-[#FED0C1]"
+                          : "text-text"
+                      }`}
+                    >
+                      Listen, enjoy and answer questions to the stories.
+                    </Text>
+                  </Pressable>
+                )}
               </View>
             </View>
           </View>
@@ -185,7 +229,7 @@ const ChildStoryDetails = () => {
               onPress={() =>
                 navigator.navigate("readStory", {
                   storyId: id,
-                  mode: "plain",
+                  mode: selectedMode,
                   page: params.page,
                 })
               }
