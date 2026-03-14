@@ -302,6 +302,7 @@ const StoryContentContainer = ({
       <StoryQuiz
         isOpen={currentlyDisplayed === "quiz"}
         onClose={() => setCurrentlyDisplayed("endOfQuizMessage")}
+        storyId={story.id}
         questions={story.questions}
         setQuizResults={setQuizResults}
       />

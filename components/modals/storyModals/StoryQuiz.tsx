@@ -1,17 +1,20 @@
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
 import { Story } from "../../../types";
+import useSubmitQuizAnswer from "../../../hooks/tanstack/mutationHooks/useSubmitQuizAnswer";
 
 type StoryQuizProps = {
   isOpen: boolean;
   onClose: () => void;
+  storyId: string;
   questions: Story["questions"];
   setQuizResults: Dispatch<SetStateAction<Array<boolean | null>>>;
 };
 const StoryQuiz = ({
   isOpen,
   onClose,
+  storyId,
   questions,
   setQuizResults,
 }: StoryQuizProps) => {
@@ -20,6 +23,8 @@ const StoryQuiz = ({
   const [results, setResults] = useState<Array<boolean | null>>(
     new Array(questions.length).fill(null)
   );
+  const { mutate: submitAnswer } = useSubmitQuizAnswer();
+  const submittedRef = useRef<Set<number>>(new Set());
 
   const isLastQuestion = activeTab === questions.length - 1;
   const currentQuestion = questions[activeTab];
@@ -30,7 +35,25 @@ const StoryQuiz = ({
       return;
     }
 
+    const questionIndex = activeTab;
+    if (submittedRef.current.has(questionIndex)) return;
+    submittedRef.current.add(questionIndex);
+
+    submitAnswer(
+      {
+        questionId: currentQuestion.id,
+        storyId,
+        selectedOption,
+      },
+      {
+        onError: () => {
+          submittedRef.current.delete(questionIndex);
+        },
+      }
+    );
+
     if (isLastQuestion) {
+      submittedRef.current.clear();
       setActiveTab(0);
       setSelectedOption(null);
       onClose();

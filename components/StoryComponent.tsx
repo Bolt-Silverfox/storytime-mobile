@@ -45,6 +45,7 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(() =>
     page && page > 0 ? page - 1 : 0
   );
+  const [currentMode, setCurrentMode] = useState<StoryModes>(storyMode);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
@@ -272,7 +273,7 @@ const StoryComponent = ({
               </Animated.View>
 
               <StoryContentContainer
-                isInteractive={storyMode === "interactive"}
+                isInteractive={currentMode === "interactive"}
                 story={data}
                 activeParagraph={activeParagraph}
                 audioUrl={
@@ -315,6 +316,9 @@ const StoryComponent = ({
           handleVoiceModal={setIsVoiceModalOpen}
           isOptionsModalOpen={isOptionsModalOpen}
           setIsOptionsModalOpen={setIsOptionsModalOpen}
+          currentMode={currentMode}
+          onModeChange={setCurrentMode}
+          hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
         />
       </View>
       <StoryLimitModal

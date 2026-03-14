@@ -12,10 +12,10 @@ type Props = {
 };
 const EndOfStoryMessage = ({
   storyTitle,
-  onTestKnowledge: _onTestKnowledge,
+  onTestKnowledge,
   isOpen,
   readAgain,
-  isInteractive: _isInteractive,
+  isInteractive,
 }: Props) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   if (!isOpen) return null;
@@ -31,6 +31,9 @@ const EndOfStoryMessage = ({
       </Text>
       <View className="flex flex-col gap-y-3">
         <CustomButton text="Read story again" transparent onPress={readAgain} />
+        {isInteractive && (
+          <CustomButton text="Test your knowledge" onPress={onTestKnowledge} />
+        )}
         <CustomButton
           text="Go home"
           onPress={() =>

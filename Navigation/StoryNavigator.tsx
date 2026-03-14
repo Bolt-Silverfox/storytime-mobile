@@ -20,7 +20,8 @@ type StoryNavigatorParamList = {
       | "coverImageUrl"
       | "id"
       | "createdAt"
-    >;
+    > &
+      Partial<Pick<Story, "isInteractive" | "questions">>;
     page?: number;
   };
   readStory: { storyId: string; mode: StoryModes; page?: number };
