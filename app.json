@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "Storytime For Kids",
+    "name": "Storytime4Kids",
     "slug": "storytime-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -19,14 +19,10 @@
       "icon": "./assets/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["remote-notification"]
       },
       "entitlements": {
-        "com.apple.developer.applesignin": [
-          "Default"
-        ],
+        "com.apple.developer.applesignin": ["Default"],
         "aps-environment": "production"
       },
       "googleServicesFile": "./GoogleService-Info.plist"
@@ -93,10 +89,13 @@
       ],
       "expo-iap",
       "./plugins/withFirebaseMessagingManifestFix",
-      ["@sentry/react-native/expo", {
-        "organization": "emerj",
-        "project": "storytime-mobile"
-      }],
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "emerj",
+          "project": "storytime-mobile"
+        }
+      ],
       "@react-native-firebase/crashlytics"
     ],
     "extra": {
@@ -110,9 +109,6 @@
     "updates": {
       "url": "https://u.expo.dev/b117024d-5005-477f-8eae-03dce4fd8e45"
     },
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }

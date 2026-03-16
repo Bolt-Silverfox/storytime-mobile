@@ -7,7 +7,7 @@ export const reactNavigationIntegration = Sentry.reactNavigationIntegration({
 });
 
 export function initSentry() {
-  if (!SENTRY_DSN) return;
+  if (!SENTRY_DSN || __DEV__) return;
 
   const environment =
     process.env.EXPO_PUBLIC_SENTRY_ENV ??
