@@ -34,6 +34,8 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     ageMax,
     categories,
     durationSeconds,
+    isInteractive,
+    questions,
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: favouritesData } = useQueryParentsFavourites();
@@ -75,6 +77,8 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           id,
           title,
           createdAt,
+          isInteractive,
+          questions,
         },
       },
     });

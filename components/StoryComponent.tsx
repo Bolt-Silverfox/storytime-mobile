@@ -45,9 +45,12 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(() =>
     page && page > 0 ? page - 1 : 0
   );
+  const [currentMode, setCurrentMode] = useState<StoryModes>(storyMode);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
   const [showQuotaReminder, setShowQuotaReminder] = useState(false);
+  // Tracks whether the voice modal was auto-shown for first-time setup (stable across re-renders)
+  const isFirstTimeVoiceSetup = useRef(false);
   const sessionStartTime = useRef(Date.now());
   const [controlsVisible, setControlsVisible] = useState(true);
   const [controlsInteractive, setControlsInteractive] = useState(true);
@@ -149,12 +152,32 @@ const StoryComponent = ({
   // Only sync preferred voice on initial load — user's local selection is
   // authoritative after that.  Without this guard, the invalidated query
   // refetch can overwrite the local VoiceType key with a DB UUID.
+  const getVoiceModalDismissedKey = useCallback(
+    () => `voiceModalDismissed:${user?.id ?? "anon"}`,
+    [user?.id]
+  );
+
   const hasInitializedVoice = useRef(false);
   useEffect(() => {
     if (!isVoiceFetched || hasInitializedVoice.current) return;
     hasInitializedVoice.current = true;
     setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
-  }, [preferredVoice, isVoiceFetched]);
+
+    // Auto-show voice selection modal for first-time users (no preferred voice).
+    // Only show once — if dismissed, don't nag on subsequent stories.
+    let mounted = true;
+    if (!preferredVoice) {
+      AsyncStorage.getItem(getVoiceModalDismissedKey()).then((dismissed) => {
+        if (!dismissed && mounted) {
+          isFirstTimeVoiceSetup.current = true;
+          setIsVoiceModalOpen(true);
+        }
+      });
+    }
+    return () => {
+      mounted = false;
+    };
+  }, [preferredVoice, isVoiceFetched, getVoiceModalDismissedKey]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
@@ -250,7 +273,7 @@ const StoryComponent = ({
               </Animated.View>
 
               <StoryContentContainer
-                isInteractive={storyMode === "interactive"}
+                isInteractive={currentMode === "interactive"}
                 story={data}
                 activeParagraph={activeParagraph}
                 audioUrl={
@@ -276,15 +299,26 @@ const StoryComponent = ({
         </Pressable>
         <SelectReadingVoiceModal
           isOpen={isVoiceModalOpen}
-          onClose={() => setIsVoiceModalOpen(false)}
+          onClose={() => {
+            setIsVoiceModalOpen(false);
+            // Mark as dismissed so we don't re-show on next story
+            if (isFirstTimeVoiceSetup.current) {
+              AsyncStorage.setItem(getVoiceModalDismissedKey(), "true");
+              isFirstTimeVoiceSetup.current = false;
+            }
+          }}
           selectedVoice={selectedVoice}
           setSelectedVoice={setSelectedVoice}
           storyId={storyId}
+          showSaveButton={isFirstTimeVoiceSetup.current}
         />
         <InStoryOptionsModal
           handleVoiceModal={setIsVoiceModalOpen}
           isOptionsModalOpen={isOptionsModalOpen}
           setIsOptionsModalOpen={setIsOptionsModalOpen}
+          currentMode={currentMode}
+          onModeChange={setCurrentMode}
+          hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
         />
       </View>
       <StoryLimitModal

@@ -92,5 +92,6 @@ export const apiLogger = log.extend("API");
 export const notifLogger = log.extend("NOTIF");
 export const iapLogger = log.extend("IAP");
 export const audioLogger = log.extend("AUDIO");
+export const quizLogger = log.extend("QUIZ");
 
 export default log;
