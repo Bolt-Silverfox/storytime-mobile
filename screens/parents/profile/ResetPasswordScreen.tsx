@@ -61,7 +61,7 @@ const ResetPasswordScreen = () => {
     await resetPassword({
       email: user!.email,
       token,
-      newPassword: confirmPassword,
+      newPassword,
       setErrorCb: setError,
       onSuccess: () => {
         Keyboard.dismiss();

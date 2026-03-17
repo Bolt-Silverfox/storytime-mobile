@@ -110,7 +110,7 @@ export const useNotifications = (isAuthenticated: boolean) => {
           // @ts-expect-error - dynamic navigation
           navigation.navigate("parents", {
             screen: "profile",
-            params: { screen: "resetParentPassword" },
+            params: { screen: "changePassword" },
           });
           break;
 
