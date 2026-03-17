@@ -99,7 +99,7 @@ const ProfileScreen: FC = () => {
             <MenuItem
               icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
               label="Change Password"
-              onPress={() => navigator.navigate("resetParentPassword")}
+              onPress={() => navigator.navigate("changePassword")}
               isTablet={isTablet}
             />
             <MenuItem

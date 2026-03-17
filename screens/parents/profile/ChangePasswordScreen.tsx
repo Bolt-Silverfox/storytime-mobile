@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
-import { Keyboard, View } from "react-native";
+import { Keyboard, Pressable, Text, View } from "react-native";
 import { z } from "zod";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
@@ -8,9 +8,9 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import PasswordInput from "../../../components/PasswordInput";
 import CustomButton from "../../../components/UI/CustomButton";
-import useAuth from "../../../contexts/AuthContext";
-import SuccessScreen from "../../../components/UI/SuccessScreen";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import SuccessScreen from "../../../components/UI/SuccessScreen";
+import useAuth from "../../../contexts/AuthContext";
 import { passwordSchema } from "../../../zodSchemas";
 
 const resetPasswordSchema = z
@@ -27,7 +27,7 @@ const resetPasswordSchema = z
 type ResetPassword = z.infer<typeof resetPasswordSchema>;
 type Errors = Partial<Record<keyof ResetPassword, string>>;
 
-export default function ResetParentPassword() {
+export default function ChangePasswordScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -100,6 +100,12 @@ export default function ResetParentPassword() {
               errorMessage={errors.confirmPassword}
             />
           </View>
+          <Pressable
+            className="mt-5 self-end"
+            onPress={() => navigator.navigate("sendResetToken")}
+          >
+            <Text className="font-[abeezee] text-link">Forgot Password?</Text>
+          </Pressable>
         </View>
         <View className="mt-10 flex-1 gap-6 px-4">
           <CustomButton onPress={onResetPassword} text="Reset Password" />
