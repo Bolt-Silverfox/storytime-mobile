@@ -36,7 +36,6 @@
       "predictiveBackGestureEnabled": false,
       "googleServicesFile": "./google-services.json",
       "permissions": [
-        "android.permission.RECORD_AUDIO",
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "com.android.vending.BILLING"
       ],
@@ -47,15 +46,10 @@
       [
         "expo-image-picker",
         {
-          "photosPermission": "The app accesses your photos to let you share them with your friends."
+          "photosPermission": "The app accesses your photos to let you set a profile picture."
         }
       ],
-      [
-        "expo-audio",
-        {
-          "microphonePermission": "Allow Storytime to access your microphone."
-        }
-      ],
+      "expo-audio",
       [
         "@react-native-google-signin/google-signin",
         {

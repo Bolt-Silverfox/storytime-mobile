@@ -38,7 +38,7 @@ const ShareStoryModal = ({
     }
   };
 
-  const shareMessage = `Check out "${storyTitle}" on Storytime4Kids!`;
+  const shareMessage = `Check out "${storyTitle}" on Storytime!`;
 
   const handleShare = () => {
     shareContent({

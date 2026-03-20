@@ -148,9 +148,40 @@ const UnauthPaywallScreen = () => {
                 onPress={handlePurchase}
               />
 
-              <Text className="text-center font-[abeezee] text-xs text-text">
-                Already purchased? Log in to restore your subscription.
-              </Text>
+              <View className="flex-row items-center justify-center gap-x-4">
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("auth", { screen: "termsOfService" })
+                  }
+                >
+                  <Text className="font-[abeezee] text-xs text-primary underline">
+                    Terms of Service
+                  </Text>
+                </Pressable>
+                <Pressable
+                  onPress={() =>
+                    navigation.navigate("auth", { screen: "privacyScreen" })
+                  }
+                >
+                  <Text className="font-[abeezee] text-xs text-primary underline">
+                    Privacy Policy
+                  </Text>
+                </Pressable>
+              </View>
+
+              <Pressable
+                onPress={() =>
+                  navigation.navigate("auth", { screen: "login" })
+                }
+                className="items-center py-2"
+              >
+                <Text className="font-[abeezee] text-sm text-primary">
+                  Restore Purchases
+                </Text>
+                <Text className="mt-1 font-[abeezee] text-xs text-text">
+                  Log in to restore an existing subscription
+                </Text>
+              </Pressable>
             </View>
           </View>
         </ScrollView>
