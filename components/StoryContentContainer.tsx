@@ -1,4 +1,4 @@
-import { BlurView } from "expo-blur";
+import Feather from "@expo/vector-icons/Feather";
 import {
   Dispatch,
   SetStateAction,
@@ -16,19 +16,18 @@ import {
   View,
   ViewStyle,
 } from "react-native";
-import Feather from "@expo/vector-icons/Feather";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { CONTROLS_FADE_MS } from "../constants";
+import { WORDS_PER_CHUNK } from "../constants/tts";
 import useIsPremium from "../hooks/useIsPremium";
 import { Story } from "../types";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
-import { WORDS_PER_CHUNK } from "../constants/tts";
-import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
@@ -224,16 +223,10 @@ const StoryContentContainer = ({
         </View>
       )}
       {currentlyDisplayed === "story" && (
-        <View>
-          <BlurView
-            intensity={60}
-            tint="systemMaterialDark"
-            className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
-          >
-            <Text className="font-[quilka] text-xl text-white">
-              {paragraphs[activeParagraph]}
-            </Text>
-          </BlurView>
+        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8 ">
+          <Text className="font-[quilka] text-xl text-black">
+            {paragraphs[activeParagraph]}
+          </Text>
         </View>
       )}
       {currentlyDisplayed === "story" && controlsInLayout && (
