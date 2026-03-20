@@ -6,45 +6,51 @@ const privacyPolicyData: {
   number: string;
 }[] = [
   {
-    title: "Information We collect",
+    title: "Information We Collect",
     paragraph:
-      "We collect only the information needed to improve your experience in Storytime. Information collected may include reading progress, app usage, and interaction patterns.",
+      "We collect the following information to provide and improve the Storytime service: your email address and name (at registration), profile photo (if uploaded), reading progress and story preferences, app usage and interaction patterns, device tokens for push notifications, and purchase/transaction data for subscription management.",
     number: "I",
   },
   {
     title: "How We Use the Information",
     paragraph:
-      "We use the collected information to personalize reading content, track achievements, remember story preferences, and make the app more engaging and educational.",
+      "We use the collected information to personalize reading content, track achievements, remember story preferences, process subscriptions, send push notifications about new content, and improve the app experience.",
     number: "II",
   },
   {
     title: "How We Protect Your Data",
     paragraph:
-      "We use secure storage systems, encrypted data handling, and safe login features. We do not use third-party trackers that collect personal information.",
+      "We use secure storage systems, encrypted data handling, and industry-standard security practices. All data is transmitted over HTTPS and sensitive credentials are stored in secure device storage.",
     number: "III",
-  },
-  {
-    title: "Your Rights",
-    paragraph:
-      "You can request to view, update, or delete any information stored about you at any time. We comply with applicable data protection standards.",
-    number: "IV",
   },
   {
     title: "Third-Party Services",
     paragraph:
-      "If we use external services such as Firebase or analytics tools, they may only access non-personal usage data. They cannot collect names, photos, addresses, or other personal details.",
+      "We use the following third-party services that may process limited data: Firebase Cloud Messaging (push notification delivery and device tokens), Firebase Crashlytics (crash reports and device diagnostics, linked to your user ID for debugging), and Sentry (error monitoring, linked to your user ID and email for issue resolution). These services process data according to their own privacy policies and do not use your data for advertising purposes.",
+    number: "IV",
+  },
+  {
+    title: "Your Rights",
+    paragraph:
+      "You can request to view, update, or delete any information stored about you at any time by contacting us or using the Delete Account feature in the app. We will respond to data requests within 30 days. For users in the European Economic Area, you also have the right to data portability, the right to object to processing, and the right to lodge a complaint with your local supervisory authority.",
     number: "V",
+  },
+  {
+    title: "Data Retention",
+    paragraph:
+      "We retain your personal data for as long as your account is active. If you delete your account, we will remove your personal data within 30 days, except where we are required to retain it by law or for legitimate business purposes (e.g., transaction records).",
+    number: "VI",
   },
   {
     title: "Updates to This Policy",
     paragraph:
       "We may update this policy occasionally. Users will be notified of important changes through the app or email.",
-    number: "VI",
+    number: "VII",
   },
   {
     title: "Contact Us",
-    paragraph: "mail : team@storytimeapp.me",
-    number: "VII",
+    paragraph: "Email: team@storytimeapp.me",
+    number: "VIII",
   },
 ];
 
