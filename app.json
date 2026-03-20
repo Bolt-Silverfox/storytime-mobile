@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "Storytime4Kids",
+    "name": "Storytime",
     "slug": "storytime-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "scheme": "storytime4kids",
+    "scheme": "storytime",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
@@ -53,7 +53,7 @@
       [
         "expo-audio",
         {
-          "microphonePermission": "Allow Storytime4Kids to access your microphone."
+          "microphonePermission": "Allow Storytime to access your microphone."
         }
       ],
       [

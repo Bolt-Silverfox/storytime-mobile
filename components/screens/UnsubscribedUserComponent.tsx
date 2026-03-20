@@ -129,8 +129,8 @@ const UnsubscribedUserComponent = () => {
           </View>
 
           <Text className="-mt-5 font-[abeezee] text-base text-black">
-            Your child won't just listen, they'll have an unlimited learning
-            experience, with the voice type you choose for them.
+            You won't just listen, you'll have an unlimited learning
+            experience, with the voice type you choose.
           </Text>
 
           <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">

@@ -19,7 +19,7 @@ type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
 type SuccessMessageType =
   | "Otp resent successfully"
-  | "Start enjoying amazing Storytime with your kids.";
+  | "Start enjoying amazing stories.";
 
 const EXPIRY_KEY = "verify-email-otp_expiry";
 const OTP_DURATION = 60;
@@ -151,7 +151,7 @@ const VerifyEmailScreen = () => {
                 setErrorCb: setError,
                 onSuccess: () =>
                   setSuccesMessage(
-                    "Start enjoying amazing Storytime with your kids."
+                    "Start enjoying amazing stories."
                   ),
               });
             }}
@@ -162,7 +162,7 @@ const VerifyEmailScreen = () => {
           secondaryMessage={successMessage}
           visible={
             successMessage ===
-            "Start enjoying amazing Storytime with your kids."
+            "Start enjoying amazing stories."
           }
           onProceed={onSuccessCb}
         />

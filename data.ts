@@ -8,37 +8,37 @@ const privacyPolicyData: {
   {
     title: "Information We collect",
     paragraph:
-      "We collect only the information needed to improve your child’s experience in StoryTime. We do not collect personal data from children without parental consent. Information collected may include reading progress, app usage, and interaction patterns.",
+      "We collect only the information needed to improve your experience in Storytime. Information collected may include reading progress, app usage, and interaction patterns.",
     number: "I",
   },
   {
     title: "How We Use the Information",
     paragraph:
-      "We use the collected information to personalize reading content, track achievements, remember story preferences, and make the app more engaging and educational for children.",
+      "We use the collected information to personalize reading content, track achievements, remember story preferences, and make the app more engaging and educational.",
     number: "II",
   },
   {
     title: "How We Protect Your Data",
     paragraph:
-      "We use secure storage systems, encrypted data handling, and safe parental login features. We do not use third-party trackers that collect personal information from children.",
+      "We use secure storage systems, encrypted data handling, and safe login features. We do not use third-party trackers that collect personal information.",
     number: "III",
   },
   {
-    title: "Parents' Rights",
+    title: "Your Rights",
     paragraph:
-      "Parents can request to view, update, or delete any information stored about their child at any time. We comply with children safety laws including COPPA and general data protection standards.",
+      "You can request to view, update, or delete any information stored about you at any time. We comply with applicable data protection standards.",
     number: "IV",
   },
   {
     title: "Third-Party Services",
     paragraph:
-      "If we use external services such as Firebase or analytics tools, they may only access non-personal usage data. They cannot collect names, photos, addresses, or personal details of any child.",
+      "If we use external services such as Firebase or analytics tools, they may only access non-personal usage data. They cannot collect names, photos, addresses, or other personal details.",
     number: "V",
   },
   {
     title: "Updates to This Policy",
     paragraph:
-      "We may update this policy occasionally. Parents will be notified of important changes through the app or email.",
+      "We may update this policy occasionally. Users will be notified of important changes through the app or email.",
     number: "VI",
   },
   {
@@ -57,7 +57,7 @@ const termsAndConditionsData: {
     heading: "Introduction and Acceptance",
     index: "I",
     paragraph: [
-      "These Terms and Conditions (“Terms”) form a legally binding agreement between you (“User,” “Parent,” or “Guardian”) and StoryTime4Kids (“Company,” “we,” “us,” or “our”) governing your access to and use of our website, mobile application, and digital content services (collectively, the “Service”).",
+      “These Terms and Conditions (“Terms”) form a legally binding agreement between you (“User”) and Storytime (“Company,” “we,” “us,” or “our”) governing your access to and use of our website, mobile application, and digital content services (collectively, the “Service”).”,
       "By accessing, using, or subscribing to the Service, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not access or use the Service.",
     ],
   },
@@ -65,8 +65,8 @@ const termsAndConditionsData: {
     heading: "The Service and Age Restrictions",
     index: "II",
     paragraph: [
-      "StoryTime4Kids provides access to a curated digital library of stories, audio, video, and related educational content designed to support children’s literacy and imagination.",
-      "The Service is intended for use by parents or legal guardians for children under the age of 18. You must be at least 18 years old to create an account, make payments, and accept these Terms on behalf of a child",
+      "Storytime provides access to a curated digital library of stories, audio, video, and related educational content designed to support literacy and imagination.",
+      "You must be at least 18 years old to create an account, make payments, and accept these Terms.",
     ],
   },
   {
@@ -82,7 +82,7 @@ const termsAndConditionsData: {
     heading: "Intellectual Property Rights",
     index: "IV",
     paragraph: [
-      "All content and materials made available through the Service, including stories, narration, illustrations, graphics, trademarks, and software, are the exclusive property of StoryTime4Kids or its licensors and are protected by applicable intellectual property laws.",
+      "All content and materials made available through the Service, including stories, narration, illustrations, graphics, trademarks, and software, are the exclusive property of Storytime or its licensors and are protected by applicable intellectual property laws.",
       "You are granted a limited, non-exclusive, non-transferable license to access and use the Service for personal, non-commercial purposes only. You may not copy, reproduce, distribute, modify, or publicly display any content without prior written consent.",
     ],
   },
@@ -136,9 +136,9 @@ const storyCategoriesColours = [
 ];
 
 const subscriptionBenefits = [
-  "Unlimited access to a growing library of kids' stories.",
+  "Unlimited access to a growing library of stories.",
   "Interactive story mode: short quizzes after each story to boost learning.",
-  "Pick from soothing, fun voices tailored to your child.",
+  "Pick from soothing, fun voices tailored to you.",
 ];
 
 const storiesByAgeImages: Record<AgeGroupType, string> = {
