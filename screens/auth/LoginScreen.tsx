@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { AppleButton } from "@invertase/react-native-apple-authentication";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
@@ -94,14 +95,12 @@ const LoginScreen = () => {
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
-                <Pressable
+                <AppleButton
+                  buttonStyle={AppleButton.Style.BLACK}
+                  buttonType={AppleButton.Type.SIGN_IN}
+                  style={{ width: 200, height: 44 }}
                   onPress={handleAppleAuth}
-                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
-                >
-                  <Image
-                    source={require("../../assets/icons/apple-icon.png")}
-                  />
-                </Pressable>
+                />
               )}
             </View>
             <View className="mt-10 flex flex-col gap-y-4">

@@ -133,14 +133,23 @@ const UnsubscribedUserComponent = () => {
             experience, with the voice type you choose.
           </Text>
 
-          <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
-            <Image
-              className="size-6"
-              source={require("../../assets/icons/caution.png")}
-            />
-            <Text className="flex-1 text-wrap font-[abeezee] text-xs">
-              Your plan will automatically renew unless you cancel your
-              subscription.
+          <View className="mx-auto flex w-full max-w-screen-md gap-y-2 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
+            <View className="flex-row gap-x-4">
+              <Image
+                className="size-6"
+                source={require("../../assets/icons/caution.png")}
+              />
+              <Text className="flex-1 text-wrap font-[abeezee] text-xs">
+                Subscription automatically renews unless canceled at least 24
+                hours before the end of the current period.
+              </Text>
+            </View>
+            <Text className="font-[abeezee] text-[10px] leading-4 text-text">
+              Payment will be charged to your Apple ID account at confirmation
+              of purchase. Your account will be charged for renewal within 24
+              hours prior to the end of the current period. You can manage and
+              cancel your subscriptions by going to your Account Settings on the
+              App Store after purchase.
             </Text>
           </View>
           {/* Coupon Redemption */}
