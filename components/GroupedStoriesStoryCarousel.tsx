@@ -151,13 +151,17 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     backgroundColor: "#ffffff",
-    paddingTop: 20,
+    paddingTop: 10,
   },
   contentContainer: {
     paddingHorizontal: 16,
     paddingTop: 24,
     paddingBottom: 20,
   },
-  columnItem: { flex: 1, marginHorizontal: 6, marginBottom: 24 },
+  columnItem: {
+    flex: 1,
+    marginHorizontal: 6,
+    marginTop: 24,
+  },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });
