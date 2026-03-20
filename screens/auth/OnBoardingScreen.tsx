@@ -123,6 +123,19 @@ function OnboardingItem({ item }: { item: SlideItems }) {
                   Log in
                 </Text>
               </Pressable>
+              <Pressable
+                onPress={() =>
+                  navigate.navigate("auth", { screen: "unauthPaywall" })
+                }
+                className="items-center py-2"
+              >
+                <Text
+                  style={styles.descriptionText}
+                  className="text-center text-sm text-primary"
+                >
+                  View Premium Plans
+                </Text>
+              </Pressable>
             </View>
           </View>
         </View>
