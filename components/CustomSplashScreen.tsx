@@ -9,7 +9,7 @@ const CustomSplashScreen = () => {
           source={require("../assets/icons/logo-complete.png")}
         />
         <Text className="text-center font-[abeezee] text-base text-[#646577]">
-          Discover beautifully told stories, created just for kids.
+          Discover beautifully told stories, crafted just for you.
         </Text>
       </View>
 
