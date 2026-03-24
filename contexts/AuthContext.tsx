@@ -361,7 +361,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         jwt: string;
         refreshToken: string;
       }>
-    >(() => auth.signup({ email, password, fullName, role: "user" }));
+    >(() => auth.signup({ email, password, fullName, role: "parent" }));
     if (!signupData.success) {
       setErrorCb(signupData.message);
       return;
