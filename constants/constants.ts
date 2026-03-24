@@ -130,12 +130,12 @@ export const privacy = [
 export const FAQ = [
   {
     q: "What is Storytime?",
-    a: "Storytime is a storytelling app with a library of narrated and read-along stories designed for learning, fun, and bedtime routines. Pick stories by age, theme, or length and play them anytime the device is online.",
+    a: "Storytime is a storytelling app with a library of narrated and read-along stories designed for learning, fun, and relaxation. Pick stories by theme or length and play them anytime the device is online.",
     id: 1,
   },
   {
     q: "Are the stories safe?",
-    a: "Yes. Our stories are selected and organized for age-appropriate listening and reading, and we avoid mature themes and explicit language.\nIf you ever find something you don’t like, you can report it and we’ll review it.",
+    a: "Yes. Our stories are carefully selected and organized for enjoyable listening and reading, and we avoid mature themes and explicit language.\nIf you ever find something you don’t like, you can report it and we’ll review it.",
     id: 2,
   },
   {

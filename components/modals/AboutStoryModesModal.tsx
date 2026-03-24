@@ -16,7 +16,7 @@ const AboutStoryModesModal = ({
           <Icon name="SquareX" onPress={onClose} />
         </View>
         <Text className="font-[abeezee] text-sm text-text">
-          Here's a breakdown of the dirrerence between the two preferred story
+          Here's a breakdown of the difference between the two preferred story
           modes.
         </Text>
         <View className="flex flex-col gap-y-8 ">

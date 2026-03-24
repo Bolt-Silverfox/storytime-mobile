@@ -53,7 +53,7 @@ const CustomSplashScreen = () => {
           />
           <View className="absolute bottom-10 w-full px-10">
             <Text className="text-center font-[quilka] text-xl text-[#F1D7C9]">
-              Used by over <Text className="text-2xl">10,000+</Text> parents
+              Used by over <Text className="text-2xl">10,000+</Text> readers
               around the world!
             </Text>
           </View>
