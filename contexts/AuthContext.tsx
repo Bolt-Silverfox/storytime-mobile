@@ -16,7 +16,7 @@ import {
 } from "react";
 import { User } from "../types";
 import auth, { publicHeaders } from "../utils/auth";
-import { setGuestMode } from "../apiFetch";
+import { setGuestMode, refreshTokensWithLock, RefreshResult } from "../apiFetch";
 import {
   BASE_URL,
   emailRegex,
@@ -191,7 +191,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
         const hasToken = await secureTokenStorage.hasAccessToken();
-        if (!localStoredSession || !hasToken) {
+        const hasRefreshToken = await secureTokenStorage.hasRefreshToken();
+
+        if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
           // Check if guest mode was previously active
           const guestModeStored =
             await AsyncStorage.getItem("guestMode");
@@ -199,6 +201,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             setIsGuest(true);
             setGuestMode(true);
           }
+          await Promise.all([
+            secureTokenStorage.clearTokens(),
+            AsyncStorage.removeItem("user"),
+          ]);
           setUser(null);
           clearSentryUser();
           clearCrashlyticsUser();
@@ -206,8 +212,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         try {
           const restoredUser = JSON.parse(localStoredSession) as User;
+
+          if (!hasToken && hasRefreshToken) {
+             const result = await refreshTokensWithLock();
+             if (result !== RefreshResult.Success) {
+                await Promise.all([
+                  secureTokenStorage.clearTokens(),
+                  AsyncStorage.removeItem("user"),
+                ]);
+                setUser(null);
+                clearSentryUser();
+                clearCrashlyticsUser();
+                return;
+             }
+          }
+
           setUser(restoredUser);
-          await secureTokenStorage.getAccessToken();
           setSentryUser(restoredUser.id, restoredUser.email);
           setCrashlyticsUser(restoredUser.id);
         } catch {
