@@ -14,19 +14,27 @@ const useGuestQuota = () => {
   const readStoryIdsRef = useRef<string[]>([]);
 
   useEffect(() => {
-    AsyncStorage.getItem(GUEST_STORIES_KEY).then((stored) => {
-      if (stored) {
-        try {
-          const parsed = JSON.parse(stored) as string[];
-          setReadStoryIds(parsed);
-          readStoryIdsRef.current = parsed;
-        } catch {
-          setReadStoryIds([]);
-          readStoryIdsRef.current = [];
+    AsyncStorage.getItem(GUEST_STORIES_KEY)
+      .then((stored) => {
+        if (stored) {
+          try {
+            const parsed = JSON.parse(stored) as string[];
+            setReadStoryIds(parsed);
+            readStoryIdsRef.current = parsed;
+          } catch {
+            setReadStoryIds([]);
+            readStoryIdsRef.current = [];
+          }
         }
-      }
-      setIsLoaded(true);
-    });
+      })
+      .catch(() => {
+        // Storage read failed — treat as empty quota
+        setReadStoryIds([]);
+        readStoryIdsRef.current = [];
+      })
+      .finally(() => {
+        setIsLoaded(true);
+      });
   }, []);
 
   const canAccessStory = useCallback(
