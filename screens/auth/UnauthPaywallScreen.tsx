@@ -3,6 +3,7 @@ import { useState } from "react";
 import {
   ActivityIndicator,
   Image,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -168,11 +169,9 @@ const UnauthPaywallScreen = () => {
                   </Text>
                 </View>
                 <Text className="font-[abeezee] text-[10px] leading-4 text-text">
-                  Payment will be charged to your Apple ID account at
-                  confirmation of purchase. Your account will be charged for
-                  renewal within 24 hours prior to the end of the current
-                  period. You can manage and cancel your subscriptions by going
-                  to your Account Settings on the App Store after purchase.
+                  {Platform.OS === "ios"
+                    ? "Payment will be charged to your Apple ID account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions by going to your Account Settings on the App Store after purchase."
+                    : "Payment will be charged to your Google Play account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
                 </Text>
               </View>
 

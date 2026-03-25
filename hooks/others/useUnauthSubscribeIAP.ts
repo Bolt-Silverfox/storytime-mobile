@@ -61,6 +61,7 @@ const useUnauthSubscribeIAP = (
     const loadSubscriptions = async () => {
       try {
         setIsLoading(true);
+        setErrorMessage("");
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
         iapLogger.error("Failed to fetch products", err);
