@@ -18,17 +18,17 @@ const AuthPromptModal = ({
   const navigation = useNavigation<RootNavigatorProp>();
   const { exitGuestMode } = useAuth();
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     onClose();
-    exitGuestMode();
+    await exitGuestMode();
     setTimeout(() => {
       navigation.navigate("auth", { screen: "signUp" });
     }, 100);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     onClose();
-    exitGuestMode();
+    await exitGuestMode();
     setTimeout(() => {
       navigation.navigate("auth", { screen: "login" });
     }, 100);

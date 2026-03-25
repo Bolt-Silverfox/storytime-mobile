@@ -198,6 +198,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           const guestModeStored =
             await AsyncStorage.getItem("guestMode");
           if (guestModeStored === "true") {
+            await secureTokenStorage.clearTokens();
             setIsGuest(true);
             setGuestMode(true);
           }
