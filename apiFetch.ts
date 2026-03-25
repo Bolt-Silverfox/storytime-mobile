@@ -24,6 +24,7 @@ interface FetchOptions extends RequestInit {
 
 class ApiError extends Error {
   status: number;
+  transientAuth?: boolean;
   constructor(message: string, status: number) {
     super(message);
     this.name = "ApiError";
@@ -83,7 +84,7 @@ const buildErrorMessage = (status: number): string => {
   }
 };
 
-enum RefreshResult {
+export enum RefreshResult {
   Success,
   InvalidToken,
   RetryableError,
@@ -116,7 +117,9 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   if (refreshResult === RefreshResult.RetryableError) {
     // For retryable errors (network/5xx), we throw without logging out
-    throw new ApiError("Authentication temporary failure, try again", 401);
+    const err = new ApiError("Authentication temporary failure, try again", 401);
+    err.transientAuth = true;
+    throw err;
   }
 
   const newToken = await secureTokenStorage.getAccessToken();
@@ -128,6 +131,9 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     !retryResponse.ok &&
     !options.passThroughStatuses?.includes(retryResponse.status)
   ) {
+    if (retryResponse.status === 401) {
+      triggerLogout();
+    }
     throw new ApiError(
       buildErrorMessage(retryResponse.status),
       retryResponse.status
@@ -138,7 +144,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 };
 
 // Token refresh with lock mechanism to prevent multiple simultaneous refresh attempts
-const refreshTokensWithLock = async (): Promise<RefreshResult> => {
+export const refreshTokensWithLock = async (): Promise<RefreshResult> => {
   // If already refreshing, wait for the existing promise
   if (isRefreshing && refreshPromise) {
     return refreshPromise;

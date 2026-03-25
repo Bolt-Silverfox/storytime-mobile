@@ -15,7 +15,7 @@ const ErrorComponent = ({
       </Text>
       <TouchableOpacity
         onPress={refetch}
-        className="w-[200px] flex-row items-center justify-center rounded-full bg-primary py-3"
+        className="flex-row w-full max-w-[200px] items-center justify-center rounded-full bg-primary py-3"
       >
         <Text className="text-center font-[abeezee] text-base text-white">Try again</Text>
       </TouchableOpacity>

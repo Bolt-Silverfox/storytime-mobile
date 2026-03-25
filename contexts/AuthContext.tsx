@@ -16,6 +16,7 @@ import {
 } from "react";
 import { User } from "../types";
 import auth, { publicHeaders } from "../utils/auth";
+import { refreshTokensWithLock, RefreshResult } from "../apiFetch";
 import {
   BASE_URL,
   emailRegex,
@@ -196,8 +197,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
         try {
           const restoredUser = JSON.parse(localStoredSession) as User;
+
+          if (!hasToken && hasRefreshToken) {
+             const result = await refreshTokensWithLock();
+             if (result === RefreshResult.InvalidToken) {
+                await Promise.all([
+                  secureTokenStorage.clearTokens(),
+                  AsyncStorage.removeItem("user"),
+                ]);
+                setUser(null);
+                clearSentryUser();
+                clearCrashlyticsUser();
+                return;
+             }
+          }
+
           setUser(restoredUser);
-          await secureTokenStorage.getAccessToken();
           setSentryUser(restoredUser.id, restoredUser.email);
           setCrashlyticsUser(restoredUser.id);
         } catch {
