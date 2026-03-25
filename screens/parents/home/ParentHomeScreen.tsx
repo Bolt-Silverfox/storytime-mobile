@@ -13,6 +13,7 @@ import StoryCategoriesList from "../../../components/parents/StoryCategoriesList
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
+import useAuth from "../../../contexts/AuthContext";
 
 type SectionKey =
   | "freeStoriesBanner"
@@ -38,6 +39,7 @@ const SECTIONS: SectionItem[] = [
 ];
 
 const ParentHomeScreen = () => {
+  const { isGuest } = useAuth();
   const {
     showBanner,
     permissionStatus,
@@ -61,7 +63,7 @@ const ParentHomeScreen = () => {
   const renderSection = useCallback(({ item }: { item: SectionItem }) => {
     switch (item.key) {
       case "freeStoriesBanner":
-        return <FreeStoriesBanner />;
+        return isGuest ? null : <FreeStoriesBanner />;
       case "storiesByAge":
         return <StoriesByAgeComponent />;
       case "topRecommendations":
@@ -75,18 +77,18 @@ const ParentHomeScreen = () => {
       case "storyCategoriesList":
         return <StoryCategoriesList />;
     }
-  }, []);
+  }, [isGuest]);
 
   const listHeader = useMemo(
     () =>
-      showBanner ? (
+      showBanner && !isGuest ? (
         <NotificationPermissionBanner
           permissionStatus={permissionStatus}
           onDismiss={handleDismiss}
           onPermissionGranted={handlePermissionGranted}
         />
       ) : null,
-    [showBanner, permissionStatus, handleDismiss, handlePermissionGranted]
+    [showBanner, isGuest, permissionStatus, handleDismiss, handlePermissionGranted]
   );
 
   return (
