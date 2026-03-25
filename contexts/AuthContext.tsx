@@ -200,7 +200,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
           if (!hasToken && hasRefreshToken) {
              const result = await refreshTokensWithLock();
-             if (result === RefreshResult.InvalidToken) {
+             if (result !== RefreshResult.Success) {
                 await Promise.all([
                   secureTokenStorage.clearTokens(),
                   AsyncStorage.removeItem("user"),
