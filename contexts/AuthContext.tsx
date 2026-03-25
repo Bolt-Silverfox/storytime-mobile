@@ -190,6 +190,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         const hasRefreshToken = await secureTokenStorage.hasRefreshToken();
 
         if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
+          await Promise.all([
+            secureTokenStorage.clearTokens(),
+            AsyncStorage.removeItem("user"),
+          ]);
           setUser(null);
           clearSentryUser();
           clearCrashlyticsUser();
