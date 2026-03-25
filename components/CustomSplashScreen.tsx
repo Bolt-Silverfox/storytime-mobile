@@ -36,7 +36,7 @@ const CustomSplashScreen = () => {
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="right-24uth absolute top-40"
+            className="absolute right-24 top-40"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
