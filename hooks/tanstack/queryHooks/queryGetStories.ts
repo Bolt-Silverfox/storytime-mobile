@@ -41,7 +41,7 @@ const queryGetStories = (params: GetStoriesParam) =>
       if (params.topPicksFromUs !== undefined)
         searchParams.set(
           "topPicksFromUs",
-          `"${String(params.topPicksFromUs)}"`
+          String(params.topPicksFromUs)
         );
       if (params.shuffle) searchParams.set("shuffle", "true");
       if (params.limit) {
