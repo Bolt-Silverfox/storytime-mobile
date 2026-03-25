@@ -186,7 +186,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
         const hasToken = await secureTokenStorage.hasAccessToken();
-        if (!localStoredSession || !hasToken) {
+        const hasRefreshToken = await secureTokenStorage.hasRefreshToken();
+
+        if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
           setUser(null);
           clearSentryUser();
           clearCrashlyticsUser();
