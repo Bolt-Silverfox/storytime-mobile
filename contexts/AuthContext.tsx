@@ -16,6 +16,7 @@ import {
 } from "react";
 import { User } from "../types";
 import auth, { publicHeaders } from "../utils/auth";
+import { setGuestMode } from "../apiFetch";
 import {
   BASE_URL,
   emailRegex,
@@ -121,6 +122,9 @@ type AuthContextType = {
   errorMessage: string | undefined | string[];
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
+  isGuest: boolean;
+  enterGuestMode: () => void;
+  exitGuestMode: () => void;
   logout: () => Promise<void>;
   login: AuthFnTypes["login"];
   signUp: AuthFnTypes["signUp"];
@@ -166,6 +170,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
+  const [isGuest, setIsGuest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<
     string | string[] | undefined
@@ -187,6 +192,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         const localStoredSession = await AsyncStorage.getItem("user");
         const hasToken = await secureTokenStorage.hasAccessToken();
         if (!localStoredSession || !hasToken) {
+          // Check if guest mode was previously active
+          const guestModeStored =
+            await AsyncStorage.getItem("guestMode");
+          if (guestModeStored === "true") {
+            setIsGuest(true);
+            setGuestMode(true);
+          }
           setUser(null);
           clearSentryUser();
           clearCrashlyticsUser();
@@ -245,6 +257,19 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const exitGuestMode = useCallback(async () => {
+    setIsGuest(false);
+    setGuestMode(false);
+    await AsyncStorage.removeItem("guestMode");
+  }, []);
+
+  const enterGuestMode = useCallback(async () => {
+    setIsGuest(true);
+    setGuestMode(true);
+    setUser(null);
+    await AsyncStorage.setItem("guestMode", "true");
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       // Unregister push notifications first (while we still have auth token)
@@ -260,6 +285,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
+      setIsGuest(false);
+      setGuestMode(false);
+      await AsyncStorage.removeItem("guestMode");
       clearSentryUser();
       clearCrashlyticsUser();
     }
@@ -287,6 +315,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(loginData.message);
       return;
     }
+    await exitGuestMode();
     await secureTokenStorage.setTokens(
       loginData.data.jwt,
       loginData.data.refreshToken
@@ -429,6 +458,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         "Invalid auth response: missing jwt, refreshToken, or user"
       );
     }
+    await exitGuestMode();
     await secureTokenStorage.setTokens(
       authData.jwt as string,
       authData.refreshToken as string
@@ -694,6 +724,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const providerReturnValues = {
     user,
     setUser,
+    isGuest,
+    enterGuestMode,
+    exitGuestMode,
     login,
     logout,
     signUp,
