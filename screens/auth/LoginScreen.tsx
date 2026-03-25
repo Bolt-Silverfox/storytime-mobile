@@ -87,10 +87,10 @@ const LoginScreen = () => {
               <Text className="text-center font-[abeezee]">Or log in with</Text>
               <View className="flex-1 border-b border-black" />
             </View>
-            <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
@@ -98,7 +98,7 @@ const LoginScreen = () => {
                 <AppleButton
                   buttonStyle={AppleButton.Style.BLACK}
                   buttonType={AppleButton.Type.SIGN_IN}
-                  style={{ width: 200, height: 44 }}
+                  style={{ width: 180, height: 44 }}
                   onPress={handleAppleAuth}
                 />
               )}
