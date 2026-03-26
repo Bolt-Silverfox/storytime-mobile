@@ -178,7 +178,7 @@ const UnauthPaywallScreen = () => {
 
               <CustomButton
                 text="Subscribe"
-                disabled={!selectedPlan || isLoading}
+                disabled={!selectedPlan || isLoading || isRestoring}
                 onPress={handlePurchase}
               />
 
@@ -205,7 +205,7 @@ const UnauthPaywallScreen = () => {
 
               <Pressable
                 onPress={handleRestore}
-                disabled={isRestoring}
+                disabled={isRestoring || isLoading}
                 className="items-center py-2"
                 accessibilityLabel="Restore Purchases"
                 accessibilityRole="button"
