@@ -98,7 +98,7 @@ const LoginScreen = () => {
                 <AppleButton
                   buttonStyle={AppleButton.Style.BLACK}
                   buttonType={AppleButton.Type.SIGN_IN}
-                  style={{ width: 180, height: 44 }}
+                  style={defaultStyles.appleButton}
                   onPress={handleAppleAuth}
                 />
               )}

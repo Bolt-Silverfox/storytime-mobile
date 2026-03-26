@@ -63,7 +63,7 @@ const termsAndConditionsData: {
     heading: "Introduction and Acceptance",
     index: "I",
     paragraph: [
-      “These Terms and Conditions (“Terms”) form a legally binding agreement between you (“User”) and Storytime (“Company,” “we,” “us,” or “our”) governing your access to and use of our website, mobile application, and digital content services (collectively, the “Service”).”,
+      “These Terms and Conditions (\”Terms\”) form a legally binding agreement between you (\”User\”) and Storytime (\”Company,\” \”we,\” \”us,\” or \”our\”) governing your access to and use of our website, mobile application, and digital content services (collectively, the \”Service\”).”,
       “By accessing, using, or subscribing to the Service, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not access or use the Service.”,
     ],
   },

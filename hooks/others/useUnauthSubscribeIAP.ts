@@ -58,6 +58,9 @@ const useUnauthSubscribeIAP = (
       return () => clearTimeout(timeout);
     }
 
+    // Clear any previous error when connected
+    setErrorMessage("");
+
     const loadSubscriptions = async () => {
       try {
         setIsLoading(true);

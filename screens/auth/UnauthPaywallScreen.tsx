@@ -36,6 +36,7 @@ const UnauthPaywallScreen = () => {
       setIsRestoring(true);
       setRestoreMessage("");
       const purchases = await getAvailablePurchases({
+        alsoPublishToEventListenerIOS: false,
         onlyIncludeActiveItemsIOS: true,
       });
       if (purchases.length > 0) {
@@ -177,7 +178,7 @@ const UnauthPaywallScreen = () => {
 
               <CustomButton
                 text="Subscribe"
-                disabled={!selectedPlan}
+                disabled={!selectedPlan || isLoading}
                 onPress={handlePurchase}
               />
 
