@@ -10,17 +10,18 @@ import {
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useAuth from "../../contexts/AuthContext";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
+  const { isGuest } = useAuth();
 
   const { data, isPending } = useGetUserProfile();
   const { isPremium: isUserSubscribed } = useIsPremium();
-  if (isPending) return <ActivityIndicator size={"large"} />;
+  if (isPending && !isGuest) return <ActivityIndicator size={"large"} />;
 
   return (
     <View
@@ -30,17 +31,20 @@ const ParentsHomeScreenHeader = () => {
       <View>
         <Avatar
           size={40}
-          onPress={() =>
-            navigator.navigate("parents", {
-              screen: "profile",
-              params: { screen: "indexPage" },
-            })
+          onPress={
+            isGuest
+              ? undefined
+              : () =>
+                  navigator.navigate("parents", {
+                    screen: "profile",
+                    params: { screen: "indexPage" },
+                  })
           }
         />
       </View>
       <View className="flex min-w-0 flex-1 flex-col gap-y-1.5">
         <Text numberOfLines={1} className="font-[abeezee] text-base">
-          {data?.name}
+          {isGuest ? "Guest" : (data?.name ?? "")}
         </Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
           {getGreeting()}
@@ -50,7 +54,7 @@ const ParentsHomeScreenHeader = () => {
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => protectedNav.navigate("getPremium")}
+            onPress={() => navigator.navigate("getPremium" as any)}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
@@ -63,14 +67,16 @@ const ParentsHomeScreenHeader = () => {
             </LinearGradient>
           </Pressable>
         )}
-        <Pressable
-          onPress={() =>
-            protectedNav.navigate("notification", { screen: "index" })
-          }
-          className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
-        >
-          <Icon name="Bell" />
-        </Pressable>
+        {!isGuest && (
+          <Pressable
+            onPress={() =>
+              navigator.navigate("notification", { screen: "index" })
+            }
+            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
+          >
+            <Icon name="Bell" />
+          </Pressable>
+        )}
       </View>
     </View>
   );

@@ -88,6 +88,7 @@ const useSubscribeIAP = (
     const loadSubscriptions = async () => {
       try {
         setIsLoading(true);
+        setErrorMessage("");
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
         iapLogger.error("Failed to fetch products from google play store", err);
@@ -127,7 +128,9 @@ const useSubscribeIAP = (
   };
 
   const handlePurchase = async () => {
+    if (isLoading) return;
     try {
+      setIsLoading(true);
       setErrorMessage("");
       setIsUserCancelled(false);
       if (!selectedPlan) throw new Error("Select a valid plan");
@@ -147,6 +150,8 @@ const useSubscribeIAP = (
       });
     } catch (err) {
       setErrorMessage(getErrorMessage(err));
+    } finally {
+      setIsLoading(false);
     }
   };
 
