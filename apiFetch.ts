@@ -7,6 +7,13 @@ let refreshPromise: Promise<RefreshResult> | null = null;
 // Logout callback - stored at module level for API layer access
 let logoutCallback: (() => void) | null = null;
 
+// Guest mode flag - when true, skip auth token requirements
+let _guestMode = false;
+
+const setGuestMode = (value: boolean) => {
+  _guestMode = value;
+};
+
 const setLogoutCallBack = (callback: () => void) => {
   logoutCallback = callback;
 };
@@ -92,6 +99,20 @@ export enum RefreshResult {
 
 const apiFetch = async (url: string, options: FetchOptions = {}) => {
   const token = await secureTokenStorage.getAccessToken();
+
+  // Guest mode: skip auth token requirements and make unauthenticated requests
+  if (!token && _guestMode) {
+    const headers = buildHeaders(null, options);
+    const response = await fetch(url, { ...options, headers });
+    if (
+      !response.ok &&
+      !options.passThroughStatuses?.includes(response.status)
+    ) {
+      throw new ApiError(buildErrorMessage(response.status), response.status);
+    }
+    return response;
+  }
+
   const headers = buildHeaders(token, options);
 
   let response = await fetch(url, { ...options, headers });
@@ -199,5 +220,5 @@ const refreshTokens = async (): Promise<RefreshResult> => {
   }
 };
 
-export { setLogoutCallBack, ApiError };
+export { setLogoutCallBack, setGuestMode, ApiError };
 export default apiFetch;
