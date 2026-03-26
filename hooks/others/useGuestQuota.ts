@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { guestLogger } from "../../utils/logger";
 
 const GUEST_STORIES_KEY = "guestStoriesRead";
 const GUEST_FREE_LIMIT = 10;
@@ -52,7 +53,14 @@ const useGuestQuota = () => {
       const updated = [...readStoryIds, storyId];
       setReadStoryIds(updated);
       readStoryIdsRef.current = updated;
-      await AsyncStorage.setItem(GUEST_STORIES_KEY, JSON.stringify(updated));
+      try {
+        await AsyncStorage.setItem(GUEST_STORIES_KEY, JSON.stringify(updated));
+      } catch (err) {
+        // Rollback in-memory state on persistence failure
+        setReadStoryIds(readStoryIds);
+        readStoryIdsRef.current = readStoryIds;
+        guestLogger.error("Failed to persist guest quota:", err);
+      }
     },
     [readStoryIds]
   );
@@ -70,14 +78,30 @@ const useGuestQuota = () => {
     const updated = [...current, storyId];
     readStoryIdsRef.current = updated;
     setReadStoryIds(updated);
-    await AsyncStorage.setItem(GUEST_STORIES_KEY, JSON.stringify(updated));
+    try {
+      await AsyncStorage.setItem(GUEST_STORIES_KEY, JSON.stringify(updated));
+    } catch (err) {
+      // Rollback in-memory state on persistence failure
+      readStoryIdsRef.current = current;
+      setReadStoryIds(current);
+      guestLogger.error("Failed to persist guest quota:", err);
+      return false;
+    }
     return true;
   }, []);
 
   const resetQuota = useCallback(async () => {
+    const prev = readStoryIdsRef.current;
     setReadStoryIds([]);
     readStoryIdsRef.current = [];
-    await AsyncStorage.removeItem(GUEST_STORIES_KEY);
+    try {
+      await AsyncStorage.removeItem(GUEST_STORIES_KEY);
+    } catch (err) {
+      // Restore in-memory state on failure
+      setReadStoryIds(prev);
+      readStoryIdsRef.current = prev;
+      guestLogger.error("Failed to reset guest quota:", err);
+    }
   }, []);
 
   return {
