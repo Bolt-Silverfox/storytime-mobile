@@ -281,7 +281,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const exitGuestMode = useCallback(async () => {
     setIsGuest(false);
     setGuestMode(false);
-    await AsyncStorage.removeItem("guestMode");
+    try {
+      await Promise.all([
+        AsyncStorage.removeItem("guestMode"),
+        AsyncStorage.removeItem("guestStoriesRead"),
+      ]);
+    } catch (err) {
+      // Log error but don't rollback state - guest mode exit should proceed
+      authLogger.error("Failed to clear guest mode storage:", err);
+    }
   }, []);
 
   const enterGuestMode = useCallback(async () => {
