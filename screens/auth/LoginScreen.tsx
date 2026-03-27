@@ -10,6 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { AppleButton } from "@invertase/react-native-apple-authentication";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
@@ -86,22 +87,23 @@ const LoginScreen = () => {
               <Text className="text-center font-[abeezee]">Or log in with</Text>
               <View className="flex-1 border-b border-black" />
             </View>
-            <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign in with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-in flow"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
-                <Pressable
-                  onPress={handleAppleAuth}
-                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
-                >
-                  <Image
-                    source={require("../../assets/icons/apple-icon.png")}
-                  />
-                </Pressable>
+                <AppleButton
+                  buttonStyle={AppleButton.Style.BLACK}
+                  buttonType={AppleButton.Type.SIGN_IN}
+                  style={defaultStyles.appleButton}
+                  onPress={() => handleAppleAuth("login")}
+                />
               )}
             </View>
             <View className="mt-10 flex flex-col gap-y-4">

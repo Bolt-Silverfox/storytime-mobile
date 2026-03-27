@@ -23,7 +23,7 @@ const FreeStoriesBanner = () => {
 
   const getDescription = () => {
     if (isLimitReached) {
-      return `${totalAllowed} free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library your child will love.`;
+      return `${totalAllowed} free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library you'll love.`;
     }
     if (hasBonus) {
       return "A new free story has arrived for you this month. Settle in and enjoy the moment, your next free story will be available next week.";

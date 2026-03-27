@@ -32,7 +32,7 @@ import { ToastProvider } from "./contexts/ToastContext";
 const prefix = Linking.createURL("/");
 
 const linking: LinkingOptions<RootNavigatorParamList> = {
-  prefixes: [prefix, "storytime4kids://", "https://www.storytimeapp.me"],
+  prefixes: [prefix, "storytime://", "https://www.storytimeapp.me"],
   config: {
     screens: {
       protected: {

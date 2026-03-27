@@ -16,7 +16,7 @@ const AboutStoryModesModal = ({
           <Icon name="SquareX" onPress={onClose} />
         </View>
         <Text className="font-[abeezee] text-sm text-text">
-          Here's a breakdown of the dirrerence between the two preferred story
+          Here's a breakdown of the difference between the two preferred story
           modes.
         </Text>
         <View className="flex flex-col gap-y-8 ">
@@ -29,8 +29,8 @@ const AboutStoryModesModal = ({
                 Plain Story Mode
               </Text>
               <Text className="text-wrap font-[abeezee] text-sm text-text">
-                Sit back and enjoy the story. In this mode, children can read
-                along or listen as the story is narrated from start to
+                Sit back and enjoy the story. In this mode, you can read along
+                or listen as the story is narrated from start to
                 finish—perfect for relaxed reading, bedtime, or quiet time.
               </Text>
             </View>
@@ -45,7 +45,7 @@ const AboutStoryModesModal = ({
               </Text>
               <Text className="text-wrap font-[abeezee] text-sm text-text">
                 Turn storytelling into a fun learning experience. After the
-                story is read, children are asked simple, engaging questions to
+                story is read, you'll be asked simple, engaging questions to
                 test understanding, spark curiosity, and encourage critical
                 thinking.
               </Text>

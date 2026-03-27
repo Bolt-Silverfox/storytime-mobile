@@ -8,6 +8,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { AppleButton } from "@invertase/react-native-apple-authentication";
 import colours from "../../colours";
 import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
@@ -32,10 +33,10 @@ const SignupScreen = () => {
           <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
             <View style={styles.textContainer}>
               <Text style={defaultStyles.heading}>
-                Welcome to Storytime4Kids
+                Welcome to Storytime
               </Text>
               <Text style={styles.text}>
-                The world's first kids story library
+                The world's first story library
               </Text>
             </View>
             <SignupForm />
@@ -46,22 +47,23 @@ const SignupScreen = () => {
               </Text>
               <View className="flex-1 border-b border-black" />
             </View>
-            <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign up with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-up flow"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
-                <Pressable
-                  onPress={handleAppleAuth}
-                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
-                >
-                  <Image
-                    source={require("../../assets/icons/apple-icon.png")}
-                  />
-                </Pressable>
+                <AppleButton
+                  buttonStyle={AppleButton.Style.BLACK}
+                  buttonType={AppleButton.Type.SIGN_UP}
+                  style={defaultStyles.appleButton}
+                  onPress={() => handleAppleAuth("signup")}
+                />
               )}
             </View>
             <Text style={{ ...styles.text }}>
