@@ -4,6 +4,7 @@ import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
