@@ -374,6 +374,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       "unverifiedUser",
       JSON.stringify(signupData.data.user)
     );
+    // Exit guest mode when user signs up
+    if (isGuest) {
+      setIsGuest(false);
+      setGuestMode(false);
+      await AsyncStorage.removeItem("guestMode");
+    }
     onSuccess();
   };
 
