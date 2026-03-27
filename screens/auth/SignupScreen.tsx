@@ -51,6 +51,9 @@ const SignupScreen = () => {
               <Pressable
                 onPress={handleGoogleAuth}
                 className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign up with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-up flow"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>

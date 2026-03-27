@@ -124,7 +124,7 @@ const termsAndConditionsData: {
     heading: "Contact Information",
     index: "IX",
     paragraph:
-      "If you have any questions about these terms, please contact us at: \nEmail : team@storytimeapp.me",
+      "If you have any questions about these terms, please contact us at: \nEmail: team@storytimeapp.me",
   },
 ];
 
