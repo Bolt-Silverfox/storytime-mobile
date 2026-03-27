@@ -4,6 +4,7 @@ import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const SeasonalStoriesComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -22,6 +23,8 @@ const SeasonalStoriesComponent = () => {
         title="Seasonal stories"
         onViewAll={() => navigator.navigate("seasonalStories")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

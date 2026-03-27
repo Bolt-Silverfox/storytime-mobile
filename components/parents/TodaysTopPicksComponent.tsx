@@ -4,6 +4,7 @@ import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const TodaysTopPicksComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -21,6 +22,8 @@ const TodaysTopPicksComponent = () => {
         title="Today's top picks"
         onViewAll={() => navigator.navigate("todaysTopPicks")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

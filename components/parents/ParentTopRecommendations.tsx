@@ -4,6 +4,7 @@ import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -21,6 +22,8 @@ const ParentsTopRecommendations = () => {
         title="Top recommendations"
         onViewAll={() => navigator.navigate("topRecommendations")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );
