@@ -48,7 +48,7 @@ const DefaultVoiceScreen = () => {
   };
 
   return (
-    <SafeAreaWrapper variant="transparent">
+    <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-white">
         <View className="flex-row items-center justify-between border-b border-b-border-lighter px-4 pb-4 pt-4">
           <Pressable

@@ -9,7 +9,7 @@ const CustomSplashScreen = () => {
           source={require("../assets/icons/logo-complete.png")}
         />
         <Text className="text-center font-[abeezee] text-base text-[#646577]">
-          Discover beautifully told stories, created just for kids.
+          Discover beautifully told stories, crafted just for you.
         </Text>
       </View>
 
@@ -36,7 +36,7 @@ const CustomSplashScreen = () => {
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="right-24uth absolute top-40"
+            className="absolute right-24 top-40"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
@@ -53,7 +53,7 @@ const CustomSplashScreen = () => {
           />
           <View className="absolute bottom-10 w-full px-10">
             <Text className="text-center font-[quilka] text-xl text-[#F1D7C9]">
-              Used by over <Text className="text-2xl">10,000+</Text> parents
+              Used by over <Text className="text-2xl">10,000+</Text> readers
               around the world!
             </Text>
           </View>

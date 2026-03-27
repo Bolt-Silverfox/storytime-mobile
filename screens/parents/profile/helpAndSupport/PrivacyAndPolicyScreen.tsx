@@ -3,7 +3,7 @@ import React from "react";
 import { ScrollView, Text, View } from "react-native";
 import PageTitle from "../../../../components/PageTitle";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
-import { privacy } from "../../../../constants/constants";
+import { privacyPolicyData } from "../../../../data";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 
 export default function PrivacyAndPolicyScreen() {
@@ -18,13 +18,13 @@ export default function PrivacyAndPolicyScreen() {
           contentContainerClassName="flex-col gap-y-8"
           className="mx-4 mb-5 mt-8"
         >
-          {privacy.map((term, i) => (
+          {privacyPolicyData.map((item, i) => (
             <View key={i} className="flex flex-col gap-y-3">
               <Text className="font-[abeezee] text-[18px] text-black">
-                {term.title}
+                {item.number}. {item.title}
               </Text>
               <Text className="font-[abeezee] text-base text-text">
-                {term.description}
+                {item.paragraph}
               </Text>
             </View>
           ))}

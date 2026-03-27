@@ -74,7 +74,7 @@ type AuthFnTypes = {
     onSuccess: () => void;
   }) => void;
   handleGoogleAuth: () => void;
-  handleAppleAuth: () => void;
+  handleAppleAuth: (mode?: "signup" | "login") => void;
   setInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
@@ -530,7 +530,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAppleAuth = async () => {
+  const handleAppleAuth = async (mode: "signup" | "login" = "login") => {
     try {
       setIsLoading(true);
 

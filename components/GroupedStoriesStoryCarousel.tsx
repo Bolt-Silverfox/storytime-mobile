@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   columnItem: {
     flex: 1,
     marginHorizontal: 6,
-    marginTop: 24,
+    marginBottom: 24,
   },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });

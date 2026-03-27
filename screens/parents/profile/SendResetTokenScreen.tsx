@@ -59,7 +59,7 @@ const SendResetTokenScreen = () => {
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error || errors.email ? "border-red-600" : "border-border"}`}
               placeholder="Enter your email"
               placeholderTextColor={
                 error || errors.email ? "red" : colours.text

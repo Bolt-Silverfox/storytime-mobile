@@ -12,6 +12,7 @@ import ResetPasswordScreen from "../screens/auth/ResetPassword";
 import SignupScreen from "../screens/auth/SignupScreen";
 import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
 import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
+import UnauthPaywallScreen from "../screens/auth/UnauthPaywallScreen";
 
 type AuthNavigatorParamList = {
   onBoarding: undefined;
@@ -25,6 +26,7 @@ type AuthNavigatorParamList = {
   termsOfService: undefined;
   confirmResetPasswordToken: { email: string };
   inputNewPassword: { email: string; token: string };
+  unauthPaywall: undefined;
 };
 
 type AuthNavigatorProp = NativeStackNavigationProp<AuthNavigatorParamList>;
@@ -49,6 +51,7 @@ const AuthNavigator = () => {
         component={ConfirmResetPasswordTokenScreen}
       />
       <Stack.Screen name="inputNewPassword" component={InputNewPassword} />
+      <Stack.Screen name="unauthPaywall" component={UnauthPaywallScreen} />
     </Stack.Navigator>
   );
 };

@@ -15,7 +15,10 @@ import { passwordSchema } from "../../../zodSchemas";
 
 const resetPasswordSchema = z
   .object({
-    token: z.string().min(6, "Token must be at least 6 digits"),
+    token: z
+      .string()
+      .trim()
+      .regex(/^\d{6,}$/, "Token must be at least 6 digits"),
     newPassword: passwordSchema,
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })

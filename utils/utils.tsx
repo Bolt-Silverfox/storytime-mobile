@@ -63,7 +63,7 @@ const shareContent = async ({
 }) => {
   try {
     return await Share.share({
-      message: message ?? "Check out this story on Storytime4Kids",
+      message: message ?? "Check out this story on Storytime",
       url,
       title,
     });
