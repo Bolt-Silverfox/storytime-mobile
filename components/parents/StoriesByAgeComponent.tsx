@@ -37,29 +37,35 @@ const StoriesByAgeComponent = () => {
 
   if (!data || data.length === 0) {
     return (
-      <View className="flex-1 items-center justify-center bg-bgLight px-4">
-        <Text className="mb-4 text-center font-[quilka] text-2xl text-black">
-          {isGuest ? "No stories available" : "No stories found"}
-        </Text>
-        <Text className="mb-6 text-center font-[abeezee] text-text">
-          {isGuest
-            ? "Sign up to access our full library"
-            : "Try a different age group"}
-        </Text>
-        {!isGuest && (
-          <Pressable
-            onPress={() =>
-              navigator.navigate("storiesByAge", { ageGroup: selectedGroup })
-            }
-            className="mx-auto h-10 items-center justify-center rounded-full border border-border-light bg-white px-5"
-          >
-            <Text className="font-[abeezee] text-base text-black">
-              {selectedGroup === "All"
-                ? "See all stories"
-                : `See all stories Aged ${selectedGroup}`}
-            </Text>
-          </Pressable>
-        )}
+      <View className="bg-bgLight px-4 py-8">
+        <AgeSelectionComponent
+          selectedGroupProp={selectedGroup}
+          setSelectedCallback={setSelectedGroup}
+        />
+        <View className="mt-6 items-center justify-center">
+          <Text className="mb-4 text-center font-[quilka] text-2xl text-black">
+            {isGuest ? "No stories available" : "No stories found"}
+          </Text>
+          <Text className="mb-6 text-center font-[abeezee] text-text">
+            {isGuest
+              ? "Sign up to access our full library"
+              : "Try a different age group"}
+          </Text>
+          {!isGuest && (
+            <Pressable
+              onPress={() =>
+                navigator.navigate("storiesByAge", { ageGroup: selectedGroup })
+              }
+              className="mx-auto h-10 items-center justify-center rounded-full border border-border-light bg-white px-5"
+            >
+              <Text className="font-[abeezee] text-base text-black">
+                {selectedGroup === "All"
+                  ? "See all stories"
+                  : `See all stories Aged ${selectedGroup}`}
+              </Text>
+            </Pressable>
+          )}
+        </View>
       </View>
     );
   }

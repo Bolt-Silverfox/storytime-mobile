@@ -245,8 +245,10 @@ const ChildStoryDetails = () => {
             )
           ) : (
             <CustomButton
+              disabled={isGuest && !guestQuota.isLoaded}
               onPress={async () => {
                 if (isGuest) {
+                  if (!guestQuota.isLoaded) return;
                   const granted = await guestQuota.tryAccessStory(id);
                   if (!granted) return;
                 }

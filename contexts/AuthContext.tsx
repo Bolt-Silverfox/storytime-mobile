@@ -378,9 +378,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
-      setIsGuest(false);
-      setGuestMode(false);
-      await AsyncStorage.removeItem("guestMode");
+      await exitGuestMode();
       clearSentryUser();
       clearCrashlyticsUser();
     }

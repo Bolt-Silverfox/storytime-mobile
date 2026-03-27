@@ -25,7 +25,7 @@ const HomepageStoriesContainer = ({
     );
   }
 
-  if (error) {
+  if (error && (!stories || stories.length === 0)) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
         <Text className="text-center font-[abeezee] text-text">
