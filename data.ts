@@ -1,5 +1,7 @@
 import { AgeGroupType } from "./types";
 
+const SUPPORT_EMAIL = "team@storytimeapp.me";
+
 const privacyPolicyData: {
   title: string;
   paragraph: string;
@@ -49,7 +51,7 @@ const privacyPolicyData: {
   },
   {
     title: "Contact Us",
-    paragraph: "Email: team@storytimeapp.me",
+    paragraph: `Email: ${SUPPORT_EMAIL}`,
     number: "VIII",
   },
 ];
@@ -124,7 +126,7 @@ const termsAndConditionsData: {
     heading: "Contact Information",
     index: "IX",
     paragraph:
-      "If you have any questions about these terms, please contact us at: \nEmail: team@storytimeapp.me",
+      `If you have any questions about these terms, please contact us at: \nEmail: ${SUPPORT_EMAIL}`,
   },
 ];
 
