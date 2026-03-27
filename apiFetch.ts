@@ -9,9 +9,15 @@ let logoutCallback: (() => void) | null = null;
 
 // Guest mode flag - when true, skip auth token requirements
 let _guestMode = false;
+// Guest session ID for backend progress tracking
+let _guestSessionId: string | null = null;
 
 const setGuestMode = (value: boolean) => {
   _guestMode = value;
+};
+
+const setGuestSessionId = (id: string | null) => {
+  _guestSessionId = id;
 };
 
 const setLogoutCallBack = (callback: () => void) => {
@@ -103,6 +109,9 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
   // Guest mode: skip auth token requirements and make unauthenticated requests
   if (!token && _guestMode) {
     const headers = buildHeaders(null, options);
+    if (_guestSessionId) {
+      headers["X-Guest-Session-Id"] = _guestSessionId;
+    }
     const response = await fetch(url, { ...options, headers });
     if (
       !response.ok &&
@@ -138,7 +147,10 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   if (refreshResult === RefreshResult.RetryableError) {
     // For retryable errors (network/5xx), we throw without logging out
-    const err = new ApiError("Authentication temporary failure, try again", 401);
+    const err = new ApiError(
+      "Authentication temporary failure, try again",
+      401
+    );
     err.transientAuth = true;
     throw err;
   }
@@ -220,5 +232,5 @@ const refreshTokens = async (): Promise<RefreshResult> => {
   }
 };
 
-export { setLogoutCallBack, setGuestMode, ApiError };
+export { setLogoutCallBack, setGuestMode, setGuestSessionId, ApiError };
 export default apiFetch;

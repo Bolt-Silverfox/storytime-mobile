@@ -16,7 +16,12 @@ import {
 } from "react";
 import { User } from "../types";
 import auth, { publicHeaders } from "../utils/auth";
-import { setGuestMode, refreshTokensWithLock, RefreshResult } from "../apiFetch";
+import {
+  setGuestMode,
+  setGuestSessionId,
+  refreshTokensWithLock,
+  RefreshResult,
+} from "../apiFetch";
 import {
   BASE_URL,
   emailRegex,
@@ -195,12 +200,51 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
         if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
           // Check if guest mode was previously active
-          const guestModeStored =
-            await AsyncStorage.getItem("guestMode");
+          const guestModeStored = await AsyncStorage.getItem("guestMode");
           if (guestModeStored === "true") {
             await secureTokenStorage.clearTokens();
             setIsGuest(true);
             setGuestMode(true);
+            // Restore guest session ID, or create new if expired (7-day TTL)
+            const storedSessionId =
+              await AsyncStorage.getItem("guestSessionId");
+            const sessionCreatedAt =
+              await AsyncStorage.getItem("guestSessionCreatedAt");
+            const sixDaysMs = 6 * 24 * 60 * 60 * 1000;
+            const isExpired =
+              !sessionCreatedAt ||
+              Date.now() - Number(sessionCreatedAt) > sixDaysMs;
+
+            if (storedSessionId && !isExpired) {
+              setGuestSessionId(storedSessionId);
+            } else {
+              // Session expired or missing — create a fresh one
+              try {
+                const res = await fetch(`${BASE_URL}/guest/session`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    ...(process.env.EXPO_PUBLIC_API_KEY
+                      ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                      : {}),
+                  },
+                });
+                const data = await res.json();
+                if (data?.data?.sessionId) {
+                  await AsyncStorage.setItem(
+                    "guestSessionId",
+                    data.data.sessionId
+                  );
+                  await AsyncStorage.setItem(
+                    "guestSessionCreatedAt",
+                    String(Date.now())
+                  );
+                  setGuestSessionId(data.data.sessionId);
+                }
+              } catch {
+                // Non-fatal: guest mode works without backend session
+              }
+            }
           }
           await Promise.all([
             secureTokenStorage.clearTokens(),
@@ -215,17 +259,17 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           const restoredUser = JSON.parse(localStoredSession) as User;
 
           if (!hasToken && hasRefreshToken) {
-             const result = await refreshTokensWithLock();
-             if (result !== RefreshResult.Success) {
-                await Promise.all([
-                  secureTokenStorage.clearTokens(),
-                  AsyncStorage.removeItem("user"),
-                ]);
-                setUser(null);
-                clearSentryUser();
-                clearCrashlyticsUser();
-                return;
-             }
+            const result = await refreshTokensWithLock();
+            if (result !== RefreshResult.Success) {
+              await Promise.all([
+                secureTokenStorage.clearTokens(),
+                AsyncStorage.removeItem("user"),
+              ]);
+              setUser(null);
+              clearSentryUser();
+              clearCrashlyticsUser();
+              return;
+            }
           }
 
           setUser(restoredUser);
@@ -281,7 +325,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const exitGuestMode = useCallback(async () => {
     setIsGuest(false);
     setGuestMode(false);
-    await AsyncStorage.removeItem("guestMode");
+    setGuestSessionId(null);
+    await AsyncStorage.multiRemove([
+      "guestMode",
+      "guestSessionId",
+      "guestSessionCreatedAt",
+    ]);
   }, []);
 
   const enterGuestMode = useCallback(async () => {
@@ -289,6 +338,29 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setGuestMode(true);
     setUser(null);
     await AsyncStorage.setItem("guestMode", "true");
+    // Create backend guest session for progress tracking
+    try {
+      const response = await fetch(`${BASE_URL}/guest/session`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(process.env.EXPO_PUBLIC_API_KEY
+            ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+            : {}),
+        },
+      });
+      const data = await response.json();
+      if (data?.data?.sessionId) {
+        await AsyncStorage.setItem("guestSessionId", data.data.sessionId);
+        await AsyncStorage.setItem(
+          "guestSessionCreatedAt",
+          String(Date.now())
+        );
+        setGuestSessionId(data.data.sessionId);
+      }
+    } catch (err) {
+      authLogger.warn("Failed to create guest session:", err);
+    }
   }, []);
 
   const logout = useCallback(async () => {
@@ -306,9 +378,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
-      setIsGuest(false);
-      setGuestMode(false);
-      await AsyncStorage.removeItem("guestMode");
+      await exitGuestMode();
       clearSentryUser();
       clearCrashlyticsUser();
     }
@@ -374,6 +444,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       "unverifiedUser",
       JSON.stringify(signupData.data.user)
     );
+    // Exit guest mode when user signs up
+    if (isGuest) {
+      await exitGuestMode();
+    }
     onSuccess();
   };
 
