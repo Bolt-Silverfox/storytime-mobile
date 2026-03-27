@@ -62,7 +62,7 @@ const SignupScreen = () => {
                   buttonStyle={AppleButton.Style.BLACK}
                   buttonType={AppleButton.Type.SIGN_UP}
                   style={defaultStyles.appleButton}
-                  onPress={handleAppleAuth}
+                  onPress={() => handleAppleAuth("signup")}
                 />
               )}
             </View>
