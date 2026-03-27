@@ -252,6 +252,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Only set guest mode after session ID is established
             setIsGuest(true);
             setGuestMode(true);
+            // Restore guest session ID for backend progress tracking
+            const storedSessionId =
+              await AsyncStorage.getItem("guestSessionId");
+            if (storedSessionId) {
+              setGuestSessionId(storedSessionId);
+            }
           }
           await Promise.all([
             secureTokenStorage.clearTokens(),

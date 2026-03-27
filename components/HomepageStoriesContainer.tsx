@@ -1,7 +1,6 @@
 import { ActivityIndicator, Text, View } from "react-native";
 import { Story } from "../types";
 import StoryCarousel from "./StoryCarousel";
-import ErrorComponent from "./ErrorComponent";
 
 type PropTypes = {
   stories: Story[];

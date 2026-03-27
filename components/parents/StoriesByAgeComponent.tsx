@@ -11,18 +11,6 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 import useAuth from "../../contexts/AuthContext";
 import ErrorComponent from "../ErrorComponent";
 
-import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
-import { AgeGroupType } from "../../types";
-import StoryCarousel from "../StoryCarousel";
-import AgeSelectionComponent from "../UI/AgeSelectionComponent";
-import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
-import useAuth from "../../contexts/AuthContext";
-
 const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const [selectedGroup, setSelectedGroup] = useState<AgeGroupType>("All");
