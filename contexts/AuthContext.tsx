@@ -252,11 +252,45 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Only set guest mode after session ID is established
             setIsGuest(true);
             setGuestMode(true);
-            // Restore guest session ID for backend progress tracking
+            // Restore guest session ID, or create new if expired (7-day TTL)
             const storedSessionId =
               await AsyncStorage.getItem("guestSessionId");
-            if (storedSessionId) {
+            const sessionCreatedAt =
+              await AsyncStorage.getItem("guestSessionCreatedAt");
+            const sixDaysMs = 6 * 24 * 60 * 60 * 1000;
+            const isExpired =
+              !sessionCreatedAt ||
+              Date.now() - Number(sessionCreatedAt) > sixDaysMs;
+
+            if (storedSessionId && !isExpired) {
               setGuestSessionId(storedSessionId);
+            } else {
+              // Session expired or missing — create a fresh one
+              try {
+                const res = await fetch(`${BASE_URL}/guest/session`, {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                    ...(process.env.EXPO_PUBLIC_API_KEY
+                      ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                      : {}),
+                  },
+                });
+                const data = await res.json();
+                if (data?.data?.sessionId) {
+                  await AsyncStorage.setItem(
+                    "guestSessionId",
+                    data.data.sessionId
+                  );
+                  await AsyncStorage.setItem(
+                    "guestSessionCreatedAt",
+                    String(Date.now())
+                  );
+                  setGuestSessionId(data.data.sessionId);
+                }
+              } catch {
+                // Non-fatal: guest mode works without backend session
+              }
             }
           }
           await Promise.all([
