@@ -1,7 +1,6 @@
-import { Text, View } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { Story } from "../types";
 import StoryCarousel from "./StoryCarousel";
-import ErrorComponent from "./ErrorComponent";
 
 type PropTypes = {
   stories: Story[];
@@ -29,7 +28,7 @@ const HomepageStoriesContainer = ({
   if (error) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
-        <Text className="font-[abeezee] text-center text-text">
+        <Text className="text-center font-[abeezee] text-text">
           Failed to load stories. Please try again.
         </Text>
       </View>
@@ -39,10 +38,10 @@ const HomepageStoriesContainer = ({
   if (!stories || stories.length === 0) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
-        <Text className="font-[quilka] text-2xl text-black text-center mb-2">
+        <Text className="mb-2 text-center font-[quilka] text-2xl text-black">
           No stories found
         </Text>
-        <Text className="font-[abeezee] text-center text-text">
+        <Text className="text-center font-[abeezee] text-text">
           Try a different category
         </Text>
       </View>

@@ -1,18 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
-import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
-import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
-import { AgeGroupType } from "../../types";
-import StoryCarousel from "../StoryCarousel";
-import AgeSelectionComponent from "../UI/AgeSelectionComponent";
-import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
-
-import { useNavigation } from "@react-navigation/native";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
-import { Pressable, Text, View } from "react-native";
+import { ActivityIndicator, Pressable, Text, View } from "react-native";
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import { AgeGroupType } from "../../types";
@@ -20,6 +9,7 @@ import StoryCarousel from "../StoryCarousel";
 import AgeSelectionComponent from "../UI/AgeSelectionComponent";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 import useAuth from "../../contexts/AuthContext";
+import ErrorComponent from "../ErrorComponent";
 
 const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -48,10 +38,10 @@ const StoriesByAgeComponent = () => {
   if (!data || data.length === 0) {
     return (
       <View className="flex-1 items-center justify-center bg-bgLight px-4">
-        <Text className="font-[quilka] text-2xl text-black text-center mb-4">
+        <Text className="mb-4 text-center font-[quilka] text-2xl text-black">
           {isGuest ? "No stories available" : "No stories found"}
         </Text>
-        <Text className="font-[abeezee] text-center text-text mb-6">
+        <Text className="mb-6 text-center font-[abeezee] text-text">
           {isGuest
             ? "Sign up to access our full library"
             : "Try a different age group"}
