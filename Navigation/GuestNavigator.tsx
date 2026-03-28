@@ -7,6 +7,13 @@ import StoryNavigator, { StoryNavigatorParamList } from "./StoryNavigator";
 import LoginScreen from "../screens/auth/LoginScreen";
 import SignupScreen from "../screens/auth/SignupScreen";
 import UnauthPaywallScreen from "../screens/auth/UnauthPaywallScreen";
+import PrivacyScreen from "../screens/auth/PrivacyScreen";
+import TermsOfServiceScreen from "../screens/auth/TermsOfServiceScreen";
+import ResetPasswordScreen from "../screens/auth/ResetPassword";
+import RequestEmailVerification from "../screens/auth/RequestEmailVerification";
+import VerifyEmailScreen from "../screens/auth/VerifyEmailScreen";
+import ConfirmResetPasswordTokenScreen from "../screens/auth/ConfirmResetPasswordToken";
+import InputNewPassword from "../screens/auth/InputNewPassword";
 
 type GuestNavigatorParamList = {
   guestTabs: NavigatorScreenParams<GuestTabParamList>;
@@ -15,6 +22,13 @@ type GuestNavigatorParamList = {
   signUp: undefined;
   login: undefined;
   unauthPaywall: undefined;
+  privacyScreen: undefined;
+  termsOfService: undefined;
+  resetPassword: undefined;
+  requestEmailVerification: undefined;
+  verifyEmail: { email: string };
+  confirmResetPasswordToken: { email: string };
+  inputNewPassword: { email: string; token: string };
 };
 
 type GuestNavigatorProp = NativeStackNavigationProp<GuestNavigatorParamList>;
@@ -30,6 +44,19 @@ const GuestNavigator = () => {
       <Stack.Screen name="signUp" component={SignupScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
       <Stack.Screen name="unauthPaywall" component={UnauthPaywallScreen} />
+      <Stack.Screen name="privacyScreen" component={PrivacyScreen} />
+      <Stack.Screen name="termsOfService" component={TermsOfServiceScreen} />
+      <Stack.Screen name="resetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen
+        name="requestEmailVerification"
+        component={RequestEmailVerification}
+      />
+      <Stack.Screen name="verifyEmail" component={VerifyEmailScreen} />
+      <Stack.Screen
+        name="confirmResetPasswordToken"
+        component={ConfirmResetPasswordTokenScreen}
+      />
+      <Stack.Screen name="inputNewPassword" component={InputNewPassword} />
     </Stack.Navigator>
   );
 };

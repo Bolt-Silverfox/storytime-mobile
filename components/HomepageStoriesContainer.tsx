@@ -35,7 +35,7 @@ const HomepageStoriesContainer = ({
     );
   }
 
-  if (!stories || stories.length === 0) {
+  if (stories.length === 0) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
         <Text className="mb-2 text-center font-[quilka] text-2xl text-black">

@@ -20,9 +20,10 @@ import CustomButton from "../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import Icon from "../../components/Icon";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 
 const UnauthPaywallScreen = () => {
-  const navigation = useNavigation<RootNavigatorProp>();
+  const navigation = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
   const [isRestoring, setIsRestoring] = useState(false);
@@ -70,12 +71,10 @@ const UnauthPaywallScreen = () => {
           <View className="w-full gap-4">
             <CustomButton
               text="Create Account"
-              onPress={() =>
-                navigation.navigate("auth", { screen: "signUp" })
-              }
+              onPress={() => (navigation as any).navigate("signUp")}
             />
             <Pressable
-              onPress={() => navigation.navigate("auth", { screen: "login" })}
+              onPress={() => (navigation as any).navigate("login")}
               className="items-center rounded-full border border-border-light py-3"
             >
               <Text className="font-[abeezee] text-base text-black">
@@ -184,18 +183,14 @@ const UnauthPaywallScreen = () => {
 
               <View className="flex-row items-center justify-center gap-x-4">
                 <Pressable
-                  onPress={() =>
-                    navigation.navigate("auth", { screen: "termsOfService" })
-                  }
+                  onPress={() => (navigation as any).navigate("termsOfService")}
                 >
                   <Text className="font-[abeezee] text-xs text-primary underline">
                     Terms of Service
                   </Text>
                 </Pressable>
                 <Pressable
-                  onPress={() =>
-                    navigation.navigate("auth", { screen: "privacyScreen" })
-                  }
+                  onPress={() => (navigation as any).navigate("privacyScreen")}
                 >
                   <Text className="font-[abeezee] text-xs text-primary underline">
                     Privacy Policy

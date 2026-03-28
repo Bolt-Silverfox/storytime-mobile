@@ -6,27 +6,48 @@ import { QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
 const useGetStory = (storyId: string) => {
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
   const queryClient = useQueryClient();
 
   return queryOptions({
     queryKey: ["story", storyId, user?.id],
     queryFn: async () => {
       try {
+        // For guests, use a different endpoint
+        if (isGuest) {
+          const request = await apiFetch(`${BASE_URL}/guest/stories/${storyId}`, {
+            method: "GET",
+            passThroughStatuses: [403, 401],
+          });
+          const response: QueryResponse<Story> = await request.json();
+          if (response.statusCode === 403) {
+            throw new Error(
+              response.message || "You have reached your story limit. Sign up to continue reading!"
+            );
+          }
+          if (!response.success) throw new Error(response.message);
+          queryClient.invalidateQueries({
+            queryKey: [QUERY_KEYS.GET_STORY_QUOTA, "guest"],
+          });
+          return response;
+        }
+
         const request = await apiFetch(`${BASE_URL}/stories/${storyId}`, {
           method: "GET",
           passThroughStatuses: [403],
         });
         const response: QueryResponse<Story> = await request.json();
         if (response.statusCode === 403) {
-          return null;
+          throw new Error(
+            response.message || "You have reached your story limit. Sign up to continue reading!"
+          );
         }
         if (!response.success) throw new Error(response.message);
         queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.GET_STORY_QUOTA, user?.id],
+          queryKey: [QUERY_KEYS.GET_STORY_QUOTA, "user"],
         });
         return response;
-      } catch (err: unknown) {
+      } catch (err) {
         if (err instanceof ApiError) {
           throw err;
         }

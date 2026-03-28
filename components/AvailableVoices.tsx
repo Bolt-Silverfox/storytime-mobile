@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Image, Pressable, StyleSheet, Switch, Text, View } from "react-native";
@@ -12,19 +12,25 @@ import useToast from "../contexts/ToastContext";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
 
+// Default voice ID for guest users
+const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
+
 const AvailableVoices = ({
   selectedVoice,
   setSelectedVoice,
   storyId,
   deferSave = false,
+  isGuest = false,
 }: {
   selectedVoice: string | null;
   setSelectedVoice: Dispatch<SetStateAction<string | null>>;
   storyId?: string;
   /** When true, card taps only update local selection — caller handles persistence */
   deferSave?: boolean;
+  /** When true, user is in guest mode and should have limited voice access */
+  isGuest?: boolean;
 }) => {
-  const { data } = useSuspenseQuery(queryAvailableVoices);
+  const { data, isLoading: voicesLoading, isError: voicesError } = useQuery(queryAvailableVoices);
   const { data: voiceAccess, isLoading: voiceAccessLoading } =
     useGetVoiceAccess(storyId);
   const [previewingId, setPreviewingId] = useState<string | null>(null);
@@ -52,8 +58,16 @@ const AvailableVoices = ({
 
   const isVoiceLocked = !isPremium && !!lockedVoiceId;
 
+  // For guests, lock all voices except the default one
+  const guestLockedVoiceId = isGuest ? GUEST_DEFAULT_VOICE_ID : lockedVoiceId;
+
   const isVoiceAllowed = (voice: VoiceData): boolean => {
     if (voiceAccessLoading) return false;
+
+    // Guest users: only the default voice is allowed
+    if (isGuest) {
+      return voice.id === GUEST_DEFAULT_VOICE_ID;
+    }
 
     // Premium per-story limit: if story has max voices used,
     // only those voices are allowed
@@ -70,7 +84,7 @@ const AvailableVoices = ({
 
   const notifyVoiceLimitReached = () => {
     const usedCount = usedVoicesForStory.length;
-    const usedNames = data
+    const usedNames = (data ?? [])
       .filter((v) => usedVoicesForStory.includes(v.id))
       .map((v) => v.displayName ?? v.name);
     notify(
@@ -93,6 +107,11 @@ const AvailableVoices = ({
     if (voiceAccessLoading) return;
     if (voice.id === selectedVoice) return;
     if (!isVoiceAllowed(voice)) {
+      if (isGuest) {
+        // Guests need to sign up to change voices
+        setIsSubscriptionModalOpen(true);
+        return;
+      }
       if (isPremium && isStoryAtVoiceLimit) {
         notifyVoiceLimitReached();
       } else {
@@ -108,37 +127,61 @@ const AvailableVoices = ({
 
   return (
     <>
-      {!voiceAccessLoading && !isPremium && !lockedVoiceId && (
-        <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
-          <Icon name="TriangleAlert" size={20} color="#212121" />
-          <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
-            {
-              "Selecting a voice sets it as your default. To change it later, you'll need to subscribe."
-            }
+      {voicesLoading && (
+        <View className="flex items-center justify-center py-8">
+          <Text className="font-[abeezee] text-text">Loading voices...</Text>
+        </View>
+      )}
+      {voicesError && (
+        <View className="flex items-center justify-center py-8">
+          <Text className="font-[abeezee] text-red-600">
+            Failed to load voices. Please try again.
           </Text>
         </View>
       )}
-      {!voiceAccessLoading && !isPremium && lockedVoiceId && (
-        <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
-          <Icon name="TriangleAlert" size={20} color="#212121" />
-          <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
-            Upgrade to premium to unlock all voices.
-          </Text>
-        </View>
-      )}
-      {!voiceAccessLoading && isPremium && isStoryAtVoiceLimit && (
-        <View className="mx-2 mb-4 rounded-xl bg-amber-50 p-3">
-          <Text className="text-center font-[abeezee] text-sm text-amber-700">
-            {`${usedVoicesForStory.length}/${maxVoicesPerStory} voices used on this story`}
-          </Text>
-        </View>
-      )}
-      <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
-        {data.map((voice) => {
+      {!voicesLoading && !voicesError && data && (
+        <>
+          {/* Guest mode warning */}
+          {!voiceAccessLoading && isGuest && (
+            <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
+              <Icon name="TriangleAlert" size={20} color="#212121" />
+              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+                Sign up to unlock all voices and choose your favorite!
+              </Text>
+            </View>
+          )}
+          {!voiceAccessLoading && !isPremium && !lockedVoiceId && !isGuest && (
+            <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
+              <Icon name="TriangleAlert" size={20} color="#212121" />
+              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+                {
+                  "Selecting a voice sets it as your default. To change it later, you'll need to subscribe."
+                }
+              </Text>
+            </View>
+          )}
+          {!voiceAccessLoading && !isPremium && lockedVoiceId && !isGuest && (
+            <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
+              <Icon name="TriangleAlert" size={20} color="#212121" />
+              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+                Upgrade to premium to unlock all voices.
+              </Text>
+            </View>
+          )}
+          {!voiceAccessLoading && isPremium && isStoryAtVoiceLimit && (
+            <View className="mx-2 mb-4 rounded-xl bg-amber-50 p-3">
+              <Text className="text-center font-[abeezee] text-sm text-amber-700">
+                {`${usedVoicesForStory.length}/${maxVoicesPerStory} voices used on this story`}
+              </Text>
+            </View>
+          )}
+          <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
+            {data.map((voice) => {
           const isSelected = voice.id === selectedVoice;
           const isPreviewing = voice.id === previewingId;
           const allowed = isVoiceAllowed(voice);
           const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
+          const isGuestDefaultLocked = isGuest && voice.id === GUEST_DEFAULT_VOICE_ID;
           const isPremiumStoryLocked =
             isPremium && isStoryAtVoiceLimit && !allowed;
 
@@ -167,7 +210,7 @@ const AvailableVoices = ({
                 source={{ uri: voice.voiceAvatar }}
                 className="size-[70px] self-center"
               />
-              {isFreeUserLocked && (
+              {(isFreeUserLocked || isGuestDefaultLocked) && (
                 <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
                   <Text className="font-[abeezee] text-[8px] text-primary">
                     Default
@@ -182,7 +225,7 @@ const AvailableVoices = ({
                   </Text>
                 </View>
               )}
-              {isVoiceLocked && !allowed && !isPremiumStoryLocked && (
+              {isVoiceLocked && !allowed && !isPremiumStoryLocked && !isGuest && (
                 <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
                   <Icon name="Lock" size={12} color="#D97706" />
                   <Text className="font-[abeezee] text-xs text-amber-600">
@@ -190,9 +233,19 @@ const AvailableVoices = ({
                   </Text>
                 </View>
               )}
+              {isGuest && !allowed && voice.id !== GUEST_DEFAULT_VOICE_ID && (
+                <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                  <Icon name="Lock" size={12} color="#D97706" />
+                  <Text className="font-[abeezee] text-xs text-amber-600">
+                    Sign up
+                  </Text>
+                </View>
+              )}
               {!isFreeUserLocked &&
+                !isGuestDefaultLocked &&
                 !isPremiumStoryLocked &&
-                !(isVoiceLocked && !allowed) && <View className="mt-2 h-6" />}
+                !(isVoiceLocked && !allowed) &&
+                !(isGuest && !allowed) && <View className="mt-2 h-6" />}
               <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
                 {voice.displayName ?? voice.name}
               </Text>
@@ -215,6 +268,10 @@ const AvailableVoices = ({
                     onPress={() => {
                       if (voiceAccessLoading) return;
                       if (!allowed) {
+                        if (isGuest) {
+                          setIsSubscriptionModalOpen(true);
+                          return;
+                        }
                         if (isPremium && isStoryAtVoiceLimit) {
                           notifyVoiceLimitReached();
                         } else {
@@ -255,6 +312,8 @@ const AvailableVoices = ({
           onClose={() => setIsSubscriptionModalOpen(false)}
         />
       </View>
+        </>
+      )}
     </>
   );
 };
