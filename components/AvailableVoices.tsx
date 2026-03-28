@@ -30,11 +30,7 @@ const AvailableVoices = ({
   /** When true, user is in guest mode and should have limited voice access */
   isGuest?: boolean;
 }) => {
-  const {
-    data,
-    isLoading: voicesLoading,
-    isError: voicesError,
-  } = useQuery(queryAvailableVoices);
+  const { data, isLoading: voicesLoading, isError: voicesError } = useQuery(queryAvailableVoices);
   const { data: voiceAccess, isLoading: voiceAccessLoading } =
     useGetVoiceAccess(storyId);
   const [previewingId, setPreviewingId] = useState<string | null>(null);
@@ -62,13 +58,16 @@ const AvailableVoices = ({
 
   const isVoiceLocked = !isPremium && !!lockedVoiceId;
 
+  // For guests, lock all voices except the default one
+  const guestLockedVoiceId = isGuest ? GUEST_DEFAULT_VOICE_ID : lockedVoiceId;
+
   const isVoiceAllowed = (voice: VoiceData): boolean => {
+    if (voiceAccessLoading) return false;
+
     // Guest users: only the default voice is allowed
     if (isGuest) {
-      return voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
+      return voice.id === GUEST_DEFAULT_VOICE_ID;
     }
-
-    if (voiceAccessLoading) return false;
 
     // Premium per-story limit: if story has max voices used,
     // only those voices are allowed
@@ -178,147 +177,141 @@ const AvailableVoices = ({
           )}
           <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
             {data.map((voice) => {
-              const isSelected = voice.id === selectedVoice;
-              const isPreviewing = voice.id === previewingId;
-              const allowed = isVoiceAllowed(voice);
-              const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
-              const isGuestDefaultLocked =
-                isGuest && voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
-              const isPremiumStoryLocked =
-                isPremium && isStoryAtVoiceLimit && !allowed;
+          const isSelected = voice.id === selectedVoice;
+          const isPreviewing = voice.id === previewingId;
+          const allowed = isVoiceAllowed(voice);
+          const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
+          const isGuestDefaultLocked = isGuest && voice.id === GUEST_DEFAULT_VOICE_ID;
+          const isPremiumStoryLocked =
+            isPremium && isStoryAtVoiceLimit && !allowed;
 
-              return (
+          return (
+            <Pressable
+              onPress={() => {
+                if (voice.id === selectedVoice) return;
+                handleSelectVoice(voice);
+                if (allowed) {
+                  handlePreview(voice.previewUrl, voice.id);
+                }
+              }}
+              key={voice.id}
+              accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${!allowed ? ", locked" : ""}`}
+              accessibilityRole="button"
+              style={isSelected ? voiceStyles.selectedShadow : undefined}
+              className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
+                !allowed
+                  ? "border border-border-light opacity-40"
+                  : isSelected
+                    ? "border border-primary"
+                    : "border border-border-light"
+              }`}
+            >
+              <Image
+                source={{ uri: voice.voiceAvatar }}
+                className="size-[70px] self-center"
+              />
+              {(isFreeUserLocked || isGuestDefaultLocked) && (
+                <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
+                  <Text className="font-[abeezee] text-[8px] text-primary">
+                    Default
+                  </Text>
+                </View>
+              )}
+              {isPremiumStoryLocked && (
+                <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                  <Icon name="Lock" size={12} color="#D97706" />
+                  <Text className="font-[abeezee] text-xs text-amber-600">
+                    {`${usedVoicesForStory.length}/${maxVoicesPerStory} voices`}
+                  </Text>
+                </View>
+              )}
+              {isVoiceLocked && !allowed && !isPremiumStoryLocked && !isGuest && (
+                <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                  <Icon name="Lock" size={12} color="#D97706" />
+                  <Text className="font-[abeezee] text-xs text-amber-600">
+                    Premium
+                  </Text>
+                </View>
+              )}
+              {isGuest && !allowed && voice.id !== GUEST_DEFAULT_VOICE_ID && (
+                <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                  <Icon name="Lock" size={12} color="#D97706" />
+                  <Text className="font-[abeezee] text-xs text-amber-600">
+                    Sign up
+                  </Text>
+                </View>
+              )}
+              {!isFreeUserLocked &&
+                !isGuestDefaultLocked &&
+                !isPremiumStoryLocked &&
+                !(isVoiceLocked && !allowed) &&
+                !(isGuest && !allowed) && <View className="mt-2 h-6" />}
+              <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
+                {voice.displayName ?? voice.name}
+              </Text>
+              {isSelected ? (
                 <Pressable
                   onPress={() => {
-                    if (voice.id === selectedVoice) return;
-                    handleSelectVoice(voice);
-                    if (allowed) {
-                      handlePreview(voice.previewUrl, voice.id);
-                    }
+                    if (voiceAccessLoading) return;
+                    handlePreview(voice.previewUrl, voice.id);
                   }}
-                  key={voice.id}
-                  accessibilityLabel={`${voice.displayName ?? voice.name}${isSelected ? ", selected" : ""}${!allowed ? ", locked" : ""}`}
-                  accessibilityRole="button"
-                  style={isSelected ? voiceStyles.selectedShadow : undefined}
-                  className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
-                    !allowed
-                      ? "border border-border-light opacity-40"
-                      : isSelected
-                        ? "border border-primary"
-                        : "border border-border-light"
-                  }`}
+                  className="mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border border-border-lighter bg-white px-4 py-2"
                 >
-                  <Image
-                    source={{ uri: voice.voiceAvatar }}
-                    className="size-[70px] self-center"
-                  />
-                  {(isFreeUserLocked || isGuestDefaultLocked) && (
-                    <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
-                      <Text className="font-[abeezee] text-[8px] text-primary">
-                        Default
-                      </Text>
-                    </View>
-                  )}
-                  {isPremiumStoryLocked && (
-                    <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
-                      <Icon name="Lock" size={12} color="#D97706" />
-                      <Text className="font-[abeezee] text-xs text-amber-600">
-                        {`${usedVoicesForStory.length}/${maxVoicesPerStory} voices`}
-                      </Text>
-                    </View>
-                  )}
-                  {isVoiceLocked &&
-                    !allowed &&
-                    !isPremiumStoryLocked &&
-                    !isGuest && (
-                      <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
-                        <Icon name="Lock" size={12} color="#D97706" />
-                        <Text className="font-[abeezee] text-xs text-amber-600">
-                          Premium
-                        </Text>
-                      </View>
-                    )}
-                  {isGuest &&
-                    !allowed &&
-                    voice.elevenLabsVoiceId !== GUEST_DEFAULT_VOICE_ID && (
-                      <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
-                        <Icon name="Lock" size={12} color="#D97706" />
-                        <Text className="font-[abeezee] text-xs text-amber-600">
-                          Sign up
-                        </Text>
-                      </View>
-                    )}
-                  {!isFreeUserLocked &&
-                    !isGuestDefaultLocked &&
-                    !isPremiumStoryLocked &&
-                    !(isVoiceLocked && !allowed) &&
-                    !(isGuest && !allowed) && <View className="mt-2 h-6" />}
-                  <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
-                    {voice.displayName ?? voice.name}
+                  <Icon name="Volume2" size={18} color="black" />
+                  <Text className="font-[abeezee] text-sm text-black">
+                    Listen
                   </Text>
-                  {isSelected ? (
-                    <Pressable
-                      onPress={() => {
-                        if (voiceAccessLoading) return;
-                        handlePreview(voice.previewUrl, voice.id);
-                      }}
-                      className="mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border border-border-lighter bg-white px-4 py-2"
-                    >
-                      <Icon name="Volume2" size={18} color="black" />
-                      <Text className="font-[abeezee] text-sm text-black">
-                        Listen
-                      </Text>
-                    </Pressable>
-                  ) : (
-                    <View className="flex flex-row items-center justify-between gap-x-4">
-                      <Pressable
-                        onPress={() => {
-                          if (voiceAccessLoading) return;
-                          if (!allowed) {
-                            if (isGuest) {
-                              setIsSubscriptionModalOpen(true);
-                              return;
-                            }
-                            if (isPremium && isStoryAtVoiceLimit) {
-                              notifyVoiceLimitReached();
-                            } else {
-                              setIsSubscriptionModalOpen(true);
-                            }
-                            return;
-                          }
-                          handlePreview(voice.previewUrl, voice.id);
-                        }}
-                        className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
-                      >
-                        <Icon
-                          name="Volume2"
-                          color={
-                            isPreviewing
-                              ? COLORS.blue
-                              : !allowed
-                                ? COLORS.skeleton
-                                : "black"
-                          }
-                        />
-                      </Pressable>
-                      {/* Visual-only toggle; actual selection handled by card press */}
-                      <View pointerEvents="none">
-                        <Switch
-                          value={isSelected}
-                          disabled={!allowed}
-                          accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
-                        />
-                      </View>
-                    </View>
-                  )}
                 </Pressable>
-              );
-            })}
-            <SubscriptionModal
-              isOpen={isSubscriptionModalOpen}
-              onClose={() => setIsSubscriptionModalOpen(false)}
-            />
-          </View>
+              ) : (
+                <View className="flex flex-row items-center justify-between gap-x-4">
+                  <Pressable
+                    onPress={() => {
+                      if (voiceAccessLoading) return;
+                      if (!allowed) {
+                        if (isGuest) {
+                          setIsSubscriptionModalOpen(true);
+                          return;
+                        }
+                        if (isPremium && isStoryAtVoiceLimit) {
+                          notifyVoiceLimitReached();
+                        } else {
+                          setIsSubscriptionModalOpen(true);
+                        }
+                        return;
+                      }
+                      handlePreview(voice.previewUrl, voice.id);
+                    }}
+                    className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
+                  >
+                    <Icon
+                      name="Volume2"
+                      color={
+                        isPreviewing
+                          ? COLORS.blue
+                          : !allowed
+                            ? COLORS.skeleton
+                            : "black"
+                      }
+                    />
+                  </Pressable>
+                  {/* Visual-only toggle; actual selection handled by card press */}
+                  <View pointerEvents="none">
+                    <Switch
+                      value={isSelected}
+                      disabled={!allowed}
+                      accessibilityLabel={`Select voice ${voice.displayName ?? voice.name}`}
+                    />
+                  </View>
+                </View>
+              )}
+            </Pressable>
+          );
+        })}
+        <SubscriptionModal
+          isOpen={isSubscriptionModalOpen}
+          onClose={() => setIsSubscriptionModalOpen(false)}
+        />
+      </View>
         </>
       )}
     </>
