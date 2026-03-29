@@ -30,7 +30,7 @@ const useGetLibraryStories = (type: LibraryFilterType) => {
         ? lastPage.pagination.nextCursor
         : undefined,
     enabled: !!user || isGuest,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 60,
     maxPages: 10,
     placeholderData: keepPreviousData,

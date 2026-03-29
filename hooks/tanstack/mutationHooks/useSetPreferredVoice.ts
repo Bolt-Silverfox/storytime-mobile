@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
 
@@ -17,9 +18,25 @@ const CRYPTIC_PATTERNS = [
 
 const useSetPreferredVoice = () => {
   const queryClient = useQueryClient();
+  const { isGuest } = useAuth();
+
+  // Default voice ID for guest users (matches VoiceType.NIMBUS)
+  const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
 
   return useMutation({
     mutationFn: async (voiceId: string) => {
+      // Guests can only use the default voice
+      if (isGuest) {
+        if (voiceId !== GUEST_DEFAULT_VOICE_ID) {
+          throw new Error(
+            'Guest users can only use the default voice. Sign in to access all voices.',
+          );
+        }
+        // For guests, just return success without making an API call
+        // The voice selection is handled locally in the component
+        return { success: true };
+      }
+
       const request = await apiFetch(`${BASE_URL}/voice/preferred`, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),

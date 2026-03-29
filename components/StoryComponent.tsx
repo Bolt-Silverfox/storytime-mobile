@@ -28,6 +28,7 @@ import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
 import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
+import { audioLogger } from "../utils/logger";
 
 const TOGGLE_DEBOUNCE_MS = 400;
 
@@ -102,26 +103,24 @@ const StoryComponent = ({
   const getGuestVoiceId = useCallback(() => {
     if (!isGuest) return "NIMBUS";
     if (!availableVoices) {
-      console.log(`getGuestVoiceId: availableVoices not loaded, returning NIMBUS`);
+      audioLogger.debug("getGuestVoiceId: availableVoices not loaded, returning NIMBUS");
       return "NIMBUS";
     }
     const nimbusVoice = availableVoices.find(
       (v) => v.elevenLabsVoiceId === "NIMBUS"
     );
     const result = nimbusVoice?.elevenLabsVoiceId ?? "NIMBUS";
-    console.log(`getGuestVoiceId: returning ${result}`);
+    audioLogger.debug(`getGuestVoiceId: returning ${result}`);
     return result;
   }, [isGuest, availableVoices]);
 
   // Map voice ID to elevenLabsVoiceId for audio API
   const getVoiceIdForAudio = useCallback((voiceId: string | null) => {
     if (!voiceId) return null;
-    if (!isGuest) return voiceId;
-    // For guests, check if voiceId is already an elevenLabsVoiceId (like "NIMBUS")
-    // or if it's an internal ID that needs to be mapped
+    // Check if voiceId is an internal ID that needs to be mapped
     const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
     if (voice) {
-      console.log(`getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`);
+      audioLogger.debug(`getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`);
       return voice.elevenLabsVoiceId;
     }
     // If not found in availableVoices, check if it's an elevenLabsVoiceId
@@ -129,13 +128,13 @@ const StoryComponent = ({
       (v) => v.elevenLabsVoiceId === voiceId
     );
     if (voiceByElevenLabsId) {
-      console.log(`getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`);
+      audioLogger.debug(`getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`);
       return voiceByElevenLabsId.elevenLabsVoiceId;
     }
     // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
-    console.log(`getVoiceIdForAudio: fallback to ${voiceId}`);
+    audioLogger.debug(`getVoiceIdForAudio: fallback to ${voiceId}`);
     return voiceId;
-  }, [isGuest, availableVoices]);
+  }, [availableVoices]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
@@ -177,8 +176,9 @@ const StoryComponent = ({
     failedParagraphs,
     retryFailed,
     batchError,
+    initialError,
   } = useBatchStoryAudio(storyId, getVoiceIdForAudio(debouncedVoice));
-  console.log(`useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`);
+  audioLogger.debug(`useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
   const isVoiceTransitioning = selectedVoice !== debouncedVoice;
@@ -205,7 +205,7 @@ const StoryComponent = ({
     hasInitializedVoice.current = true;
     // For guests, use the mapped voice ID, otherwise use preferred voice ID or default
     const guestVoiceId = getGuestVoiceId();
-    console.log(`Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`);
+    audioLogger.debug(`Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`);
     setSelectedVoice(preferredVoice?.id ?? guestVoiceId);
 
     // Auto-show voice selection modal for first-time users (no preferred voice).
@@ -310,10 +310,17 @@ const StoryComponent = ({
                 <Pressable
                   onPress={(e) => {
                     e.stopPropagation();
-                    navigator.reset({
-                      index: 0,
-                      routes: [{ name: "parents" }],
-                    });
+                    if (isGuest) {
+                      (navigator as any).reset({
+                        index: 0,
+                        routes: [{ name: "guestTabs" }],
+                      });
+                    } else {
+                      navigator.reset({
+                        index: 0,
+                        routes: [{ name: "parents" }],
+                      });
+                    }
                   }}
                   className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
@@ -351,6 +358,7 @@ const StoryComponent = ({
                 failedParagraphs={failedParagraphs}
                 onRetryFailed={retryFailed}
                 batchError={batchError}
+                initialError={initialError}
               />
             </View>
           </ImageBackground>
