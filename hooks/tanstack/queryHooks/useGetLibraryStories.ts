@@ -56,5 +56,14 @@ const getLibraryStories = async (
   const response: QueryResponse<CursorPaginatedData<LibraryStory>> =
     await request.json();
   if (!response.success) throw new Error(response.message);
+
+  // Guest endpoint returns all stories; filter client-side by completion status
+  if (isGuest && response.data?.data) {
+    const filtered = response.data.data.filter((story) =>
+      type === "completed" ? story.progress >= 100 : story.progress < 100
+    );
+    return { ...response.data, data: filtered };
+  }
+
   return response.data;
 };

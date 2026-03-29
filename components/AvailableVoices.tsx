@@ -63,7 +63,7 @@ const AvailableVoices = ({
 
     // Guest users: only the default voice is allowed
     if (isGuest) {
-      return voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
+      return voice.id === GUEST_DEFAULT_VOICE_ID;
     }
 
     // Premium per-story limit: if story has max voices used,
@@ -178,7 +178,7 @@ const AvailableVoices = ({
           const isPreviewing = voice.id === previewingId;
           const allowed = isVoiceAllowed(voice);
           const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
-          const isGuestDefaultLocked = isGuest && voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
+          const isGuestDefaultLocked = isGuest && voice.id === GUEST_DEFAULT_VOICE_ID;
           const isPremiumStoryLocked =
             isPremium && isStoryAtVoiceLimit && !allowed;
 
@@ -230,7 +230,7 @@ const AvailableVoices = ({
                   </Text>
                 </View>
               )}
-              {isGuest && !allowed && voice.elevenLabsVoiceId !== GUEST_DEFAULT_VOICE_ID && (
+              {isGuest && !allowed && voice.id !== GUEST_DEFAULT_VOICE_ID && (
                 <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
                   <Icon name="Lock" size={12} color="#D97706" />
                   <Text className="font-[abeezee] text-xs text-amber-600">

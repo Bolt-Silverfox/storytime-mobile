@@ -55,7 +55,12 @@ const StoryLimitModal = ({
   const handleSubscribed = () => {
     queryClient.invalidateQueries({ queryKey: ["story", storyId] });
     queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_STORY_QUOTA] });
-    onClose?.();
+    if (onClose) {
+      onClose();
+    } else {
+      // Blocking mode without onClose: navigate away after successful subscription
+      (navigator as any).reset({ index: 0, routes: [{ name: isGuest ? "guestTabs" : "parents" }] });
+    }
   };
 
   const {

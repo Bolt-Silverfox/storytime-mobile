@@ -29,12 +29,13 @@ const useSetStoryProgress = ({
       const url = isGuest
         ? `${BASE_URL}/guest/progress`
         : `${BASE_URL}/stories/user/progress`;
+      const body = isGuest
+        ? { storyId, progress }
+        : { storyId, progress, completed, totalTimeSpent: time };
+
       const request = await apiFetch(url, {
         method: "POST",
-        body: JSON.stringify({
-          storyId: storyId,
-          progress: progress,
-        }),
+        body: JSON.stringify(body),
       });
       const response: QueryResponse = await request.json();
       if (!response.success) throw new Error(response.message);
