@@ -37,9 +37,23 @@ const Stack = createNativeStackNavigator<GuestNavigatorParamList>();
 
 const GuestNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="guestTabs" component={GuestTabNavigator} />
-      <Stack.Screen name="stories" component={StoryNavigator} />
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerBackTitle: 'Back',
+        headerTintColor: '#3b82f6',
+      }}
+    >
+      <Stack.Screen
+        name="guestTabs"
+        component={GuestTabNavigator}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="stories"
+        component={StoryNavigator}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen name="getPremium" component={GetPremiumScreen} />
       <Stack.Screen name="signUp" component={SignupScreen} />
       <Stack.Screen name="login" component={LoginScreen} />
