@@ -19,17 +19,17 @@ const FILTER_PATH: Record<LibraryFilterType, string> = {
 };
 
 const useGetLibraryStories = (type: LibraryFilterType) => {
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
 
   return useInfiniteQuery({
-    queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, type, user?.id],
-    queryFn: ({ pageParam }) => getLibraryStories(type, pageParam),
+    queryKey: [QUERY_KEYS.GET_LIBRARY_STORIES, type, user?.id, isGuest],
+    queryFn: ({ pageParam }) => getLibraryStories(type, pageParam, isGuest),
     initialPageParam: undefined as string | undefined,
     getNextPageParam: (lastPage) =>
       lastPage?.pagination?.hasNextPage && lastPage.pagination.nextCursor
         ? lastPage.pagination.nextCursor
         : undefined,
-    enabled: !!user,
+    enabled: !!user || isGuest,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 60,
     maxPages: 10,
@@ -41,13 +41,17 @@ export default useGetLibraryStories;
 
 const getLibraryStories = async (
   type: LibraryFilterType,
-  cursor: string | undefined
+  cursor: string | undefined,
+  isGuest: boolean = false
 ): Promise<CursorPaginatedData<LibraryStory>> => {
   const searchParams = new URLSearchParams();
   searchParams.set("limit", String(DEFAULT_CURSOR_PAGE_SIZE));
   if (cursor) searchParams.set("cursor", cursor);
 
-  const url = `${BASE_URL}/stories/user/library/${FILTER_PATH[type]}?${searchParams.toString()}`;
+  // Use guest endpoint for guests, user endpoint for authenticated users
+  const url = isGuest
+    ? `${BASE_URL}/guest/history?${searchParams.toString()}`
+    : `${BASE_URL}/stories/user/library/${FILTER_PATH[type]}?${searchParams.toString()}`;
   const request = await apiFetch(url, { method: "GET" });
   const response: QueryResponse<CursorPaginatedData<LibraryStory>> =
     await request.json();
