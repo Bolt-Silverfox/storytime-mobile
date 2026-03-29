@@ -210,7 +210,7 @@ const StoryLimitModal = ({
                   // eslint-disable-next-line react-native/no-inline-styles
                   {
                     backgroundColor:
-                      selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
+                      selectedPlan && !isLoading ? "#FF6B35" : "#FFB8AD",
                     opacity: selectedPlan && !isLoading ? 1 : 0.6,
                   },
                 ]}
