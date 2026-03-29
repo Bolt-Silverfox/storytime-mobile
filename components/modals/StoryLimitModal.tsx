@@ -81,6 +81,7 @@ const StoryLimitModal = ({
     : `As a freemium user, you are entitled to ${totalAllowed} free stories overall and 1 free story weekly.`;
 
   const navigateToTerms = () => {
+    onClose?.();
     if (isGuest) {
       (navigator as any).navigate("termsOfService");
     } else {
@@ -95,6 +96,7 @@ const StoryLimitModal = ({
   };
 
   const navigateToPrivacy = () => {
+    onClose?.();
     if (isGuest) {
       (navigator as any).navigate("privacyScreen");
     } else {
