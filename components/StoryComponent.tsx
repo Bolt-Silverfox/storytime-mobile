@@ -101,11 +101,16 @@ const StoryComponent = ({
   // For guests, return the elevenLabsVoiceId directly (e.g., "NIMBUS")
   const getGuestVoiceId = useCallback(() => {
     if (!isGuest) return "NIMBUS";
-    if (!availableVoices) return "NIMBUS";
+    if (!availableVoices) {
+      console.log(`getGuestVoiceId: availableVoices not loaded, returning NIMBUS`);
+      return "NIMBUS";
+    }
     const nimbusVoice = availableVoices.find(
       (v) => v.elevenLabsVoiceId === "NIMBUS"
     );
-    return nimbusVoice?.elevenLabsVoiceId ?? "NIMBUS";
+    const result = nimbusVoice?.elevenLabsVoiceId ?? "NIMBUS";
+    console.log(`getGuestVoiceId: returning ${result}`);
+    return result;
   }, [isGuest, availableVoices]);
 
   // Map voice ID to elevenLabsVoiceId for audio API
@@ -116,6 +121,7 @@ const StoryComponent = ({
     // or if it's an internal ID that needs to be mapped
     const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
     if (voice) {
+      console.log(`getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`);
       return voice.elevenLabsVoiceId;
     }
     // If not found in availableVoices, check if it's an elevenLabsVoiceId
@@ -123,9 +129,11 @@ const StoryComponent = ({
       (v) => v.elevenLabsVoiceId === voiceId
     );
     if (voiceByElevenLabsId) {
+      console.log(`getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`);
       return voiceByElevenLabsId.elevenLabsVoiceId;
     }
     // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
+    console.log(`getVoiceIdForAudio: fallback to ${voiceId}`);
     return voiceId;
   }, [isGuest, availableVoices]);
 
@@ -170,6 +178,7 @@ const StoryComponent = ({
     retryFailed,
     batchError,
   } = useBatchStoryAudio(storyId, getVoiceIdForAudio(debouncedVoice));
+  console.log(`useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
   const isVoiceTransitioning = selectedVoice !== debouncedVoice;
@@ -196,6 +205,7 @@ const StoryComponent = ({
     hasInitializedVoice.current = true;
     // For guests, use the mapped voice ID, otherwise use preferred voice ID or default
     const guestVoiceId = getGuestVoiceId();
+    console.log(`Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`);
     setSelectedVoice(preferredVoice?.id ?? guestVoiceId);
 
     // Auto-show voice selection modal for first-time users (no preferred voice).

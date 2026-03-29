@@ -279,6 +279,7 @@ export default useBatchStoryAudio;
 
 const fetchBatchAudio = async (storyId: string, voiceId: string) => {
   try {
+    console.log(`fetchBatchAudio called with storyId: ${storyId}, voiceId: ${voiceId}`);
     const request = await apiFetch(`${BASE_URL}/voice/story/audio/batch`, {
       method: "POST",
       body: JSON.stringify({ storyId, voiceId }),
@@ -288,6 +289,7 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
+    console.error(`fetchBatchAudio error:`, err);
     throw new Error(getErrorMessage(err));
   }
 };
