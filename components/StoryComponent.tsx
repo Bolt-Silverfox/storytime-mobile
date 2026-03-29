@@ -98,21 +98,35 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
-  // For guests, map "NIMBUS" to the actual voice ID
+  // For guests, return the elevenLabsVoiceId directly (e.g., "NIMBUS")
   const getGuestVoiceId = useCallback(() => {
-    if (!isGuest || !availableVoices) return "NIMBUS";
+    if (!isGuest) return "NIMBUS";
+    if (!availableVoices) return "NIMBUS";
     const nimbusVoice = availableVoices.find(
       (v) => v.elevenLabsVoiceId === "NIMBUS"
     );
-    return nimbusVoice?.id ?? "NIMBUS";
+    return nimbusVoice?.elevenLabsVoiceId ?? "NIMBUS";
   }, [isGuest, availableVoices]);
 
   // Map voice ID to elevenLabsVoiceId for audio API
   const getVoiceIdForAudio = useCallback((voiceId: string | null) => {
     if (!voiceId) return null;
     if (!isGuest) return voiceId;
+    // For guests, check if voiceId is already an elevenLabsVoiceId (like "NIMBUS")
+    // or if it's an internal ID that needs to be mapped
     const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
-    return voice?.elevenLabsVoiceId ?? voiceId;
+    if (voice) {
+      return voice.elevenLabsVoiceId;
+    }
+    // If not found in availableVoices, check if it's an elevenLabsVoiceId
+    const voiceByElevenLabsId = (availableVoices ?? []).find(
+      (v) => v.elevenLabsVoiceId === voiceId
+    );
+    if (voiceByElevenLabsId) {
+      return voiceByElevenLabsId.elevenLabsVoiceId;
+    }
+    // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
+    return voiceId;
   }, [isGuest, availableVoices]);
 
   // Debounce voice selection to prevent rapid batch requests

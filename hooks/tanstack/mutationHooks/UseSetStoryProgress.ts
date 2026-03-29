@@ -13,7 +13,7 @@ const useSetStoryProgress = ({
   onSuccess?: () => void;
 }) => {
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
 
   return useMutation({
     mutationFn: async ({
@@ -25,7 +25,10 @@ const useSetStoryProgress = ({
       completed?: boolean;
       time: number;
     }) => {
-      const url = `${BASE_URL}/stories/user/progress`;
+      // Use guest endpoint for guests, user endpoint for authenticated users
+      const url = isGuest
+        ? `${BASE_URL}/guest/progress`
+        : `${BASE_URL}/stories/user/progress`;
       const sessionTime = Math.floor((Date.now() - time) / 1000);
       const request = await apiFetch(url, {
         method: "POST",
