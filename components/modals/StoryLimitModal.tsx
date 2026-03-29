@@ -13,6 +13,8 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
+import useAuth from "../../contexts/AuthContext";
 import useRestorePurchases from "../../hooks/others/useRestorePurchases";
 import { QUERY_KEYS } from "../../constants";
 import { subscriptionBenefits } from "../../data";
@@ -35,8 +37,9 @@ const StoryLimitModal = ({
   mode = "blocking",
   onClose,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
   const queryClient = useQueryClient();
+  const { isGuest } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
 
   const isDismissible = mode === "reminder";
@@ -45,7 +48,7 @@ const StoryLimitModal = ({
     if (isDismissible && onClose) {
       onClose();
     } else {
-      navigator.reset({ index: 0, routes: [{ name: "parents" }] });
+      (navigator as any).reset({ index: 0, routes: [{ name: isGuest ? "guestTabs" : "parents" }] });
     }
   };
 
@@ -76,6 +79,34 @@ const StoryLimitModal = ({
   const subtitle = !isDismissible
     ? `That was the last of your ${totalAllowed} free stories. With the Freemium plan, you'll receive 1 free story every week. Upgrade now for full access to our entire story library.`
     : `As a freemium user, you are entitled to ${totalAllowed} free stories overall and 1 free story weekly.`;
+
+  const navigateToTerms = () => {
+    if (isGuest) {
+      (navigator as any).navigate("termsOfService");
+    } else {
+      (navigator as any).navigate("parents", {
+        screen: "profile",
+        params: {
+          screen: "helpAndSupport",
+          params: { screen: "termsAndConditions" },
+        },
+      });
+    }
+  };
+
+  const navigateToPrivacy = () => {
+    if (isGuest) {
+      (navigator as any).navigate("privacyScreen");
+    } else {
+      (navigator as any).navigate("parents", {
+        screen: "profile",
+        params: {
+          screen: "helpAndSupport",
+          params: { screen: "privacyAndPolicy" },
+        },
+      });
+    }
+  };
 
   return (
     <Modal
@@ -178,6 +209,7 @@ const StoryLimitModal = ({
                   {
                     backgroundColor:
                       selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
+                    opacity: selectedPlan && !isLoading ? 1 : 0.6,
                   },
                 ]}
               >
@@ -187,30 +219,10 @@ const StoryLimitModal = ({
               </Pressable>
 
               <View style={modalStyles.legalLinks}>
-                <Pressable
-                  onPress={() =>
-                    navigator.navigate("parents", {
-                      screen: "profile",
-                      params: {
-                        screen: "helpAndSupport",
-                        params: { screen: "termsAndConditions" },
-                      },
-                    } as any)
-                  }
-                >
+                <Pressable onPress={navigateToTerms}>
                   <Text style={modalStyles.legalLinkText}>Terms of Service</Text>
                 </Pressable>
-                <Pressable
-                  onPress={() =>
-                    navigator.navigate("parents", {
-                      screen: "profile",
-                      params: {
-                        screen: "helpAndSupport",
-                        params: { screen: "privacyAndPolicy" },
-                      },
-                    } as any)
-                  }
-                >
+                <Pressable onPress={navigateToPrivacy}>
                   <Text style={modalStyles.legalLinkText}>Privacy Policy</Text>
                 </Pressable>
               </View>
