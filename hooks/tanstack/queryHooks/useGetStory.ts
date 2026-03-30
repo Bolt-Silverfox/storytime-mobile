@@ -1,5 +1,4 @@
 import { queryOptions, useQueryClient } from "@tanstack/react-query";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
@@ -16,12 +15,8 @@ const useGetStory = (storyId: string) => {
       try {
         // For guests, use a different endpoint
         if (isGuest) {
-          const guestSessionId = await AsyncStorage.getItem("guestSessionId");
           const request = await apiFetch(`${BASE_URL}/guest/stories/${storyId}`, {
             method: "GET",
-            headers: {
-              ...(guestSessionId && { "x-guest-session-id": guestSessionId }),
-            },
             passThroughStatuses: [403, 401],
           });
           const response: QueryResponse<Story> = await request.json();
