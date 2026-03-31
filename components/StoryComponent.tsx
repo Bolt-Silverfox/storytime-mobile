@@ -15,6 +15,7 @@ import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator"
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
@@ -27,6 +28,7 @@ import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
 import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
+import { audioLogger } from "../utils/logger";
 
 const TOGGLE_DEBOUNCE_MS = 400;
 
@@ -90,11 +92,49 @@ const StoryComponent = ({
   }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();
-  const { user } = useAuth();
+  const { user, isGuest } = useAuth();
   const { data: quota } = useGetStoryQuota();
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
+  const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+
+  // For guests, return the internal voice ID (DB row ID) for the default voice
+  const getGuestVoiceId = useCallback(() => {
+    if (!isGuest) return "NIMBUS";
+    if (!availableVoices) {
+      audioLogger.debug("getGuestVoiceId: availableVoices not loaded, returning NIMBUS");
+      return "NIMBUS";
+    }
+    const nimbusVoice = availableVoices.find(
+      (v) => v.elevenLabsVoiceId === "NIMBUS"
+    );
+    const result = nimbusVoice?.id ?? "NIMBUS";
+    audioLogger.debug(`getGuestVoiceId: returning ${result}`);
+    return result;
+  }, [isGuest, availableVoices]);
+
+  // Map voice ID to elevenLabsVoiceId for audio API
+  const getVoiceIdForAudio = useCallback((voiceId: string | null) => {
+    if (!voiceId) return null;
+    // Check if voiceId is an internal ID that needs to be mapped
+    const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
+    if (voice) {
+      audioLogger.debug(`getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`);
+      return voice.elevenLabsVoiceId;
+    }
+    // If not found in availableVoices, check if it's an elevenLabsVoiceId
+    const voiceByElevenLabsId = (availableVoices ?? []).find(
+      (v) => v.elevenLabsVoiceId === voiceId
+    );
+    if (voiceByElevenLabsId) {
+      audioLogger.debug(`getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`);
+      return voiceByElevenLabsId.elevenLabsVoiceId;
+    }
+    // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
+    audioLogger.debug(`getVoiceIdForAudio: fallback to ${voiceId}`);
+    return voiceId;
+  }, [availableVoices]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
@@ -136,7 +176,9 @@ const StoryComponent = ({
     failedParagraphs,
     retryFailed,
     batchError,
-  } = useBatchStoryAudio(storyId, debouncedVoice);
+    initialError,
+  } = useBatchStoryAudio(storyId, getVoiceIdForAudio(debouncedVoice));
+  audioLogger.debug(`useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
   const isVoiceTransitioning = selectedVoice !== debouncedVoice;
@@ -161,7 +203,10 @@ const StoryComponent = ({
   useEffect(() => {
     if (!isVoiceFetched || hasInitializedVoice.current) return;
     hasInitializedVoice.current = true;
-    setSelectedVoice(preferredVoice?.id ?? "NIMBUS");
+    // For guests, use the mapped voice ID, otherwise use preferred voice ID or default
+    const guestVoiceId = getGuestVoiceId();
+    audioLogger.debug(`Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`);
+    setSelectedVoice(preferredVoice?.id ?? guestVoiceId);
 
     // Auto-show voice selection modal for first-time users (no preferred voice).
     // Only show once — if dismissed, don't nag on subsequent stories.
@@ -177,7 +222,7 @@ const StoryComponent = ({
     return () => {
       mounted = false;
     };
-  }, [preferredVoice, isVoiceFetched, getVoiceModalDismissedKey]);
+  }, [preferredVoice, isVoiceFetched, getVoiceModalDismissedKey, getGuestVoiceId]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
@@ -223,6 +268,26 @@ const StoryComponent = ({
 
   if (isPending) return <LoadingOverlay visible />;
   if (error) {
+    // Check if error is due to quota limit (403)
+    if (error.message?.includes("limit") || error.message?.includes("quota")) {
+      return (
+        <SafeAreaWrapper variant="transparent">
+          <StoryLimitModal
+            visible={true}
+            storyId={storyId}
+            quota={quota}
+            mode="blocking"
+            onClose={() => {
+              // Close modal and navigate back
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+              });
+            }}
+          />
+        </SafeAreaWrapper>
+      );
+    }
     return <ErrorComponent message={error.message} refetch={refetch} />;
   }
   if (!data) {
@@ -252,10 +317,17 @@ const StoryComponent = ({
                 <Pressable
                   onPress={(e) => {
                     e.stopPropagation();
-                    navigator.reset({
-                      index: 0,
-                      routes: [{ name: "parents" }],
-                    });
+                    if (isGuest) {
+                      (navigator as any).reset({
+                        index: 0,
+                        routes: [{ name: "guestTabs" }],
+                      });
+                    } else {
+                      navigator.reset({
+                        index: 0,
+                        routes: [{ name: "parents" }],
+                      });
+                    }
                   }}
                   className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
                 >
@@ -293,6 +365,7 @@ const StoryComponent = ({
                 failedParagraphs={failedParagraphs}
                 onRetryFailed={retryFailed}
                 batchError={batchError}
+                initialError={initialError}
               />
             </View>
           </ImageBackground>

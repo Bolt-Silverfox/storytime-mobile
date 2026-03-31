@@ -21,6 +21,8 @@ const TodaysTopPicksComponent = () => {
         title="Today's top picks"
         onViewAll={() => navigator.navigate("todaysTopPicks")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

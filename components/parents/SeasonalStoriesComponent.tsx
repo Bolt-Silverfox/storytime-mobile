@@ -22,6 +22,8 @@ const SeasonalStoriesComponent = () => {
         title="Seasonal stories"
         onViewAll={() => navigator.navigate("seasonalStories")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

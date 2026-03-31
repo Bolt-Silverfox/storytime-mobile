@@ -21,6 +21,8 @@ const ParentsTopRecommendations = () => {
         title="Top recommendations"
         onViewAll={() => navigator.navigate("topRecommendations")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

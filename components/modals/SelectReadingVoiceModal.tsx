@@ -3,8 +3,8 @@ import { Dispatch, lazy, SetStateAction } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useSetPreferredVoice from "../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
+import useAuth from "../../contexts/AuthContext";
 import Icon from "../Icon";
-import SuspenseWrapper from "../supsense/SuspenseWrapper";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
 const AvailableVoices = lazy(() => import("../AvailableVoices"));
@@ -25,8 +25,9 @@ const SelectReadingVoiceModal = ({
   storyId,
   showSaveButton = false,
 }: PropTypes) => {
-  const { data: voices } = useQuery(queryAvailableVoices);
+  const { data: voices, isLoading: voicesLoading, isError: voicesError } = useQuery(queryAvailableVoices);
   const { mutate: markPreferred } = useSetPreferredVoice();
+  const { isGuest } = useAuth();
   const selectedVoiceDisplay = voices?.find(
     (v) =>
       v.id === selectedVoice ||
@@ -43,6 +44,18 @@ const SelectReadingVoiceModal = ({
       onClose();
     }
   };
+
+  if (voicesError) {
+    return (
+      <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
+        <View className="flex flex-1 items-center justify-center">
+          <Text className="font-[abeezee] text-red-600">
+            Failed to load voices. Please try again.
+          </Text>
+        </View>
+      </CustomModal>
+    );
+  }
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
@@ -75,14 +88,19 @@ const SelectReadingVoiceModal = ({
             </View>
             <Icon name="CircleCheck" color="green" />
           </View>
-          <SuspenseWrapper>
+          {voicesLoading ? (
+            <View className="flex items-center justify-center py-8">
+              <Text className="font-[abeezee] text-text">Loading voices...</Text>
+            </View>
+          ) : (
             <AvailableVoices
               selectedVoice={selectedVoice}
               setSelectedVoice={setSelectedVoice}
               storyId={storyId}
               deferSave={showSaveButton}
+              isGuest={isGuest}
             />
-          </SuspenseWrapper>
+          )}
           {showSaveButton && (
             <Pressable
               onPress={handleSave}
