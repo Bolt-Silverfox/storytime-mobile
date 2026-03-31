@@ -62,6 +62,15 @@ const AvailableVoices = ({
 
   const isVoiceLocked = !isPremium && !!lockedVoiceId;
 
+  // Helper to check if a voice is selected (selectedVoice can be id, elevenLabsVoiceId, or name)
+  const isVoiceSelected = (voice: VoiceData): boolean => {
+    return (
+      selectedVoice === voice.id ||
+      selectedVoice === voice.elevenLabsVoiceId ||
+      selectedVoice === voice.name
+    );
+  };
+
   const isVoiceAllowed = (voice: VoiceData): boolean => {
     // Guest users: only the default voice is allowed
     if (isGuest) {
@@ -106,7 +115,7 @@ const AvailableVoices = ({
 
   const handleSelectVoice = (voice: VoiceData) => {
     if (voiceAccessLoading) return;
-    if (voice.id === selectedVoice) return;
+    if (isVoiceSelected(voice)) return;
     if (!isVoiceAllowed(voice)) {
       if (isGuest) {
         // Guests need to sign up to change voices
@@ -178,7 +187,7 @@ const AvailableVoices = ({
           )}
           <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
             {data.map((voice) => {
-              const isSelected = voice.id === selectedVoice;
+              const isSelected = isVoiceSelected(voice);
               const isPreviewing = voice.id === previewingId;
               const allowed = isVoiceAllowed(voice);
               const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
@@ -190,7 +199,7 @@ const AvailableVoices = ({
               return (
                 <Pressable
                   onPress={() => {
-                    if (voice.id === selectedVoice) return;
+                    if (isVoiceSelected(voice)) return;
                     handleSelectVoice(voice);
                     if (allowed) {
                       handlePreview(voice.previewUrl, voice.id);
