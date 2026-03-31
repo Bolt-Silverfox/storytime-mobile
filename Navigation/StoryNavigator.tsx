@@ -32,7 +32,13 @@ const Stack = createNativeStackNavigator();
 
 const StoryNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: true,
+        headerBackTitle: 'Back',
+        headerTintColor: '#3b82f6',
+      }}
+    >
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
       <Stack.Screen name="readStory" component={ReadStoryScreen} />
       <Stack.Screen name="storyDeepLink" component={StoryDeepLinkScreen} />

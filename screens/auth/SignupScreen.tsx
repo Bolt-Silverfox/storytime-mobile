@@ -8,10 +8,10 @@ import {
   Text,
   View,
 } from "react-native";
-import { AppleButton } from "@invertase/react-native-apple-authentication";
 import colours from "../../colours";
 import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useAuth from "../../contexts/AuthContext";
@@ -19,7 +19,7 @@ import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const SignupScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
+  const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
     <SafeAreaWrapper variant="solid">
@@ -58,18 +58,21 @@ const SignupScreen = () => {
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
-                <AppleButton
-                  buttonStyle={AppleButton.Style.BLACK}
-                  buttonType={AppleButton.Type.SIGN_UP}
-                  style={defaultStyles.appleButton}
+                <Pressable
                   onPress={() => handleAppleAuth("signup")}
-                />
+                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  accessibilityLabel="Sign up with Apple"
+                  accessibilityRole="button"
+                  accessibilityHint="Opens Apple sign-up flow"
+                >
+                  <Image source={require("../../assets/icons/apple-icon.png")} />
+                </Pressable>
               )}
             </View>
             <Text style={{ ...styles.text }}>
               If you already have an account{" "}
               <Text
-                onPress={() => navigator.navigate("auth", { screen: "login" })}
+                onPress={() => (navigator as any).navigate("login")}
                 style={{ ...defaultStyles.defaultText, color: colours.link }}
               >
                 Log in
@@ -82,18 +85,14 @@ const SignupScreen = () => {
             </Text>
             <Text style={styles.footerText}>
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "termsOfService" })
-                }
+                onPress={() => (navigator as any).navigate("termsOfService")}
                 style={styles.footerLinkText}
               >
                 Terms and conditions
               </Text>{" "}
               and{" "}
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "privacyScreen" })
-                }
+                onPress={() => (navigator as any).navigate("privacyScreen")}
                 style={styles.footerLinkText}
               >
                 Privacy Policy

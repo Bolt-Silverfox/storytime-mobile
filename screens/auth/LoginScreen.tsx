@@ -10,12 +10,12 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { AppleButton } from "@invertase/react-native-apple-authentication";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
@@ -23,7 +23,7 @@ import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import CustomButton from "../../components/UI/CustomButton";
 
 const LoginScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
+  const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -62,9 +62,7 @@ const LoginScreen = () => {
                 placeholder="Enter your password"
               />
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "resetPassword" })
-                }
+                onPress={() => (navigator as any).navigate("resetPassword")}
                 className="text-right"
                 style={defaultStyles.linkText}
               >
@@ -98,21 +96,22 @@ const LoginScreen = () => {
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
-                <AppleButton
-                  buttonStyle={AppleButton.Style.BLACK}
-                  buttonType={AppleButton.Type.SIGN_IN}
-                  style={defaultStyles.appleButton}
+                <Pressable
                   onPress={() => handleAppleAuth("login")}
-                />
+                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  accessibilityLabel="Sign in with Apple"
+                  accessibilityRole="button"
+                  accessibilityHint="Opens Apple sign-in flow"
+                >
+                  <Image source={require("../../assets/icons/apple-icon.png")} />
+                </Pressable>
               )}
             </View>
             <View className="mt-10 flex flex-col gap-y-4">
               <Text style={{ ...styles.text }}>
                 Don't have an account?{" "}
                 <Text
-                  onPress={() =>
-                    navigator.navigate("auth", { screen: "signUp" })
-                  }
+                  onPress={() => (navigator as any).navigate("signUp")}
                   style={{ ...defaultStyles.defaultText, color: colours.link }}
                 >
                   Register
@@ -122,9 +121,7 @@ const LoginScreen = () => {
                 Signed up but haven't verified?{" "}
                 <Text
                   onPress={() =>
-                    navigator.navigate("auth", {
-                      screen: "requestEmailVerification",
-                    })
+                    (navigator as any).navigate("requestEmailVerification")
                   }
                   style={{ ...defaultStyles.defaultText, color: colours.link }}
                 >

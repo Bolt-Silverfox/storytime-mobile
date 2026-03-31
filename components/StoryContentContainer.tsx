@@ -46,6 +46,7 @@ type PropTypes = {
   failedParagraphs: number[];
   onRetryFailed: () => void;
   batchError?: string | null;
+  initialError?: string | null;
 };
 
 type DisplayOptions =
@@ -71,6 +72,7 @@ const StoryContentContainer = ({
   failedParagraphs,
   onRetryFailed,
   batchError,
+  initialError,
 }: PropTypes) => {
   const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -198,15 +200,19 @@ const StoryContentContainer = ({
               </Text>
             </View>
           )}
-          {(failedParagraphs.length > 0 || batchError) &&
+          {(failedParagraphs.length > 0 || batchError || isAudioError || initialError) &&
             !isStillGenerating && (
               <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
                 <View className="flex-1 flex-row items-center gap-x-2">
                   <Feather name="alert-circle" size={16} color="#dc2626" />
                   <Text className="flex-1 font-[abeezee] text-sm text-red-700">
-                    {batchError
-                      ? batchError
-                      : `${failedParagraphs.length} paragraph${failedParagraphs.length > 1 ? "s" : ""} failed to generate`}
+                    {initialError
+                      ? initialError
+                      : batchError
+                        ? batchError
+                        : failedParagraphs.length > 0
+                          ? `${failedParagraphs.length} paragraph${failedParagraphs.length > 1 ? "s" : ""} failed to generate`
+                          : "Audio unavailable. Please try again."}
                   </Text>
                 </View>
                 <TouchableOpacity

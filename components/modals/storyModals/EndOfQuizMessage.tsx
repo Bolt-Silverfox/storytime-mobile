@@ -1,8 +1,10 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, Pressable, Text, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../../Navigation/GuestNavigator";
 import Icon from "../../Icon";
 import CustomButton from "../../UI/CustomButton";
+import useAuth from "../../../contexts/AuthContext";
 
 type PropTypes = {
   isOpen: boolean;
@@ -16,7 +18,23 @@ const EndOfQuizMessage = ({
   storyTitle,
   results,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
+  const { isGuest } = useAuth();
+
+  const handleGoHome = () => {
+    if (isGuest) {
+      (navigator as GuestNavigatorProp).reset({
+        index: 0,
+        routes: [{ name: "guestTabs" }],
+      });
+    } else {
+      (navigator as ProtectedRoutesNavigationProp).replace("parents", {
+        screen: "home",
+        params: { screen: "homePage" },
+      });
+    }
+  };
+
   if (!isOpen) return null;
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
@@ -62,12 +80,7 @@ const EndOfQuizMessage = ({
       <View className="flex flex-col gap-y-3">
         <CustomButton
           text="Go home"
-          onPress={() =>
-            navigator.replace("parents", {
-              screen: "home",
-              params: { screen: "homePage" },
-            })
-          }
+          onPress={handleGoHome}
         />
         <CustomButton text="Read story again" transparent onPress={readAgain} />
       </View>

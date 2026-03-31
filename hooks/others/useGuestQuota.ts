@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { guestLogger } from "../../utils/logger";
 
 const GUEST_STORIES_KEY = "guestStoriesRead";
-const GUEST_FREE_LIMIT = 10;
+const GUEST_FREE_LIMIT = 3;
 
 /**
  * Device-local quota tracking for guest users.

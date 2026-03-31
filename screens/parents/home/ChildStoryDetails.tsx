@@ -18,6 +18,9 @@ import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../../hooks/useIsPremium";
+import useGuestQuota from "../../../hooks/others/useGuestQuota";
+import useAuth from "../../../contexts/AuthContext";
+import GuestQuotaBanner from "../../../components/GuestQuotaBanner";
 import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
@@ -49,16 +52,19 @@ const ChildStoryDetails = () => {
   const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
+  const { isGuest } = useAuth();
+  const guestQuota = useGuestQuota();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const { data: storyProgress, isFetching: isProgressFetching } =
     useGetStoryProgress(id);
   const hasExistingProgress = !!storyProgress;
-  const hasReachedLimit =
-    !isPremium &&
-    !hasExistingProgress &&
-    !isQuotaFetching &&
-    !isProgressFetching &&
-    (quota?.remaining ?? 0) === 0;
+  const hasReachedLimit = isGuest
+    ? guestQuota.isLoaded && !guestQuota.canAccessStory(id)
+    : !isPremium &&
+      !hasExistingProgress &&
+      !isQuotaFetching &&
+      !isProgressFetching &&
+      (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
   return (
@@ -212,27 +218,46 @@ const ChildStoryDetails = () => {
           />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          {!isPremium && quota && !hasReachedLimit && (
+          {isGuest && guestQuota.isLoaded && !hasReachedLimit && (
+            <GuestQuotaBanner remaining={guestQuota.remaining} />
+          )}
+          {!isGuest && !isPremium && quota && !hasReachedLimit && (
             <Text className="py-2 text-center font-[abeezee] text-xs text-text">
               {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
               remaining
             </Text>
           )}
           {hasReachedLimit ? (
-            <CustomButton
-              onPress={() => setIsSubscriptionModalOpen(true)}
-              text="Subscribe to Read"
-              ariaLabel="Subscribe to read more stories"
-            />
+            isGuest ? (
+              <CustomButton
+                onPress={() =>
+                  navigator.getParent()?.navigate("signUp" as never)
+                }
+                text="Sign Up to Read More"
+                ariaLabel="Sign up to read more stories"
+              />
+            ) : (
+              <CustomButton
+                onPress={() => setIsSubscriptionModalOpen(true)}
+                text="Subscribe to Read"
+                ariaLabel="Subscribe to read more stories"
+              />
+            )
           ) : (
             <CustomButton
-              onPress={() =>
+              disabled={isGuest && !guestQuota.isLoaded}
+              onPress={async () => {
+                if (isGuest) {
+                  if (!guestQuota.isLoaded) return;
+                  const granted = await guestQuota.tryAccessStory(id);
+                  if (!granted) return;
+                }
                 navigator.navigate("readStory", {
                   storyId: id,
                   mode: selectedMode,
                   page: params.page,
-                })
-              }
+                });
+              }}
               text="Start Reading"
               ariaLabel="Start reading this story"
             />

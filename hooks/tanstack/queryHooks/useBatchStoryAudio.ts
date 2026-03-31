@@ -4,6 +4,7 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
+import { audioLogger } from "../../../utils/logger";
 
 export type BatchParagraph = {
   index: number;
@@ -272,6 +273,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     failedParagraphs,
     retryFailed,
     batchError,
+    initialError: batchQuery.error?.message ?? null,
   };
 };
 
@@ -279,6 +281,7 @@ export default useBatchStoryAudio;
 
 const fetchBatchAudio = async (storyId: string, voiceId: string) => {
   try {
+    audioLogger.debug(`fetchBatchAudio called with storyId: ${storyId}, voiceId: ${voiceId}`);
     const request = await apiFetch(`${BASE_URL}/voice/story/audio/batch`, {
       method: "POST",
       body: JSON.stringify({ storyId, voiceId }),
@@ -288,6 +291,7 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
+    audioLogger.error(`fetchBatchAudio error:`, err);
     throw new Error(getErrorMessage(err));
   }
 };

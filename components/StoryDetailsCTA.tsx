@@ -5,12 +5,14 @@ import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFa
 import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
 import { FavouriteStory } from "../types";
 import Icon from "./Icon";
+import useAuth from "../contexts/AuthContext";
 
 type PropTypes = {
   story: FavouriteStory;
   setShowShareModal: Dispatch<SetStateAction<boolean>>;
 };
 const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
+  const { isGuest } = useAuth();
   const { data } = useQueryParentsFavourites();
 
   const isLiked = useMemo(
@@ -35,17 +37,19 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
         <Icon name="Share2" />
         <Text className="font-[abeezee] text-base text-black">Share</Text>
       </Pressable>
-      <Pressable
-        onPress={() => onToggle()}
-        className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
-      >
-        {isLiked ? (
-          <FontAwesome name="heart" size={24} color="red" />
-        ) : (
-          <FontAwesome name="heart-o" size={24} color="black" />
-        )}
-        <Text className="font-[abeezee] text-base text-black">Favourite</Text>
-      </Pressable>
+      {!isGuest && (
+        <Pressable
+          onPress={() => onToggle()}
+          className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
+        >
+          {isLiked ? (
+            <FontAwesome name="heart" size={24} color="red" />
+          ) : (
+            <FontAwesome name="heart-o" size={24} color="black" />
+          )}
+          <Text className="font-[abeezee] text-base text-black">Favourite</Text>
+        </Pressable>
+      )}
     </View>
   );
 };

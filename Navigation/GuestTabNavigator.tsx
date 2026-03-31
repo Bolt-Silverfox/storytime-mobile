@@ -72,7 +72,7 @@ const GuestTabNavigator = () => {
           tabPress: (e) => {
             e.preventDefault();
             // Navigate back to auth flow for registration
-            navigation.getParent()?.navigate("auth", { screen: "signUp" });
+            navigation.getParent()?.navigate("signUp");
           },
         })}
       />
