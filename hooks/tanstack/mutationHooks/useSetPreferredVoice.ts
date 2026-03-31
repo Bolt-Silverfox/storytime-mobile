@@ -20,9 +20,6 @@ const useSetPreferredVoice = () => {
   const queryClient = useQueryClient();
   const { isGuest } = useAuth();
 
-  // Default voice ID for guest users (matches VoiceType.NIMBUS)
-  const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
-
   return useMutation({
     mutationFn: async (voiceId: string) => {
       // Guests can only use the default voice
@@ -30,10 +27,6 @@ const useSetPreferredVoice = () => {
         // For guests, voiceId should be the internal DB ID, not ElevenLabs ID
         // We allow any voiceId since the UI already restricts to default
         // Just return success without making an API call
-        return { success: true };
-      }
-        // For guests, just return success without making an API call
-        // The voice selection is handled locally in the component
         return { success: true };
       }
 
