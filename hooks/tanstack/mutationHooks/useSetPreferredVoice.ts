@@ -6,6 +6,9 @@ import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
 
+// Default voice ID for guest users
+const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
+
 const CRYPTIC_PATTERNS = [
   "request failed",
   "cannot read prop",
@@ -24,6 +27,11 @@ const useSetPreferredVoice = () => {
     mutationFn: async (voiceId: string) => {
       // Guests can only use the default voice
       if (isGuest) {
+        if (voiceId !== GUEST_DEFAULT_VOICE_ID) {
+          throw new Error(
+            "Guest users can only use the default voice. Sign in to access all voices.",
+          );
+        }
         // For guests, voiceId should be the internal DB ID, not ElevenLabs ID
         // We allow any voiceId since the UI already restricts to default
         // Just return success without making an API call
