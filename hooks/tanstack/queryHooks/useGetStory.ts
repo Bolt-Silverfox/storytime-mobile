@@ -10,19 +10,23 @@ const useGetStory = (storyId: string) => {
   const queryClient = useQueryClient();
 
   return queryOptions({
-    queryKey: ["story", storyId, user?.id],
+    queryKey: ["story", storyId, isGuest ? "guest" : "user", user?.id ?? null],
     queryFn: async () => {
       try {
         // For guests, use a different endpoint
         if (isGuest) {
-          const request = await apiFetch(`${BASE_URL}/guest/stories/${storyId}`, {
-            method: "GET",
-            passThroughStatuses: [403, 401],
-          });
+          const request = await apiFetch(
+            `${BASE_URL}/guest/stories/${storyId}`,
+            {
+              method: "GET",
+              passThroughStatuses: [403, 401],
+            }
+          );
           const response: QueryResponse<Story> = await request.json();
           if (response.statusCode === 403) {
             throw new Error(
-              response.message || "You have reached your story limit. Sign up to continue reading!"
+              response.message ||
+                "You have reached your story limit. Sign up to continue reading!"
             );
           }
           if (!response.success) throw new Error(response.message);
@@ -39,7 +43,8 @@ const useGetStory = (storyId: string) => {
         const response: QueryResponse<Story> = await request.json();
         if (response.statusCode === 403) {
           throw new Error(
-            response.message || "You have reached your story limit. Sign up to continue reading!"
+            response.message ||
+              "You have reached your story limit. Sign up to continue reading!"
           );
         }
         if (!response.success) throw new Error(response.message);
