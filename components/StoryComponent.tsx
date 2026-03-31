@@ -99,7 +99,7 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
-  // For guests, return the elevenLabsVoiceId directly (e.g., "NIMBUS")
+  // For guests, return the internal voice ID (DB row ID) for the default voice
   const getGuestVoiceId = useCallback(() => {
     if (!isGuest) return "NIMBUS";
     if (!availableVoices) {
@@ -109,7 +109,7 @@ const StoryComponent = ({
     const nimbusVoice = availableVoices.find(
       (v) => v.elevenLabsVoiceId === "NIMBUS"
     );
-    const result = nimbusVoice?.elevenLabsVoiceId ?? "NIMBUS";
+    const result = nimbusVoice?.id ?? "NIMBUS";
     audioLogger.debug(`getGuestVoiceId: returning ${result}`);
     return result;
   }, [isGuest, availableVoices]);
@@ -277,6 +277,13 @@ const StoryComponent = ({
             storyId={storyId}
             quota={quota}
             mode="blocking"
+            onClose={() => {
+              // Close modal and navigate back
+              (navigation as any).reset({
+                index: 0,
+                routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+              });
+            }}
           />
         </SafeAreaWrapper>
       );
