@@ -181,6 +181,19 @@ const ProfileScreen: FC = () => {
             <MenuItem
               icon={
                 <Feather
+                  name="refresh-cw"
+                  color="#EC4007"
+                  size={isTablet ? 20 : 18}
+                />
+              }
+              label="Clear Guest Session (Debug)"
+              isTablet={isTablet}
+              onPress={handleClearGuestSession}
+              textColor="#DC2626"
+            />
+            <MenuItem
+              icon={
+                <Feather
                   name="trash"
                   color="#EC4007"
                   size={isTablet ? 20 : 18}

@@ -108,7 +108,7 @@ const StoryComponent = ({
       );
       return "NIMBUS";
     }
-    const nimbusVoice = availableVoices.find((v) => v.elevenLabsVoiceId === "NIMBUS");
+    const nimbusVoice = availableVoices.find((v) => v.name === "NIMBUS");
     const result = nimbusVoice?.id ?? "NIMBUS";
     audioLogger.debug(`getGuestVoiceId: returning ${result}`);
     return result;
