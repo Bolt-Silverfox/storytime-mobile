@@ -5,6 +5,7 @@ import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
+const GUEST_DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX";
 
 
 const CRYPTIC_PATTERNS = [
