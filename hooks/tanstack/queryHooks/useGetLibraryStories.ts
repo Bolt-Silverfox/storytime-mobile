@@ -62,7 +62,7 @@ const getLibraryStories = async (
     const filtered = response.data.data
       .map((story) => ({
         ...story,
-        id: story.storyId || story.id, // Map storyId to id for compatibility
+        id: (story as LibraryStory & { storyId?: string }).storyId || story.id, // Map storyId to id for compatibility
       }))
       .filter((story) =>
         type === "completed" ? story.progress >= 100 : story.progress < 100
