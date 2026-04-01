@@ -33,7 +33,7 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
-  const { user, isLoading, logout } = useAuth();
+  const { user, isLoading, logout, isGuest } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
@@ -163,7 +163,7 @@ const ProfileScreen: FC = () => {
               isTablet={isTablet}
               onPress={() => setOpenModal("logout")}
             />
-            {__DEV__ && (
+            {__DEV__ && isGuest && (
               <MenuItem
                 icon={
                   <Feather
