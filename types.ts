@@ -356,6 +356,7 @@ type LibraryStory = Pick<
   | "durationSeconds"
   | "createdAt"
   | "categories"
+  | "readStatus"
 > & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
 const libraryFilters = ["ongoing", "completed"] as const;

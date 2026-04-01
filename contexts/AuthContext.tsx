@@ -333,10 +333,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsGuest(false);
     setGuestMode(false);
     setGuestSessionId(null);
+    setGuestDeviceId(null);
     await AsyncStorage.multiRemove([
       "guestMode",
       "guestSessionId",
       "guestSessionCreatedAt",
+      "guestDeviceId",
+      "guestStoriesRead",
     ]);
   }, []);
 

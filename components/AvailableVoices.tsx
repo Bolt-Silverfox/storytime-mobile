@@ -12,8 +12,8 @@ import useToast from "../contexts/ToastContext";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
 
-// Default voice ID for guest users
-const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
+// Default voice ID for guest users (matches the ElevenLabs ID from backend)
+const GUEST_DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX";
 
 const AvailableVoices = ({
   selectedVoice,
