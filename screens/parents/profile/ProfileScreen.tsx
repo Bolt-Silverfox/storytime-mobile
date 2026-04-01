@@ -163,19 +163,21 @@ const ProfileScreen: FC = () => {
               isTablet={isTablet}
               onPress={() => setOpenModal("logout")}
             />
-            <MenuItem
-              icon={
-                <Feather
-                  name="refresh-cw"
-                  color="#EC4007"
-                  size={isTablet ? 20 : 18}
-                />
-              }
-              label="Clear Guest Session (Debug)"
-              isTablet={isTablet}
-              onPress={handleClearGuestSession}
-              textColor="#DC2626"
-            />
+            {__DEV__ && (
+              <MenuItem
+                icon={
+                  <Feather
+                    name="refresh-cw"
+                    color="#EC4007"
+                    size={isTablet ? 20 : 18}
+                  />
+                }
+                label="Clear Guest Session (Debug)"
+                isTablet={isTablet}
+                onPress={handleClearGuestSession}
+                textColor="#DC2626"
+              />
+            )}
             <MenuItem
               icon={
                 <Feather

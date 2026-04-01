@@ -224,6 +224,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             } else {
               // Session expired or missing — create a fresh one
               try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
                 const res = await fetch(`${BASE_URL}/guest/session`, {
                   method: "POST",
                   headers: {
@@ -232,7 +234,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
                       : {}),
                   },
+                  signal: controller.signal,
                 });
+                clearTimeout(timeout);
                 const data = await res.json();
                 if (data?.data?.sessionId) {
                   await AsyncStorage.setItem(
@@ -339,7 +343,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       "guestSessionId",
       "guestSessionCreatedAt",
       "guestDeviceId",
-      "guestStoriesRead",
     ]);
   }, []);
 
@@ -374,6 +377,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Create backend guest session for progress tracking
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(`${BASE_URL}/guest/session`, {
         method: "POST",
         headers: {
@@ -382,7 +387,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
             : {}),
         },
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const data = await response.json();
       if (data?.data?.sessionId) {
         await AsyncStorage.setItem("guestSessionId", data.data.sessionId);

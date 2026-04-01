@@ -42,7 +42,7 @@ const useGetVoiceAccess = (storyId?: string) => {
               unlimited: false,
               defaultVoice: "NIMBUS",
               maxVoices: 1,
-              lockedVoiceId: "NIMBUS",
+              lockedVoiceId: null,
               elevenLabsTrialStoryId: null,
               usedVoicesForStory: [],
               maxVoicesPerStory: 1,

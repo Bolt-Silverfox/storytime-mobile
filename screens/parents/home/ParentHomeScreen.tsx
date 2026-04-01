@@ -120,7 +120,7 @@ const ParentHomeScreen = () => {
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-bgLight px-4">
         <ParentsHomeScreenHeader />
-        {isGuest && (
+        {__DEV__ && isGuest && (
           <TouchableOpacity
             onPress={handleClearGuestSession}
             className="mb-4 self-end rounded-full bg-red-100 px-4 py-2"
