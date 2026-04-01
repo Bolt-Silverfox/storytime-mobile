@@ -6,8 +6,6 @@ import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
 
-// Default voice ID for guest users (VoiceType enum key)
-const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
 
 const CRYPTIC_PATTERNS = [
   "request failed",
