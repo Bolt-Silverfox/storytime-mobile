@@ -103,38 +103,45 @@ const StoryComponent = ({
   const getGuestVoiceId = useCallback(() => {
     if (!isGuest) return "NIMBUS";
     if (!availableVoices) {
-      audioLogger.debug("getGuestVoiceId: availableVoices not loaded, returning NIMBUS");
+      audioLogger.debug(
+        "getGuestVoiceId: availableVoices not loaded, returning NIMBUS"
+      );
       return "NIMBUS";
     }
-    const nimbusVoice = availableVoices.find(
-      (v) => v.id === "NIMBUS"
-    );
+    const nimbusVoice = availableVoices.find((v) => v.id === "NIMBUS");
     const result = nimbusVoice?.id ?? "NIMBUS";
     audioLogger.debug(`getGuestVoiceId: returning ${result}`);
     return result;
   }, [isGuest, availableVoices]);
 
   // Map voice ID to elevenLabsVoiceId for audio API
-  const getVoiceIdForAudio = useCallback((voiceId: string | null) => {
-    if (!voiceId) return null;
-    // Check if voiceId is an internal ID that needs to be mapped
-    const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
-    if (voice) {
-      audioLogger.debug(`getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`);
-      return voice.elevenLabsVoiceId;
-    }
-    // If not found in availableVoices, check if it's an elevenLabsVoiceId
-    const voiceByElevenLabsId = (availableVoices ?? []).find(
-      (v) => v.elevenLabsVoiceId === voiceId
-    );
-    if (voiceByElevenLabsId) {
-      audioLogger.debug(`getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`);
-      return voiceByElevenLabsId.elevenLabsVoiceId;
-    }
-    // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
-    audioLogger.debug(`getVoiceIdForAudio: fallback to ${voiceId}`);
-    return voiceId;
-  }, [availableVoices]);
+  const getVoiceIdForAudio = useCallback(
+    (voiceId: string | null) => {
+      if (!voiceId) return null;
+      // Check if voiceId is an internal ID that needs to be mapped
+      const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
+      if (voice) {
+        audioLogger.debug(
+          `getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`
+        );
+        return voice.elevenLabsVoiceId;
+      }
+      // If not found in availableVoices, check if it's an elevenLabsVoiceId
+      const voiceByElevenLabsId = (availableVoices ?? []).find(
+        (v) => v.elevenLabsVoiceId === voiceId
+      );
+      if (voiceByElevenLabsId) {
+        audioLogger.debug(
+          `getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`
+        );
+        return voiceByElevenLabsId.elevenLabsVoiceId;
+      }
+      // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
+      audioLogger.debug(`getVoiceIdForAudio: fallback to ${voiceId}`);
+      return voiceId;
+    },
+    [availableVoices]
+  );
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
@@ -178,7 +185,9 @@ const StoryComponent = ({
     batchError,
     initialError,
   } = useBatchStoryAudio(storyId, getVoiceIdForAudio(debouncedVoice));
-  audioLogger.debug(`useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`);
+  audioLogger.debug(
+    `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`
+  );
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
   const isVoiceTransitioning = selectedVoice !== debouncedVoice;
@@ -205,7 +214,9 @@ const StoryComponent = ({
     hasInitializedVoice.current = true;
     // For guests, use the mapped voice ID, otherwise use preferred voice ID or default
     const guestVoiceId = getGuestVoiceId();
-    audioLogger.debug(`Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`);
+    audioLogger.debug(
+      `Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`
+    );
     setSelectedVoice(preferredVoice?.id ?? guestVoiceId);
 
     // Auto-show voice selection modal for first-time users (no preferred voice).
@@ -222,7 +233,12 @@ const StoryComponent = ({
     return () => {
       mounted = false;
     };
-  }, [preferredVoice, isVoiceFetched, getVoiceModalDismissedKey, getGuestVoiceId]);
+  }, [
+    preferredVoice,
+    isVoiceFetched,
+    getVoiceModalDismissedKey,
+    getGuestVoiceId,
+  ]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
@@ -279,7 +295,7 @@ const StoryComponent = ({
             mode="blocking"
             onClose={() => {
               // Close modal and navigate back
-              (navigation as any).reset({
+              (navigator as any).reset({
                 index: 0,
                 routes: [{ name: isGuest ? "guestTabs" : "parents" }],
               });
