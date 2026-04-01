@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { FlatList, RefreshControl, StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
@@ -74,7 +74,7 @@ const ParentHomeScreen = () => {
         'REACT_QUERY_OFFLINE_CACHE', // Clear React Query offline cache
       ]);
       // Clear React Query cache in memory
-      await queryClient.clear();
+      queryClient.clear();
       // Reset guest mode state
       setGuestMode(false);
       setGuestSessionId(null);
