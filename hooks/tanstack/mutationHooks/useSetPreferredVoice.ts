@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
+import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
+
 
 const CRYPTIC_PATTERNS = [
   "request failed",
@@ -22,16 +23,11 @@ const useSetPreferredVoice = () => {
 
   return useMutation({
     mutationFn: async (voiceId: string) => {
-      // Guests can only use the default voice
+      // Guests: the UI already restricts to the default voice, so just no-op
       if (isGuest) {
-        if (voiceId !== GUEST_DEFAULT_VOICE_ID) {
-          throw new Error(
-            "Guest users can only use the default voice. Sign in to access all voices.",
-          );
+        if (__DEV__ && voiceId) {
+          console.warn(`Guest voice mutation called with voiceId: ${voiceId}`);
         }
-        // For guests, voiceId should be the internal DB ID, not ElevenLabs ID
-        // We allow any voiceId since the UI already restricts to default
-        // Just return success without making an API call
         return { success: true };
       }
 

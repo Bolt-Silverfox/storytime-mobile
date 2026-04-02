@@ -13,6 +13,11 @@ import {
   QueryResponse,
 } from "../../../types";
 
+/** Guest API response includes `storyId` alongside the standard LibraryStory fields. */
+interface GuestLibraryStory extends LibraryStory {
+  storyId?: string;
+}
+
 const FILTER_PATH: Record<LibraryFilterType, string> = {
   completed: "completed",
   ongoing: "continue-reading",
@@ -59,9 +64,17 @@ const getLibraryStories = async (
 
   // Guest endpoint returns all stories; filter client-side by completion status
   if (isGuest && response.data?.data) {
-    const filtered = response.data.data.filter((story) =>
-      type === "completed" ? story.progress >= 100 : story.progress < 100
-    );
+    const guestStories = response.data.data as GuestLibraryStory[];
+    const filtered = guestStories
+      .map((story) => ({
+        ...story,
+        id: story.storyId || story.id, // Map storyId to id for compatibility
+      }))
+      .filter((story) =>
+        type === "completed"
+          ? (story.progress ?? 0) >= 100
+          : (story.progress ?? 0) < 100
+      );
     return { ...response.data, data: filtered };
   }
 

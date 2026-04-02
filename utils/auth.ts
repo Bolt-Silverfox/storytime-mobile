@@ -1,6 +1,12 @@
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 
+async function parseErrorResponse(response: Response, fallbackMessage: string): Promise<never> {
+  let errorData;
+  try { errorData = await response.json(); } catch { errorData = null; }
+  throw new Error(errorData?.message || fallbackMessage);
+}
+
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 /** Headers for unauthenticated endpoints that still require the API key. */
@@ -24,8 +30,7 @@ const auth = {
       body: JSON.stringify({ email, password }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
+      await parseErrorResponse(response, "Login failed");
     }
     return await response.json();
   },
@@ -42,10 +47,9 @@ const auth = {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Registration failed");
+      await parseErrorResponse(response, "Registration failed");
     }
-    return response.json();
+    return await response.json();
   },
 
   verifyEmail: async (token: string) => {
@@ -55,8 +59,7 @@ const auth = {
       body: JSON.stringify({ token }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Email verification failed");
+      await parseErrorResponse(response, "Email verification failed");
     }
     return await response.json();
   },
@@ -68,8 +71,7 @@ const auth = {
       body: JSON.stringify({ email }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to send verification email");
+      await parseErrorResponse(response, "Failed to send verification email");
     }
     const data = await response.json();
     return data;
@@ -82,8 +84,7 @@ const auth = {
       body: JSON.stringify({ email }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to request password reset");
+      await parseErrorResponse(response, "Failed to request password reset");
     }
     return await response.json();
   },
@@ -95,8 +96,7 @@ const auth = {
       body: JSON.stringify({ email, token }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to validate reset token");
+      await parseErrorResponse(response, "Failed to validate reset token");
     }
     return await response.json();
   },
