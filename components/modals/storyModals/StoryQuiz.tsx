@@ -35,13 +35,15 @@ const StoryQuiz = ({
       return;
     }
 
+    if (!currentQuestion) return;
+
     const questionIndex = activeTab;
     if (submittedRef.current.has(questionIndex)) return;
     submittedRef.current.add(questionIndex);
 
     submitAnswer(
       {
-        questionId: currentQuestion?.id,
+        questionId: currentQuestion.id,
         storyId,
         selectedOption,
       },
