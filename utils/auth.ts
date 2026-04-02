@@ -24,8 +24,9 @@ const auth = {
       body: JSON.stringify({ email, password }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Login failed");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Login failed");
     }
     return await response.json();
   },
@@ -42,8 +43,9 @@ const auth = {
       body: JSON.stringify(data),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Registration failed");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Registration failed");
     }
     return response.json();
   },
@@ -55,8 +57,9 @@ const auth = {
       body: JSON.stringify({ token }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Email verification failed");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Email verification failed");
     }
     return await response.json();
   },
@@ -68,8 +71,9 @@ const auth = {
       body: JSON.stringify({ email }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to send verification email");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Failed to send verification email");
     }
     const data = await response.json();
     return data;
@@ -82,8 +86,9 @@ const auth = {
       body: JSON.stringify({ email }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to request password reset");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Failed to request password reset");
     }
     return await response.json();
   },
@@ -95,8 +100,9 @@ const auth = {
       body: JSON.stringify({ email, token }),
     });
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to validate reset token");
+      let errorData;
+      try { errorData = await response.json(); } catch { errorData = null; }
+      throw new Error(errorData?.message || "Failed to validate reset token");
     }
     return await response.json();
   },

@@ -29,6 +29,7 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
+import { setGuestMode, setGuestSessionId, setGuestDeviceId } from "../../../apiFetch";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
@@ -52,6 +53,10 @@ const ProfileScreen: FC = () => {
         'guestDeviceId',
         'guestStoriesRead', // Local quota tracking
       ]);
+      // Reset in-memory guest state
+      setGuestMode(false);
+      setGuestSessionId(null);
+      setGuestDeviceId(null);
       Alert.alert('Success', 'Guest session cleared. You can now test as a new guest.');
     } catch (error) {
       Alert.alert('Error', 'Failed to clear guest session.');
