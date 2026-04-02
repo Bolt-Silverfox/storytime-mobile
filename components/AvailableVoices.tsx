@@ -112,7 +112,7 @@ const AvailableVoices = ({
   };
 
   const handleSelectVoice = (voice: VoiceData) => {
-    if (voiceAccessLoading) return;
+    if (!isGuest && voiceAccessLoading) return;
     if (isVoiceSelected(voice)) return;
     if (!isVoiceAllowed(voice)) {
       if (isGuest) {
