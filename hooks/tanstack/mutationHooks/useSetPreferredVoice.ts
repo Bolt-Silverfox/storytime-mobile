@@ -6,6 +6,7 @@ import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
 
+
 const CRYPTIC_PATTERNS = [
   "request failed",
   "cannot read prop",

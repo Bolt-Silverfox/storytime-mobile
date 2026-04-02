@@ -43,7 +43,7 @@ const StoryQuiz = ({
 
     submitAnswer(
       {
-        questionId: currentQuestion.id,
+        questionId: currentQuestion?.id,
         storyId,
         selectedOption,
       },

@@ -59,9 +59,16 @@ const getLibraryStories = async (
 
   // Guest endpoint returns all stories; filter client-side by completion status
   if (isGuest && response.data?.data) {
-    const filtered = response.data.data.filter((story) =>
-      type === "completed" ? story.progress >= 100 : story.progress < 100
-    );
+    const filtered = response.data.data
+      .map((story) => ({
+        ...story,
+        id: (story as LibraryStory & { storyId?: string }).storyId || story.id, // Map storyId to id for compatibility
+      }))
+      .filter((story) =>
+        type === "completed"
+          ? (story.progress ?? 0) >= 100
+          : (story.progress ?? 0) < 100
+      );
     return { ...response.data, data: filtered };
   }
 
