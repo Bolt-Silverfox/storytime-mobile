@@ -36,6 +36,10 @@ const SelectReadingVoiceModal = ({
   );
 
   const handleSave = () => {
+    if (isGuest) {
+      onClose();
+      return;
+    }
     if (selectedVoice) {
       markPreferred(selectedVoice, {
         onSuccess: () => onClose(),

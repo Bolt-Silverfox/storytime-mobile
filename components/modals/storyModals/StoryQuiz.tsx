@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Alert, Image, Pressable, Text, View } from "react-native";
 import CustomButton from "../../UI/CustomButton";
 import { Story } from "../../../types";
@@ -26,16 +26,22 @@ const StoryQuiz = ({
   const { mutate: submitAnswer } = useSubmitQuizAnswer();
   const submittedRef = useRef<Set<number>>(new Set());
 
+  useEffect(() => {
+    if (!isOpen) return;
+
+    setActiveTab(0);
+    setSelectedOption(null);
+    setResults(new Array(questions?.length ?? 0).fill(null));
+    submittedRef.current.clear();
+  }, [isOpen, storyId, questions?.length]);
+
   const isLastQuestion = activeTab === (questions?.length ?? 0) - 1;
-  const currentQuestion = questions?.[activeTab];
 
   const handleNext = () => {
     if (selectedOption === null) {
       Alert.alert("Select a valid option");
       return;
     }
-
-    if (!currentQuestion) return;
 
     const questionIndex = activeTab;
     if (submittedRef.current.has(questionIndex)) return;
@@ -54,12 +60,18 @@ const StoryQuiz = ({
       }
     );
 
+    // Compute updated results inline to avoid stale state from React batching
+    const updatedResults = results.map((r, idx) =>
+      idx === activeTab ? selectedOption === currentQuestion.correctOption : r
+    );
+    setResults(updatedResults);
+
     if (isLastQuestion) {
       submittedRef.current.clear();
       setActiveTab(0);
       setSelectedOption(null);
       onClose();
-      setQuizResults(results);
+      setQuizResults(updatedResults);
       return;
     }
     setActiveTab((a) => a + 1);
@@ -67,6 +79,8 @@ const StoryQuiz = ({
   };
 
   if (!isOpen || !questions || questions.length === 0) return null;
+
+  const currentQuestion = questions[activeTab];
 
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
@@ -93,14 +107,6 @@ const StoryQuiz = ({
                 key={option}
                 onPress={() => {
                   setSelectedOption(index);
-                  setResults((result) =>
-                    result.map((r, idx) => {
-                      if (idx !== activeTab) return r;
-                      return index === currentQuestion.correctOption
-                        ? true
-                        : false;
-                    })
-                  );
                 }}
                 className="flex-row items-center gap-x-5 rounded-2xl px-4 py-1"
               >
