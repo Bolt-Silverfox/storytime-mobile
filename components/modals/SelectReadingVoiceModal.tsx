@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, lazy, SetStateAction } from "react";
-import { Pressable, ScrollView, Text, View } from "react-native";
+import { Dispatch, lazy, SetStateAction, Suspense } from "react";
+import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
 import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useSetPreferredVoice from "../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import useAuth from "../../contexts/AuthContext";
@@ -93,13 +93,15 @@ const SelectReadingVoiceModal = ({
               <Text className="font-[abeezee] text-text">Loading voices...</Text>
             </View>
           ) : (
-            <AvailableVoices
-              selectedVoice={selectedVoice}
-              setSelectedVoice={setSelectedVoice}
-              storyId={storyId}
-              deferSave={showSaveButton}
-              isGuest={isGuest}
-            />
+            <Suspense fallback={<ActivityIndicator className="py-8" />}>
+              <AvailableVoices
+                selectedVoice={selectedVoice}
+                setSelectedVoice={setSelectedVoice}
+                storyId={storyId}
+                deferSave={showSaveButton}
+                isGuest={isGuest}
+              />
+            </Suspense>
           )}
           {showSaveButton && (
             <Pressable
