@@ -209,7 +209,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Restore device ID for quota tracking
             const deviceId = await getOrCreateDeviceId();
             setGuestDeviceId(deviceId);
-            // Restore guest session ID, or create new if expired (7-day TTL)
+            // Refresh session if older than 6 days (1 day before 7-day TTL expiry)
             const storedSessionId =
               await AsyncStorage.getItem("guestSessionId");
             const sessionCreatedAt =
@@ -648,7 +648,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAppleAuth = async (mode: "signup" | "login" = "login") => {
+  const handleAppleAuth = async (_mode: "signup" | "login" = "login") => {
     try {
       setIsLoading(true);
 

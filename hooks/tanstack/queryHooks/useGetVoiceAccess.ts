@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useAuth from "../../../contexts/AuthContext";
@@ -42,7 +42,7 @@ const useGetVoiceAccess = (storyId?: string) => {
               unlimited: false,
               defaultVoice: "NIMBUS",
               maxVoices: 1,
-              lockedVoiceId: null,
+              lockedVoiceId: GUEST_DEFAULT_VOICE_ID,
               elevenLabsTrialStoryId: null,
               usedVoicesForStory: [],
               maxVoicesPerStory: 1,

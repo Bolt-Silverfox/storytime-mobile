@@ -1,13 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
-
-// Default voice ID for guest users (VoiceType enum key)
-const GUEST_DEFAULT_VOICE_ID = "NIMBUS";
 
 const CRYPTIC_PATTERNS = [
   "request failed",

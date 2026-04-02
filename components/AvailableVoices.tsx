@@ -3,6 +3,7 @@ import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Image, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { COLORS } from "../constants/ui";
+import { GUEST_DEFAULT_VOICE_ID } from "../constants";
 import { audioLogger } from "../utils/logger";
 import { AvailableVoices as VoiceData } from "../types";
 import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
@@ -11,9 +12,6 @@ import useGetVoiceAccess from "../hooks/tanstack/queryHooks/useGetVoiceAccess";
 import useToast from "../contexts/ToastContext";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
-
-// Default voice ID for guest users (matches the ElevenLabs ID from backend)
-const GUEST_DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX";
 
 const AvailableVoices = ({
   selectedVoice,

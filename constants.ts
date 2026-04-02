@@ -44,6 +44,9 @@ const SHARE_WEB_URL = "https://www.storytimeapp.me";
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;
 
+/** Default ElevenLabs voice ID assigned to guest users. */
+const GUEST_DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX";
+
 export {
   emailRegex,
   BASE_URL,
@@ -58,4 +61,5 @@ export {
   SHARE_WEB_URL,
   CONTROLS_FADE_MS,
   DEFAULT_CURSOR_PAGE_SIZE,
+  GUEST_DEFAULT_VOICE_ID,
 };
