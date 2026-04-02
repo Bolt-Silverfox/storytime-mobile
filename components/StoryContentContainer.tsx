@@ -95,7 +95,7 @@ const StoryContentContainer = ({
     }
   }, [controlsVisible]);
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array(story.questions.length).fill(null)
+    new Array(story?.questions?.length ?? 0).fill(null)
   );
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
@@ -200,7 +200,10 @@ const StoryContentContainer = ({
               </Text>
             </View>
           )}
-          {(failedParagraphs.length > 0 || batchError || isAudioError || initialError) &&
+          {(failedParagraphs.length > 0 ||
+            batchError ||
+            isAudioError ||
+            initialError) &&
             !isStillGenerating && (
               <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
                 <View className="flex-1 flex-row items-center gap-x-2">

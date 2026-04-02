@@ -18,7 +18,9 @@ import {
   Text,
   useWindowDimensions,
   View,
+  Alert,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import colours from "../../../colours";
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
@@ -40,6 +42,21 @@ const ProfileScreen: FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
+
+  const handleClearGuestSession = async () => {
+    try {
+      await AsyncStorage.multiRemove([
+        'guestSessionId',
+        'guestSessionCreatedAt',
+        'guestMode',
+        'guestDeviceId',
+        'guestStoriesRead', // Local quota tracking
+      ]);
+      Alert.alert('Success', 'Guest session cleared. You can now test as a new guest.');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to clear guest session.');
+    }
+  };
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -146,6 +163,21 @@ const ProfileScreen: FC = () => {
               isTablet={isTablet}
               onPress={() => setOpenModal("logout")}
             />
+            {__DEV__ && (
+              <MenuItem
+                icon={
+                  <Feather
+                    name="refresh-cw"
+                    color="#EC4007"
+                    size={isTablet ? 20 : 18}
+                  />
+                }
+                label="Clear Guest Session (Debug)"
+                isTablet={isTablet}
+                onPress={handleClearGuestSession}
+                textColor="#DC2626"
+              />
+            )}
             <MenuItem
               icon={
                 <Feather

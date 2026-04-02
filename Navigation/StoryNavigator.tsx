@@ -34,9 +34,7 @@ const StoryNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: true,
-        headerBackTitle: 'Back',
-        headerTintColor: '#3b82f6',
+        headerShown: false,
       }}
     >
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />

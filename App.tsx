@@ -28,6 +28,7 @@ import RootNavigator, {
   RootNavigatorParamList,
 } from "./Navigation/RootNavigator";
 import { ToastProvider } from "./contexts/ToastContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 
 const prefix = Linking.createURL("/");
 
@@ -124,25 +125,27 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <ToastProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer
-              ref={navigationRef}
-              linking={linking}
-              onReady={() => {
-                reactNavigationIntegration.registerNavigationContainer(
-                  navigationRef
-                );
-              }}
-            >
-              <NotificationHandler>
-                <RootNavigator />
-              </NotificationHandler>
-            </NavigationContainer>
-          </QueryClientProvider>
-        </ToastProvider>
-      </AuthProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <QueryClientProvider client={queryClient}>
+              <NavigationContainer
+                ref={navigationRef}
+                linking={linking}
+                onReady={() => {
+                  reactNavigationIntegration.registerNavigationContainer(
+                    navigationRef
+                  );
+                }}
+              >
+                <NotificationHandler>
+                  <RootNavigator />
+                </NotificationHandler>
+              </NavigationContainer>
+            </QueryClientProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }
