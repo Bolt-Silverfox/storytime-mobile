@@ -233,6 +233,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     ...(process.env.EXPO_PUBLIC_API_KEY
                       ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
                       : {}),
+                    ...(deviceId
+                      ? { "X-Guest-Device-Id": deviceId }
+                      : {}),
                   },
                   signal: controller.signal,
                 });
@@ -352,7 +355,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     if (!deviceId) {
       // Use platform-specific device ID, fallback to UUID
       if (Platform.OS === "android") {
-        deviceId = Application.getAndroidId();
+        const androidId = Application.getAndroidId();
+        deviceId = androidId ?? uuidv4();
       } else if (Platform.OS === "ios") {
         const iosId = await Application.getIosIdForVendorAsync();
         deviceId = iosId || uuidv4();
@@ -385,6 +389,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
           "Content-Type": "application/json",
           ...(process.env.EXPO_PUBLIC_API_KEY
             ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+            : {}),
+          ...(deviceId
+            ? { "X-Guest-Device-Id": deviceId }
             : {}),
         },
         signal: controller.signal,
@@ -426,7 +433,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       clearSentryUser();
       clearCrashlyticsUser();
     }
-  }, []);
+  }, [exitGuestMode]);
 
   const login: AuthFnTypes["login"] = async ({
     email,
