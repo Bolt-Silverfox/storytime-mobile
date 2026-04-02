@@ -209,7 +209,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Restore device ID for quota tracking
             const deviceId = await getOrCreateDeviceId();
             setGuestDeviceId(deviceId);
-            // Restore guest session ID, or create new if expired (7-day TTL)
+            // Refresh session if older than 6 days (1 day before 7-day TTL expiry)
             const storedSessionId =
               await AsyncStorage.getItem("guestSessionId");
             const sessionCreatedAt =
@@ -224,6 +224,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             } else {
               // Session expired or missing — create a fresh one
               try {
+                const controller = new AbortController();
+                const timeout = setTimeout(() => controller.abort(), 5000);
                 const res = await fetch(`${BASE_URL}/guest/session`, {
                   method: "POST",
                   headers: {
@@ -232,7 +234,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
                       : {}),
                   },
+                  signal: controller.signal,
                 });
+                clearTimeout(timeout);
                 const data = await res.json();
                 if (data?.data?.sessionId) {
                   await AsyncStorage.setItem(
@@ -333,10 +337,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setIsGuest(false);
     setGuestMode(false);
     setGuestSessionId(null);
+    setGuestDeviceId(null);
     await AsyncStorage.multiRemove([
       "guestMode",
       "guestSessionId",
       "guestSessionCreatedAt",
+      "guestDeviceId",
     ]);
   }, []);
 
@@ -371,6 +377,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Create backend guest session for progress tracking
     try {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
       const response = await fetch(`${BASE_URL}/guest/session`, {
         method: "POST",
         headers: {
@@ -379,7 +387,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
             : {}),
         },
+        signal: controller.signal,
       });
+      clearTimeout(timeout);
       const data = await response.json();
       if (data?.data?.sessionId) {
         await AsyncStorage.setItem("guestSessionId", data.data.sessionId);
@@ -638,7 +648,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAppleAuth = async (mode: "signup" | "login" = "login") => {
+  const handleAppleAuth = async (_mode: "signup" | "login" = "login") => {
     try {
       setIsLoading(true);
 

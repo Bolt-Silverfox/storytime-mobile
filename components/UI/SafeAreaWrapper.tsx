@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type SafeAreaWrapperProps = {
   variant: "solid" | "transparent";
@@ -16,7 +16,7 @@ const SafeAreaWrapper = ({
   statusBarStyle = "dark",
   children,
 }: SafeAreaWrapperProps) => {
-  const providerStyle = useMemo(
+  const containerStyle = useMemo(
     () => [
       styles.container,
       {
@@ -27,17 +27,17 @@ const SafeAreaWrapper = ({
   );
 
   return (
-    <SafeAreaProvider style={providerStyle}>
+    <>
       <StatusBar style={statusBarStyle} />
       <SafeAreaView
-        style={styles.container}
+        style={containerStyle}
         edges={
           variant === "transparent" ? ["left", "right", "bottom"] : undefined
         }
       >
         {children}
       </SafeAreaView>
-    </SafeAreaProvider>
+    </>
   );
 };
 

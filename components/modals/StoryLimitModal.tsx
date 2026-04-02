@@ -37,7 +37,9 @@ const StoryLimitModal = ({
   mode = "blocking",
   onClose,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
   const queryClient = useQueryClient();
   const { isGuest } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
@@ -48,7 +50,10 @@ const StoryLimitModal = ({
     if (isDismissible && onClose) {
       onClose();
     } else {
-      (navigator as any).reset({ index: 0, routes: [{ name: isGuest ? "guestTabs" : "parents" }] });
+      (navigator as any).reset({
+        index: 0,
+        routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+      });
     }
   };
 
@@ -59,7 +64,10 @@ const StoryLimitModal = ({
       onClose();
     } else {
       // Blocking mode without onClose: navigate away after successful subscription
-      (navigator as any).reset({ index: 0, routes: [{ name: isGuest ? "guestTabs" : "parents" }] });
+      (navigator as any).reset({
+        index: 0,
+        routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+      });
     }
   };
 
@@ -72,7 +80,11 @@ const StoryLimitModal = ({
     getPlanName,
   } = useSubscribeIAP(selectedPlan, handleSubscribed);
 
-  const { handleRestore, isRestoring, error: restoreError } = useRestorePurchases();
+  const {
+    handleRestore,
+    isRestoring,
+    error: restoreError,
+  } = useRestorePurchases();
 
   const used = quota?.used ?? 0;
   const totalAllowed = quota?.totalAllowed ?? 0;
@@ -227,7 +239,9 @@ const StoryLimitModal = ({
 
               <View style={modalStyles.legalLinks}>
                 <Pressable onPress={navigateToTerms}>
-                  <Text style={modalStyles.legalLinkText}>Terms of Service</Text>
+                  <Text style={modalStyles.legalLinkText}>
+                    Terms of Service
+                  </Text>
                 </Pressable>
                 <Pressable onPress={navigateToPrivacy}>
                   <Text style={modalStyles.legalLinkText}>Privacy Policy</Text>

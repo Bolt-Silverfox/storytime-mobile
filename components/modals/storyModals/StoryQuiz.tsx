@@ -21,19 +21,21 @@ const StoryQuiz = ({
   const [activeTab, setActiveTab] = useState(0);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
   const [results, setResults] = useState<Array<boolean | null>>(
-    new Array(questions.length).fill(null)
+    new Array(questions?.length ?? 0).fill(null)
   );
   const { mutate: submitAnswer } = useSubmitQuizAnswer();
   const submittedRef = useRef<Set<number>>(new Set());
 
-  const isLastQuestion = activeTab === questions.length - 1;
-  const currentQuestion = questions[activeTab];
+  const isLastQuestion = activeTab === (questions?.length ?? 0) - 1;
+  const currentQuestion = questions?.[activeTab];
 
   const handleNext = () => {
     if (selectedOption === null) {
       Alert.alert("Select a valid option");
       return;
     }
+
+    if (!currentQuestion) return;
 
     const questionIndex = activeTab;
     if (submittedRef.current.has(questionIndex)) return;
@@ -64,7 +66,7 @@ const StoryQuiz = ({
     setSelectedOption(null);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !questions || questions.length === 0) return null;
 
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">

@@ -39,15 +39,12 @@ const GuestNavigator = () => {
   return (
     <Stack.Navigator
       screenOptions={{
-        headerShown: true,
-        headerBackTitle: 'Back',
-        headerTintColor: '#3b82f6',
+        headerShown: false,
       }}
     >
       <Stack.Screen
         name="guestTabs"
         component={GuestTabNavigator}
-        options={{ headerShown: false }}
       />
       <Stack.Screen name="stories" component={StoryNavigator} />
       <Stack.Screen name="getPremium" component={GetPremiumScreen} />

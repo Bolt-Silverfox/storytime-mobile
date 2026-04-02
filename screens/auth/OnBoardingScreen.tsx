@@ -125,18 +125,6 @@ function OnboardingItem({ item }: { item: SlideItems }) {
                   Continue as a Guest
                 </Text>
               </Pressable>
-            </View>
-            <View className="mt-4 flex-row justify-center">
-              <Text style={styles.descriptionText} className="text-sm text-text">
-                If you already have an account{" "}
-              </Text>
-              <Pressable
-                onPress={() => navigate.navigate("auth", { screen: "login" })}
-              >
-                <Text style={styles.descriptionText} className="text-sm text-primary underline">
-                  Log in
-                </Text>
-              </Pressable>
               <Pressable
                 onPress={() =>
                   navigate.navigate("auth", { screen: "unauthPaywall" })
@@ -148,6 +136,18 @@ function OnboardingItem({ item }: { item: SlideItems }) {
                   className="text-center text-sm text-primary"
                 >
                   View Premium Plans
+                </Text>
+              </Pressable>
+            </View>
+            <View className="mt-4 flex-row justify-center">
+              <Text style={styles.descriptionText} className="text-sm text-text">
+                If you already have an account{" "}
+              </Text>
+              <Pressable
+                onPress={() => navigate.navigate("auth", { screen: "login" })}
+              >
+                <Text style={styles.descriptionText} className="text-sm text-primary underline">
+                  Log in
                 </Text>
               </Pressable>
             </View>
