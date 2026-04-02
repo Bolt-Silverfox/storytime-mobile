@@ -37,6 +37,8 @@ const useGetVoiceAccess = (storyId?: string) => {
         if (isGuest) {
           return {
             success: true,
+            statusCode: 200,
+            message: "Guest default voice access",
             data: {
               isPremium: false,
               unlimited: false,
