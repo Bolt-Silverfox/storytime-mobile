@@ -25,6 +25,7 @@ const StoryQuiz = ({
   );
   const { mutate: submitAnswer } = useSubmitQuizAnswer();
   const submittedRef = useRef<Set<number>>(new Set());
+  const questionSetKey = questions?.map((question) => question.id).join("|");
 
   useEffect(() => {
     if (!isOpen) return;
@@ -33,7 +34,7 @@ const StoryQuiz = ({
     setSelectedOption(null);
     setResults(new Array(questions?.length ?? 0).fill(null));
     submittedRef.current.clear();
-  }, [isOpen, storyId, questions?.length]);
+  }, [isOpen, storyId, questionSetKey]);
 
   const isLastQuestion = activeTab === (questions?.length ?? 0) - 1;
 
