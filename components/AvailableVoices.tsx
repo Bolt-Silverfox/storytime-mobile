@@ -51,6 +51,12 @@ const AvailableVoices = ({
     isPremium && usedVoicesForStory.length >= maxVoicesPerStory;
 
   useEffect(() => {
+    return () => {
+      player.pause();
+    };
+  }, [player]);
+
+  useEffect(() => {
     if (voiceAccessLoading || hasShownTrialToast.current) return;
     if (!isPremium && !lockedVoiceId) {
       notify("Your first story gets our best voice — choose wisely!");
