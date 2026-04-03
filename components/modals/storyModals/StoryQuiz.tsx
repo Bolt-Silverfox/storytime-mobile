@@ -82,6 +82,8 @@ const StoryQuiz = ({
 
   const currentQuestion = questions[activeTab];
 
+  if (!currentQuestion) return null;
+
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
       <View className="flex flex-row items-center justify-between">
