@@ -31,7 +31,7 @@ const useSetStoryProgress = ({
         : `${BASE_URL}/stories/user/progress`;
       const body = isGuest
         ? { storyId, progress }
-        : { storyId, progress, completed, totalTimeSpent: time };
+        : { storyId, progress, completed, sessionTime: time };
 
       const request = await apiFetch(url, {
         method: "POST",
