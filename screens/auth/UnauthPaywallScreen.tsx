@@ -29,8 +29,13 @@ const UnauthPaywallScreen = () => {
   const [isRestoring, setIsRestoring] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState("");
 
-  const { isLoading, errorMessage, subscriptions, handlePurchase, getPlanName } =
-    useUnauthSubscribeIAP(selectedPlan, () => setPurchaseComplete(true));
+  const {
+    isLoading,
+    errorMessage,
+    subscriptions,
+    handlePurchase,
+    getPlanName,
+  } = useUnauthSubscribeIAP(selectedPlan, () => setPurchaseComplete(true));
 
   const handleRestore = async () => {
     try {

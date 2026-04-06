@@ -39,10 +39,7 @@ const queryGetStories = (params: GetStoriesParam) =>
       if (params.isMostLiked !== undefined)
         searchParams.set("isMostLiked", String(params.isMostLiked));
       if (params.topPicksFromUs !== undefined)
-        searchParams.set(
-          "topPicksFromUs",
-          String(params.topPicksFromUs)
-        );
+        searchParams.set("topPicksFromUs", String(params.topPicksFromUs));
       if (params.shuffle) searchParams.set("shuffle", "true");
       if (params.limit) {
         searchParams.set("limit", String(params.limit));

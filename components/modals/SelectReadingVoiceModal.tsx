@@ -1,6 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { Dispatch, lazy, SetStateAction, Suspense } from "react";
-import { ActivityIndicator, Pressable, ScrollView, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
 import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useSetPreferredVoice from "../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import useAuth from "../../contexts/AuthContext";
@@ -25,7 +31,11 @@ const SelectReadingVoiceModal = ({
   storyId,
   showSaveButton = false,
 }: PropTypes) => {
-  const { data: voices, isLoading: voicesLoading, isError: voicesError } = useQuery(queryAvailableVoices);
+  const {
+    data: voices,
+    isLoading: voicesLoading,
+    isError: voicesError,
+  } = useQuery(queryAvailableVoices);
   const { mutate: markPreferred } = useSetPreferredVoice();
   const { isGuest } = useAuth();
   const selectedVoiceDisplay = voices?.find(
@@ -94,7 +104,9 @@ const SelectReadingVoiceModal = ({
           </View>
           {voicesLoading ? (
             <View className="flex items-center justify-center py-8">
-              <Text className="font-[abeezee] text-text">Loading voices...</Text>
+              <Text className="font-[abeezee] text-text">
+                Loading voices...
+              </Text>
             </View>
           ) : (
             <Suspense fallback={<ActivityIndicator className="py-8" />}>

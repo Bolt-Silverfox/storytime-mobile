@@ -18,7 +18,9 @@ const EndOfQuizMessage = ({
   storyTitle,
   results,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
   const { isGuest } = useAuth();
 
   const handleGoHome = () => {
@@ -78,10 +80,7 @@ const EndOfQuizMessage = ({
         </View>
       </View>
       <View className="flex flex-col gap-y-3">
-        <CustomButton
-          text="Go home"
-          onPress={handleGoHome}
-        />
+        <CustomButton text="Go home" onPress={handleGoHome} />
         <CustomButton text="Read story again" transparent onPress={readAgain} />
       </View>
     </View>

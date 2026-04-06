@@ -9,7 +9,9 @@ import useAuth from "../../../contexts/AuthContext";
 interface ExitModalProps extends Omit<CustomModalProps, "children"> {}
 
 const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
   const { isGuest } = useAuth();
 
   const onExitStory = () => {

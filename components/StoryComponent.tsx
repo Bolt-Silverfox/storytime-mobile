@@ -15,6 +15,7 @@ import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator"
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
@@ -99,46 +100,23 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
-  // For guests, return the internal voice ID (DB row ID) for the default voice
+  // For guests, return the internal voice ID (DB row ID) for the default voice.
+  // Returns null when voices aren't loaded yet — callers should wait.
   const getGuestVoiceId = useCallback(() => {
-    if (!isGuest) return "NIMBUS";
-    if (!availableVoices) {
-      audioLogger.debug(
-        "getGuestVoiceId: availableVoices not loaded, returning NIMBUS"
-      );
-      return "NIMBUS";
-    }
-    const nimbusVoice = availableVoices.find((v) => v.name === "NIMBUS");
-    const result = nimbusVoice?.id ?? "NIMBUS";
-    audioLogger.debug(`getGuestVoiceId: returning ${result}`);
-    return result;
-  }, [isGuest, availableVoices]);
+    if (!availableVoices?.length) return null;
+    const nimbusVoice = availableVoices.find(
+      (v) => v.id === DEFAULT_GUEST_VOICE_ID
+    );
+    return nimbusVoice?.id ?? availableVoices[0].id;
+  }, [availableVoices]);
 
-  // Map voice ID to elevenLabsVoiceId for audio API
+  // Map internal DB voice ID to elevenLabsVoiceId for the audio API.
+  // Returns null when the voice isn't found — prevents sending raw strings.
   const getVoiceIdForAudio = useCallback(
     (voiceId: string | null) => {
-      if (!voiceId) return null;
-      // Check if voiceId is an internal ID that needs to be mapped
-      const voice = (availableVoices ?? []).find((v) => v.id === voiceId);
-      if (voice) {
-        audioLogger.debug(
-          `getVoiceIdForAudio: mapped ${voiceId} to ${voice.elevenLabsVoiceId}`
-        );
-        return voice.elevenLabsVoiceId;
-      }
-      // If not found in availableVoices, check if it's an elevenLabsVoiceId
-      const voiceByElevenLabsId = (availableVoices ?? []).find(
-        (v) => v.elevenLabsVoiceId === voiceId
-      );
-      if (voiceByElevenLabsId) {
-        audioLogger.debug(
-          `getVoiceIdForAudio: ${voiceId} is already an elevenLabsVoiceId`
-        );
-        return voiceByElevenLabsId.elevenLabsVoiceId;
-      }
-      // Fallback to the voiceId as-is (might already be an elevenLabsVoiceId)
-      audioLogger.debug(`getVoiceIdForAudio: fallback to ${voiceId}`);
-      return voiceId;
+      if (!voiceId || !availableVoices) return null;
+      const voice = availableVoices.find((v) => v.id === voiceId);
+      return voice?.elevenLabsVoiceId ?? null;
     },
     [availableVoices]
   );
@@ -211,13 +189,18 @@ const StoryComponent = ({
   const hasInitializedVoice = useRef(false);
   useEffect(() => {
     if (!isVoiceFetched || hasInitializedVoice.current) return;
-    hasInitializedVoice.current = true;
-    // For guests, use the mapped voice ID, otherwise use preferred voice ID or default
+    // For authenticated users with a preferred voice, initialize immediately.
+    // For guests (or no preferred voice), wait until availableVoices loads
+    // so getGuestVoiceId() can return a real DB UUID instead of null.
     const guestVoiceId = getGuestVoiceId();
+    const voiceToSet = preferredVoice?.id ?? guestVoiceId;
+    // Don't mark as initialized if we'd set null — wait for voices to load
+    if (!voiceToSet) return;
+    hasInitializedVoice.current = true;
     audioLogger.debug(
       `Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`
     );
-    setSelectedVoice(preferredVoice?.id ?? guestVoiceId);
+    setSelectedVoice(voiceToSet);
 
     // Auto-show voice selection modal for first-time users (no preferred voice).
     // Only show once — if dismissed, don't nag on subsequent stories.
