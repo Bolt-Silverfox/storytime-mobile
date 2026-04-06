@@ -37,7 +37,6 @@ import {
   WEB_CLIENT_ID,
 } from "../constants";
 import * as Application from "expo-application";
-import { v4 as uuidv4 } from "uuid";
 import {
   GoogleSignin,
   isSuccessResponse,
@@ -523,12 +522,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       // Use platform-specific device ID, fallback to UUID
       if (Platform.OS === "android") {
         const androidId = Application.getAndroidId();
-        deviceId = androidId ?? uuidv4();
+        deviceId = androidId ?? Crypto.randomUUID();
       } else if (Platform.OS === "ios") {
         const iosId = await Application.getIosIdForVendorAsync();
-        deviceId = iosId || uuidv4();
+        deviceId = iosId || Crypto.randomUUID();
       } else {
-        deviceId = uuidv4();
+        deviceId = Crypto.randomUUID();
       }
       await AsyncStorage.setItem("guestDeviceId", deviceId);
     }
