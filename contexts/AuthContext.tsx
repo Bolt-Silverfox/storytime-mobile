@@ -319,7 +319,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
               let validationSucceeded = false;
               let sessionValid = false;
 
-              for (let attempt = 1; attempt <= 2; attempt++) {
+              for (
+                let attempt = 1;
+                attempt <= MAX_RETRY_ATTEMPTS;
+                attempt++
+              ) {
                 let timeout: NodeJS.Timeout | null = null;
                 try {
                   const controller = new AbortController();
@@ -356,7 +360,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     break;
                   }
                 } catch (err) {
-                  if (attempt === 2) {
+                  if (attempt === MAX_RETRY_ATTEMPTS) {
                     // Final attempt failed, use stored session (offline tolerance)
                     setGuestSessionId(storedSessionId);
                   } else {
