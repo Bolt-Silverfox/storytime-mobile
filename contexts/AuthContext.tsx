@@ -344,6 +344,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       headers: {
                         "Content-Type": "application/json",
                         "X-Guest-Session-Id": storedSessionId,
+                        ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
                         ...(process.env.EXPO_PUBLIC_API_KEY
                           ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
                           : {}),
@@ -372,8 +373,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       // Final attempt failed, keep using stored session (offline tolerance)
                       return;
                     } else {
-                      // Wait before retry
-                      await new Promise((r) => setTimeout(r, 500));
+                      // Wait before retry with incremental backoff
+                      await new Promise((r) => setTimeout(r, 1000 * attempt));
                     }
                   } finally {
                     // Always clear timeout to prevent memory leaks
