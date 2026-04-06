@@ -4,7 +4,7 @@ import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
 import { setSentryUser, clearSentryUser } from "../utils/sentry";
 import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
-import { envValidator } from "../utils/env";
+// Environment validation should be called from app bootstrap, not here
 import {
   SESSION_REFRESH_THRESHOLD_MS,
   REQUEST_TIMEOUT_MS,
@@ -339,9 +339,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     signal: controller.signal,
                   });
 
-                  validationSucceeded = true;
-                  sessionValid = res.status !== 401;
-                  break; // Success, exit retry loop
+                  if (res.status === 401) {
+                    // Session explicitly expired
+                    validationSucceeded = true;
+                    sessionValid = false;
+                    break;
+                  } else if (!res.ok) {
+                    // Other HTTP errors - throw to trigger retry
+                    throw new Error(
+                      `HTTP ${res.status}: ${res.statusText || "Validation failed"}`
+                    );
+                  } else {
+                    // Success (2xx response)
+                    validationSucceeded = true;
+                    sessionValid = true;
+                    break;
+                  }
                 } catch (err) {
                   if (attempt === 2) {
                     // Final attempt failed, use stored session (offline tolerance)

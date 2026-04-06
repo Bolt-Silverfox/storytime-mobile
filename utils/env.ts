@@ -22,17 +22,17 @@ class EnvironmentValidator {
   validate(): void {
     if (this.validated) return;
 
-    const env = process.env as RequiredEnvVars;
     this.warnings = [];
 
     // Check required environment variables
-    if (!env.EXPO_PUBLIC_BASE_URL) {
+    // Direct access to process.env allows Expo to inline these at build time
+    if (!process.env.EXPO_PUBLIC_BASE_URL) {
       this.warnings.push(
         "EXPO_PUBLIC_BASE_URL is not set - API calls may fail"
       );
     }
 
-    if (!env.EXPO_PUBLIC_API_KEY) {
+    if (!process.env.EXPO_PUBLIC_API_KEY) {
       this.warnings.push(
         "EXPO_PUBLIC_API_KEY is not set - some features may be limited"
       );
@@ -60,5 +60,10 @@ class EnvironmentValidator {
 // Export singleton instance
 export const envValidator = EnvironmentValidator.getInstance();
 
-// Validate on import
-envValidator.validate();
+// Export validation function for explicit invocation
+export function validateEnv(): void {
+  envValidator.validate();
+}
+
+// Note: Validation should be called explicitly from app bootstrap
+// Remove automatic validation to decouple from import timing

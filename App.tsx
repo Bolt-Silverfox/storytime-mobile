@@ -29,6 +29,7 @@ import RootNavigator, {
 } from "./Navigation/RootNavigator";
 import { ToastProvider } from "./contexts/ToastContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { validateEnv } from "./utils/env";
 
 const prefix = Linking.createURL("/");
 
@@ -110,6 +111,9 @@ export default function App() {
   });
 
   useEffect(() => {
+    // Validate environment variables on app startup
+    validateEnv();
+
     const subscription = AppState.addEventListener("change", onAppStateChange);
 
     return () => subscription.remove();
