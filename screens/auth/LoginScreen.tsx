@@ -103,7 +103,9 @@ const LoginScreen = () => {
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-in flow"
                 >
-                  <Image source={require("../../assets/icons/apple-icon.png")} />
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
                 </Pressable>
               )}
             </View>

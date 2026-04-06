@@ -31,7 +31,10 @@ const FunAndAdventuresComponent = () => {
         refetch={refetchCategories}
         hasData={!!categories}
       >
-        <ErrorComponent message={categoriesError?.message || "Failed to load categories"} refetch={refetchCategories} />
+        <ErrorComponent
+          message={categoriesError?.message || "Failed to load categories"}
+          refetch={refetchCategories}
+        />
       </HomeScreenCarouselComponent>
     );
   }

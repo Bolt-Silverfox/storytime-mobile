@@ -84,8 +84,8 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
           </View>
         </View>
         <Text className="-mt-5 font-[abeezee] text-base text-black">
-          You won't just listen, you'll have an unlimited learning
-          experience, with the voice type you choose.
+          You won't just listen, you'll have an unlimited learning experience,
+          with the voice type you choose.
         </Text>
 
         <View

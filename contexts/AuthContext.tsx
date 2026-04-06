@@ -4,6 +4,12 @@ import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
 import { setSentryUser, clearSentryUser } from "../utils/sentry";
 import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
+// Environment validation should be called from app bootstrap, not here
+import {
+  SESSION_REFRESH_THRESHOLD_MS,
+  REQUEST_TIMEOUT_MS,
+  MAX_RETRY_ATTEMPTS,
+} from "../constants/constants";
 import {
   createContext,
   Dispatch,
@@ -176,6 +182,80 @@ type SetErrorCallback = Dispatch<SetStateAction<string>>;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Session creation promise cache to prevent duplicate requests
+let sessionCreationPromise: Promise<string | null> | null = null;
+
+// Extracted outside the component — no dependencies on component state.
+// Uses only module-level BASE_URL and process.env.
+// Includes debouncing to prevent duplicate session creation
+const createGuestSession = async (
+  deviceId: string | null,
+  maxAttempts = MAX_RETRY_ATTEMPTS
+): Promise<string | null> => {
+  // If a session creation is already in progress, return that promise
+  if (sessionCreationPromise) {
+    return sessionCreationPromise;
+  }
+
+  // Create new session promise
+  sessionCreationPromise = (async () => {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      let timeout: NodeJS.Timeout | null = null;
+      try {
+        const controller = new AbortController();
+        timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        const res = await fetch(`${BASE_URL}/guest/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(process.env.EXPO_PUBLIC_API_KEY
+              ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+              : {}),
+            ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
+          },
+          signal: controller.signal,
+        });
+
+        // Check for HTTP errors and retry on non-2xx responses
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        if (data?.data?.sessionId) {
+          return data.data.sessionId;
+        }
+        // If we got a response but no sessionId, it's likely an error response
+        throw new Error(data?.message || "No sessionId in response");
+      } catch (err) {
+        // Log error for debugging while still retrying
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        authLogger.warn(
+          `Guest session creation attempt ${attempt} failed: ${errorMessage}`
+        );
+
+        if (attempt < maxAttempts) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+        }
+      } finally {
+        // Always clear the timeout to prevent leaks
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      }
+    }
+    return null;
+  })();
+
+  // Clear the promise after completion to allow new requests
+  sessionCreationPromise.finally(() => {
+    sessionCreationPromise = null;
+  });
+
+  return sessionCreationPromise;
+};
+
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isGuest, setIsGuest] = useState(false);
@@ -212,53 +292,140 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             // Refresh session if older than 6 days (1 day before 7-day TTL expiry)
             const storedSessionId =
               await AsyncStorage.getItem("guestSessionId");
-            const sessionCreatedAt =
-              await AsyncStorage.getItem("guestSessionCreatedAt");
-            const sixDaysMs = 6 * 24 * 60 * 60 * 1000;
-            const isExpired =
-              !sessionCreatedAt ||
-              Date.now() - Number(sessionCreatedAt) > sixDaysMs;
+            const sessionCreatedAt = await AsyncStorage.getItem(
+              "guestSessionCreatedAt"
+            );
 
-            if (storedSessionId && !isExpired) {
-              setGuestSessionId(storedSessionId);
-            } else {
-              // Session expired or missing — create a fresh one
-              try {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 5000);
-                const res = await fetch(`${BASE_URL}/guest/session`, {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                    ...(process.env.EXPO_PUBLIC_API_KEY
-                      ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
-                      : {}),
-                    ...(deviceId
-                      ? { "X-Guest-Device-Id": deviceId }
-                      : {}),
-                  },
-                  signal: controller.signal,
-                });
-                clearTimeout(timeout);
-                const data = await res.json();
-                if (data?.data?.sessionId) {
-                  await AsyncStorage.setItem(
-                    "guestSessionId",
-                    data.data.sessionId
-                  );
-                  await AsyncStorage.setItem(
-                    "guestSessionCreatedAt",
-                    String(Date.now())
-                  );
-                  setGuestSessionId(data.data.sessionId);
-                }
-              } catch {
-                // Non-fatal: guest mode works without backend session
+            // Handle both epoch ms and ISO string formats
+            let timestamp = 0;
+            if (sessionCreatedAt) {
+              const numValue = Number(sessionCreatedAt);
+              if (!isNaN(numValue)) {
+                timestamp = numValue;
+              } else {
+                // Try parsing as ISO string
+                const parsed = Date.parse(sessionCreatedAt);
+                timestamp = isNaN(parsed) ? 0 : parsed;
               }
             }
-            // Only set guest mode after session ID is established
+
+            const isExpired =
+              !sessionCreatedAt ||
+              timestamp === 0 ||
+              Date.now() - timestamp > SESSION_REFRESH_THRESHOLD_MS;
+
+            // Restore guest state immediately for better UX
             setIsGuest(true);
             setGuestMode(true);
+
+            if (storedSessionId && !isExpired) {
+              // Set stored session immediately, validate asynchronously
+              setGuestSessionId(storedSessionId);
+
+              // Run backend validation in background
+              (async () => {
+                let validationSucceeded = false;
+                let sessionValid = false;
+
+                for (
+                  let attempt = 1;
+                  attempt <= MAX_RETRY_ATTEMPTS;
+                  attempt++
+                ) {
+                  let timeout: NodeJS.Timeout | null = null;
+                  try {
+                    const controller = new AbortController();
+                    timeout = setTimeout(
+                      () => controller.abort(),
+                      REQUEST_TIMEOUT_MS
+                    );
+                    const res = await fetch(`${BASE_URL}/guest/quota`, {
+                      method: "GET",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-Guest-Session-Id": storedSessionId,
+                        ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
+                        ...(process.env.EXPO_PUBLIC_API_KEY
+                          ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                          : {}),
+                      },
+                      signal: controller.signal,
+                    });
+
+                    if (res.status === 401) {
+                      // Session explicitly expired
+                      validationSucceeded = true;
+                      sessionValid = false;
+                      break;
+                    } else if (!res.ok) {
+                      // Other HTTP errors - throw to trigger retry
+                      throw new Error(
+                        `HTTP ${res.status}: ${res.statusText || "Validation failed"}`
+                      );
+                    } else {
+                      // Success (2xx response)
+                      validationSucceeded = true;
+                      sessionValid = true;
+                      break;
+                    }
+                  } catch {
+                    if (attempt === MAX_RETRY_ATTEMPTS) {
+                      // Final attempt failed, keep using stored session (offline tolerance)
+                      return;
+                    } else {
+                      // Wait before retry with incremental backoff
+                      await new Promise((r) => setTimeout(r, 1000 * attempt));
+                    }
+                  } finally {
+                    // Always clear timeout to prevent memory leaks
+                    if (timeout) {
+                      clearTimeout(timeout);
+                    }
+                  }
+                }
+
+                if (validationSucceeded && !sessionValid) {
+                  // Session expired server-side, create new session and update state
+                  await AsyncStorage.multiRemove([
+                    "guestSessionId",
+                    "guestSessionCreatedAt",
+                  ]);
+                  const newSessionId = await createGuestSession(deviceId);
+                  if (newSessionId) {
+                    await AsyncStorage.setItem("guestSessionId", newSessionId);
+                    await AsyncStorage.setItem(
+                      "guestSessionCreatedAt",
+                      String(Date.now())
+                    );
+                    setGuestSessionId(newSessionId);
+                  }
+                }
+              })().catch(() => {
+                // Background validation failed, but guest mode continues with stored session
+              });
+            } else {
+              // Session expired client-side or missing — set guest mode and create session in background
+              const provisionalId =
+                storedSessionId || `provisional-${Date.now()}`;
+              setGuestSessionId(provisionalId);
+
+              // Create fresh session in background
+              (async () => {
+                try {
+                  const newSessionId = await createGuestSession(deviceId);
+                  if (newSessionId) {
+                    await AsyncStorage.setItem("guestSessionId", newSessionId);
+                    await AsyncStorage.setItem(
+                      "guestSessionCreatedAt",
+                      String(Date.now())
+                    );
+                    setGuestSessionId(newSessionId);
+                  }
+                } catch {
+                  // Non-fatal: guest mode works without backend session
+                }
+              })();
+            }
           }
           await Promise.all([
             secureTokenStorage.clearTokens(),
@@ -381,30 +548,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
     // Create backend guest session for progress tracking
     try {
-      const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
-      const response = await fetch(`${BASE_URL}/guest/session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(process.env.EXPO_PUBLIC_API_KEY
-            ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
-            : {}),
-          ...(deviceId
-            ? { "X-Guest-Device-Id": deviceId }
-            : {}),
-        },
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      const data = await response.json();
-      if (data?.data?.sessionId) {
-        await AsyncStorage.setItem("guestSessionId", data.data.sessionId);
-        await AsyncStorage.setItem(
-          "guestSessionCreatedAt",
-          String(Date.now())
-        );
-        setGuestSessionId(data.data.sessionId);
+      const newSessionId = await createGuestSession(deviceId);
+      if (newSessionId) {
+        await AsyncStorage.setItem("guestSessionId", newSessionId);
+        await AsyncStorage.setItem("guestSessionCreatedAt", String(Date.now()));
+        setGuestSessionId(newSessionId);
       }
     } catch (err) {
       authLogger.warn("Failed to create guest session:", err);

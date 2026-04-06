@@ -30,8 +30,8 @@ const AboutStoryModesModal = ({
               </Text>
               <Text className="text-wrap font-[abeezee] text-sm text-text">
                 Sit back and enjoy the story. In this mode, you can read along
-                or listen as the story is narrated from start to
-                finish—perfect for relaxed reading, bedtime, or quiet time.
+                or listen as the story is narrated from start to finish—perfect
+                for relaxed reading, bedtime, or quiet time.
               </Text>
             </View>
           </View>

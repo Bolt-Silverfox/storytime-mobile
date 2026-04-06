@@ -1,6 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
-import { FlatList, RefreshControl, StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import {
+  FlatList,
+  RefreshControl,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Alert,
+} from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
@@ -15,7 +23,11 @@ import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
 import useAuth from "../../../contexts/AuthContext";
-import { setGuestMode, setGuestSessionId, setGuestDeviceId } from "../../../apiFetch";
+import {
+  setGuestMode,
+  setGuestSessionId,
+  setGuestDeviceId,
+} from "../../../apiFetch";
 
 type SectionKey =
   | "freeStoriesBanner"
@@ -66,12 +78,12 @@ const ParentHomeScreen = () => {
     try {
       // Clear all guest-related AsyncStorage keys
       await AsyncStorage.multiRemove([
-        'guestSessionId',
-        'guestSessionCreatedAt',
-        'guestMode',
-        'guestDeviceId',
-        'guestStoriesRead', // Local quota tracking
-        'REACT_QUERY_OFFLINE_CACHE', // Clear React Query offline cache
+        "guestSessionId",
+        "guestSessionCreatedAt",
+        "guestMode",
+        "guestDeviceId",
+        "guestStoriesRead", // Local quota tracking
+        "REACT_QUERY_OFFLINE_CACHE", // Clear React Query offline cache
       ]);
       // Clear React Query cache in memory
       queryClient.clear();
@@ -79,30 +91,36 @@ const ParentHomeScreen = () => {
       setGuestMode(false);
       setGuestSessionId(null);
       setGuestDeviceId(null);
-      Alert.alert('Success', 'Guest session cleared. Please refresh the app to test as a new guest.');
+      Alert.alert(
+        "Success",
+        "Guest session cleared. Please refresh the app to test as a new guest."
+      );
     } catch (error) {
-      Alert.alert('Error', 'Failed to clear guest session.');
+      Alert.alert("Error", "Failed to clear guest session.");
     }
   };
 
-  const renderSection = useCallback(({ item }: { item: SectionItem }) => {
-    switch (item.key) {
-      case "freeStoriesBanner":
-        return isGuest ? null : <FreeStoriesBanner />;
-      case "storiesByAge":
-        return <StoriesByAgeComponent />;
-      case "topRecommendations":
-        return <ParentsTopRecommendations />;
-      case "todaysTopPicks":
-        return <TodaysTopPicksComponent />;
-      case "seasonalStories":
-        return <SeasonalStoriesComponent />;
-      case "funAndAdventures":
-        return <FunAndAdventuresComponent />;
-      case "storyCategoriesList":
-        return <StoryCategoriesList />;
-    }
-  }, [isGuest]);
+  const renderSection = useCallback(
+    ({ item }: { item: SectionItem }) => {
+      switch (item.key) {
+        case "freeStoriesBanner":
+          return isGuest ? null : <FreeStoriesBanner />;
+        case "storiesByAge":
+          return <StoriesByAgeComponent />;
+        case "topRecommendations":
+          return <ParentsTopRecommendations />;
+        case "todaysTopPicks":
+          return <TodaysTopPicksComponent />;
+        case "seasonalStories":
+          return <SeasonalStoriesComponent />;
+        case "funAndAdventures":
+          return <FunAndAdventuresComponent />;
+        case "storyCategoriesList":
+          return <StoryCategoriesList />;
+      }
+    },
+    [isGuest]
+  );
 
   const listHeader = useMemo(
     () =>
@@ -113,7 +131,13 @@ const ParentHomeScreen = () => {
           onPermissionGranted={handlePermissionGranted}
         />
       ) : null,
-    [showBanner, isGuest, permissionStatus, handleDismiss, handlePermissionGranted]
+    [
+      showBanner,
+      isGuest,
+      permissionStatus,
+      handleDismiss,
+      handlePermissionGranted,
+    ]
   );
 
   return (
