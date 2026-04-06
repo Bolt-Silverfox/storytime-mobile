@@ -331,7 +331,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     method: "GET",
                     headers: {
                       "Content-Type": "application/json",
-                      "x-guest-session-id": storedSessionId,
+                      "X-Guest-Session-Id": storedSessionId,
                       ...(process.env.EXPO_PUBLIC_API_KEY
                         ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
                         : {}),
