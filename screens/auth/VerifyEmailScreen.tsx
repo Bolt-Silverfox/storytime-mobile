@@ -150,9 +150,7 @@ const VerifyEmailScreen = () => {
                 token: otp,
                 setErrorCb: setError,
                 onSuccess: () =>
-                  setSuccesMessage(
-                    "Start enjoying amazing stories."
-                  ),
+                  setSuccesMessage("Start enjoying amazing stories."),
               });
             }}
           />
@@ -160,10 +158,7 @@ const VerifyEmailScreen = () => {
         <SuccessScreen
           message="Congratulations, your account has been created successfully!"
           secondaryMessage={successMessage}
-          visible={
-            successMessage ===
-            "Start enjoying amazing stories."
-          }
+          visible={successMessage === "Start enjoying amazing stories."}
           onProceed={onSuccessCb}
         />
       </View>

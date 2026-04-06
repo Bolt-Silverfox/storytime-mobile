@@ -1,9 +1,16 @@
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 
-async function parseErrorResponse(response: Response, fallbackMessage: string): Promise<never> {
+async function parseErrorResponse(
+  response: Response,
+  fallbackMessage: string
+): Promise<never> {
   let errorData;
-  try { errorData = await response.json(); } catch { errorData = null; }
+  try {
+    errorData = await response.json();
+  } catch {
+    errorData = null;
+  }
   throw new Error(errorData?.message || fallbackMessage);
 }
 

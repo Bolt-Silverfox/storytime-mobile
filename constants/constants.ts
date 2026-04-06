@@ -13,8 +13,7 @@ export const onBoardingSlide: {
       uri: "https://res.cloudinary.com/billmal/image/upload/v1770186120/storytime/assets/Onboarding_4_1_s0neg4.jpg",
     },
     title: "Welcome to Storytime",
-    description:
-      "Listen, read, and explore stories crafted just for you!",
+    description: "Listen, read, and explore stories crafted just for you!",
     dot: [10, 5, 5],
   },
   {

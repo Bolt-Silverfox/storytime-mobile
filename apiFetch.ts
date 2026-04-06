@@ -241,5 +241,11 @@ const refreshTokens = async (): Promise<RefreshResult> => {
   }
 };
 
-export { setLogoutCallBack, setGuestMode, setGuestSessionId, setGuestDeviceId, ApiError };
+export {
+  setLogoutCallBack,
+  setGuestMode,
+  setGuestSessionId,
+  setGuestDeviceId,
+  ApiError,
+};
 export default apiFetch;

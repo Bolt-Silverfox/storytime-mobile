@@ -180,12 +180,13 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // Uses only module-level BASE_URL and process.env.
 const createGuestSession = async (
   deviceId: string | null,
-  maxAttempts = 2,
+  maxAttempts = 2
 ): Promise<string | null> => {
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let timeout: NodeJS.Timeout | null = null;
     try {
       const controller = new AbortController();
-      const timeout = setTimeout(() => controller.abort(), 5000);
+      timeout = setTimeout(() => controller.abort(), 5000);
       const res = await fetch(`${BASE_URL}/guest/session`, {
         method: "POST",
         headers: {
@@ -197,14 +198,26 @@ const createGuestSession = async (
         },
         signal: controller.signal,
       });
-      clearTimeout(timeout);
+      
+      // Check for HTTP errors and retry on non-2xx responses
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
       const data = await res.json();
       if (data?.data?.sessionId) {
         return data.data.sessionId;
       }
+      // If we got a response but no sessionId, it's likely an error response
+      throw new Error(data?.message || "No sessionId in response");
     } catch (err) {
       if (attempt < maxAttempts) {
         await new Promise((r) => setTimeout(r, 1000 * attempt));
+      }
+    } finally {
+      // Always clear the timeout to prevent leaks
+      if (timeout) {
+        clearTimeout(timeout);
       }
     }
   }
@@ -251,9 +264,22 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
               "guestSessionCreatedAt"
             );
             const sixDaysMs = 6 * 24 * 60 * 60 * 1000;
+            
+            // Handle both epoch ms and ISO string formats
+            let timestamp = 0;
+            if (sessionCreatedAt) {
+              const numValue = Number(sessionCreatedAt);
+              if (!isNaN(numValue)) {
+                timestamp = numValue;
+              } else {
+                // Try parsing as ISO string
+                const parsed = Date.parse(sessionCreatedAt);
+                timestamp = isNaN(parsed) ? 0 : parsed;
+              }
+            }
+            
             const isExpired =
-              !sessionCreatedAt ||
-              Date.now() - Number(sessionCreatedAt) > sixDaysMs;
+              !sessionCreatedAt || timestamp === 0 || Date.now() - timestamp > sixDaysMs;
 
             if (storedSessionId && !isExpired) {
               // Validate stored session against backend

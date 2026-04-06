@@ -42,10 +42,7 @@ const GuestNavigator = () => {
         headerShown: false,
       }}
     >
-      <Stack.Screen
-        name="guestTabs"
-        component={GuestTabNavigator}
-      />
+      <Stack.Screen name="guestTabs" component={GuestTabNavigator} />
       <Stack.Screen name="stories" component={StoryNavigator} />
       <Stack.Screen name="getPremium" component={GetPremiumScreen} />
       <Stack.Screen name="signUp" component={SignupScreen} />

@@ -103,7 +103,7 @@ const StoryComponent = ({
   // Returns null when voices aren't loaded yet — callers should wait.
   const getGuestVoiceId = useCallback(() => {
     if (!availableVoices?.length) return null;
-    const nimbusVoice = availableVoices.find((v) => v.name === "NIMBUS");
+    const nimbusVoice = availableVoices.find((v) => v.id === "NIMBUS");
     return nimbusVoice?.id ?? availableVoices[0].id;
   }, [availableVoices]);
 
@@ -115,7 +115,7 @@ const StoryComponent = ({
       const voice = availableVoices.find((v) => v.id === voiceId);
       return voice?.elevenLabsVoiceId ?? null;
     },
-    [availableVoices],
+    [availableVoices]
   );
 
   // Debounce voice selection to prevent rapid batch requests

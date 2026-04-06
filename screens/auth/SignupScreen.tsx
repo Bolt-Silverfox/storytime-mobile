@@ -32,12 +32,8 @@ const SignupScreen = () => {
         >
           <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
             <View style={styles.textContainer}>
-              <Text style={defaultStyles.heading}>
-                Welcome to Storytime
-              </Text>
-              <Text style={styles.text}>
-                The world's first story library
-              </Text>
+              <Text style={defaultStyles.heading}>Welcome to Storytime</Text>
+              <Text style={styles.text}>The world's first story library</Text>
             </View>
             <SignupForm />
             <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
@@ -65,7 +61,9 @@ const SignupScreen = () => {
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-up flow"
                 >
-                  <Image source={require("../../assets/icons/apple-icon.png")} />
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
                 </Pressable>
               )}
             </View>

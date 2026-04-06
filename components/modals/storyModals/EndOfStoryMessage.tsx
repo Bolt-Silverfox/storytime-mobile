@@ -19,7 +19,9 @@ const EndOfStoryMessage = ({
   readAgain,
   isInteractive,
 }: Props) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp | GuestNavigatorProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
   const { isGuest } = useAuth();
 
   const handleGoHome = () => {
@@ -52,10 +54,7 @@ const EndOfStoryMessage = ({
         {isInteractive && (
           <CustomButton text="Test your knowledge" onPress={onTestKnowledge} />
         )}
-        <CustomButton
-          text="Go home"
-          onPress={handleGoHome}
-        />
+        <CustomButton text="Go home" onPress={handleGoHome} />
       </View>
     </View>
   );

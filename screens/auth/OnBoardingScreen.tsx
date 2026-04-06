@@ -140,13 +140,19 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               </Pressable>
             </View>
             <View className="mt-4 flex-row justify-center">
-              <Text style={styles.descriptionText} className="text-sm text-text">
+              <Text
+                style={styles.descriptionText}
+                className="text-sm text-text"
+              >
                 If you already have an account{" "}
               </Text>
               <Pressable
                 onPress={() => navigate.navigate("auth", { screen: "login" })}
               >
-                <Text style={styles.descriptionText} className="text-sm text-primary underline">
+                <Text
+                  style={styles.descriptionText}
+                  className="text-sm text-primary underline"
+                >
                   Log in
                 </Text>
               </Pressable>
