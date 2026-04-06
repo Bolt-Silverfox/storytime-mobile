@@ -4,6 +4,12 @@ import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
 import { setSentryUser, clearSentryUser } from "../utils/sentry";
 import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
+import { envValidator } from "../utils/env";
+import {
+  SESSION_REFRESH_THRESHOLD_MS,
+  REQUEST_TIMEOUT_MS,
+  MAX_RETRY_ATTEMPTS,
+} from "../constants/constants";
 import {
   createContext,
   Dispatch,
@@ -176,52 +182,78 @@ type SetErrorCallback = Dispatch<SetStateAction<string>>;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Session creation promise cache to prevent duplicate requests
+let sessionCreationPromise: Promise<string | null> | null = null;
+
 // Extracted outside the component — no dependencies on component state.
 // Uses only module-level BASE_URL and process.env.
+// Includes debouncing to prevent duplicate session creation
 const createGuestSession = async (
   deviceId: string | null,
-  maxAttempts = 2
+  maxAttempts = MAX_RETRY_ATTEMPTS
 ): Promise<string | null> => {
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
-    let timeout: NodeJS.Timeout | null = null;
-    try {
-      const controller = new AbortController();
-      timeout = setTimeout(() => controller.abort(), 5000);
-      const res = await fetch(`${BASE_URL}/guest/session`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(process.env.EXPO_PUBLIC_API_KEY
-            ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
-            : {}),
-          ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
-        },
-        signal: controller.signal,
-      });
-      
-      // Check for HTTP errors and retry on non-2xx responses
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      }
-      
-      const data = await res.json();
-      if (data?.data?.sessionId) {
-        return data.data.sessionId;
-      }
-      // If we got a response but no sessionId, it's likely an error response
-      throw new Error(data?.message || "No sessionId in response");
-    } catch (err) {
-      if (attempt < maxAttempts) {
-        await new Promise((r) => setTimeout(r, 1000 * attempt));
-      }
-    } finally {
-      // Always clear the timeout to prevent leaks
-      if (timeout) {
-        clearTimeout(timeout);
+  // If a session creation is already in progress, return that promise
+  if (sessionCreationPromise) {
+    return sessionCreationPromise;
+  }
+
+  // Create new session promise
+  sessionCreationPromise = (async () => {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      let timeout: NodeJS.Timeout | null = null;
+      try {
+        const controller = new AbortController();
+        timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        const res = await fetch(`${BASE_URL}/guest/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(process.env.EXPO_PUBLIC_API_KEY
+              ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+              : {}),
+            ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
+          },
+          signal: controller.signal,
+        });
+
+        // Check for HTTP errors and retry on non-2xx responses
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        if (data?.data?.sessionId) {
+          return data.data.sessionId;
+        }
+        // If we got a response but no sessionId, it's likely an error response
+        throw new Error(data?.message || "No sessionId in response");
+      } catch (err) {
+        // Log error for debugging while still retrying
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        authLogger.warn(
+          `Guest session creation attempt ${attempt} failed: ${errorMessage}`
+        );
+
+        if (attempt < maxAttempts) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+        }
+      } finally {
+        // Always clear the timeout to prevent leaks
+        if (timeout) {
+          clearTimeout(timeout);
+        }
       }
     }
-  }
-  return null;
+    return null;
+  })();
+
+  // Clear the promise after completion to allow new requests
+  sessionCreationPromise.finally(() => {
+    sessionCreationPromise = null;
+  });
+
+  return sessionCreationPromise;
 };
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
@@ -263,8 +295,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             const sessionCreatedAt = await AsyncStorage.getItem(
               "guestSessionCreatedAt"
             );
-            const sixDaysMs = 6 * 24 * 60 * 60 * 1000;
-            
+
             // Handle both epoch ms and ISO string formats
             let timestamp = 0;
             if (sessionCreatedAt) {
@@ -277,29 +308,58 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                 timestamp = isNaN(parsed) ? 0 : parsed;
               }
             }
-            
+
             const isExpired =
-              !sessionCreatedAt || timestamp === 0 || Date.now() - timestamp > sixDaysMs;
+              !sessionCreatedAt ||
+              timestamp === 0 ||
+              Date.now() - timestamp > SESSION_REFRESH_THRESHOLD_MS;
 
             if (storedSessionId && !isExpired) {
-              // Validate stored session against backend
-              try {
-                const controller = new AbortController();
-                const timeout = setTimeout(() => controller.abort(), 5000);
-                const res = await fetch(`${BASE_URL}/guest/quota`, {
-                  method: "GET",
-                  headers: {
-                    "Content-Type": "application/json",
-                    "x-guest-session-id": storedSessionId,
-                    ...(process.env.EXPO_PUBLIC_API_KEY
-                      ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
-                      : {}),
-                  },
-                  signal: controller.signal,
-                });
-                clearTimeout(timeout);
+              // Validate stored session against backend with retry logic
+              let validationSucceeded = false;
+              let sessionValid = false;
 
-                if (res.status === 401) {
+              for (let attempt = 1; attempt <= 2; attempt++) {
+                let timeout: NodeJS.Timeout | null = null;
+                try {
+                  const controller = new AbortController();
+                  timeout = setTimeout(
+                    () => controller.abort(),
+                    REQUEST_TIMEOUT_MS
+                  );
+                  const res = await fetch(`${BASE_URL}/guest/quota`, {
+                    method: "GET",
+                    headers: {
+                      "Content-Type": "application/json",
+                      "x-guest-session-id": storedSessionId,
+                      ...(process.env.EXPO_PUBLIC_API_KEY
+                        ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                        : {}),
+                    },
+                    signal: controller.signal,
+                  });
+
+                  validationSucceeded = true;
+                  sessionValid = res.status !== 401;
+                  break; // Success, exit retry loop
+                } catch (err) {
+                  if (attempt === 2) {
+                    // Final attempt failed, use stored session (offline tolerance)
+                    setGuestSessionId(storedSessionId);
+                  } else {
+                    // Wait before retry
+                    await new Promise((r) => setTimeout(r, 500));
+                  }
+                } finally {
+                  // Always clear timeout to prevent memory leaks
+                  if (timeout) {
+                    clearTimeout(timeout);
+                  }
+                }
+              }
+
+              if (validationSucceeded) {
+                if (!sessionValid) {
                   // Session expired server-side, create new
                   await AsyncStorage.multiRemove([
                     "guestSessionId",
@@ -318,9 +378,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                   // Session valid
                   setGuestSessionId(storedSessionId);
                 }
-              } catch {
-                // Network error — use stored session (offline tolerance)
-                setGuestSessionId(storedSessionId);
               }
             } else {
               // Session expired client-side or missing — create a fresh one

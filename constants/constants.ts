@@ -1,5 +1,14 @@
 import { ImageSourcePropType } from "react-native";
 
+// Voice constants
+// Note: This matches the VoiceType enum key returned by the backend as 'id' field
+export const DEFAULT_GUEST_VOICE_ID = "NIMBUS";
+
+// Session constants
+export const SESSION_REFRESH_THRESHOLD_MS = 6 * 24 * 60 * 60 * 1000; // 6 days in milliseconds
+export const REQUEST_TIMEOUT_MS = 5000; // 5 seconds
+export const MAX_RETRY_ATTEMPTS = 2;
+
 export const onBoardingSlide: {
   id: string;
   image: ImageSourcePropType;

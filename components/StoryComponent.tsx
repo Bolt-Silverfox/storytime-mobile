@@ -15,6 +15,7 @@ import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator"
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
+import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import { StoryModes } from "../types";
 import ErrorComponent from "./ErrorComponent";
@@ -103,7 +104,9 @@ const StoryComponent = ({
   // Returns null when voices aren't loaded yet — callers should wait.
   const getGuestVoiceId = useCallback(() => {
     if (!availableVoices?.length) return null;
-    const nimbusVoice = availableVoices.find((v) => v.id === "NIMBUS");
+    const nimbusVoice = availableVoices.find(
+      (v) => v.id === DEFAULT_GUEST_VOICE_ID
+    );
     return nimbusVoice?.id ?? availableVoices[0].id;
   }, [availableVoices]);
 
