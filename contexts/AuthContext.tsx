@@ -314,70 +314,77 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
               timestamp === 0 ||
               Date.now() - timestamp > SESSION_REFRESH_THRESHOLD_MS;
 
+            // Restore guest state immediately for better UX
+            setIsGuest(true);
+            setGuestMode(true);
+
             if (storedSessionId && !isExpired) {
-              // Validate stored session against backend with retry logic
-              let validationSucceeded = false;
-              let sessionValid = false;
+              // Set stored session immediately, validate asynchronously
+              setGuestSessionId(storedSessionId);
 
-              for (
-                let attempt = 1;
-                attempt <= MAX_RETRY_ATTEMPTS;
-                attempt++
-              ) {
-                let timeout: NodeJS.Timeout | null = null;
-                try {
-                  const controller = new AbortController();
-                  timeout = setTimeout(
-                    () => controller.abort(),
-                    REQUEST_TIMEOUT_MS
-                  );
-                  const res = await fetch(`${BASE_URL}/guest/quota`, {
-                    method: "GET",
-                    headers: {
-                      "Content-Type": "application/json",
-                      "X-Guest-Session-Id": storedSessionId,
-                      ...(process.env.EXPO_PUBLIC_API_KEY
-                        ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
-                        : {}),
-                    },
-                    signal: controller.signal,
-                  });
+              // Run backend validation in background
+              (async () => {
+                let validationSucceeded = false;
+                let sessionValid = false;
 
-                  if (res.status === 401) {
-                    // Session explicitly expired
-                    validationSucceeded = true;
-                    sessionValid = false;
-                    break;
-                  } else if (!res.ok) {
-                    // Other HTTP errors - throw to trigger retry
-                    throw new Error(
-                      `HTTP ${res.status}: ${res.statusText || "Validation failed"}`
+                for (
+                  let attempt = 1;
+                  attempt <= MAX_RETRY_ATTEMPTS;
+                  attempt++
+                ) {
+                  let timeout: NodeJS.Timeout | null = null;
+                  try {
+                    const controller = new AbortController();
+                    timeout = setTimeout(
+                      () => controller.abort(),
+                      REQUEST_TIMEOUT_MS
                     );
-                  } else {
-                    // Success (2xx response)
-                    validationSucceeded = true;
-                    sessionValid = true;
-                    break;
-                  }
-                } catch (err) {
-                  if (attempt === MAX_RETRY_ATTEMPTS) {
-                    // Final attempt failed, use stored session (offline tolerance)
-                    setGuestSessionId(storedSessionId);
-                  } else {
-                    // Wait before retry
-                    await new Promise((r) => setTimeout(r, 500));
-                  }
-                } finally {
-                  // Always clear timeout to prevent memory leaks
-                  if (timeout) {
-                    clearTimeout(timeout);
+                    const res = await fetch(`${BASE_URL}/guest/quota`, {
+                      method: "GET",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-Guest-Session-Id": storedSessionId,
+                        ...(process.env.EXPO_PUBLIC_API_KEY
+                          ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                          : {}),
+                      },
+                      signal: controller.signal,
+                    });
+
+                    if (res.status === 401) {
+                      // Session explicitly expired
+                      validationSucceeded = true;
+                      sessionValid = false;
+                      break;
+                    } else if (!res.ok) {
+                      // Other HTTP errors - throw to trigger retry
+                      throw new Error(
+                        `HTTP ${res.status}: ${res.statusText || "Validation failed"}`
+                      );
+                    } else {
+                      // Success (2xx response)
+                      validationSucceeded = true;
+                      sessionValid = true;
+                      break;
+                    }
+                  } catch {
+                    if (attempt === MAX_RETRY_ATTEMPTS) {
+                      // Final attempt failed, keep using stored session (offline tolerance)
+                      return;
+                    } else {
+                      // Wait before retry
+                      await new Promise((r) => setTimeout(r, 500));
+                    }
+                  } finally {
+                    // Always clear timeout to prevent memory leaks
+                    if (timeout) {
+                      clearTimeout(timeout);
+                    }
                   }
                 }
-              }
 
-              if (validationSucceeded) {
-                if (!sessionValid) {
-                  // Session expired server-side, create new
+                if (validationSucceeded && !sessionValid) {
+                  // Session expired server-side, create new session and update state
                   await AsyncStorage.multiRemove([
                     "guestSessionId",
                     "guestSessionCreatedAt",
@@ -391,30 +398,33 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                     );
                     setGuestSessionId(newSessionId);
                   }
-                } else {
-                  // Session valid
-                  setGuestSessionId(storedSessionId);
                 }
-              }
+              })().catch(() => {
+                // Background validation failed, but guest mode continues with stored session
+              });
             } else {
-              // Session expired client-side or missing — create a fresh one
-              try {
-                const newSessionId = await createGuestSession(deviceId);
-                if (newSessionId) {
-                  await AsyncStorage.setItem("guestSessionId", newSessionId);
-                  await AsyncStorage.setItem(
-                    "guestSessionCreatedAt",
-                    String(Date.now())
-                  );
-                  setGuestSessionId(newSessionId);
+              // Session expired client-side or missing — set guest mode and create session in background
+              const provisionalId =
+                storedSessionId || `provisional-${Date.now()}`;
+              setGuestSessionId(provisionalId);
+
+              // Create fresh session in background
+              (async () => {
+                try {
+                  const newSessionId = await createGuestSession(deviceId);
+                  if (newSessionId) {
+                    await AsyncStorage.setItem("guestSessionId", newSessionId);
+                    await AsyncStorage.setItem(
+                      "guestSessionCreatedAt",
+                      String(Date.now())
+                    );
+                    setGuestSessionId(newSessionId);
+                  }
+                } catch {
+                  // Non-fatal: guest mode works without backend session
                 }
-              } catch {
-                // Non-fatal: guest mode works without backend session
-              }
+              })();
             }
-            // Only set guest mode after session ID is established
-            setIsGuest(true);
-            setGuestMode(true);
           }
           await Promise.all([
             secureTokenStorage.clearTokens(),
