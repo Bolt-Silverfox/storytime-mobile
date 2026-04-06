@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
@@ -405,8 +406,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
               });
             } else {
               // Session expired client-side or missing — set guest mode and create session in background
-              const provisionalId =
-                storedSessionId || `provisional-${Date.now()}`;
+              const provisionalId = storedSessionId || Crypto.randomUUID();
               setGuestSessionId(provisionalId);
 
               // Create fresh session in background
