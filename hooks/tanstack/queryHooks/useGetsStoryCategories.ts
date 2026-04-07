@@ -23,8 +23,6 @@ const queryStoryCategories = () => {
       if (!response.success)
         throw new Error(response.message ?? "Unexpected error, try again.");
       const parsedData: { value: Categories[] } = JSON.parse(response.data);
-      console.log("parsed Data", parsedData);
-      console.log("parsed value data", parsedData.value);
       return parsedData.value;
       // return response.data;
     },

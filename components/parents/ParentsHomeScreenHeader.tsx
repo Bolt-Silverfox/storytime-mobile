@@ -2,6 +2,7 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ActivityIndicator,
+  Image,
   Pressable,
   StyleSheet,
   Text,
@@ -51,10 +52,10 @@ const ParentsHomeScreenHeader = () => {
         </Text>
       </View>
       <View className="flex shrink-0 flex-row items-center gap-x-3">
-        {!isUserSubscribed && (
+        {!isUserSubscribed ? (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => navigator.navigate("getPremium" as any)}
+            onPress={() => navigator.navigate("getPremium")}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
@@ -66,13 +67,20 @@ const ParentsHomeScreenHeader = () => {
               <Text className="font-[abeezee] text-white">Get Premium</Text>
             </LinearGradient>
           </Pressable>
+        ) : (
+          <Pressable
+            onPress={() => navigator.navigate("streaks")}
+            className="flex size-11 items-center justify-center rounded-full border-2 border-[#FDECEA] bg-white "
+          >
+            <Image source={require("../../assets/icons/streak-icon.png")} />
+          </Pressable>
         )}
         {!isGuest && (
           <Pressable
             onPress={() =>
               navigator.navigate("notification", { screen: "index" })
             }
-            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
+            className="flex size-11 items-center justify-center rounded-full border border-light bg-white "
           >
             <Icon name="Bell" />
           </Pressable>

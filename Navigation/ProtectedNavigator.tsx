@@ -13,12 +13,14 @@ import ParentsTabNavigator, {
   ParentsNavigatorParamList,
 } from "./ParentsNavigator";
 import StoryNavigator, { StoryNavigatorParamList } from "./StoryNavigator";
+import StreaksScreen from "../screens/parents/StreaksScreen";
 
 type ProtectedRoutesParamList = {
   parents: NavigatorScreenParams<ParentsNavigatorParamList>;
   notification: NavigatorScreenParams<NotificationsNavigatorParamList>;
   getPremium: undefined;
   stories: NavigatorScreenParams<StoryNavigatorParamList>;
+  streaks: undefined;
 };
 
 type ProtectedRoutesNavigationProp =
@@ -42,6 +44,7 @@ const ProtectedRoutesNavigator = () => {
       <Stack.Screen name="notification" component={NotificationsNavigator} />
       <Stack.Screen name="getPremium" component={GetPremiumScreen} />
       <Stack.Screen name="stories" component={StoryNavigator} />
+      <Stack.Screen name="streaks" component={StreaksScreen} />
     </Stack.Navigator>
   );
 };
