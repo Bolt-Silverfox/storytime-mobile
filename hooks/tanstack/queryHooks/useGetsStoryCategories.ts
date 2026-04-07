@@ -20,15 +20,14 @@ const queryStoryCategories = () => {
         method: "GET",
       });
       const response: QueryResponse<Categories[]> = await request.json();
-      if (!response.success) {
-        throw new Error(response.message ?? "Unexpected error, try again");
-      }
-      return response;
+      if (!response.success)
+        throw new Error(response.message ?? "Unexpected error, try again.");
+
+      return response.data;
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     staleTime: Infinity,
-    select: (res) => res.data,
   });
 };
 

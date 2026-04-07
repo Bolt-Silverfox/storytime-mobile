@@ -9,13 +9,12 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data, isPending } = useQuery(queryStoryCategories());
-
   return (
     <HomeScreenCarouselComponent
       isPending={isPending}
       error={error}
       refetch={refetch}
-      hasData={!!data}
+      hasData={data && data.length > 0}
     >
       <View className="flex flex-col gap-y-4 pb-5">
         <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5 lg:max-w-screen-lg xl:max-w-screen-xl">
