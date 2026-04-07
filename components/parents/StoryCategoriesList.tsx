@@ -28,7 +28,7 @@ const StoryCategoriesList = () => {
         </View>
         <View className="mx-auto w-full max-w-screen-md flex-1 lg:max-w-screen-lg xl:max-w-screen-xl">
           <View className="flex flex-row flex-wrap items-center justify-center gap-x-2.5 gap-y-4">
-            {data?.map((category) => (
+            {data?.map?.((category) => (
               <Item
                 imageUrl={
                   category.image ??
