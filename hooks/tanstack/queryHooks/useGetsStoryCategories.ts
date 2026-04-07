@@ -19,11 +19,14 @@ const queryStoryCategories = () => {
       const request = await apiFetch(url, {
         method: "GET",
       });
-      const response: QueryResponse<Categories[]> = await request.json();
+      const response: QueryResponse<string> = await request.json();
       if (!response.success)
         throw new Error(response.message ?? "Unexpected error, try again.");
-
-      return response.data;
+      const parsedData: { value: Categories[] } = JSON.parse(response.data);
+      console.log("parsed Data", parsedData);
+      console.log("parsed value data", parsedData.value);
+      return parsedData.value;
+      // return response.data;
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
@@ -31,4 +34,5 @@ const queryStoryCategories = () => {
   });
 };
 
+export type { Categories };
 export default queryStoryCategories;

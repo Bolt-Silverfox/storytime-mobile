@@ -278,8 +278,12 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setIsLoading(true);
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
+        const accessToken = await secureTokenStorage.getAccessToken();
         const hasToken = await secureTokenStorage.hasAccessToken();
         const hasRefreshToken = await secureTokenStorage.hasRefreshToken();
+        if (__DEV__) {
+          console.log("user session token", accessToken);
+        }
 
         if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
           // Check if guest mode was previously active
