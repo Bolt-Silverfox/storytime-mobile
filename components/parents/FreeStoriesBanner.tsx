@@ -2,15 +2,19 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../hooks/useIsPremium";
+import useAuth from "../../contexts/AuthContext";
 
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const rootNavigator = useNavigation<RootNavigatorProp>();
   const { data: quota } = useGetStoryQuota();
   const { isPremium } = useIsPremium();
+  const { isGuest } = useAuth();
 
   if (dismissed || isPremium || !quota) return null;
 
@@ -36,12 +40,20 @@ const FreeStoriesBanner = () => {
     return `${used}/${totalAllowed} stories read`;
   };
 
+  const handleUpgradePress = () => {
+    if (isGuest) {
+      rootNavigator.navigate("auth", { screen: "signUp" });
+    } else {
+      navigator.navigate("getPremium");
+    }
+  };
+
   return (
     <View style={bannerStyles.container}>
       <View style={bannerStyles.contentWrapper}>
         <Text style={bannerStyles.description}>{getDescription()}</Text>
         {showUpgrade ? (
-          <Pressable onPress={() => navigator.navigate("getPremium")}>
+          <Pressable onPress={handleUpgradePress}>
             <Text style={bannerStyles.boldTextUnderlined}>{getBoldText()}</Text>
           </Pressable>
         ) : (

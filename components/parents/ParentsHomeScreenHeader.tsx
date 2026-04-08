@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
@@ -17,11 +18,20 @@ import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const rootNavigator = useNavigation<RootNavigatorProp>();
   const { isGuest } = useAuth();
 
   const { data, isPending } = useGetUserProfile();
   const { isPremium: isUserSubscribed } = useIsPremium();
   if (isPending && !isGuest) return <ActivityIndicator size={"large"} />;
+
+  const handleGetPremiumPress = () => {
+    if (isGuest) {
+      rootNavigator.navigate("auth", { screen: "signUp" });
+    } else {
+      navigator.navigate("getPremium" as any);
+    }
+  };
 
   return (
     <View
@@ -54,7 +64,7 @@ const ParentsHomeScreenHeader = () => {
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => navigator.navigate("getPremium" as any)}
+            onPress={handleGetPremiumPress}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
