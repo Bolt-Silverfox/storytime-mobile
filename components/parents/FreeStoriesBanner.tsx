@@ -1,20 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../hooks/useIsPremium";
-import useAuth from "../../contexts/AuthContext";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const guestNavigator = useNavigation<GuestNavigatorProp>();
   const { data: quota } = useGetStoryQuota();
   const { isPremium } = useIsPremium();
-  const { isGuest } = useAuth();
+  const handleUpgradePress = useUpgradeNavigation();
 
   if (dismissed || isPremium || !quota) return null;
 
@@ -38,14 +33,6 @@ const FreeStoriesBanner = () => {
   const getBoldText = () => {
     if (showUpgrade) return "Upgrade to Premium";
     return `${used}/${totalAllowed} stories read`;
-  };
-
-  const handleUpgradePress = () => {
-    if (isGuest) {
-      guestNavigator.navigate("signUp");
-    } else {
-      navigator.navigate("getPremium");
-    }
   };
 
   return (

@@ -8,30 +8,22 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import useAuth from "../../contexts/AuthContext";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const guestNavigator = useNavigation<GuestNavigatorProp>();
   const { isGuest } = useAuth();
+  const handleGetPremiumPress = useUpgradeNavigation();
 
   const { data, isPending } = useGetUserProfile();
   const { isPremium: isUserSubscribed } = useIsPremium();
   if (isPending && !isGuest) return <ActivityIndicator size={"large"} />;
-
-  const handleGetPremiumPress = () => {
-    if (isGuest) {
-      guestNavigator.navigate("signUp");
-    } else {
-      navigator.navigate("getPremium" as any);
-    }
-  };
 
   return (
     <View

@@ -100,8 +100,6 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
-  const isPremium = quota?.isPremium ?? false;
-
   // For guests, return the internal voice ID (DB row ID) for the default voice.
   // Returns null when voices aren't loaded yet — callers should wait.
   const guestVoiceId = useMemo(() => {
