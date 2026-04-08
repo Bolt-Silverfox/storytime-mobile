@@ -100,6 +100,8 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
+  const isPremium = quota?.isPremium ?? false;
+
   // For guests, return the internal voice ID (DB row ID) for the default voice.
   // Returns null when voices aren't loaded yet — callers should wait.
   const getGuestVoiceId = useCallback(() => {
@@ -188,7 +190,9 @@ const StoryComponent = ({
 
   const hasInitializedVoice = useRef(false);
   useEffect(() => {
-    if (!isVoiceFetched || hasInitializedVoice.current) return;
+    // For authenticated users, wait for voice query to fetch. For guests, skip this check.
+    if (!isGuest && !isVoiceFetched) return;
+    if (hasInitializedVoice.current) return;
     // For authenticated users with a preferred voice, initialize immediately.
     // For guests (or no preferred voice), wait until availableVoices loads
     // so getGuestVoiceId() can return a real DB UUID instead of null.
@@ -202,10 +206,11 @@ const StoryComponent = ({
     );
     setSelectedVoice(voiceToSet);
 
-    // Auto-show voice selection modal for first-time users (no preferred voice).
+    // Auto-show voice selection modal for first-time non-guest users (no preferred voice).
     // Only show once — if dismissed, don't nag on subsequent stories.
+    // Guests get default voice automatically and cannot change it.
     let mounted = true;
-    if (!preferredVoice) {
+    if (!preferredVoice && !isGuest) {
       AsyncStorage.getItem(getVoiceModalDismissedKey()).then((dismissed) => {
         if (!dismissed && mounted) {
           isFirstTimeVoiceSetup.current = true;
@@ -217,9 +222,11 @@ const StoryComponent = ({
       mounted = false;
     };
   }, [
+    isGuest,
     preferredVoice,
     isVoiceFetched,
     getVoiceModalDismissedKey,
+    isPremium,
     getGuestVoiceId,
   ]);
 

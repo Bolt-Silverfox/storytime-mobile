@@ -7,8 +7,8 @@ import {
   Text,
   View,
 } from "react-native";
-import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import useAuth from "../../contexts/AuthContext";
@@ -18,7 +18,7 @@ import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const rootNavigator = useNavigation<RootNavigatorProp>();
+  const guestNavigator = useNavigation<GuestNavigatorProp>();
   const { isGuest } = useAuth();
 
   const { data, isPending } = useGetUserProfile();
@@ -27,7 +27,7 @@ const ParentsHomeScreenHeader = () => {
 
   const handleGetPremiumPress = () => {
     if (isGuest) {
-      rootNavigator.navigate("auth", { screen: "signUp" });
+      guestNavigator.navigate("signUp");
     } else {
       navigator.navigate("getPremium" as any);
     }
