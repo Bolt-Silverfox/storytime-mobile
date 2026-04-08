@@ -41,8 +41,8 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: favouritesData } = useQueryParentsFavourites();
- const { isGuest } = useAuth();
- const { notify } = useToast();
+  const { isGuest } = useAuth();
+  const { notify } = useToast();
 
   const isLiked = useMemo(
     () =>
@@ -68,14 +68,14 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   });
 
   const handleFavoritePress = () => {
- if (isGuest) {
- notify("Please register to add stories to favorites");
- return;
- }
- onToggle();
- };
+    if (isGuest) {
+      notify("Please register to add stories to favorites");
+      return;
+    }
+    onToggle();
+  };
 
- const navigate = () => {
+  const navigate = () => {
     navigator.navigate("stories", {
       screen: "childStoryDetails",
       params: {
