@@ -1,9 +1,10 @@
-import { Text, View, Image, Pressable, ScrollView } from "react-native";
-import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import { useNavigation } from "@react-navigation/native";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import PageTitle from "../../components/PageTitle";
 import Icon from "../../components/Icon";
+import PageTitle from "../../components/PageTitle";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import StreakIcon from "../../components/UI/StreakIcon";
 
 const streakTitles = [
   "current streak",
@@ -67,10 +68,8 @@ const StreaksScreen = () => {
         </View>
         <View className="flex flex-col border-y border-y-border-light py-8">
           <View className="flex flex-col items-center">
-            <View className="flex flex-col items-center justify-center rounded-[35px] border border-bgLight bg-white p-5">
-              <Image
-                source={require("../../assets/icons/streak-icon-yellow.png")}
-              />
+            <View className="flex size-32 flex-col items-center justify-center rounded-[35px] border border-bgLight bg-white p-5">
+              <StreakIcon size={60} status="active" />
             </View>
             <View className=" -mt-10 flex flex-col items-center gap-y-1">
               <Text className="font-qilka text-[80px] text-black">{0}</Text>
@@ -102,9 +101,7 @@ const StreaksScreen = () => {
                 key={item}
                 className="flex w-[30%] max-w-[120px] flex-col items-center gap-y-2 rounded-2xl border border-border-lighter p-2.5"
               >
-                <Image
-                  source={require("../../assets/icons/streak-icon-large.png")}
-                />
+                <StreakIcon size={45} status="inactive" />
                 <Text className="font-abeezee text-xs text-text">
                   {item} Days Streak
                 </Text>

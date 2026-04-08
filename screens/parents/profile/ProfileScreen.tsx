@@ -1,5 +1,6 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 import {
   BellRing,
@@ -12,28 +13,30 @@ import {
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
+  Alert,
   ImageBackground,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   useWindowDimensions,
   View,
-  Alert,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+  setGuestDeviceId,
+  setGuestMode,
+  setGuestSessionId,
+} from "../../../apiFetch";
 import colours from "../../../colours";
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
+import Icon from "../../../components/Icon";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import StreakIcon from "../../../components/UI/StreakIcon";
 import useAuth from "../../../contexts/AuthContext";
-import {
-  setGuestMode,
-  setGuestSessionId,
-  setGuestDeviceId,
-} from "../../../apiFetch";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
@@ -113,7 +116,21 @@ const ProfileScreen: FC = () => {
               {user?.email}
             </CustomText>
           </View>
-
+          <Pressable
+            onPress={() => protectedNavigator.navigate("streaks")}
+            className="mx-4 mt-5 flex flex-row items-center justify-between rounded-2xl bg-primary px-6 py-5"
+          >
+            <View className="flex flex-row items-center gap-x-1.5">
+              <StreakIcon size={50} status="active" />
+              <View>
+                <Text className="font-qilka mb-1 text-3xl text-white">2</Text>
+                <Text className="font-abeezee text-xs text-white">
+                  Days Streak
+                </Text>
+              </View>
+            </View>
+            <Icon name="ChevronRight" color="white" />
+          </Pressable>
           <View className="mx-auto mt-7 w-[90%]  max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
             <MenuItem
               icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
@@ -218,6 +235,22 @@ const ProfileScreen: FC = () => {
               isLastItem
             />
           </View>
+          {isGuest ? (
+            <View className="mx-4 my-5 flex flex-col items-start rounded-2xl bg-blue px-6 py-4">
+              <Text className="font-qilka text-2xl text-white">
+                Enjoy other incredible benefits on Storytime
+              </Text>
+              <Text className="font-abeezee mb-4 mt-1.5 text-base text-[#D3C9FA]">
+                Read, listen save and track unlimited amount of stories when you
+                create an account.
+              </Text>
+              <Pressable className="rounded-full bg-yellow px-5 py-3">
+                <Text className="font-abeezee text-black">
+                  Register or Login
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
         </ScrollView>
         <ParentProfileModal
           open={openModal}

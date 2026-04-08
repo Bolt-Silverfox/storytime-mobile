@@ -2,19 +2,19 @@ import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import {
   ActivityIndicator,
-  Image,
   Pressable,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import useIsPremium from "../../hooks/useIsPremium";
-import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import useAuth from "../../contexts/AuthContext";
+import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useIsPremium from "../../hooks/useIsPremium";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
+import StreakIcon from "../UI/StreakIcon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
@@ -72,7 +72,7 @@ const ParentsHomeScreenHeader = () => {
             onPress={() => navigator.navigate("streaks")}
             className="flex size-11 items-center justify-center rounded-full border-2 border-[#FDECEA] bg-white "
           >
-            <Image source={require("../../assets/icons/streak-icon.png")} />
+            <StreakIcon status="inactive" />
           </Pressable>
         )}
         {!isGuest && (

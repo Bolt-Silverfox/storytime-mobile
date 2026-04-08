@@ -19,12 +19,10 @@ const queryStoryCategories = () => {
       const request = await apiFetch(url, {
         method: "GET",
       });
-      const response: QueryResponse<string> = await request.json();
+      const response: QueryResponse<Categories[]> = await request.json();
       if (!response.success)
         throw new Error(response.message ?? "Unexpected error, try again.");
-      const parsedData: { value: Categories[] } = JSON.parse(response.data);
-      return parsedData.value;
-      // return response.data;
+      return response.data;
     },
     refetchOnMount: false,
     refetchOnWindowFocus: false,
