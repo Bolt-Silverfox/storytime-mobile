@@ -1,16 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../hooks/useIsPremium";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: quota } = useGetStoryQuota();
   const { isPremium } = useIsPremium();
+  const handleUpgradePress = useUpgradeNavigation();
 
   if (dismissed || isPremium || !quota) return null;
 
@@ -41,7 +40,7 @@ const FreeStoriesBanner = () => {
       <View style={bannerStyles.contentWrapper}>
         <Text style={bannerStyles.description}>{getDescription()}</Text>
         {showUpgrade ? (
-          <Pressable onPress={() => navigator.navigate("getPremium")}>
+          <Pressable onPress={handleUpgradePress}>
             <Text style={bannerStyles.boldTextUnderlined}>{getBoldText()}</Text>
           </Pressable>
         ) : (

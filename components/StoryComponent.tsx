@@ -102,7 +102,7 @@ const StoryComponent = ({
 
   // For guests, return the internal voice ID (DB row ID) for the default voice.
   // Returns null when voices aren't loaded yet — callers should wait.
-  const getGuestVoiceId = useCallback(() => {
+  const guestVoiceId = useMemo(() => {
     if (!availableVoices?.length) return null;
     const nimbusVoice = availableVoices.find(
       (v) => v.id === DEFAULT_GUEST_VOICE_ID
@@ -188,11 +188,13 @@ const StoryComponent = ({
 
   const hasInitializedVoice = useRef(false);
   useEffect(() => {
-    if (!isVoiceFetched || hasInitializedVoice.current) return;
+    // For authenticated users, wait for voice query to fetch. For guests, skip this check.
+    if (!isGuest && !isVoiceFetched) return;
+    if (hasInitializedVoice.current) return;
     // For authenticated users with a preferred voice, initialize immediately.
     // For guests (or no preferred voice), wait until availableVoices loads
     // so getGuestVoiceId() can return a real DB UUID instead of null.
-    const guestVoiceId = getGuestVoiceId();
+    // guestVoiceId is now memoized directly
     const voiceToSet = preferredVoice?.id ?? guestVoiceId;
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
@@ -202,10 +204,11 @@ const StoryComponent = ({
     );
     setSelectedVoice(voiceToSet);
 
-    // Auto-show voice selection modal for first-time users (no preferred voice).
+    // Auto-show voice selection modal for first-time non-guest users (no preferred voice).
     // Only show once — if dismissed, don't nag on subsequent stories.
+    // Guests get default voice automatically and cannot change it.
     let mounted = true;
-    if (!preferredVoice) {
+    if (!preferredVoice && !isGuest) {
       AsyncStorage.getItem(getVoiceModalDismissedKey()).then((dismissed) => {
         if (!dismissed && mounted) {
           isFirstTimeVoiceSetup.current = true;
@@ -217,10 +220,11 @@ const StoryComponent = ({
       mounted = false;
     };
   }, [
+    isGuest,
     preferredVoice,
     isVoiceFetched,
     getVoiceModalDismissedKey,
-    getGuestVoiceId,
+    guestVoiceId,
   ]);
 
   const getQuotaReminderKey = useCallback(() => {
