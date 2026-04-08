@@ -104,7 +104,7 @@ const StoryComponent = ({
 
   // For guests, return the internal voice ID (DB row ID) for the default voice.
   // Returns null when voices aren't loaded yet — callers should wait.
-  const getGuestVoiceId = useCallback(() => {
+  const guestVoiceId = useMemo(() => {
     if (!availableVoices?.length) return null;
     const nimbusVoice = availableVoices.find(
       (v) => v.id === DEFAULT_GUEST_VOICE_ID
@@ -196,7 +196,7 @@ const StoryComponent = ({
     // For authenticated users with a preferred voice, initialize immediately.
     // For guests (or no preferred voice), wait until availableVoices loads
     // so getGuestVoiceId() can return a real DB UUID instead of null.
-    const guestVoiceId = getGuestVoiceId();
+    // guestVoiceId is now memoized directly
     const voiceToSet = preferredVoice?.id ?? guestVoiceId;
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
@@ -226,8 +226,7 @@ const StoryComponent = ({
     preferredVoice,
     isVoiceFetched,
     getVoiceModalDismissedKey,
-    isPremium,
-    getGuestVoiceId,
+    guestVoiceId,
   ]);
 
   const getQuotaReminderKey = useCallback(() => {
