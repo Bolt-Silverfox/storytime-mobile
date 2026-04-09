@@ -21,18 +21,21 @@ const DisclaimerInformationComponent = ({
           contentContainerClassName="flex-col gap-y-8"
           className="mx-4 mb-5 mt-5"
         >
-          {data.map((item, i) => (
-            <View key={i} className="flex flex-col">
+          {data.map((item, itemIndex) => (
+            <View
+              key={`${itemIndex}-${item.title ?? "section"}`}
+              className="flex flex-col"
+            >
               {item.title && (
                 <Text className="font-[abeezee] text-[18px] text-black">
                   {item.index && item.index + "."} {item.title}
                 </Text>
               )}
-              {item.paragraph?.map((p) => {
+              {item.paragraph?.map((p, paragraphIndex) => {
                 if (typeof p === "string")
                   return (
                     <Text
-                      key={p}
+                      key={`paragraph-${paragraphIndex}-${itemIndex}`}
                       className="mt-3 font-[abeezee] text-base text-text"
                     >
                       {p}
@@ -40,7 +43,7 @@ const DisclaimerInformationComponent = ({
                   );
                 return (
                   <Text
-                    key={p.text}
+                    key={`paragraph-${paragraphIndex}-${itemIndex}`}
                     className={`ml-2 font-[abeezee] text-base text-text ${p.index === 1 && "mt-3"}`}
                   >
                     {p.index}. {p.text}

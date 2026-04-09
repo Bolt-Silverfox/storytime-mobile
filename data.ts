@@ -51,7 +51,7 @@ const privacyPolicyData: DisclaimerData = [
   },
   {
     title: "Children's privacy (COPPA-Aligned)",
-    index: 1.3,
+    index: 2,
     paragraph: [
       "Storytime is designed for families and may be used by children under parental supervision.",
       "We:",
@@ -141,7 +141,7 @@ const privacyPolicyData: DisclaimerData = [
     title: "Data retention",
     index: 5,
     paragraph: [
-      "We eep data only as long as necessary to:",
+      "We keep data only as long as necessary to:",
       {
         index: 1,
         text: "Provide the Service",
@@ -222,7 +222,7 @@ const termsAndConditionsData: DisclaimerData = [
       "You may use Storytime only if:",
       {
         index: 1,
-        text: "You are at least 1 years old, or",
+        text: "You are at least 1 year old, or",
       },
       {
         index: 2,
@@ -307,7 +307,7 @@ const termsAndConditionsData: DisclaimerData = [
         index: 2,
         text: "Subscriptions automatically renew unless cancelled before the renewal date",
       },
-      { index: 3, text: "Prices may cnange with prior notice" },
+      { index: 3, text: "Prices may change with prior notice" },
     ],
   },
   {
@@ -317,7 +317,7 @@ const termsAndConditionsData: DisclaimerData = [
       "You may cancel at any time via:",
       { index: 1, text: "Your app store account (Apple/Google), or" },
       { index: 2, text: "Your Storytime account settings" },
-      "IMPORTAANT",
+      "IMPORTANT",
       { index: 1, text: "Cancellation stops future billing" },
       {
         index: 2,
@@ -347,7 +347,7 @@ const termsAndConditionsData: DisclaimerData = [
       { index: 4, text: "Interfere with the platform's security" },
       {
         index: 5,
-        text: "Use Storytime for commercial redistribbution without permission",
+        text: "Use Storytime for commercial redistribution without permission",
       },
       "We may suspend or terminate accounts that violate these rules.",
     ],
@@ -461,7 +461,7 @@ const termsAndConditionsData: DisclaimerData = [
       { index: 2, text: "Loss of data" },
       { index: 3, text: "Service interruptions" },
       { index: 4, text: "AI-generated content outcomes" },
-      "Your use of the Service is at your won risk.",
+      "Your use of the Service is at your own risk.",
     ],
   },
   {

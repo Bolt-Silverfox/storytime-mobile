@@ -7,7 +7,7 @@ const PrivacyScreen = () => {
   const navigator = useNavigation<AuthNavigatorProp>();
   return (
     <DisclaimerInformationComponent
-      pageTitle="Privacy and Policy"
+      pageTitle="Privacy Policy"
       goBack={() => navigator.goBack()}
       data={privacyPolicyData}
     />
