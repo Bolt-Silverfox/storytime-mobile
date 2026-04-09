@@ -1,11 +1,16 @@
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
-import TermsAndConditionsScreenComponent from "../../components/screens/TermsAndConditionsScreenComponent";
+import { termsAndConditionsData } from "../../data";
+import DisclaimerInformationComponent from "../../components/screens/DisclaimerInformationComponent";
 
 const TermsOfServiceScreen = () => {
   const navigator = useNavigation<AuthNavigatorProp>();
   return (
-    <TermsAndConditionsScreenComponent goBack={() => navigator.goBack()} />
+    <DisclaimerInformationComponent
+      pageTitle="Terms & Conditions"
+      goBack={() => navigator.goBack()}
+      data={termsAndConditionsData}
+    />
   );
 };
 

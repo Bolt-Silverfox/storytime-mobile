@@ -94,7 +94,7 @@ export default function HelpAndSupportIndexScreen() {
                   size={isTablet ? 20 : 18}
                 />
               }
-              label="Privacy and Policy"
+              label="Privacy Policy"
               isTablet={isTablet}
               onPress={() =>
                 navigator.navigate("helpAndSupport", {
