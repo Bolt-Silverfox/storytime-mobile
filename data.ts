@@ -482,7 +482,7 @@ const termsAndConditionsData: DisclaimerData = [
     index: 14,
     paragraph: [
       "These Terms shall be governed by the laws of:",
-      "United States of America",
+      "Your residing country",
     ],
   },
   {
