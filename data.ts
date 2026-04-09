@@ -1,131 +1,494 @@
-import { AgeGroupType } from "./types";
+import { AgeGroupType, DisclaimerData } from "./types";
 
 const SUPPORT_EMAIL = "team@storytimeapp.me";
 
-const privacyPolicyData: {
-  title: string;
-  paragraph: string;
-  number: string;
-}[] = [
+const privacyPolicyData: DisclaimerData = [
   {
-    title: "Information We Collect",
-    paragraph:
-      "We collect the following information to provide and improve the Storytime service: your email address and name (at registration), profile photo (if uploaded), reading progress and story preferences, app usage and interaction patterns, device tokens for push notifications, and purchase/transaction data for subscription management.",
-    number: "I",
+    paragraph: [
+      "Storytime (“Storytime,” “we,” “us,” or “our”) respects your privacy and is committed to protecting the personal information of families who use our app and services (the “Service”).",
+      "This Privacy Policy explains how we collect, use, store, and protect your information.",
+    ],
   },
   {
-    title: "How We Use the Information",
-    paragraph:
-      "We use the collected information to personalize reading content, track achievements, remember story preferences, process subscriptions, send push notifications about new content, and improve the app experience.",
-    number: "II",
+    title: "Information we collect",
+    index: 1,
   },
   {
-    title: "How We Protect Your Data",
-    paragraph:
-      "We use secure storage systems, encrypted data handling, and industry-standard security practices. All data is transmitted over HTTPS and sensitive credentials are stored in secure device storage.",
-    number: "III",
+    title: "Information we provide",
+    index: 1.1,
+    paragraph: [
+      "When you use Storytime, we may collect:",
+      { text: "Name", index: 1 },
+      { text: "Email address", index: 2 },
+      { text: "Parent/guardian details", index: 3 },
+      "We collect only what is necessary to operate the Service.",
+    ],
   },
   {
-    title: "Third-Party Services",
-    paragraph:
-      "We use the following third-party services that may process limited data: Firebase Cloud Messaging (push notification delivery and device tokens), Firebase Crashlytics (crash reports and device diagnostics, linked to your user ID for debugging), and Sentry (error monitoring, linked to your user ID and email for issue resolution). These services process data according to their own privacy policies and do not use your data for advertising purposes.",
-    number: "IV",
+    title: "Automatically collected information",
+    index: 1.2,
+    paragraph: [
+      "We may automatically collect:",
+      { text: "Device type", index: 1 },
+      { text: "Operating system", index: 2 },
+      { text: "App usage data", index: 3 },
+      { text: "Log information", index: 4 },
+      { text: "Crash reports", index: 5 },
+      { text: "IP address (approximate location)", index: 6 },
+      "This helps us improve performance and reliability.",
+    ],
   },
   {
-    title: "Your Rights",
-    paragraph:
-      "You can request to view, update, or delete any information stored about you at any time by contacting us or using the Delete Account feature in the app. We will respond to data requests within 30 days. For users in the European Economic Area, you also have the right to data portability, the right to object to processing, and the right to lodge a complaint with your local supervisory authority.",
-    number: "V",
+    title: "Payment information",
+    index: 1.3,
+    paragraph: [
+      "Payments are processed by third-party providers (e.g., Apple App Store, Google Play).",
+      "We do NOT store:",
+      { text: "Full card numbers", index: 1 },
+      { text: "Bank details", index: 2 },
+      { text: "Payment credentials", index: 3 },
+    ],
   },
   {
-    title: "Data Retention",
-    paragraph:
-      "We retain your personal data for as long as your account is active. If you delete your account, we will remove your personal data within 30 days, except where we are required to retain it by law or for legitimate business purposes (e.g., transaction records).",
-    number: "VI",
+    title: "Children's privacy (COPPA-Aligned)",
+    index: 1.3,
+    paragraph: [
+      "Storytime is designed for families and may be used by children under parental supervision.",
+      "We:",
+      { text: "Require parent/guardian involvement", index: 1 },
+      { text: "Limit data collection from children", index: 2 },
+      { text: "Do not knowingly sell children's data", index: 3 },
+      { text: "Allow parents to request deletion", index: 4 },
+      "Parents may contact us at:.",
+      `${SUPPORT_EMAIL}`,
+      "To:",
+      {
+        text: "Review data",
+        index: 1,
+      },
+      {
+        text: "Delete profiles",
+        index: 2,
+      },
+      {
+        text: "Withdraw consent",
+        index: 3,
+      },
+    ],
   },
   {
-    title: "Updates to This Policy",
-    paragraph:
-      "We may update this policy occasionally. Users will be notified of important changes through the app or email.",
-    number: "VII",
+    title: "How we use information",
+    index: 3,
+    paragraph: [
+      "We use your information to:",
+      {
+        index: 1,
+        text: "Provide and personalize stories",
+      },
+      {
+        index: 2,
+        text: "Maintain your account",
+      },
+      {
+        index: 3,
+        text: "Process subscriptions",
+      },
+      {
+        index: 4,
+        text: "Improve the Service",
+      },
+      {
+        index: 5,
+        text: "Send important service notifications",
+      },
+      {
+        index: 6,
+        text: "Provide customer support",
+      },
+      {
+        index: 7,
+        text: "Ensure safety and prevent abuse",
+      },
+      "We do not sell personal data.",
+    ],
+  },
+  {
+    title: "Data sharing",
+    index: 4,
+    paragraph: [
+      "We only share data with:",
+      {
+        index: 1,
+        text: "Payment processors",
+      },
+      {
+        index: 2,
+        text: "Cloud hosting providers",
+      },
+      {
+        index: 3,
+        text: "Analytics providers",
+      },
+      {
+        index: 4,
+        text: "Legal authorities when required",
+      },
+      "All partners are required to protect your data.",
+      "We do not sell or rent user data.",
+    ],
+  },
+  {
+    title: "Data retention",
+    index: 5,
+    paragraph: [
+      "We eep data only as long as necessary to:",
+      {
+        index: 1,
+        text: "Provide the Service",
+      },
+      {
+        index: 2,
+        text: "Meet legal obligations",
+      },
+      {
+        index: 3,
+        text: "Resolve disputes",
+      },
+      "You may request deletion at any time.",
+    ],
+  },
+  {
+    title: "Your rights",
+    index: 6,
+    paragraph: [
+      { index: 1, text: "Access your data" },
+      { index: 2, text: "Correct your data" },
+      { index: 3, text: "Delete your data" },
+      { index: 4, text: "Restrict processing" },
+      { index: 5, text: "Withdraw consent" },
+      "To exercise rights:",
+      `${SUPPORT_EMAIL}`,
+    ],
+  },
+  {
+    title: "Security",
+    index: 7,
+    paragraph: [
+      "We use reasonable administrative, technical, and organizational safeguards to protect your data.",
+      "However, no system is 100% secure.",
+    ],
+  },
+  {
+    title: "International users",
+    index: 8,
+    paragraph: [
+      "Your data may be processed in countries outside your residence. We take steps to ensure appropriate protection.",
+    ],
+  },
+  {
+    title: "Changes to this policy",
+    index: 9,
+    paragraph: [
+      "We may update this Privacy Policy periodically.",
+      "If changes are material, we will notify users via the app or email.",
+    ],
   },
   {
     title: "Contact Us",
-    paragraph: `Email: ${SUPPORT_EMAIL}`,
-    number: "VIII",
+    index: 10,
+    paragraph: [`${SUPPORT_EMAIL}`],
   },
 ];
 
-const termsAndConditionsData: {
-  heading: string;
-  paragraph: string | string[];
-  index: string;
-}[] = [
+const termsAndConditionsData: DisclaimerData = [
   {
-    heading: "Introduction and Acceptance",
-    index: "I",
+    title: "Introduction and Acceptance",
     paragraph: [
-      'These Terms and Conditions ("Terms") form a legally binding agreement between you ("User") and Storytime ("Company," "we," "us," or "our") governing your access to and use of our website, mobile application, and digital content services (collectively, the "Service").',
-      "By accessing, using, or subscribing to the Service, you confirm that you have read, understood, and agree to be bound by these Terms. If you do not agree, you must not access or use the Service.",
+      "Welcome to Storytime (“Storytime,” “we,” “us,” or “our”). These Terms & Conditions (“Terms”) govern your access to and use of the Storytime mobile application, website, and related services (collectively, the “Service”).",
+      "By creating an account or using Storytime, you agree to these Terms. If you do not agree, please do not use the Service.",
     ],
   },
   {
-    heading: "The Service and Age Restrictions",
-    index: "II",
+    title: "About Storytime",
+    index: 1,
     paragraph: [
-      "Storytime provides access to a curated digital library of stories, audio, video, and related educational content designed to support literacy and imagination.",
-      "You must be at least 18 years old to create an account, make payments, and accept these Terms.",
+      "Storytime is a family-focused storytelling platform designed to provide safe, curated, and engaging stories for children and families. Our goal is to make storytelling joyful, calming, and meaningful for users of all ages",
     ],
   },
   {
-    heading: "Subscriptions, Payments, and Free Trials",
-    index: "III",
+    title: "Eligibility",
+    index: 2,
     paragraph: [
-      "1.Subscription\nWe offer various subscription plans, including monthly and annual options. Plan details and pricing are displayed at the time of purchase.",
-      "2. Automatic Renewal\nAll paid subscriptions automatically renew at the applicable rate unless cancelled before the end of the current billing period.",
-      "3. Billing and Cancellation\nSubscription management and cancellations are handled through your App Store or Google Play account.",
+      "You may use Storytime only if:",
+      {
+        index: 1,
+        text: "You are at least 1 years old, or",
+      },
+      {
+        index: 2,
+        text: "You are a parent/legal guardian providing consent for a child's use.",
+      },
+      "Parents and guardians are responsible for supervising children's use of the app.",
     ],
   },
   {
-    heading: "Intellectual Property Rights",
-    index: "IV",
+    title: "Account registration",
+    index: 3,
+  },
+  {
+    title: "Creating an Account",
+    index: 3.1,
     paragraph: [
-      "All content and materials made available through the Service, including stories, narration, illustrations, graphics, trademarks, and software, are the exclusive property of Storytime or its licensors and are protected by applicable intellectual property laws.",
-      "You are granted a limited, non-exclusive, non-transferable license to access and use the Service for personal, non-commercial purposes only. You may not copy, reproduce, distribute, modify, or publicly display any content without prior written consent.",
+      "To access certain features, you may need to create an account and provide accurate information.",
+      "You agree to:",
+      {
+        index: 1,
+        text: "Provide truthful information",
+      },
+      {
+        index: 2,
+        text: "Keep your login credentials secure",
+      },
+      {
+        index: 3,
+        text: "Notify us of any unauthorized access",
+      },
+      "You are responsible for all activities under your account.",
     ],
   },
   {
-    heading: "User Conduct and Account Security",
-    index: "V",
+    title: "Child profiles",
+    index: 3.2,
     paragraph: [
-      "You are responsible for maintaining the confidentiality of your account credentials and for all activity that occurs under your account.",
-      "You agree not to:\n 1. Use the Service for unlawful or unauthorized purposes.\n 2. Share account access beyond the limits of your subscription plan.\n 3. Attempt to copy, scrape, redistribute, or exploit any part of the Service.",
+      "If Storytime allows multiple child profiles:",
+      {
+        index: 1,
+        text: "You confirm you have legal authority to create profiles for minors.",
+      },
+      {
+        index: 2,
+        text: "You are responsible for managing content preferences and controls.",
+      },
     ],
   },
   {
-    heading: "Suspension and Termination",
-    index: "VI",
-    paragraph:
-      "We reserve the right to suspend or terminate your access to the Service, with or without notice, if you violate these Terms, misuse the Service, or fail to meet payment obligations.\nYou may discontinue use of the Service at any time by cancelling your subscription or deleting your account.",
-  },
-  {
-    heading: "Governing Law and Dispute Resolution",
-    index: "VII",
+    title: "Subscription plans",
+    index: 4,
     paragraph: [
-      "These Terms shall be governed by and construed in accordance with the laws of your Jurisdiction, without regard to conflict of law principles.",
-      "Any disputes arising out of or relating to these Terms or the Service shall first be attempted to be resolved through good-faith negotiations and, if unresolved, through binding arbitration in accordance with applicable laws",
+      "Storytime offers the following plans:",
+      "FREEMIUM PLAN",
+      {
+        index: 1,
+        text: "Users receive 10 free stories upon signup",
+      },
+      { index: 2, text: "Users receive 1 free story each month thereafter" },
+      { index: 3, text: "Features may be limited" },
+      "We reserve the right to modify free limits at any time with notice.",
+      "PAID PLAN",
+      "Monthly Subscription",
+      { index: 1, text: "Billed monthly" },
+      { index: 2, text: "Auto-renews unless cancelled" },
+      "Annual Subscription",
+      { index: 1, text: "Billed yearly" },
+      { index: 2, text: "Auto-renews unless cancelled" },
+      "Paid plans unlock premium features and expanded access.",
     ],
   },
   {
-    heading: "Changes to These Terms",
-    index: "VIII",
-    paragraph:
-      'We may update these Terms from time to time. Any changes will be posted on this page with an updated "Last updated" date. Continued use of the Service after changes become effective constitutes acceptance of the revised Terms.',
+    title: "Billing & Auto-renewal",
+    index: 4.1,
+    paragraph: [
+      "By subscribing, you agree that:",
+      {
+        index: 1,
+        text: "Payment will be charged to your selected payment method",
+      },
+      {
+        index: 2,
+        text: "Subscriptions automatically renew unless cancelled before the renewal date",
+      },
+      { index: 3, text: "Prices may cnange with prior notice" },
+    ],
   },
   {
-    heading: "Contact Information",
-    index: "IX",
-    paragraph: `If you have any questions about these terms, please contact us at: \nEmail: ${SUPPORT_EMAIL}`,
+    title: "Cancellation",
+    index: 4.2,
+    paragraph: [
+      "You may cancel at any time via:",
+      { index: 1, text: "Your app store account (Apple/Google), or" },
+      { index: 2, text: "Your Storytime account settings" },
+      "IMPORTAANT",
+      { index: 1, text: "Cancellation stops future billing" },
+      {
+        index: 2,
+        text: "Current billing periods are not-refundable unless required by law",
+      },
+    ],
+  },
+  {
+    title: "Refunds",
+    index: 4.3,
+    paragraph: [
+      "Except where required by law:",
+      { index: 1, text: "All purchases are non-refundable" },
+      { index: 2, text: "Partial subscription periods are not refunded" },
+      "If you believe you were billed in error, contact:",
+      `${SUPPORT_EMAIL}`,
+    ],
+  },
+  {
+    title: "Acceptable use",
+    index: 5,
+    paragraph: [
+      "You agree NOT to:",
+      { index: 1, text: "Misuse the Service" },
+      { index: 2, text: "Attempt to reverse engineer the app" },
+      { index: 3, text: "Upload harmful or illegal content" },
+      { index: 4, text: "Interfere with the platform's security" },
+      {
+        index: 5,
+        text: "Use Storytime for commercial redistribbution without permission",
+      },
+      "We may suspend or terminate accounts that violate these rules.",
+    ],
+  },
+  {
+    title: "Content & intellectual property",
+    index: 6,
+  },
+  {
+    title: "Our content",
+    index: 6.1,
+    paragraph: [
+      "All stories, audio, designs, and technology in Storytime are owned by us or our licensors and are protected by copyright and intellectual property laws.",
+      "You may:",
+      { index: 1, text: "Use content for personal, non-commercial use" },
+      {
+        index: 2,
+        text: "Not copy, resell, or redistribute content without permission",
+      },
+      "We may suspend or terminate accounts that violate these rules.",
+    ],
+  },
+  {
+    title: "User generic content (if applicable)",
+    index: 6.2,
+    paragraph: [
+      "If you submit content (e.g, story inputs, names, preferences):",
+      { index: 1, text: "You retain ownership of your content" },
+      {
+        index: 2,
+        text: "You grant Storytime a limited license to use it to operate and improve the Service",
+      },
+      { index: 3, text: "You confirm you have rights to submit the content" },
+    ],
+  },
+  {
+    title: "AI Generated stories",
+    index: 7,
+    paragraph: [
+      "Storytime may use AI to generate personalized stories.",
+      "You acknowledge that:",
+      { index: 1, text: "AI outputs may vary" },
+      { index: 2, text: "Stories are generated automatically" },
+      {
+        index: 3,
+        text: "We do not guarantee factual accuracy in fictional content",
+      },
+      "Storytime is designed for entertainment and educational purposes.",
+    ],
+  },
+  {
+    title: "Child safety & parental responsibility",
+    index: 8,
+    paragraph: [
+      "Storytime is built with families in mind and aims to provide age-appropriate content.",
+      "However:",
+      {
+        index: 1,
+        text: "Parents/guardians are responsible for supervising usage",
+      },
+      { index: 2, text: "Parents should review stories for suitability" },
+      {
+        index: 3,
+        text: "Screen time decisions remain the parent's responsibility",
+      },
+    ],
+  },
+  {
+    title: "Privacy",
+    index: 9,
+    paragraph: [
+      "Your use of Storytime is also governed by our Privacy Policy.",
+      "We are committed to protecting family data and using information only as necessary to provide and improve the Service.",
+    ],
+  },
+  {
+    title: "Service availability",
+    index: 10,
+    paragraph: [
+      "We strive to keep Storytime available at all times, but we do not guarantee:",
+      {
+        index: 1,
+        text: "Uninterrupted service",
+      },
+      { index: 2, text: "Error-free performance" },
+      {
+        index: 3,
+        text: "Permanent availability of specific stories or features",
+      },
+      "We may modify or discontinue features at any time.",
+    ],
+  },
+  {
+    title: "Termination",
+    index: 11,
+    paragraph: [
+      "We may suspend or terminate your access if:",
+      { index: 1, text: "You violate these Terms" },
+      { index: 2, text: "You misuse the platform" },
+      { index: 3, text: "Required by law" },
+      "You may stop using Storytime at any time by deleting your account.",
+    ],
+  },
+  {
+    title: "Limitation of liability",
+    index: 12,
+    paragraph: [
+      "To the maximum extent permitted by law:",
+      "Storytime shall not be liable for:",
+      { index: 1, text: "Indirect or consequential damages" },
+      { index: 2, text: "Loss of data" },
+      { index: 3, text: "Service interruptions" },
+      { index: 4, text: "AI-generated content outcomes" },
+      "Your use of the Service is at your won risk.",
+    ],
+  },
+  {
+    title: "Changes to these terms",
+    index: 13,
+    paragraph: [
+      "We may update these Terms from time to time.",
+      "If we make material changes:",
+      {
+        index: 1,
+        text: "We will notify users via the app or email",
+      },
+      { index: 2, text: "Continued use means you accept the updated Terms" },
+    ],
+  },
+  {
+    title: "Governing law",
+    index: 14,
+    paragraph: [
+      "These Terms shall be governed by the laws of:",
+      "United States of America",
+    ],
+  },
+  {
+    title: "Contact us",
+    index: 15,
+    paragraph: ["If you have questions about these Terms:", `${SUPPORT_EMAIL}`],
   },
 ];
 
