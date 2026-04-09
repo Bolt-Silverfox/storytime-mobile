@@ -11,6 +11,7 @@ import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigat
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
 import useAuth from "../../contexts/AuthContext";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
@@ -18,6 +19,7 @@ import Icon from "../Icon";
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { isGuest } = useAuth();
+  const handleGetPremiumPress = useUpgradeNavigation();
 
   const { data, isPending } = useGetUserProfile();
   const { isPremium: isUserSubscribed } = useIsPremium();
@@ -54,7 +56,7 @@ const ParentsHomeScreenHeader = () => {
         {!isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => navigator.navigate("getPremium" as any)}
+            onPress={handleGetPremiumPress}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
