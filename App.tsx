@@ -46,6 +46,15 @@ const linking: LinkingOptions<RootNavigatorParamList> = {
           },
         },
       },
+      guest: {
+        screens: {
+          stories: {
+            screens: {
+              storyDeepLink: "story/:storyId",
+            },
+          },
+        },
+      },
     },
   } as LinkingOptions<RootNavigatorParamList>["config"],
 };

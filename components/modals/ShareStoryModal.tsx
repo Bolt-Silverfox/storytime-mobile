@@ -1,7 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import * as Clipboard from "expo-clipboard";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
-import { SHARE_WEB_URL } from "../../constants";
+import { SHARE_DEEP_LINK_URL } from "../../constants";
 import { shareContent } from "../../utils/utils";
 import useToast from "../../contexts/ToastContext";
 import Icon from "../Icon";
@@ -26,7 +26,7 @@ const ShareStoryModal = ({
   storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
-  const shareUrl = `${SHARE_WEB_URL}/story/${storyId}`;
+  const shareUrl = `${SHARE_DEEP_LINK_URL}/${storyId}`;
   const { notify } = useToast();
 
   const handleCopy = async () => {
