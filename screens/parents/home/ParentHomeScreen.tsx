@@ -30,7 +30,6 @@ import {
 } from "../../../apiFetch";
 
 type SectionKey =
-  | "freeStoriesBanner"
   | "storiesByAge"
   | "topRecommendations"
   | "todaysTopPicks"
@@ -43,7 +42,6 @@ type SectionItem = { key: SectionKey };
 const sectionKeyExtractor = (item: SectionItem) => item.key;
 
 const SECTIONS: SectionItem[] = [
-  { key: "freeStoriesBanner" },
   { key: "storiesByAge" },
   { key: "topRecommendations" },
   { key: "todaysTopPicks" },
@@ -102,8 +100,6 @@ const ParentHomeScreen = () => {
 
   const renderSection = useCallback(({ item }: { item: SectionItem }) => {
     switch (item.key) {
-      case "freeStoriesBanner":
-        return <FreeStoriesBanner />;
       case "storiesByAge":
         return <StoriesByAgeComponent />;
       case "topRecommendations":
@@ -116,18 +112,24 @@ const ParentHomeScreen = () => {
         return <FunAndAdventuresComponent />;
       case "storyCategoriesList":
         return <StoryCategoriesList />;
+      default:
+        return null;
     }
   }, []);
 
   const listHeader = useMemo(
-    () =>
-      showBanner && !isGuest ? (
-        <NotificationPermissionBanner
-          permissionStatus={permissionStatus}
-          onDismiss={handleDismiss}
-          onPermissionGranted={handlePermissionGranted}
-        />
-      ) : null,
+    () => (
+      <View style={styles.listHeader}>
+        {showBanner && !isGuest && (
+          <NotificationPermissionBanner
+            permissionStatus={permissionStatus}
+            onDismiss={handleDismiss}
+            onPermissionGranted={handlePermissionGranted}
+          />
+        )}
+        <FreeStoriesBanner />
+      </View>
+    ),
     [
       showBanner,
       isGuest,
@@ -173,6 +175,7 @@ const ParentHomeScreen = () => {
 
 const styles = StyleSheet.create({
   listContent: { gap: 32, paddingBottom: 32 },
+  listHeader: { gap: 16 },
 });
 
 export default ParentHomeScreen;
