@@ -116,10 +116,12 @@ const GroupedStoriesStoryCarousel = ({
       }
       ListHeaderComponent={
         showAges ? (
-          <AgeSelectionComponent
-            selectedGroupProp={selectedAgeGroup}
-            setSelectedCallback={setSelectedAgeGroup}
-          />
+          <View style={styles.listHeader}>
+            <AgeSelectionComponent
+              selectedGroupProp={selectedAgeGroup}
+              setSelectedCallback={setSelectedAgeGroup}
+            />
+          </View>
         ) : null
       }
       renderItem={renderStoryItem}
@@ -163,5 +165,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 6,
     marginBottom: 24,
   },
+  listHeader: { marginBottom: 16 },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });

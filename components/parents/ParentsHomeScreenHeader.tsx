@@ -53,7 +53,7 @@ const ParentsHomeScreenHeader = () => {
         </Text>
       </View>
       <View className="flex shrink-0 flex-row items-center gap-x-3">
-        {!isUserSubscribed && (
+        {!isGuest && !isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
             onPress={handleGetPremiumPress}
