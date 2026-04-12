@@ -174,8 +174,8 @@ const ParentHomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  listContent: { gap: 32, paddingBottom: 32 },
-  listHeader: { gap: 16 },
+  listContent: { gap: 16, paddingBottom: 32 },
+  listHeader: { gap: 12 },
 });
 
 export default ParentHomeScreen;

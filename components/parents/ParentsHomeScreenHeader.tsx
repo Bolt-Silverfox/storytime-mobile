@@ -28,7 +28,7 @@ const ParentsHomeScreenHeader = () => {
   return (
     <View
       aria-labelledby="user avatar container"
-      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-4"
+      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-2"
     >
       <View>
         <Avatar
