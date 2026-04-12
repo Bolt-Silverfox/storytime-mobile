@@ -154,7 +154,7 @@ const AvailableVoices = ({
             <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
               <Icon name="TriangleAlert" size={20} color="#212121" />
               <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
-                Sign up to unlock all voices and choose your favorite!
+                Sign up to unlock more voices and choose your favorite!
               </Text>
             </View>
           )}
