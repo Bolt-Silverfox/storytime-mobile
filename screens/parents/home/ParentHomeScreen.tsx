@@ -18,6 +18,7 @@ import StoryCategoriesList from "../../../components/parents/StoryCategoriesList
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
+import useAuth from "../../../contexts/AuthContext";
 
 type SectionKey =
   | "storiesByAge"
@@ -41,6 +42,7 @@ const SECTIONS: SectionItem[] = [
 ];
 
 const ParentHomeScreen = () => {
+  const { isGuest } = useAuth();
   const {
     showBanner,
     permissionStatus,
@@ -84,7 +86,7 @@ const ParentHomeScreen = () => {
   const listHeader = useMemo(
     () => (
       <View style={styles.listHeader}>
-        {showBanner && (
+        {showBanner && !isGuest && (
           <NotificationPermissionBanner
             permissionStatus={permissionStatus}
             onDismiss={handleDismiss}
@@ -96,6 +98,7 @@ const ParentHomeScreen = () => {
     ),
     [
       showBanner,
+      isGuest,
       permissionStatus,
       handleDismiss,
       handlePermissionGranted,
