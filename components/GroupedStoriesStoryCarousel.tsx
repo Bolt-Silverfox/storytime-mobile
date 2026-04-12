@@ -1,4 +1,3 @@
-import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
@@ -13,13 +12,16 @@ import useInfiniteStories, {
 } from "../hooks/tanstack/queryHooks/useInfiniteStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
-import useAdaptiveColumns from "../hooks/others/useAdaptiveColumns";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
 import CustomButton from "./UI/CustomButton";
+import {
+  AdaptiveFlashList,
+  adaptiveColumnItemStyle,
+} from "./UI/AdaptiveFlashList";
 
 const storyKeyExtractor = (item: { id: string }) => item.id;
 
@@ -36,7 +38,6 @@ const GroupedStoriesStoryCarousel = ({
   params,
 }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const numColumns = useAdaptiveColumns();
   const {
     data,
     isPending,
@@ -61,7 +62,7 @@ const GroupedStoriesStoryCarousel = ({
 
   const renderStoryItem = useCallback(
     ({ item: story }: { item: (typeof stories)[number] }) => (
-      <View style={styles.columnItem}>
+      <View style={adaptiveColumnItemStyle}>
         <StoryItem story={story} isGrouped />
       </View>
     ),
@@ -102,15 +103,11 @@ const GroupedStoriesStoryCarousel = ({
   }
 
   return (
-    <FlashList
-      key={numColumns}
+    <AdaptiveFlashList
       data={stories}
       keyExtractor={storyKeyExtractor}
-      style={styles.carouselContainer}
-      contentContainerStyle={styles.contentContainer}
       drawDistance={500}
       showsVerticalScrollIndicator={false}
-      numColumns={numColumns}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
@@ -147,24 +144,6 @@ const GroupedStoriesStoryCarousel = ({
 export default GroupedStoriesStoryCarousel;
 
 const styles = StyleSheet.create({
-  carouselContainer: {
-    marginTop: -16,
-    flex: 1,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    backgroundColor: "#ffffff",
-    paddingTop: 10,
-  },
-  contentContainer: {
-    paddingHorizontal: 16,
-    paddingTop: 24,
-    paddingBottom: 20,
-  },
-  columnItem: {
-    flex: 1,
-    marginHorizontal: 6,
-    marginBottom: 24,
-  },
   listHeader: { marginBottom: 16 },
   footer: { height: 60, alignItems: "center", justifyContent: "center" },
 });
