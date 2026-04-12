@@ -31,7 +31,7 @@ const TodaysTopPicksScreen = () => {
     isPending,
     error,
     refetch,
-  } = useQuery(queryGetStories({ topPicksFromUs: true }));
+  } = useQuery(queryGetStories({ topPicksFromUs: true, shuffle: true }));
   const { refreshing, onRefresh } = useRefreshControl(refetch);
 
   return (
