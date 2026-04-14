@@ -16,8 +16,19 @@ import {
   adaptiveColumnItemStyle,
 } from "../../../components/UI/AdaptiveFlashList";
 
+/**
+ * Key extractor function for Story items in the FlatList
+ */
 const storyKeyExtractor = (item: { id: string }) => item.id;
 
+/**
+ * Screen component displaying today's top story picks in a responsive grid layout.
+ *
+ * Shows a featured header image with navigation back button, and displays stories
+ * in an adaptive grid (2-4 columns based on screen width) with pull-to-refresh.
+ *
+ * @returns The Today's Top Picks screen UI
+ */
 const TodaysTopPicksScreen = () => {
   const navigator = useNavigation();
   const insets = useSafeAreaInsets();

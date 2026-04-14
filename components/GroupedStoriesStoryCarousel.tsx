@@ -23,14 +23,32 @@ import {
   adaptiveColumnItemStyle,
 } from "./UI/AdaptiveFlashList";
 
+/**
+ * Key extractor function for Story items
+ */
 const storyKeyExtractor = (item: { id: string }) => item.id;
 
+/**
+ * Props for GroupedStoriesStoryCarousel component
+ */
 type PropTypes = {
+  /** Whether to show the age selection filter UI */
   showAges: boolean;
+  /** Callback to update the selected age group */
   setSelectedAgeGroup: Dispatch<SetStateAction<AgeGroupType>>;
+  /** Currently selected age group filter */
   selectedAgeGroup: AgeGroupType;
+  /** Query parameters for fetching stories */
   params: InfiniteStoriesParam;
 };
+
+/**
+ * Displays an infinitely scrolling list of stories with optional age filtering
+ * and responsive grid layout (2-4 columns based on screen width).
+ *
+ * @param props - Component properties
+ * @returns The grouped stories carousel UI
+ */
 const GroupedStoriesStoryCarousel = ({
   showAges,
   selectedAgeGroup,
