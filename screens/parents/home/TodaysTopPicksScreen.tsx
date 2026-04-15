@@ -1,13 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { useQuery } from "@tanstack/react-query";
-import {
-  Pressable,
-  RefreshControl,
-  ScrollView,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Pressable, RefreshControl, Text, View } from "react-native";
 import CustomButton from "../../../components/UI/CustomButton";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import queryGetStories from "../../../hooks/tanstack/queryHooks/queryGetStories";
@@ -18,11 +11,24 @@ import { CustomImageBackground } from "../../../components/UI/CustomImage";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
 import ErrorComponent from "../../../components/ErrorComponent";
+import {
+  AdaptiveFlashList,
+  adaptiveColumnItemStyle,
+} from "../../../components/UI/AdaptiveFlashList";
 
-const topPickStyles = StyleSheet.create({
-  columnItem: { width: "47%" },
-});
+/**
+ * Key extractor function for Story items in the FlatList
+ */
+const storyKeyExtractor = (item: { id: string }) => item.id;
 
+/**
+ * Screen component displaying today's top story picks in a responsive grid layout.
+ *
+ * Shows a featured header image with navigation back button, and displays stories
+ * in an adaptive grid (2-4 columns based on screen width) with pull-to-refresh.
+ *
+ * @returns The Today's Top Picks screen UI
+ */
 const TodaysTopPicksScreen = () => {
   const navigator = useNavigation();
   const insets = useSafeAreaInsets();
@@ -31,8 +37,18 @@ const TodaysTopPicksScreen = () => {
     isPending,
     error,
     refetch,
-  } = useQuery(queryGetStories({ topPicksFromUs: true }));
+  } = useQuery(queryGetStories({ topPicksFromUs: true, shuffle: true }));
   const { refreshing, onRefresh } = useRefreshControl(refetch);
+
+  const renderStoryItem = ({
+    item: story,
+  }: {
+    item: NonNullable<typeof stories>[number];
+  }) => (
+    <View style={adaptiveColumnItemStyle}>
+      <StoryItem story={story} isGrouped />
+    </View>
+  );
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -77,20 +93,15 @@ const TodaysTopPicksScreen = () => {
             />
           </View>
         ) : (
-          <ScrollView
-            className="-mt-4 rounded-t-3xl bg-white pt-5"
-            contentContainerClassName="flex-row flex-wrap gap-x-3 gap-y-6 px-4 py-6 pb-5"
+          <AdaptiveFlashList
+            data={stories}
+            keyExtractor={storyKeyExtractor}
             showsVerticalScrollIndicator={false}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
             }
-          >
-            {stories.map((story) => (
-              <View key={story.id} style={topPickStyles.columnItem}>
-                <StoryItem story={story} isGrouped />
-              </View>
-            ))}
-          </ScrollView>
+            renderItem={renderStoryItem}
+          />
         )}
       </View>
     </SafeAreaWrapper>

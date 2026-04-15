@@ -15,7 +15,7 @@ const StoriesByAgeScreen = () => {
       }}
       description={`Access stories from ${isSelectedAgeDefault ? "all ages" : "ages " + params.ageGroup}`}
       title={isSelectedAgeDefault ? "All ages" : `Age ${params.ageGroup}`}
-      showAges={false}
+      showAges={true}
     />
   );
 };
