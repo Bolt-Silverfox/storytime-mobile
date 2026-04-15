@@ -1,6 +1,7 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import * as Clipboard from "expo-clipboard";
 import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import { makeStoryDeepLink } from "../../constants";
 import { shareContent } from "../../utils/utils";
 import useToast from "../../contexts/ToastContext";
 import Icon from "../Icon";
@@ -25,9 +26,9 @@ const ShareStoryModal = ({
   storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
-  // Use web URL as primary share link for better compatibility
-  // Deep links won't work for recipients without the app installed
-  const shareUrl = `https://storytime.app/story/${storyId}`;
+  // Use deep link for users with app installed, web URL as fallback
+  // The linking config in App.tsx handles both storytime:// and https://www.storytimeapp.me
+  const shareUrl = makeStoryDeepLink(storyId);
   const { notify } = useToast();
 
   const handleCopy = async () => {
