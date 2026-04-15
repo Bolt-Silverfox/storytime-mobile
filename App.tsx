@@ -30,6 +30,7 @@ import RootNavigator, {
 import { ToastProvider } from "./contexts/ToastContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { validateEnv } from "./utils/env";
+import { STORY_DEEP_LINK_ROUTE } from "./constants";
 
 const prefix = Linking.createURL("/");
 
@@ -41,7 +42,7 @@ const linking: LinkingOptions<RootNavigatorParamList> = {
         screens: {
           stories: {
             screens: {
-              storyDeepLink: "story/:storyId",
+              storyDeepLink: STORY_DEEP_LINK_ROUTE,
             },
           },
         },
@@ -50,7 +51,7 @@ const linking: LinkingOptions<RootNavigatorParamList> = {
         screens: {
           stories: {
             screens: {
-              storyDeepLink: "story/:storyId",
+              storyDeepLink: STORY_DEEP_LINK_ROUTE,
             },
           },
         },

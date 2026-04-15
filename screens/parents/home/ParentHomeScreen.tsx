@@ -72,8 +72,10 @@ const ParentHomeScreen = () => {
         return <FunAndAdventuresComponent />;
       case "storyCategoriesList":
         return <StoryCategoriesList />;
-      default:
-        return null;
+      default: {
+        const _exhaustiveCheck: never = item.key;
+        throw new Error(`Unhandled SectionKey: ${String(_exhaustiveCheck)}`);
+      }
     }
   }, []);
 

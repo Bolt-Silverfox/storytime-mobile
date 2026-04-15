@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    backgroundColor: "#ffffff",
+    backgroundColor: "white", // Default white; override via style prop if needed
     paddingTop: 10,
   },
   contentContainer: {

@@ -41,6 +41,12 @@ const READ_STATUS_COLORS = {
 /** Deep link prefix for shareable story links. */
 const SHARE_DEEP_LINK_URL = "storytime://story";
 
+/** Story deep link route path (used in navigation config). */
+const STORY_DEEP_LINK_ROUTE = "story/:storyId";
+
+/** Helper to construct full story deep link. */
+const makeStoryDeepLink = (storyId: string) => `${SHARE_DEEP_LINK_URL}/${storyId}`;
+
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;
 
@@ -59,6 +65,8 @@ export {
   IMAGE_MIME_MAP,
   READ_STATUS_COLORS,
   SHARE_DEEP_LINK_URL,
+  STORY_DEEP_LINK_ROUTE,
+  makeStoryDeepLink,
   CONTROLS_FADE_MS,
   DEFAULT_CURSOR_PAGE_SIZE,
   GUEST_DEFAULT_VOICE_ID,
