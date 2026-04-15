@@ -19,7 +19,7 @@ const DisclaimerInformationComponent = ({
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerClassName="flex-col gap-y-8"
-          className="mx-4 mb-5 mt-5"
+          className="mx-4 mb-5 pt-5"
         >
           {data.map((item, itemIndex) => (
             <View

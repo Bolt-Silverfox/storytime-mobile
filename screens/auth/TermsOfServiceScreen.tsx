@@ -1,7 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
-import { termsAndConditionsData } from "../../data";
+import { iosTermsAndConditionsData, androidTermsAndConditionsData } from "../../data";
 import DisclaimerInformationComponent from "../../components/screens/DisclaimerInformationComponent";
+import { Platform } from "react-native";
 
 const TermsOfServiceScreen = () => {
   const navigator = useNavigation<AuthNavigatorProp>();
@@ -9,7 +10,7 @@ const TermsOfServiceScreen = () => {
     <DisclaimerInformationComponent
       pageTitle="Terms & Conditions"
       goBack={() => navigator.goBack()}
-      data={termsAndConditionsData}
+      data={Platform.OS === 'ios' ? iosTermsAndConditionsData : androidTermsAndConditionsData}
     />
   );
 };

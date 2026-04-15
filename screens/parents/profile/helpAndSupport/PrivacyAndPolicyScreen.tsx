@@ -1,8 +1,12 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import DisclaimerInformationComponent from "../../../../components/screens/DisclaimerInformationComponent";
-import { privacyPolicyData } from "../../../../data";
+import {
+  androidPrivacyPolicyData,
+  iosPrivacyPolicyData,
+} from "../../../../data";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import { Platform } from "react-native";
 
 export default function PrivacyAndPolicyScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
@@ -11,7 +15,9 @@ export default function PrivacyAndPolicyScreen() {
     <DisclaimerInformationComponent
       pageTitle="Privacy and Policy"
       goBack={() => navigator.goBack()}
-      data={privacyPolicyData}
+      data={
+        Platform.OS === "ios" ? iosPrivacyPolicyData : androidPrivacyPolicyData
+      }
     />
   );
 }

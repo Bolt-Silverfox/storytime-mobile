@@ -1,7 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
 import { AuthNavigatorProp } from "../../Navigation/AuthNavigator";
 import DisclaimerInformationComponent from "../../components/screens/DisclaimerInformationComponent";
-import { privacyPolicyData } from "../../data";
+import { androidPrivacyPolicyData, iosPrivacyPolicyData } from "../../data";
+import { Platform } from "react-native";
 
 const PrivacyScreen = () => {
   const navigator = useNavigation<AuthNavigatorProp>();
@@ -9,7 +10,9 @@ const PrivacyScreen = () => {
     <DisclaimerInformationComponent
       pageTitle="Privacy Policy"
       goBack={() => navigator.goBack()}
-      data={privacyPolicyData}
+      data={
+        Platform.OS === "ios" ? iosPrivacyPolicyData : androidPrivacyPolicyData
+      }
     />
   );
 };
