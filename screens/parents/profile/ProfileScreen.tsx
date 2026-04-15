@@ -18,9 +18,7 @@ import {
   Text,
   useWindowDimensions,
   View,
-  Alert,
 } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import colours from "../../../colours";
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
@@ -29,16 +27,11 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
-import {
-  setGuestMode,
-  setGuestSessionId,
-  setGuestDeviceId,
-} from "../../../apiFetch";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
-  const { user, isLoading, logout, isGuest } = useAuth();
+  const { user, isLoading, logout } = useAuth();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
@@ -47,28 +40,6 @@ const ProfileScreen: FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
-
-  const handleClearGuestSession = async () => {
-    try {
-      await AsyncStorage.multiRemove([
-        "guestSessionId",
-        "guestSessionCreatedAt",
-        "guestMode",
-        "guestDeviceId",
-        "guestStoriesRead", // Local quota tracking
-      ]);
-      // Reset in-memory guest state
-      setGuestMode(false);
-      setGuestSessionId(null);
-      setGuestDeviceId(null);
-      Alert.alert(
-        "Success",
-        "Guest session cleared. You can now test as a new guest."
-      );
-    } catch (error) {
-      Alert.alert("Error", "Failed to clear guest session.");
-    }
-  };
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -174,34 +145,6 @@ const ProfileScreen: FC = () => {
               label="Log Out"
               isTablet={isTablet}
               onPress={() => setOpenModal("logout")}
-            />
-            {__DEV__ && isGuest && (
-              <MenuItem
-                icon={
-                  <Feather
-                    name="refresh-cw"
-                    color="#EC4007"
-                    size={isTablet ? 20 : 18}
-                  />
-                }
-                label="Clear Guest Session (Debug)"
-                isTablet={isTablet}
-                onPress={handleClearGuestSession}
-                textColor="#DC2626"
-              />
-            )}
-            <MenuItem
-              icon={
-                <Feather
-                  name="refresh-cw"
-                  color="#EC4007"
-                  size={isTablet ? 20 : 18}
-                />
-              }
-              label="Clear Guest Session (Debug)"
-              isTablet={isTablet}
-              onPress={handleClearGuestSession}
-              textColor="#DC2626"
             />
             <MenuItem
               icon={
