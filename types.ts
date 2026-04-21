@@ -361,7 +361,11 @@ type LibraryStory = Pick<
 
 const libraryFilters = ["ongoing", "completed"] as const;
 type LibraryFilterType = (typeof libraryFilters)[number];
-
+type DisclaimerData = Array<{
+  title?: string;
+  index?: number;
+  paragraph?: Array<string | { text: string; index: number }>;
+}>;
 export type {
   User,
   Profile,
@@ -393,6 +397,7 @@ export type {
   LibraryFilterType,
   AuthProvider,
   LinkedAccount,
+  DisclaimerData,
 };
 
 export { ageGroups, libraryFilters };
