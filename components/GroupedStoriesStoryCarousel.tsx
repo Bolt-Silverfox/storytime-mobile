@@ -1,4 +1,3 @@
-import { FlashList } from "@shopify/flash-list";
 import { useNavigation } from "@react-navigation/native";
 import { Dispatch, SetStateAction, useCallback, useMemo } from "react";
 import {
@@ -13,7 +12,6 @@ import useInfiniteStories, {
 } from "../hooks/tanstack/queryHooks/useInfiniteStories";
 import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator";
 import { AgeGroupType } from "../types";
-import useAdaptiveColumns from "../hooks/others/useAdaptiveColumns";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import ErrorComponent from "./ErrorComponent";
 import StoryItem from "./parents/StoryItem";
@@ -58,7 +56,6 @@ const GroupedStoriesStoryCarousel = ({
   params,
 }: PropTypes) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const numColumns = useAdaptiveColumns();
   const {
     data,
     isPending,
@@ -129,7 +126,6 @@ const GroupedStoriesStoryCarousel = ({
       keyExtractor={storyKeyExtractor}
       drawDistance={500}
       showsVerticalScrollIndicator={false}
-      numColumns={numColumns}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
       }
