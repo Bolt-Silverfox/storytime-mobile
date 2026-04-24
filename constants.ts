@@ -45,7 +45,8 @@ const SHARE_DEEP_LINK_URL = "storytime://story";
 const STORY_DEEP_LINK_ROUTE = "story/:storyId";
 
 /** Helper to construct full story deep link. */
-const makeStoryDeepLink = (storyId: string) => `${SHARE_DEEP_LINK_URL}/${storyId}`;
+const makeStoryDeepLink = (storyId: string) =>
+  `${SHARE_DEEP_LINK_URL}/${storyId}`;
 
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;
