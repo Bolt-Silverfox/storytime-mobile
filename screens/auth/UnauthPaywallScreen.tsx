@@ -76,9 +76,11 @@ const UnauthPaywallScreen = () => {
           <View className="w-full gap-4">
             <CustomButton
               text="Create Account"
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onPress={() => (navigation as any).navigate("signUp")}
             />
             <Pressable
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onPress={() => (navigation as any).navigate("login")}
               className="items-center rounded-full border border-border-light py-3"
             >
@@ -188,6 +190,7 @@ const UnauthPaywallScreen = () => {
 
               <View className="flex-row items-center justify-center gap-x-4">
                 <Pressable
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("termsOfService")}
                 >
                   <Text className="font-[abeezee] text-xs text-primary underline">
@@ -195,6 +198,7 @@ const UnauthPaywallScreen = () => {
                   </Text>
                 </Pressable>
                 <Pressable
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("privacyScreen")}
                 >
                   <Text className="font-[abeezee] text-xs text-primary underline">

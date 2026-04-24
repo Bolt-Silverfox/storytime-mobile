@@ -70,6 +70,7 @@ const SignupScreen = () => {
             <Text style={{ ...styles.text }}>
               If you already have an account{" "}
               <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onPress={() => (navigator as any).navigate("login")}
                 style={{ ...defaultStyles.defaultText, color: colours.link }}
               >
@@ -83,6 +84,7 @@ const SignupScreen = () => {
             </Text>
             <Text style={styles.footerText}>
               <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onPress={() => (navigator as any).navigate("termsOfService")}
                 style={styles.footerLinkText}
               >
@@ -90,6 +92,7 @@ const SignupScreen = () => {
               </Text>{" "}
               and{" "}
               <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onPress={() => (navigator as any).navigate("privacyScreen")}
                 style={styles.footerLinkText}
               >

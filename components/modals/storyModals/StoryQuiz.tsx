@@ -34,6 +34,7 @@ const StoryQuiz = ({
     setSelectedOption(null);
     setResults(new Array(questions?.length ?? 0).fill(null));
     submittedRef.current.clear();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, storyId, questionSetKey]);
 
   const isLastQuestion = activeTab === (questions?.length ?? 0) - 1;

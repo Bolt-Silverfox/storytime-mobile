@@ -475,6 +475,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     getUserSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const authTryCatch = async <T,>(
