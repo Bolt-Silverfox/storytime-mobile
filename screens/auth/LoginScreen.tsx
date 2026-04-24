@@ -62,6 +62,7 @@ const LoginScreen = () => {
                 placeholder="Enter your password"
               />
               <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onPress={() => (navigator as any).navigate("resetPassword")}
                 className="text-right"
                 style={defaultStyles.linkText}
@@ -113,6 +114,7 @@ const LoginScreen = () => {
               <Text style={{ ...styles.text }}>
                 Don't have an account?{" "}
                 <Text
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigator as any).navigate("signUp")}
                   style={{ ...defaultStyles.defaultText, color: colours.link }}
                 >
@@ -123,6 +125,7 @@ const LoginScreen = () => {
                 Signed up but haven't verified?{" "}
                 <Text
                   onPress={() =>
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (navigator as any).navigate("requestEmailVerification")
                   }
                   style={{ ...defaultStyles.defaultText, color: colours.link }}

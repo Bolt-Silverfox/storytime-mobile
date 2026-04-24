@@ -282,6 +282,7 @@ const StoryComponent = ({
             mode="blocking"
             onClose={() => {
               // Close modal and navigate back
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (navigator as any).reset({
                 index: 0,
                 routes: [{ name: isGuest ? "guestTabs" : "parents" }],
@@ -321,6 +322,7 @@ const StoryComponent = ({
                   onPress={(e) => {
                     e.stopPropagation();
                     if (isGuest) {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       (navigator as any).reset({
                         index: 0,
                         routes: [{ name: "guestTabs" }],
