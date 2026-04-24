@@ -19,7 +19,7 @@ const useSetStoryProgress = ({
     mutationFn: async ({
       progress,
       completed,
-      time,
+      time: _time,
     }: {
       progress?: number;
       completed?: boolean;

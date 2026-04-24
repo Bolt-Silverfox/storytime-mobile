@@ -1,5 +1,4 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import useAuth from "../contexts/AuthContext";
 
 const ErrorComponent = ({
   message,

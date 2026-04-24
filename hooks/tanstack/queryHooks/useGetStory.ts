@@ -1,5 +1,4 @@
 import { queryOptions, useQueryClient } from "@tanstack/react-query";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";

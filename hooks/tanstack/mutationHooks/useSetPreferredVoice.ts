@@ -25,6 +25,7 @@ const useSetPreferredVoice = () => {
       // Guests: the UI already restricts to the default voice, so just no-op
       if (isGuest) {
         if (__DEV__ && voiceId) {
+          // eslint-disable-next-line no-console
           console.warn(`Guest voice mutation called with voiceId: ${voiceId}`);
         }
         return { success: true };

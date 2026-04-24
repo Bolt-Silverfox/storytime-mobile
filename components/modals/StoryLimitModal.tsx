@@ -50,6 +50,7 @@ const StoryLimitModal = ({
     if (isDismissible && onClose) {
       onClose();
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).reset({
         index: 0,
         routes: [{ name: isGuest ? "guestTabs" : "parents" }],
@@ -64,6 +65,7 @@ const StoryLimitModal = ({
       onClose();
     } else {
       // Blocking mode without onClose: navigate away after successful subscription
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).reset({
         index: 0,
         routes: [{ name: isGuest ? "guestTabs" : "parents" }],
@@ -100,8 +102,10 @@ const StoryLimitModal = ({
   const navigateToTerms = () => {
     onClose?.();
     if (isGuest) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).navigate("termsOfService");
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).navigate("parents", {
         screen: "profile",
         params: {
@@ -115,8 +119,10 @@ const StoryLimitModal = ({
   const navigateToPrivacy = () => {
     onClose?.();
     if (isGuest) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).navigate("privacyScreen");
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (navigator as any).navigate("parents", {
         screen: "profile",
         params: {
