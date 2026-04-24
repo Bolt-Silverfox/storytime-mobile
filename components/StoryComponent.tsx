@@ -178,6 +178,7 @@ const StoryComponent = ({
     return map;
   }, [batchAudio?.paragraphs]);
 
+
   // Only sync preferred voice on initial load — user's local selection is
   // authoritative after that.  Without this guard, the invalidated query
   // refetch can overwrite the local VoiceType key with a DB UUID.

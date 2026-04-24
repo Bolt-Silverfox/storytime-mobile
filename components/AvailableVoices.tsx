@@ -60,6 +60,7 @@ const AvailableVoices = ({
 
   const isVoiceLocked = !isPremium && !!lockedVoiceId;
 
+
   // Helper to check if a voice is selected (selectedVoice can be id, elevenLabsVoiceId, or name)
   const isVoiceSelected = (voice: VoiceData): boolean => {
     return (
