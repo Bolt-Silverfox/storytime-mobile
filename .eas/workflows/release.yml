@@ -2,6 +2,7 @@ name: Release (main)
 
 concurrency:
   group: ${{ workflow.filename }}-${{ github.ref }}
+  cancel_in_progress: true
 
 on:
   push:
