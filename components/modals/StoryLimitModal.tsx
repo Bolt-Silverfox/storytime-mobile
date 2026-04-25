@@ -214,7 +214,6 @@ const StoryLimitModal = ({
             {/* Divider */}
             <View style={modalStyles.divider} />
 
-
             {/* Auto-renewal disclosure */}
             <View style={modalStyles.disclosureBox}>
               <Text style={modalStyles.disclosureText}>
