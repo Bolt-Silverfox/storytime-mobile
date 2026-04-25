@@ -16,6 +16,7 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import useAuth from "../../contexts/AuthContext";
 
 type SlideItems = {
   id: string;
@@ -71,6 +72,7 @@ export default function OnBoardingScreen() {
 
 function OnboardingItem({ item }: { item: SlideItems }) {
   const navigate = useNavigation<RootNavigatorProp>();
+  const { enterGuestMode } = useAuth();
   const [isImageLoading, setIsImageLoading] = useState(false);
   const { width } = useWindowDimensions();
   return (
@@ -111,15 +113,33 @@ function OnboardingItem({ item }: { item: SlideItems }) {
                   style={styles.textWhite}
                   className="text-center text-white"
                 >
-                  Sign up
+                  Create an Account
                 </Text>
               </Pressable>
               <Pressable
-                onPress={() => navigate.navigate("auth", { screen: "login" })}
+                onPress={enterGuestMode}
                 style={styles.buttonWhite}
                 className="border-[0.5px] border-[#4A413F]"
               >
                 <Text style={styles.textDark} className="text-center">
+                  Continue as a Guest
+                </Text>
+              </Pressable>
+            </View>
+            <View className="mt-4 flex-row justify-center">
+              <Text
+                style={styles.descriptionText}
+                className="text-sm text-text"
+              >
+                If you already have an account{" "}
+              </Text>
+              <Pressable
+                onPress={() => navigate.navigate("auth", { screen: "login" })}
+              >
+                <Text
+                  style={styles.descriptionText}
+                  className="text-sm text-primary underline"
+                >
                   Log in
                 </Text>
               </Pressable>

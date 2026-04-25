@@ -1,4 +1,4 @@
-import { BlurView } from "expo-blur";
+import Feather from "@expo/vector-icons/Feather";
 import {
   Dispatch,
   SetStateAction,
@@ -12,20 +12,22 @@ import {
   Pressable,
   StyleSheet as RNStyleSheet,
   Text,
+  TouchableOpacity,
   View,
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
 import { CONTROLS_FADE_MS } from "../constants";
+import { WORDS_PER_CHUNK } from "../constants/tts";
+import useIsPremium from "../hooks/useIsPremium";
 import { Story } from "../types";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
 import Icon from "./Icon";
 import StoryAudioPlayer from "./StoryAudioPlayer";
 import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
-import { WORDS_PER_CHUNK } from "../constants/tts";
-import { splitByWordCountPreservingSentences } from "../utils/utils";
 
 type PropTypes = {
   story: Story;
@@ -34,12 +36,17 @@ type PropTypes = {
   audioUrl: string | null;
   isAudioLoading: boolean;
   isAudioError: boolean;
+  isStillGenerating: boolean;
   setActiveParagraph: Dispatch<SetStateAction<number>>;
   onProgress: (progress: number, completed: boolean) => void;
   controlsInteractive: boolean;
   controlsVisible: boolean;
   animatedControlsStyle: AnimatedStyle<ViewStyle>;
   isTTSDegraded: boolean;
+  failedParagraphs: number[];
+  onRetryFailed: () => void;
+  batchError?: string | null;
+  initialError?: string | null;
 };
 
 type DisplayOptions =
@@ -57,11 +64,17 @@ const StoryContentContainer = ({
   audioUrl,
   isAudioLoading,
   isAudioError,
+  isStillGenerating,
   controlsInteractive,
   controlsVisible,
   animatedControlsStyle,
   isTTSDegraded,
+  failedParagraphs,
+  onRetryFailed,
+  batchError,
+  initialError,
 }: PropTypes) => {
+  const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
     useState<DisplayOptions>("story");
@@ -82,7 +95,7 @@ const StoryContentContainer = ({
     }
   }, [controlsVisible]);
   const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
-    new Array(story.questions.length).fill(null)
+    new Array(story?.questions?.length ?? 0).fill(null)
   );
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
@@ -99,6 +112,8 @@ const StoryContentContainer = ({
       splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
     [story.textContent]
   );
+
+  const isCurrentParagraphFailed = failedParagraphs.includes(activeParagraph);
 
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
@@ -170,12 +185,14 @@ const StoryContentContainer = ({
               audioUrl={audioUrl}
               isLoading={isAudioLoading}
               isError={isAudioError}
+              isStillGenerating={isStillGenerating}
+              isFailed={isCurrentParagraphFailed}
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
             />
           </Animated.View>
-          {isTTSDegraded && (
+          {isTTSDegraded && isPremium && (
             <View className="mt-2 flex flex-row items-center gap-x-2 rounded-lg bg-amber-500/90 px-3 py-2">
               <Icon name="TriangleAlert" size={16} color="white" />
               <Text className="flex-1 font-[abeezee] text-xs text-white">
@@ -183,19 +200,42 @@ const StoryContentContainer = ({
               </Text>
             </View>
           )}
+          {(failedParagraphs.length > 0 ||
+            batchError ||
+            isAudioError ||
+            initialError) &&
+            !isStillGenerating && (
+              <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
+                <View className="flex-1 flex-row items-center gap-x-2">
+                  <Feather name="alert-circle" size={16} color="#dc2626" />
+                  <Text className="flex-1 font-[abeezee] text-sm text-red-700">
+                    {initialError
+                      ? initialError
+                      : batchError
+                        ? batchError
+                        : failedParagraphs.length > 0
+                          ? `${failedParagraphs.length} paragraph${failedParagraphs.length > 1 ? "s" : ""} failed to generate`
+                          : "Audio unavailable. Please try again."}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={onRetryFailed}
+                  activeOpacity={0.7}
+                  className="ml-2 rounded-lg bg-red-100 px-3 py-1.5"
+                >
+                  <Text className="font-[abeezee] text-sm font-medium text-red-700">
+                    Retry
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
         </View>
       )}
       {currentlyDisplayed === "story" && (
-        <View>
-          <BlurView
-            intensity={60}
-            tint="systemMaterialDark"
-            className="overflow-hidden rounded-lg px-4 py-8 backdrop-blur-md"
-          >
-            <Text className="font-[quilka] text-xl text-white">
-              {paragraphs[activeParagraph]}
-            </Text>
-          </BlurView>
+        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8 ">
+          <Text className="font-[quilka] text-xl text-black">
+            {paragraphs[activeParagraph]}
+          </Text>
         </View>
       )}
       {currentlyDisplayed === "story" && controlsInLayout && (
@@ -264,6 +304,7 @@ const StoryContentContainer = ({
       <StoryQuiz
         isOpen={currentlyDisplayed === "quiz"}
         onClose={() => setCurrentlyDisplayed("endOfQuizMessage")}
+        storyId={story.id}
         questions={story.questions}
         setQuizResults={setQuizResults}
       />

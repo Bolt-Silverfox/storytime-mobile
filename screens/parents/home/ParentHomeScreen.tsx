@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
-import { FlatList, RefreshControl, View } from "react-native";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
@@ -13,9 +13,9 @@ import StoryCategoriesList from "../../../components/parents/StoryCategoriesList
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useNotificationBanner from "../../../hooks/useNotificationBanner";
 import useRefreshControl from "../../../hooks/others/useRefreshControl";
+import useAuth from "../../../contexts/AuthContext";
 
 type SectionKey =
-  | "freeStoriesBanner"
   | "storiesByAge"
   | "topRecommendations"
   | "todaysTopPicks"
@@ -28,7 +28,6 @@ type SectionItem = { key: SectionKey };
 const sectionKeyExtractor = (item: SectionItem) => item.key;
 
 const SECTIONS: SectionItem[] = [
-  { key: "freeStoriesBanner" },
   { key: "storiesByAge" },
   { key: "topRecommendations" },
   { key: "todaysTopPicks" },
@@ -38,6 +37,7 @@ const SECTIONS: SectionItem[] = [
 ];
 
 const ParentHomeScreen = () => {
+  const { isGuest } = useAuth();
   const {
     showBanner,
     permissionStatus,
@@ -60,8 +60,6 @@ const ParentHomeScreen = () => {
 
   const renderSection = useCallback(({ item }: { item: SectionItem }) => {
     switch (item.key) {
-      case "freeStoriesBanner":
-        return <FreeStoriesBanner />;
       case "storiesByAge":
         return <StoriesByAgeComponent />;
       case "topRecommendations":
@@ -74,19 +72,33 @@ const ParentHomeScreen = () => {
         return <FunAndAdventuresComponent />;
       case "storyCategoriesList":
         return <StoryCategoriesList />;
+      default: {
+        const _exhaustiveCheck: never = item.key;
+        throw new Error(`Unhandled SectionKey: ${String(_exhaustiveCheck)}`);
+      }
     }
   }, []);
 
   const listHeader = useMemo(
-    () =>
-      showBanner ? (
-        <NotificationPermissionBanner
-          permissionStatus={permissionStatus}
-          onDismiss={handleDismiss}
-          onPermissionGranted={handlePermissionGranted}
-        />
-      ) : null,
-    [showBanner, permissionStatus, handleDismiss, handlePermissionGranted]
+    () => (
+      <View style={styles.listHeader}>
+        {showBanner && !isGuest && (
+          <NotificationPermissionBanner
+            permissionStatus={permissionStatus}
+            onDismiss={handleDismiss}
+            onPermissionGranted={handlePermissionGranted}
+          />
+        )}
+        <FreeStoriesBanner />
+      </View>
+    ),
+    [
+      showBanner,
+      isGuest,
+      permissionStatus,
+      handleDismiss,
+      handlePermissionGranted,
+    ]
   );
 
   return (
@@ -98,7 +110,7 @@ const ParentHomeScreen = () => {
           keyExtractor={sectionKeyExtractor}
           renderItem={renderSection}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={{ gap: 32, paddingBottom: 32 }}
+          contentContainerStyle={styles.listContent}
           removeClippedSubviews={false}
           initialNumToRender={4}
           maxToRenderPerBatch={3}
@@ -112,5 +124,10 @@ const ParentHomeScreen = () => {
     </SafeAreaWrapper>
   );
 };
+
+const styles = StyleSheet.create({
+  listContent: { gap: 16, paddingBottom: 32 },
+  listHeader: { gap: 12 },
+});
 
 export default ParentHomeScreen;

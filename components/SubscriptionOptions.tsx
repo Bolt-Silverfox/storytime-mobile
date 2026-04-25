@@ -29,7 +29,7 @@ const SubscriptionOptions = ({
   }
 
   return (
-    <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2">
+    <View className="mx-auto flex w-full max-w-screen-md flex-row gap-x-2 lg:max-w-screen-lg xl:max-w-screen-xl">
       {subscriptions.map((sub) => {
         const planName = getPlanName(sub.id);
         const isSelected = selectedPlan === planName;

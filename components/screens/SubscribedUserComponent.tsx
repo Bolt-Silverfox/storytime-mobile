@@ -20,7 +20,7 @@ const SubscribedUserComponent = () => {
         <Text className="mt-2 px-4 text-center font-[abeezee] text-sm text-white">
           {isAdmin
             ? "You have full access to all premium features"
-            : "You are now subscribed to Storytime for Kids"}
+            : "You are now subscribed to Storytime"}
         </Text>
       </View>
       {!isAdmin && <SubscriptionDetails />}

@@ -1,6 +1,19 @@
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 
+async function parseErrorResponse(
+  response: Response,
+  fallbackMessage: string
+): Promise<never> {
+  let errorData;
+  try {
+    errorData = await response.json();
+  } catch {
+    errorData = null;
+  }
+  throw new Error(errorData?.message || fallbackMessage);
+}
+
 const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
 
 /** Headers for unauthenticated endpoints that still require the API key. */
@@ -23,6 +36,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ email, password }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Login failed");
+    }
     return await response.json();
   },
 
@@ -37,7 +53,10 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify(data),
     });
-    return response.json();
+    if (!response.ok) {
+      await parseErrorResponse(response, "Registration failed");
+    }
+    return await response.json();
   },
 
   verifyEmail: async (token: string) => {
@@ -46,6 +65,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ token }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Email verification failed");
+    }
     return await response.json();
   },
 
@@ -55,6 +77,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ email }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Failed to send verification email");
+    }
     const data = await response.json();
     return data;
   },
@@ -65,6 +90,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ email }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Failed to request password reset");
+    }
     return await response.json();
   },
 
@@ -74,6 +102,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ email, token }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Failed to validate reset token");
+    }
     return await response.json();
   },
   resetpassword: async (email: string, token: string, newPassword: string) => {
@@ -82,6 +113,9 @@ const auth = {
       headers: publicHeaders,
       body: JSON.stringify({ email, token, newPassword }),
     });
+    if (!response.ok) {
+      await parseErrorResponse(response, "Password reset failed");
+    }
     return await response.json();
   },
   setInAppPin: async (pin: string) => {
@@ -151,6 +185,32 @@ const auth = {
       method: "DELETE",
     });
     return await request.json();
+  },
+  getLinkedAccounts: async () => {
+    const response = await apiFetch(`${BASE_URL}/auth/linked-accounts`, {
+      method: "GET",
+    });
+    return await response.json();
+  },
+  linkGoogle: async (idToken: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/link/google`, {
+      method: "POST",
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    return await response.json();
+  },
+  linkApple: async (idToken: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/link/apple`, {
+      method: "POST",
+      body: JSON.stringify({ id_token: idToken }),
+    });
+    return await response.json();
+  },
+  unlinkProvider: async (provider: string) => {
+    const response = await apiFetch(`${BASE_URL}/auth/unlink/${provider}`, {
+      method: "DELETE",
+    });
+    return await response.json();
   },
 };
 

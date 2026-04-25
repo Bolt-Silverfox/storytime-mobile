@@ -9,7 +9,7 @@ const PageTitle = ({
   title: string;
 }) => {
   return (
-    <View className="flex flex-row items-center border-b border-b-black/10 bg-white px-4 pb-5 pt-2">
+    <View className="flex flex-row items-center border-b border-b-black/10 bg-white px-4 pb-5 pt-4">
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Go back"

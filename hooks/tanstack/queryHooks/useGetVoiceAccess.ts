@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL } from "../../../constants";
+import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
+import useAuth from "../../../contexts/AuthContext";
 
 type VoiceAccess = {
   isPremium: boolean;
@@ -16,6 +17,8 @@ type VoiceAccess = {
 };
 
 const useGetVoiceAccess = (storyId?: string) => {
+  const { isGuest } = useAuth();
+
   return useQuery({
     queryKey: ["voiceAccess", storyId ?? null],
     queryFn: async () => {
@@ -30,6 +33,24 @@ const useGetVoiceAccess = (storyId?: string) => {
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err) {
+        // For guests, return default access if API fails
+        if (isGuest) {
+          return {
+            success: true,
+            statusCode: 200,
+            message: "Guest default voice access",
+            data: {
+              isPremium: false,
+              unlimited: false,
+              defaultVoice: "NIMBUS",
+              maxVoices: 1,
+              lockedVoiceId: GUEST_DEFAULT_VOICE_ID,
+              elevenLabsTrialStoryId: null,
+              usedVoicesForStory: [],
+              maxVoicesPerStory: 1,
+            },
+          };
+        }
         throw new Error(getErrorMessage(err));
       }
     },

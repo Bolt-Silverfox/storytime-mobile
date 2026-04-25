@@ -8,20 +8,21 @@ import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 const ParentsTopRecommendations = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
   const { data, error, refetch, isPending } = useQuery(
-    queryGetStories({
-      isMostLiked: true,
-    })
+    queryGetStories({ isMostLiked: true, shuffle: true })
   );
   return (
     <HomeScreenCarouselComponent
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title="Top recommendations"
         onViewAll={() => navigator.navigate("topRecommendations")}
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );
