@@ -1,6 +1,16 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Crypto from "expo-crypto";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { cleanupPushNotifications } from "../utils/notifications";
+import { authLogger } from "../utils/logger";
+import { setSentryUser, clearSentryUser } from "../utils/sentry";
+import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
+// Environment validation should be called from app bootstrap, not here
+import {
+  SESSION_REFRESH_THRESHOLD_MS,
+  REQUEST_TIMEOUT_MS,
+  MAX_RETRY_ATTEMPTS,
+} from "../constants/constants";
 import {
   createContext,
   Dispatch,
@@ -14,11 +24,19 @@ import {
 import { User } from "../types";
 import auth, { publicHeaders } from "../utils/auth";
 import {
+  setGuestMode,
+  setGuestSessionId,
+  setGuestDeviceId,
+  refreshTokensWithLock,
+  RefreshResult,
+} from "../apiFetch";
+import {
   BASE_URL,
   emailRegex,
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
+import * as Application from "expo-application";
 import {
   GoogleSignin,
   isSuccessResponse,
@@ -70,7 +88,7 @@ type AuthFnTypes = {
     onSuccess: () => void;
   }) => void;
   handleGoogleAuth: () => void;
-  handleAppleAuth: () => void;
+  handleAppleAuth: (mode?: "signup" | "login") => void;
   setInAppPin: (data: {
     pin: string;
     setErrorCb: SetErrorCallback;
@@ -118,6 +136,9 @@ type AuthContextType = {
   errorMessage: string | undefined | string[];
   user: User | null | undefined;
   setUser: Dispatch<SetStateAction<User | null | undefined>>;
+  isGuest: boolean;
+  enterGuestMode: () => void;
+  exitGuestMode: () => void;
   logout: () => Promise<void>;
   login: AuthFnTypes["login"];
   signUp: AuthFnTypes["signUp"];
@@ -153,7 +174,7 @@ type AuthErrorResponse = {
   timeStamp: string;
 };
 
-type AuthResponse<T = { messaege: string }> =
+type AuthResponse<T = { message: string }> =
   | AuthSuccessResponse<T>
   | AuthErrorResponse;
 
@@ -161,8 +182,83 @@ type SetErrorCallback = Dispatch<SetStateAction<string>>;
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Session creation promise cache to prevent duplicate requests
+let sessionCreationPromise: Promise<string | null> | null = null;
+
+// Extracted outside the component — no dependencies on component state.
+// Uses only module-level BASE_URL and process.env.
+// Includes debouncing to prevent duplicate session creation
+const createGuestSession = async (
+  deviceId: string | null,
+  maxAttempts = MAX_RETRY_ATTEMPTS
+): Promise<string | null> => {
+  // If a session creation is already in progress, return that promise
+  if (sessionCreationPromise) {
+    return sessionCreationPromise;
+  }
+
+  // Create new session promise
+  sessionCreationPromise = (async () => {
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+      let timeout: NodeJS.Timeout | null = null;
+      try {
+        const controller = new AbortController();
+        timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+        const res = await fetch(`${BASE_URL}/guest/session`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...(process.env.EXPO_PUBLIC_API_KEY
+              ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+              : {}),
+            ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
+          },
+          signal: controller.signal,
+        });
+
+        // Check for HTTP errors and retry on non-2xx responses
+        if (!res.ok) {
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+
+        const data = await res.json();
+        if (data?.data?.sessionId) {
+          return data.data.sessionId;
+        }
+        // If we got a response but no sessionId, it's likely an error response
+        throw new Error(data?.message || "No sessionId in response");
+      } catch (err) {
+        // Log error for debugging while still retrying
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        authLogger.warn(
+          `Guest session creation attempt ${attempt} failed: ${errorMessage}`
+        );
+
+        if (attempt < maxAttempts) {
+          await new Promise((r) => setTimeout(r, 1000 * attempt));
+        }
+      } finally {
+        // Always clear the timeout to prevent leaks
+        if (timeout) {
+          clearTimeout(timeout);
+        }
+      }
+    }
+    return null;
+  })();
+
+  // Clear the promise after completion to allow new requests
+  sessionCreationPromise.finally(() => {
+    sessionCreationPromise = null;
+  });
+
+  return sessionCreationPromise;
+};
+
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
+  const [isGuest, setIsGuest] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<
     string | string[] | undefined
@@ -183,20 +279,188 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         setErrorMessage(undefined);
         const localStoredSession = await AsyncStorage.getItem("user");
         const hasToken = await secureTokenStorage.hasAccessToken();
-        if (!localStoredSession || !hasToken) {
+        const hasRefreshToken = await secureTokenStorage.hasRefreshToken();
+
+        if (!localStoredSession || (!hasToken && !hasRefreshToken)) {
+          // Check if guest mode was previously active
+          const guestModeStored = await AsyncStorage.getItem("guestMode");
+          if (guestModeStored === "true") {
+            await secureTokenStorage.clearTokens();
+            // Restore device ID for quota tracking
+            const deviceId = await getOrCreateDeviceId();
+            setGuestDeviceId(deviceId);
+            // Refresh session if older than 6 days (1 day before 7-day TTL expiry)
+            const storedSessionId =
+              await AsyncStorage.getItem("guestSessionId");
+            const sessionCreatedAt = await AsyncStorage.getItem(
+              "guestSessionCreatedAt"
+            );
+
+            // Handle both epoch ms and ISO string formats
+            let timestamp = 0;
+            if (sessionCreatedAt) {
+              const numValue = Number(sessionCreatedAt);
+              if (!isNaN(numValue)) {
+                timestamp = numValue;
+              } else {
+                // Try parsing as ISO string
+                const parsed = Date.parse(sessionCreatedAt);
+                timestamp = isNaN(parsed) ? 0 : parsed;
+              }
+            }
+
+            const isExpired =
+              !sessionCreatedAt ||
+              timestamp === 0 ||
+              Date.now() - timestamp > SESSION_REFRESH_THRESHOLD_MS;
+
+            // Restore guest state immediately for better UX
+            setIsGuest(true);
+            setGuestMode(true);
+
+            if (storedSessionId && !isExpired) {
+              // Set stored session immediately, validate asynchronously
+              setGuestSessionId(storedSessionId);
+
+              // Run backend validation in background
+              (async () => {
+                let validationSucceeded = false;
+                let sessionValid = false;
+
+                for (
+                  let attempt = 1;
+                  attempt <= MAX_RETRY_ATTEMPTS;
+                  attempt++
+                ) {
+                  let timeout: NodeJS.Timeout | null = null;
+                  try {
+                    const controller = new AbortController();
+                    timeout = setTimeout(
+                      () => controller.abort(),
+                      REQUEST_TIMEOUT_MS
+                    );
+                    const res = await fetch(`${BASE_URL}/guest/quota`, {
+                      method: "GET",
+                      headers: {
+                        "Content-Type": "application/json",
+                        "X-Guest-Session-Id": storedSessionId,
+                        ...(deviceId ? { "X-Guest-Device-Id": deviceId } : {}),
+                        ...(process.env.EXPO_PUBLIC_API_KEY
+                          ? { "X-API-Key": process.env.EXPO_PUBLIC_API_KEY }
+                          : {}),
+                      },
+                      signal: controller.signal,
+                    });
+
+                    if (res.status === 401) {
+                      // Session explicitly expired
+                      validationSucceeded = true;
+                      sessionValid = false;
+                      break;
+                    } else if (!res.ok) {
+                      // Other HTTP errors - throw to trigger retry
+                      throw new Error(
+                        `HTTP ${res.status}: ${res.statusText || "Validation failed"}`
+                      );
+                    } else {
+                      // Success (2xx response)
+                      validationSucceeded = true;
+                      sessionValid = true;
+                      break;
+                    }
+                  } catch {
+                    if (attempt === MAX_RETRY_ATTEMPTS) {
+                      // Final attempt failed, keep using stored session (offline tolerance)
+                      return;
+                    } else {
+                      // Wait before retry with incremental backoff
+                      await new Promise((r) => setTimeout(r, 1000 * attempt));
+                    }
+                  } finally {
+                    // Always clear timeout to prevent memory leaks
+                    if (timeout) {
+                      clearTimeout(timeout);
+                    }
+                  }
+                }
+
+                if (validationSucceeded && !sessionValid) {
+                  // Session expired server-side, create new session and update state
+                  await AsyncStorage.multiRemove([
+                    "guestSessionId",
+                    "guestSessionCreatedAt",
+                  ]);
+                  const newSessionId = await createGuestSession(deviceId);
+                  if (newSessionId) {
+                    await AsyncStorage.setItem("guestSessionId", newSessionId);
+                    await AsyncStorage.setItem(
+                      "guestSessionCreatedAt",
+                      String(Date.now())
+                    );
+                    setGuestSessionId(newSessionId);
+                  }
+                }
+              })().catch(() => {
+                // Background validation failed, but guest mode continues with stored session
+              });
+            } else {
+              // Session expired client-side or missing — set guest mode and create session in background
+              const provisionalId = storedSessionId || Crypto.randomUUID();
+              setGuestSessionId(provisionalId);
+
+              // Create fresh session in background
+              (async () => {
+                try {
+                  const newSessionId = await createGuestSession(deviceId);
+                  if (newSessionId) {
+                    await AsyncStorage.setItem("guestSessionId", newSessionId);
+                    await AsyncStorage.setItem(
+                      "guestSessionCreatedAt",
+                      String(Date.now())
+                    );
+                    setGuestSessionId(newSessionId);
+                  }
+                } catch {
+                  // Non-fatal: guest mode works without backend session
+                }
+              })();
+            }
+          }
+          await Promise.all([
+            secureTokenStorage.clearTokens(),
+            AsyncStorage.removeItem("user"),
+          ]);
           setUser(null);
+          clearSentryUser();
+          clearCrashlyticsUser();
           return;
         }
         try {
-          setUser(JSON.parse(localStoredSession));
-          const accessToken = await secureTokenStorage.getAccessToken();
-          if (__DEV__) {
-            console.log("access token", accessToken); // eslint-disable-line no-console
+          const restoredUser = JSON.parse(localStoredSession) as User;
+
+          if (!hasToken && hasRefreshToken) {
+            const result = await refreshTokensWithLock();
+            if (result === RefreshResult.InvalidToken) {
+              await Promise.all([
+                secureTokenStorage.clearTokens(),
+                AsyncStorage.removeItem("user"),
+              ]);
+              setUser(null);
+              clearSentryUser();
+              clearCrashlyticsUser();
+              return;
+            }
           }
+
+          setUser(restoredUser);
+          setSentryUser(restoredUser.id, restoredUser.email);
+          setCrashlyticsUser(restoredUser.id);
         } catch {
           // Corrupted user data - clear it and reset
           await AsyncStorage.removeItem("user");
           setUser(null);
+          clearSentryUser();
+          clearCrashlyticsUser();
           return;
         }
       } catch (err) {
@@ -211,6 +475,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     getUserSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const authTryCatch = async <T,>(
@@ -238,6 +503,65 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const exitGuestMode = useCallback(async () => {
+    setIsGuest(false);
+    setGuestMode(false);
+    setGuestSessionId(null);
+    setGuestDeviceId(null);
+    await AsyncStorage.multiRemove([
+      "guestMode",
+      "guestSessionId",
+      "guestSessionCreatedAt",
+      "guestDeviceId",
+    ]);
+  }, []);
+
+  // Get or create a persistent device ID for guest quota tracking
+  const getOrCreateDeviceId = useCallback(async (): Promise<string> => {
+    let deviceId = await AsyncStorage.getItem("guestDeviceId");
+    if (!deviceId) {
+      // Use platform-specific device ID, fallback to UUID
+      if (Platform.OS === "android") {
+        const androidId = Application.getAndroidId();
+        deviceId = androidId ?? Crypto.randomUUID();
+      } else if (Platform.OS === "ios") {
+        const iosId = await Application.getIosIdForVendorAsync();
+        deviceId = iosId || Crypto.randomUUID();
+      } else {
+        deviceId = Crypto.randomUUID();
+      }
+      await AsyncStorage.setItem("guestDeviceId", deviceId);
+    }
+    return deviceId;
+  }, []);
+
+  const enterGuestMode = useCallback(async () => {
+    // Clear any existing tokens first
+    await secureTokenStorage.clearTokens();
+    await AsyncStorage.removeItem("user");
+    setUser(null);
+    await AsyncStorage.setItem("guestMode", "true");
+
+    // Get or create device ID for quota tracking
+    const deviceId = await getOrCreateDeviceId();
+    setGuestDeviceId(deviceId);
+
+    // Create backend guest session for progress tracking
+    try {
+      const newSessionId = await createGuestSession(deviceId);
+      if (newSessionId) {
+        await AsyncStorage.setItem("guestSessionId", newSessionId);
+        await AsyncStorage.setItem("guestSessionCreatedAt", String(Date.now()));
+        setGuestSessionId(newSessionId);
+      }
+    } catch (err) {
+      authLogger.warn("Failed to create guest session:", err);
+    }
+    // Only set guest mode after session ID is established
+    setIsGuest(true);
+    setGuestMode(true);
+  }, [getOrCreateDeviceId]);
+
   const logout = useCallback(async () => {
     try {
       // Unregister push notifications first (while we still have auth token)
@@ -248,15 +572,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         AsyncStorage.removeItem("user"),
       ]);
     } catch (error) {
-      if (__DEV__) {
-        console.error("Logout storage clear failed:", error); // eslint-disable-line no-console
-      }
+      authLogger.error("Logout storage clear failed:", error);
     } finally {
       // Always reset state even if storage clear fails
       setUser(null);
       setErrorMessage(undefined);
+      await exitGuestMode();
+      clearSentryUser();
+      clearCrashlyticsUser();
     }
-  }, []);
+  }, [exitGuestMode]);
 
   const login: AuthFnTypes["login"] = async ({
     email,
@@ -280,12 +605,15 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       setErrorCb(loginData.message);
       return;
     }
+    await exitGuestMode();
     await secureTokenStorage.setTokens(
       loginData.data.jwt,
       loginData.data.refreshToken
     );
     await AsyncStorage.setItem("user", JSON.stringify(loginData.data.user));
     setUser(loginData.data.user);
+    setSentryUser(loginData.data.user.id, loginData.data.user.email);
+    setCrashlyticsUser(loginData.data.user.id);
   };
 
   const signUp: AuthFnTypes["signUp"] = async ({
@@ -315,6 +643,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       "unverifiedUser",
       JSON.stringify(signupData.data.user)
     );
+    // Exit guest mode when user signs up
+    if (isGuest) {
+      await exitGuestMode();
+    }
     onSuccess();
   };
 
@@ -420,12 +752,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         "Invalid auth response: missing jwt, refreshToken, or user"
       );
     }
+    await exitGuestMode();
     await secureTokenStorage.setTokens(
       authData.jwt as string,
       authData.refreshToken as string
     );
     await AsyncStorage.setItem("user", JSON.stringify(authData.user));
-    setUser(authData.user as User);
+    const oauthUser = authData.user as User;
+    setUser(oauthUser);
+    setSentryUser(oauthUser.id, oauthUser.email);
+    setCrashlyticsUser(oauthUser.id);
   };
 
   const handleGoogleAuth = async () => {
@@ -447,6 +783,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         method: "POST",
       });
       const response = await request.json();
+      if (
+        request.status === 409 &&
+        response.error === "ACCOUNT_EXISTS_LINK_REQUIRED"
+      ) {
+        Alert.alert(
+          "Account Already Exists",
+          "An account with this email already exists. Please log in with your original method first, then link Google from Profile → Linked Accounts."
+        );
+        return;
+      }
       await processOAuthResponse(response);
     } catch (error) {
       const message =
@@ -457,7 +803,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const handleAppleAuth = async () => {
+  const handleAppleAuth = async (_mode: "signup" | "login" = "login") => {
     try {
       setIsLoading(true);
 
@@ -516,6 +862,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       const response = await request.json();
+      if (
+        request.status === 409 &&
+        response.error === "ACCOUNT_EXISTS_LINK_REQUIRED"
+      ) {
+        Alert.alert(
+          "Account Already Exists",
+          "An account with this email already exists. Please log in with your original method first, then link Apple from Profile → Linked Accounts."
+        );
+        return;
+      }
       await processOAuthResponse(response);
     } catch (error) {
       const message =
@@ -662,6 +1018,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const providerReturnValues = {
     user,
     setUser,
+    isGuest,
+    enterGuestMode,
+    exitGuestMode,
     login,
     logout,
     signUp,

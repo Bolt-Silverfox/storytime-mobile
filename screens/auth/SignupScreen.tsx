@@ -11,6 +11,7 @@ import {
 import colours from "../../colours";
 import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useAuth from "../../contexts/AuthContext";
@@ -18,7 +19,7 @@ import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 
 const SignupScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
+  const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
     <SafeAreaWrapper variant="solid">
@@ -31,12 +32,8 @@ const SignupScreen = () => {
         >
           <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
             <View style={styles.textContainer}>
-              <Text style={defaultStyles.heading}>
-                Welcome to Storytime4Kids
-              </Text>
-              <Text style={styles.text}>
-                The world's first kids story library
-              </Text>
+              <Text style={defaultStyles.heading}>Welcome to Storytime</Text>
+              <Text style={styles.text}>The world's first story library</Text>
             </View>
             <SignupForm />
             <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
@@ -46,17 +43,23 @@ const SignupScreen = () => {
               </Text>
               <View className="flex-1 border-b border-black" />
             </View>
-            <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign up with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-up flow"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
                 <Pressable
-                  onPress={handleAppleAuth}
-                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  onPress={() => handleAppleAuth("signup")}
+                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  accessibilityLabel="Sign up with Apple"
+                  accessibilityRole="button"
+                  accessibilityHint="Opens Apple sign-up flow"
                 >
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
@@ -67,7 +70,8 @@ const SignupScreen = () => {
             <Text style={{ ...styles.text }}>
               If you already have an account{" "}
               <Text
-                onPress={() => navigator.navigate("auth", { screen: "login" })}
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("login")}
                 style={{ ...defaultStyles.defaultText, color: colours.link }}
               >
                 Log in
@@ -80,18 +84,16 @@ const SignupScreen = () => {
             </Text>
             <Text style={styles.footerText}>
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "termsOfService" })
-                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("termsOfService")}
                 style={styles.footerLinkText}
               >
                 Terms and conditions
               </Text>{" "}
               and{" "}
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "privacyScreen" })
-                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("privacyScreen")}
                 style={styles.footerLinkText}
               >
                 Privacy Policy

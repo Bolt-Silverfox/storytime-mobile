@@ -1,11 +1,18 @@
 import Netinfo from "@react-native-community/netinfo";
-import { LinkingOptions, NavigationContainer } from "@react-navigation/native";
+import {
+  LinkingOptions,
+  NavigationContainer,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
+import { audioLogger } from "./utils/logger";
+import { reactNavigationIntegration } from "./utils/sentry";
 import {
   QueryClient,
   QueryClientProvider,
   focusManager,
   onlineManager,
 } from "@tanstack/react-query";
+import { ApiError } from "./apiFetch";
 import { useFonts } from "expo-font";
 import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
@@ -21,18 +28,30 @@ import RootNavigator, {
   RootNavigatorParamList,
 } from "./Navigation/RootNavigator";
 import { ToastProvider } from "./contexts/ToastContext";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { validateEnv } from "./utils/env";
+import { STORY_DEEP_LINK_ROUTE } from "./constants";
 
 const prefix = Linking.createURL("/");
 
 const linking: LinkingOptions<RootNavigatorParamList> = {
-  prefixes: [prefix, "storytime4kids://", "https://www.storytimeapp.me"],
+  prefixes: [prefix, "storytime://", "https://www.storytimeapp.me"],
   config: {
     screens: {
       protected: {
         screens: {
           stories: {
             screens: {
-              storyDeepLink: "story/:storyId",
+              storyDeepLink: STORY_DEEP_LINK_ROUTE,
+            },
+          },
+        },
+      },
+      guest: {
+        screens: {
+          stories: {
+            screens: {
+              storyDeepLink: STORY_DEEP_LINK_ROUTE,
             },
           },
         },
@@ -48,7 +67,7 @@ setAudioModeAsync({
   shouldPlayInBackground: false,
   interruptionMode: "mixWithOthers",
 }).catch((e) => {
-  if (__DEV__) console.warn("setAudioModeAsync failed:", e); // eslint-disable-line no-console
+  audioLogger.warn("setAudioModeAsync failed:", e);
 });
 
 const queryClient = new QueryClient({
@@ -57,6 +76,28 @@ const queryClient = new QueryClient({
       staleTime: 1000 * 60 * 5,
       gcTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
+      retry: (failureCount, error) => {
+        // Retry 429s with backoff up to 3 times
+        if (error instanceof ApiError && error.status === 429) {
+          return failureCount < 3;
+        }
+        // Default: retry non-4xx errors up to 3 times
+        if (
+          error instanceof ApiError &&
+          error.status >= 400 &&
+          error.status < 500
+        ) {
+          return false;
+        }
+        return failureCount < 3;
+      },
+      retryDelay: (attemptIndex, error) => {
+        // Longer backoff for 429s
+        if (error instanceof ApiError && error.status === 429) {
+          return Math.min(1000 * 2 ** attemptIndex, 10000);
+        }
+        return Math.min(1000 * 2 ** attemptIndex, 30000);
+      },
     },
   },
 });
@@ -73,12 +114,16 @@ const onAppStateChange = (status: AppStateStatus) => {
 };
 
 export default function App() {
+  const navigationRef = useNavigationContainerRef<RootNavigatorParamList>();
   const [loaded, error] = useFonts({
     quilka: require("./assets/fonts/Qilkabold-DO6BR.otf"),
     abeezee: require("./assets/fonts/ABeeZee-Regular.ttf"),
   });
 
   useEffect(() => {
+    // Validate environment variables on app startup
+    validateEnv();
+
     const subscription = AppState.addEventListener("change", onAppStateChange);
 
     return () => subscription.remove();
@@ -94,17 +139,27 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <AuthProvider>
-        <ToastProvider>
-          <QueryClientProvider client={queryClient}>
-            <NavigationContainer linking={linking}>
-              <NotificationHandler>
-                <RootNavigator />
-              </NotificationHandler>
-            </NavigationContainer>
-          </QueryClientProvider>
-        </ToastProvider>
-      </AuthProvider>
+      <SafeAreaProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <QueryClientProvider client={queryClient}>
+              <NavigationContainer
+                ref={navigationRef}
+                linking={linking}
+                onReady={() => {
+                  reactNavigationIntegration.registerNavigationContainer(
+                    navigationRef
+                  );
+                }}
+              >
+                <NotificationHandler>
+                  <RootNavigator />
+                </NotificationHandler>
+              </NavigationContainer>
+            </QueryClientProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </SafeAreaProvider>
     </ErrorBoundary>
   );
 }

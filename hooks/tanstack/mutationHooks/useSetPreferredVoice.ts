@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import useAuth from "../../../contexts/AuthContext";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
 
@@ -17,9 +18,19 @@ const CRYPTIC_PATTERNS = [
 
 const useSetPreferredVoice = () => {
   const queryClient = useQueryClient();
+  const { isGuest } = useAuth();
 
   return useMutation({
     mutationFn: async (voiceId: string) => {
+      // Guests: the UI already restricts to the default voice, so just no-op
+      if (isGuest) {
+        if (__DEV__ && voiceId) {
+          // eslint-disable-next-line no-console
+          console.warn(`Guest voice mutation called with voiceId: ${voiceId}`);
+        }
+        return { success: true };
+      }
+
       const request = await apiFetch(`${BASE_URL}/voice/preferred`, {
         method: "PATCH",
         body: JSON.stringify({ voiceId }),
@@ -27,10 +38,11 @@ const useSetPreferredVoice = () => {
       });
       const response = await request.json();
       if (!response.success) {
-        const msg =
+        const fallbackMsg =
           request.status === 403
             ? "You've already selected a voice. Upgrade to premium to switch voices."
-            : (response.message ?? GENERIC_VOICE_ERROR);
+            : GENERIC_VOICE_ERROR;
+        const msg = response.message ?? fallbackMsg;
         throw new Error(msg);
       }
       return response;

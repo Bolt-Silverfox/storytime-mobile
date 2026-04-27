@@ -61,6 +61,11 @@ export const secureTokenStorage = {
     const token = await this.getAccessToken();
     return token !== null;
   },
+
+  async hasRefreshToken(): Promise<boolean> {
+    const token = await this.getRefreshToken();
+    return token !== null;
+  },
 };
 
 export default secureTokenStorage;

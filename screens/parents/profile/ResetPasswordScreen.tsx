@@ -8,14 +8,17 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import PageTitle from "../../../components/PageTitle";
 import PasswordInput from "../../../components/PasswordInput";
 import CustomButton from "../../../components/UI/CustomButton";
-import useAuth from "../../../contexts/AuthContext";
-import SuccessScreen from "../../../components/UI/SuccessScreen";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import SuccessScreen from "../../../components/UI/SuccessScreen";
+import useAuth from "../../../contexts/AuthContext";
 import { passwordSchema } from "../../../zodSchemas";
 
 const resetPasswordSchema = z
   .object({
-    oldPassword: z.string().min(1, "Old password is required"),
+    token: z
+      .string()
+      .trim()
+      .regex(/^\d{6,}$/, "Token must be at least 6 digits"),
     newPassword: passwordSchema,
     confirmPassword: z.string().min(1, "Please confirm your new password"),
   })
@@ -27,21 +30,21 @@ const resetPasswordSchema = z
 type ResetPassword = z.infer<typeof resetPasswordSchema>;
 type Errors = Partial<Record<keyof ResetPassword, string>>;
 
-export default function ResetParentPassword() {
+const ResetPasswordScreen = () => {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
-  const [oldPassword, setOldPassword] = useState("");
+  const [token, setToken] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Errors>({});
   const [error, setError] = useState("");
-  const { isLoading, changePassword } = useAuth();
+  const { isLoading, resetPassword, user } = useAuth();
   const [success, setSuccess] = useState(false);
 
   const onResetPassword = async () => {
     setErrors({});
     setError("");
     const result = resetPasswordSchema.safeParse({
-      oldPassword,
+      token,
       newPassword,
       confirmPassword,
     });
@@ -57,14 +60,16 @@ export default function ResetParentPassword() {
       setErrors(formatted);
       return;
     }
-    changePassword({
-      oldPassword,
+
+    await resetPassword({
+      email: user!.email,
+      token,
       newPassword,
+      setErrorCb: setError,
       onSuccess: () => {
         Keyboard.dismiss();
         setSuccess(true);
       },
-      setErrorCb: setError,
     });
   };
 
@@ -75,15 +80,15 @@ export default function ResetParentPassword() {
           title="Reset your password"
           goBack={() => navigator.goBack()}
         />
-        <View className="mx-[17] max-w-screen-md md:mx-auto md:w-full">
+        <View className="mx-[17] max-w-screen-md md:mx-auto md:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
           <View className="mt-[60] gap-[16px]">
             {error && <ErrorMessageDisplay errorMessage={error} />}
             <PasswordInput
-              label="Enter old password:"
-              setPassword={setOldPassword}
-              password={oldPassword}
-              placeholder="Enter old password"
-              errorMessage={errors.oldPassword}
+              label="Enter token:"
+              setPassword={setToken}
+              password={token}
+              placeholder="Enter token"
+              errorMessage={errors.token}
             />
             <PasswordInput
               label="Enter new password:"
@@ -108,10 +113,14 @@ export default function ResetParentPassword() {
           visible={success}
           message="Success!"
           secondaryMessage="Password reset successful"
-          onProceed={() => navigator.goBack()}
+          onProceed={() =>
+            navigator.reset({ index: 0, routes: [{ name: "indexPage" }] })
+          }
         />
         <LoadingOverlay visible={isLoading} />
       </View>
     </SafeAreaWrapper>
   );
-}
+};
+
+export default ResetPasswordScreen;

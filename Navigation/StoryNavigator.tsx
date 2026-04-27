@@ -20,7 +20,8 @@ type StoryNavigatorParamList = {
       | "coverImageUrl"
       | "id"
       | "createdAt"
-    >;
+    > &
+      Partial<Pick<Story, "isInteractive" | "questions">>;
     page?: number;
   };
   readStory: { storyId: string; mode: StoryModes; page?: number };
@@ -31,7 +32,11 @@ const Stack = createNativeStackNavigator();
 
 const StoryNavigator = () => {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
       <Stack.Screen name="readStory" component={ReadStoryScreen} />
       <Stack.Screen name="storyDeepLink" component={StoryDeepLinkScreen} />

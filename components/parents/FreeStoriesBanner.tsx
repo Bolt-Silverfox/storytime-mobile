@@ -1,19 +1,15 @@
-import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useGetStoryQuota from "../../hooks/tanstack/queryHooks/useGetStoryQuota";
-import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useIsPremium from "../../hooks/useIsPremium";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 
 const FreeStoriesBanner = () => {
   const [dismissed, setDismissed] = useState(false);
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: quota } = useGetStoryQuota();
-  const { data: profile } = useGetUserProfile();
-
-  const isPremium =
-    profile?.subscriptionStatus === "active" || profile?.role === "admin";
+  const { isPremium } = useIsPremium();
+  const handleUpgradePress = useUpgradeNavigation();
 
   if (dismissed || isPremium || !quota) return null;
 
@@ -26,7 +22,7 @@ const FreeStoriesBanner = () => {
 
   const getDescription = () => {
     if (isLimitReached) {
-      return `${totalAllowed} free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library your child will love.`;
+      return `${totalAllowed} free stories completed. Upgrade to unlock unlimited stories, audio narration, and a growing library you'll love.`;
     }
     if (hasBonus) {
       return "A new free story has arrived for you this month. Settle in and enjoy the moment, your next free story will be available next week.";
@@ -44,7 +40,7 @@ const FreeStoriesBanner = () => {
       <View style={bannerStyles.contentWrapper}>
         <Text style={bannerStyles.description}>{getDescription()}</Text>
         {showUpgrade ? (
-          <Pressable onPress={() => navigator.navigate("getPremium")}>
+          <Pressable onPress={handleUpgradePress}>
             <Text style={bannerStyles.boldTextUnderlined}>{getBoldText()}</Text>
           </Pressable>
         ) : (

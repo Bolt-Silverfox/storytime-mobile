@@ -2,10 +2,12 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useNavigation } from "@react-navigation/native";
 import { memo, useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
+import useAuth from "../../contexts/AuthContext";
 import { READ_STATUS_COLORS } from "../../constants";
 import { storyCategoriesColours } from "../../data";
 import { useToggleFavourites } from "../../hooks/tanstack/mutationHooks/useToggleFavourites";
 import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
+import useToast from "../../contexts/ToastContext";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import { Story } from "../../types";
 import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
@@ -34,9 +36,13 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     ageMax,
     categories,
     durationSeconds,
+    isInteractive,
+    questions,
   } = story;
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const { data: favouritesData } = useQueryParentsFavourites();
+  const { isGuest } = useAuth();
+  const { notify } = useToast();
 
   const isLiked = useMemo(
     () =>
@@ -61,6 +67,14 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     isLiked,
   });
 
+  const handleFavoritePress = () => {
+    if (isGuest) {
+      notify("Please register to add stories to favorites");
+      return;
+    }
+    onToggle();
+  };
+
   const navigate = () => {
     navigator.navigate("stories", {
       screen: "childStoryDetails",
@@ -75,6 +89,8 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           id,
           title,
           createdAt,
+          isInteractive,
+          questions,
         },
       },
     });
@@ -103,7 +119,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         />
         <Pressable
           disabled={isPending}
-          onPress={() => onToggle()}
+          onPress={handleFavoritePress}
           className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
           {isLiked ? (

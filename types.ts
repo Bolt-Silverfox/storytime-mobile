@@ -257,6 +257,14 @@ const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 
+type AuthProvider = "email" | "google" | "apple";
+
+type LinkedAccount = {
+  provider: AuthProvider;
+  email: string | null;
+  linkedAt: string;
+};
+
 type SubscriptionPlan = "Monthly" | "Yearly" | null;
 
 type SubscriptionStatus = {
@@ -348,11 +356,16 @@ type LibraryStory = Pick<
   | "durationSeconds"
   | "createdAt"
   | "categories"
+  | "readStatus"
 > & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
 const libraryFilters = ["ongoing", "completed"] as const;
 type LibraryFilterType = (typeof libraryFilters)[number];
-
+type DisclaimerData = Array<{
+  title?: string;
+  index?: number;
+  paragraph?: Array<string | { text: string; index: number }>;
+}>;
 export type {
   User,
   Profile,
@@ -382,6 +395,9 @@ export type {
   StoryQuota,
   LibraryStory,
   LibraryFilterType,
+  AuthProvider,
+  LinkedAccount,
+  DisclaimerData,
 };
 
 export { ageGroups, libraryFilters };

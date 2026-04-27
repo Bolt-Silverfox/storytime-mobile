@@ -1,8 +1,8 @@
 name: Release (main)
 
 concurrency:
-  cancel_in_progress: false
   group: ${{ workflow.filename }}-${{ github.ref }}
+  cancel_in_progress: true
 
 on:
   push:

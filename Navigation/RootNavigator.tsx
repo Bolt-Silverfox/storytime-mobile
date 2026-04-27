@@ -8,10 +8,12 @@ import { setLogoutCallBack } from "../apiFetch";
 import CustomSplashScreen from "../components/CustomSplashScreen";
 import useAuth from "../contexts/AuthContext";
 import AuthNavigator, { AuthNavigatorParamList } from "./AuthNavigator";
+import GuestNavigator, { GuestNavigatorParamList } from "./GuestNavigator";
 import ProtectedRoutesNavigator from "./ProtectedNavigator";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
+  guest: NavigatorScreenParams<GuestNavigatorParamList>;
   protected: undefined;
 };
 
@@ -19,7 +21,7 @@ type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;
 const Stack = createNativeStackNavigator<RootNavigatorParamList>();
 
 const RootNavigator = () => {
-  const { user, logout } = useAuth();
+  const { user, isGuest, logout } = useAuth();
 
   useEffect(() => {
     setLogoutCallBack(logout);
@@ -27,19 +29,13 @@ const RootNavigator = () => {
 
   if (user === undefined) return <CustomSplashScreen />;
   return (
-    <Stack.Navigator>
-      {!user ? (
-        <Stack.Screen
-          name="auth"
-          component={AuthNavigator}
-          options={{ headerShown: false }}
-        />
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      {user ? (
+        <Stack.Screen name="protected" component={ProtectedRoutesNavigator} />
+      ) : isGuest ? (
+        <Stack.Screen name="guest" component={GuestNavigator} />
       ) : (
-        <Stack.Screen
-          options={{ headerShown: false }}
-          name="protected"
-          component={ProtectedRoutesNavigator}
-        />
+        <Stack.Screen name="auth" component={AuthNavigator} />
       )}
     </Stack.Navigator>
   );

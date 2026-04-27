@@ -15,6 +15,7 @@ import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 import defaultStyles from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
@@ -22,7 +23,7 @@ import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import CustomButton from "../../components/UI/CustomButton";
 
 const LoginScreen = () => {
-  const navigator = useNavigation<RootNavigatorProp>();
+  const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -61,9 +62,8 @@ const LoginScreen = () => {
                 placeholder="Enter your password"
               />
               <Text
-                onPress={() =>
-                  navigator.navigate("auth", { screen: "resetPassword" })
-                }
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("resetPassword")}
                 className="text-right"
                 style={defaultStyles.linkText}
               >
@@ -86,17 +86,23 @@ const LoginScreen = () => {
               <Text className="text-center font-[abeezee]">Or log in with</Text>
               <View className="flex-1 border-b border-black" />
             </View>
-            <View className="flex flex-row items-center justify-center gap-x-20 ">
+            <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign in with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-in flow"
               >
                 <Image source={require("../../assets/icons/google-icon.png")} />
               </Pressable>
               {Platform.OS === "ios" && (
                 <Pressable
-                  onPress={handleAppleAuth}
-                  className="flex size-20 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  onPress={() => handleAppleAuth("login")}
+                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  accessibilityLabel="Sign in with Apple"
+                  accessibilityRole="button"
+                  accessibilityHint="Opens Apple sign-in flow"
                 >
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
@@ -108,9 +114,8 @@ const LoginScreen = () => {
               <Text style={{ ...styles.text }}>
                 Don't have an account?{" "}
                 <Text
-                  onPress={() =>
-                    navigator.navigate("auth", { screen: "signUp" })
-                  }
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  onPress={() => (navigator as any).navigate("signUp")}
                   style={{ ...defaultStyles.defaultText, color: colours.link }}
                 >
                   Register
@@ -120,9 +125,8 @@ const LoginScreen = () => {
                 Signed up but haven't verified?{" "}
                 <Text
                   onPress={() =>
-                    navigator.navigate("auth", {
-                      screen: "requestEmailVerification",
-                    })
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    (navigator as any).navigate("requestEmailVerification")
                   }
                   style={{ ...defaultStyles.defaultText, color: colours.link }}
                 >

@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { getErrorMessage } from "../../../utils/utils";
+import { notifLogger } from "../../../utils/logger";
 
 const useMarkNotificationRead = () => {
   const queryClient = useQueryClient();
@@ -27,7 +28,7 @@ const useMarkNotificationRead = () => {
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
     onError: (err) => {
-      if (__DEV__) console.log("Mark read error:", getErrorMessage(err)); // eslint-disable-line no-console
+      notifLogger.error("Mark read error:", getErrorMessage(err));
     },
   });
 };

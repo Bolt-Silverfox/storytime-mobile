@@ -1,7 +1,9 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, Text, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../../Navigation/GuestNavigator";
 import CustomButton from "../../UI/CustomButton";
+import useAuth from "../../../contexts/AuthContext";
 
 type Props = {
   storyTitle: string;
@@ -12,12 +14,30 @@ type Props = {
 };
 const EndOfStoryMessage = ({
   storyTitle,
-  onTestKnowledge: _onTestKnowledge,
+  onTestKnowledge,
   isOpen,
   readAgain,
-  isInteractive: _isInteractive,
+  isInteractive,
 }: Props) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
+  const { isGuest } = useAuth();
+
+  const handleGoHome = () => {
+    if (isGuest) {
+      (navigator as GuestNavigatorProp).reset({
+        index: 0,
+        routes: [{ name: "guestTabs" }],
+      });
+    } else {
+      (navigator as ProtectedRoutesNavigationProp).replace("parents", {
+        screen: "home",
+        params: { screen: "homePage" },
+      });
+    }
+  };
+
   if (!isOpen) return null;
   return (
     <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
@@ -31,15 +51,10 @@ const EndOfStoryMessage = ({
       </Text>
       <View className="flex flex-col gap-y-3">
         <CustomButton text="Read story again" transparent onPress={readAgain} />
-        <CustomButton
-          text="Go home"
-          onPress={() =>
-            navigator.replace("parents", {
-              screen: "home",
-              params: { screen: "homePage" },
-            })
-          }
-        />
+        {isInteractive && (
+          <CustomButton text="Test your knowledge" onPress={onTestKnowledge} />
+        )}
+        <CustomButton text="Go home" onPress={handleGoHome} />
       </View>
     </View>
   );

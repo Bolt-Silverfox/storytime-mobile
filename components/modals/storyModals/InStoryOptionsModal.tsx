@@ -1,6 +1,7 @@
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, Text, View } from "react-native";
+import { StoryModes } from "../../../types";
 import Icon from "../../Icon";
 import TopModal from "../TopModal";
 import ExitStoryModal from "./ExitStoryModal";
@@ -10,11 +11,17 @@ type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
   handleVoiceModal: Dispatch<SetStateAction<boolean>>;
   isOptionsModalOpen: boolean;
+  currentMode: StoryModes;
+  onModeChange: (mode: StoryModes) => void;
+  hasQuiz: boolean;
 };
 const InStoryOptionsModal = ({
   isOptionsModalOpen,
   setIsOptionsModalOpen,
   handleVoiceModal,
+  currentMode,
+  onModeChange,
+  hasQuiz,
 }: PropTypes) => {
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
@@ -69,6 +76,9 @@ const InStoryOptionsModal = ({
           setIsOptionsModalOpen(false);
           setIsStoryModeModalOpen(false);
         }}
+        currentMode={currentMode}
+        onModeChange={onModeChange}
+        hasQuiz={hasQuiz}
       />
       <ExitStoryModal
         isOpen={isExitModalOpen}

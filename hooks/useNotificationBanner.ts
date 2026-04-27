@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import * as Notifications from "expo-notifications";
+import { notifLogger } from "../utils/logger";
 
 const BANNER_DISMISSED_KEY = "notificationBannerDismissed";
 const BANNER_DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -60,9 +61,7 @@ const useNotificationBanner = () => {
     try {
       await AsyncStorage.setItem(BANNER_DISMISSED_KEY, Date.now().toString());
     } catch (error) {
-      if (__DEV__) {
-        console.error("Failed to save banner dismiss status:", error); // eslint-disable-line no-console
-      }
+      notifLogger.error("Failed to save banner dismiss status:", error);
     }
   };
 
@@ -72,9 +71,7 @@ const useNotificationBanner = () => {
     try {
       await AsyncStorage.removeItem(BANNER_DISMISSED_KEY);
     } catch (error) {
-      if (__DEV__) {
-        console.error("Failed to clear banner dismiss status:", error); // eslint-disable-line no-console
-      }
+      notifLogger.error("Failed to clear banner dismiss status:", error);
     }
   };
 

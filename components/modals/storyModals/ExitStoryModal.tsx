@@ -1,19 +1,31 @@
 import { useNavigation } from "@react-navigation/native";
 import { Image, Text, View } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../../Navigation/GuestNavigator";
 import CustomButton from "../../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "../CustomModal";
+import useAuth from "../../../contexts/AuthContext";
 
 interface ExitModalProps extends Omit<CustomModalProps, "children"> {}
 
 const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
+  const { isGuest } = useAuth();
 
   const onExitStory = () => {
-    navigator.reset({
-      index: 0,
-      routes: [{ name: "parents" }],
-    });
+    if (isGuest) {
+      (navigator as GuestNavigatorProp).reset({
+        index: 0,
+        routes: [{ name: "guestTabs" }],
+      });
+    } else {
+      (navigator as ProtectedRoutesNavigationProp).reset({
+        index: 0,
+        routes: [{ name: "parents" }],
+      });
+    }
   };
 
   return (
