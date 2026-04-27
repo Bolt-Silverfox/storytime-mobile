@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { authLogger } from "../../../utils/logger";
 
 const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
   const { user } = useAuth();
@@ -30,9 +31,7 @@ const useUpdateUserProfile = ({ onSuccess }: { onSuccess?: () => void }) => {
     },
     onError: (err) => {
       Alert.alert("Error", "Failed to update profile. Please try again.");
-      if (__DEV__) {
-        console.error("Profile update failed:", err); // eslint-disable-line no-console
-      }
+      authLogger.error("Profile update failed:", err);
     },
   });
 };

@@ -4,6 +4,7 @@ import TermsAndConditionsScreenComponent from "../../components/screens/TermsAnd
 
 const TermsOfServiceScreen = () => {
   const navigator = useNavigation<AuthNavigatorProp>();
+
   return (
     <TermsAndConditionsScreenComponent goBack={() => navigator.goBack()} />
   );

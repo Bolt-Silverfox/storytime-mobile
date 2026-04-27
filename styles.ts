@@ -61,6 +61,11 @@ const defaultStyles = StyleSheet.create({
     maxWidth: 600,
     alignSelf: "center",
   },
+  appleButton: {
+    width: 180,
+    height: 44,
+    maxWidth: "100%",
+  },
 });
 
 export default defaultStyles;

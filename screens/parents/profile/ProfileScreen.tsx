@@ -4,8 +4,11 @@ import { useNavigation } from "@react-navigation/native";
 import {
   BellRing,
   CreditCard,
+  Gift,
   HelpCircle,
   KeyRound,
+  Link2,
+  Volume2,
 } from "lucide-react-native";
 import React, { FC, useState } from "react";
 import {
@@ -37,8 +40,6 @@ const ProfileScreen: FC = () => {
 
   const { width } = useWindowDimensions();
   const isTablet = width >= 768;
-
-  if (isLoading) return <LoadingOverlay visible={isLoading} />;
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -84,7 +85,7 @@ const ProfileScreen: FC = () => {
             </CustomText>
           </View>
 
-          <View className="mx-auto mt-7 w-[90%]  max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4">
+          <View className="mx-auto mt-7 w-[90%]  max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
             <MenuItem
               icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
               label="Notification Settings"
@@ -98,14 +99,32 @@ const ProfileScreen: FC = () => {
             <MenuItem
               icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
               label="Change Password"
-              onPress={() => navigator.navigate("resetParentPassword")}
+              onPress={() => navigator.navigate("changePassword")}
               isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Link2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Linked Accounts"
+              onPress={() => navigator.navigate("linkedAccounts")}
+              isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Volume2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Default Voice"
+              isTablet={isTablet}
+              onPress={() => navigator.navigate("defaultVoice")}
             />
             <MenuItem
               icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
               label="Subscription"
               isTablet={isTablet}
               onPress={() => protectedNavigator.navigate("getPremium")}
+            />
+            <MenuItem
+              icon={<Gift color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Redeem Coupon"
+              isTablet={isTablet}
+              onPress={() => navigator.navigate("redeemCoupon")}
             />
             <MenuItem
               icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}

@@ -8,52 +8,55 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
-import { SUBSCRIPTION_STATUS, USER_ROLES } from "../../constants/ui";
+import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import useAuth from "../../contexts/AuthContext";
+import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 import { getGreeting } from "../../utils/utils";
 import Avatar from "../Avatar";
 import Icon from "../Icon";
 
 const ParentsHomeScreenHeader = () => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
-  const protectedNav = useNavigation<ProtectedRoutesNavigationProp>();
+  const { isGuest } = useAuth();
+  const handleGetPremiumPress = useUpgradeNavigation();
 
   const { data, isPending } = useGetUserProfile();
-
-  const isUserSubscribed =
-    data?.subscriptionStatus === SUBSCRIPTION_STATUS.active ||
-    data?.role === USER_ROLES.admin;
-  if (isPending) return <ActivityIndicator size={"large"} />;
+  const { isPremium: isUserSubscribed } = useIsPremium();
+  if (isPending && !isGuest) return <ActivityIndicator size={"large"} />;
 
   return (
     <View
       aria-labelledby="user avatar container"
-      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-4"
+      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-2"
     >
       <View>
         <Avatar
           size={40}
-          onPress={() =>
-            navigator.navigate("parents", {
-              screen: "profile",
-              params: { screen: "indexPage" },
-            })
+          onPress={
+            isGuest
+              ? undefined
+              : () =>
+                  navigator.navigate("parents", {
+                    screen: "profile",
+                    params: { screen: "indexPage" },
+                  })
           }
         />
       </View>
       <View className="flex min-w-0 flex-1 flex-col gap-y-1.5">
         <Text numberOfLines={1} className="font-[abeezee] text-base">
-          {data?.name}
+          {isGuest ? "Guest" : (data?.name ?? "")}
         </Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
           {getGreeting()}
         </Text>
       </View>
       <View className="flex shrink-0 flex-row items-center gap-x-3">
-        {!isUserSubscribed && (
+        {!isGuest && !isUserSubscribed && (
           <Pressable
             className="overflow-hidden rounded-full"
-            onPress={() => protectedNav.navigate("getPremium")}
+            onPress={handleGetPremiumPress}
           >
             <LinearGradient
               colors={["#3608AB", "#2651D3", "#976FFC"]}
@@ -66,14 +69,16 @@ const ParentsHomeScreenHeader = () => {
             </LinearGradient>
           </Pressable>
         )}
-        <Pressable
-          onPress={() =>
-            protectedNav.navigate("notification", { screen: "index" })
-          }
-          className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
-        >
-          <Icon name="Bell" />
-        </Pressable>
+        {!isGuest && (
+          <Pressable
+            onPress={() =>
+              navigator.navigate("notification", { screen: "index" })
+            }
+            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
+          >
+            <Icon name="Bell" />
+          </Pressable>
+        )}
       </View>
     </View>
   );

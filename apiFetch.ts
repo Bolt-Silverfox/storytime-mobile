@@ -2,10 +2,29 @@ import { secureTokenStorage } from "./utils/secureTokenStorage";
 
 // Token refresh lock mechanism to prevent race conditions
 let isRefreshing = false;
-let refreshPromise: Promise<boolean> | null = null;
+let refreshPromise: Promise<RefreshResult> | null = null;
 
 // Logout callback - stored at module level for API layer access
 let logoutCallback: (() => void) | null = null;
+
+// Guest mode flag - when true, skip auth token requirements
+let _guestMode = false;
+// Guest session ID for backend progress tracking
+let _guestSessionId: string | null = null;
+// Guest device ID for persistent quota tracking
+let _guestDeviceId: string | null = null;
+
+const setGuestMode = (value: boolean) => {
+  _guestMode = value;
+};
+
+const setGuestSessionId = (id: string | null) => {
+  _guestSessionId = id;
+};
+
+const setGuestDeviceId = (id: string | null) => {
+  _guestDeviceId = id;
+};
 
 const setLogoutCallBack = (callback: () => void) => {
   logoutCallback = callback;
@@ -24,6 +43,7 @@ interface FetchOptions extends RequestInit {
 
 class ApiError extends Error {
   status: number;
+  transientAuth?: boolean;
   constructor(message: string, status: number) {
     super(message);
     this.name = "ApiError";
@@ -60,8 +80,57 @@ const buildHeaders = (
   return headers;
 };
 
+const buildErrorMessage = (status: number): string => {
+  switch (status) {
+    case 400:
+      return "Bad request. Please check your input and try again.";
+    case 401:
+      return "Your session has expired. Please log in again.";
+    case 403:
+      return "You do not have permission to perform this action.";
+    case 404:
+      return "The requested information could not be found.";
+    case 429:
+      return "Too many requests. Please wait a moment and try again.";
+    case 500:
+      return "An unexpected server error occurred. Please try again later.";
+    case 502:
+    case 503:
+    case 504:
+      return "The server is temporarily unavailable. Please check your connection and try again.";
+    default:
+      return "An unexpected network error occurred. Please try again.";
+  }
+};
+
+export enum RefreshResult {
+  Success,
+  InvalidToken,
+  RetryableError,
+}
+
 const apiFetch = async (url: string, options: FetchOptions = {}) => {
   const token = await secureTokenStorage.getAccessToken();
+
+  // Guest mode: skip auth token requirements and make unauthenticated requests
+  if (_guestMode) {
+    const headers = buildHeaders(null, options);
+    if (_guestSessionId) {
+      headers["X-Guest-Session-Id"] = _guestSessionId;
+    }
+    if (_guestDeviceId) {
+      headers["X-Guest-Device-Id"] = _guestDeviceId;
+    }
+    const response = await fetch(url, { ...options, headers });
+    if (
+      !response.ok &&
+      !options.passThroughStatuses?.includes(response.status)
+    ) {
+      throw new ApiError(buildErrorMessage(response.status), response.status);
+    }
+    return response;
+  }
+
   const headers = buildHeaders(token, options);
 
   let response = await fetch(url, { ...options, headers });
@@ -72,20 +141,27 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(
-        `Request failed with status ${response.status}`,
-        response.status
-      );
+      throw new ApiError(buildErrorMessage(response.status), response.status);
     }
     return response;
   }
 
   // Handle 401 with token refresh (using lock to prevent race conditions)
-  const refreshed = await refreshTokensWithLock();
+  const refreshResult = await refreshTokensWithLock();
 
-  if (!refreshed) {
+  if (refreshResult === RefreshResult.InvalidToken) {
     triggerLogout();
     throw new ApiError("Session expired", 401);
+  }
+
+  if (refreshResult === RefreshResult.RetryableError) {
+    // For retryable errors (network/5xx), we throw without logging out
+    const err = new ApiError(
+      "Authentication temporary failure, try again",
+      401
+    );
+    err.transientAuth = true;
+    throw err;
   }
 
   const newToken = await secureTokenStorage.getAccessToken();
@@ -97,8 +173,11 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     !retryResponse.ok &&
     !options.passThroughStatuses?.includes(retryResponse.status)
   ) {
+    if (retryResponse.status === 401) {
+      triggerLogout();
+    }
     throw new ApiError(
-      `Request failed with status ${retryResponse.status}`,
+      buildErrorMessage(retryResponse.status),
       retryResponse.status
     );
   }
@@ -107,7 +186,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 };
 
 // Token refresh with lock mechanism to prevent multiple simultaneous refresh attempts
-const refreshTokensWithLock = async (): Promise<boolean> => {
+export const refreshTokensWithLock = async (): Promise<RefreshResult> => {
   // If already refreshing, wait for the existing promise
   if (isRefreshing && refreshPromise) {
     return refreshPromise;
@@ -122,10 +201,10 @@ const refreshTokensWithLock = async (): Promise<boolean> => {
   return refreshPromise;
 };
 
-const refreshTokens = async (): Promise<boolean> => {
+const refreshTokens = async (): Promise<RefreshResult> => {
   try {
     const token = await secureTokenStorage.getRefreshToken();
-    if (!token) return false;
+    if (!token) return RefreshResult.InvalidToken;
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
       {
@@ -138,22 +217,35 @@ const refreshTokens = async (): Promise<boolean> => {
       }
     );
 
-    if (!response.ok) return false;
+    // If the server explicitly says the token is invalid (400, 401, 403)
+    if ([400, 401, 403].includes(response.status)) {
+      return RefreshResult.InvalidToken;
+    }
+
+    // For other non-ok responses (5xx, etc.), it's a retryable error
+    if (!response.ok) return RefreshResult.RetryableError;
 
     let data;
     try {
       data = await response.json();
     } catch {
-      return false;
+      return RefreshResult.RetryableError;
     }
 
-    if (!data.success) return false;
+    if (!data.success) return RefreshResult.InvalidToken;
     await secureTokenStorage.setAccessToken(data.data.jwt);
-    return true;
+    return RefreshResult.Success;
   } catch {
-    return false;
+    // Network errors are retryable
+    return RefreshResult.RetryableError;
   }
 };
 
-export { setLogoutCallBack, ApiError };
+export {
+  setLogoutCallBack,
+  setGuestMode,
+  setGuestSessionId,
+  setGuestDeviceId,
+  ApiError,
+};
 export default apiFetch;

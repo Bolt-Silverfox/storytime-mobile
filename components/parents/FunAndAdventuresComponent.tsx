@@ -5,6 +5,7 @@ import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
 import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCategories";
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import ErrorComponent from "../ErrorComponent";
 
 const FunAndAdventuresComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -18,7 +19,7 @@ const FunAndAdventuresComponent = () => {
   const category = categories?.[0];
 
   const { data, isPending, error, refetch } = useQuery({
-    ...queryGetStories({ category: category?.id }),
+    ...queryGetStories({ category: category?.id, shuffle: true }),
     enabled: !!category?.id,
   });
 
@@ -28,8 +29,12 @@ const FunAndAdventuresComponent = () => {
         isPending={categoriesPending}
         error={categoriesError}
         refetch={refetchCategories}
+        hasData={!!categories}
       >
-        {null}
+        <ErrorComponent
+          message={categoriesError?.message || "Failed to load categories"}
+          refetch={refetchCategories}
+        />
       </HomeScreenCarouselComponent>
     );
   }
@@ -41,6 +46,7 @@ const FunAndAdventuresComponent = () => {
       isPending={isPending}
       error={error}
       refetch={refetch}
+      hasData={!!data}
     >
       <HomepageStoriesContainer
         title={category.name}
@@ -52,6 +58,8 @@ const FunAndAdventuresComponent = () => {
           })
         }
         stories={data ?? []}
+        error={error}
+        isPending={isPending}
       />
     </HomeScreenCarouselComponent>
   );

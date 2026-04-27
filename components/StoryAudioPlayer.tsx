@@ -3,11 +3,14 @@ import { useAudioPlayer, useAudioPlayerStatus } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef } from "react";
 import { ActivityIndicator, Pressable, Switch, Text, View } from "react-native";
 import { VOICE_LABELS } from "../constants/ui";
+import { audioLogger } from "../utils/logger";
 
 const StoryAudioPlayer = ({
   audioUrl,
   isLoading,
   isError,
+  isStillGenerating,
+  isFailed,
   isPlaying,
   setIsPlaying,
   onPageFinished,
@@ -15,6 +18,8 @@ const StoryAudioPlayer = ({
   audioUrl: string | null;
   isLoading: boolean;
   isError: boolean;
+  isStillGenerating: boolean;
+  isFailed: boolean;
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
@@ -48,6 +53,8 @@ const StoryAudioPlayer = ({
   // Track whether URL went through a null transition (voice switch)
   // vs a direct URL change (page navigation)
   const wasNullTransitionRef = useRef(false);
+  // Track whether URL went null because audio is still generating (not a voice switch)
+  const wasGeneratingWaitRef = useRef(false);
 
   // When the audio URL changes (new voice or new page content), replace audio
   // When URL goes null (voice switch in progress), pause old audio
@@ -55,33 +62,40 @@ const StoryAudioPlayer = ({
     if (audioUrl && audioUrl !== prevUrlRef.current) {
       const wasPlaying = isPlayingRef.current;
       const wasVoiceSwitch = wasNullTransitionRef.current;
+      const wasGeneratingWait = wasGeneratingWaitRef.current;
       prevUrlRef.current = audioUrl;
       wasNullTransitionRef.current = false;
+      wasGeneratingWaitRef.current = false;
       // Reset edge detection so the next finish is treated as fresh
       prevDidJustFinishRef.current = false;
 
       try {
         player.replace(audioUrl);
-        // Only auto-resume for page navigation, not voice switches
-        if (wasPlaying && !wasVoiceSwitch) {
+        // Auto-resume for page navigation OR generation wait, but NOT voice switches
+        if ((wasPlaying && !wasVoiceSwitch) || wasGeneratingWait) {
           player.play();
         }
       } catch (e) {
-        if (__DEV__) console.error("Audio replace failed:", e); // eslint-disable-line no-console
+        audioLogger.error("Audio replace failed:", e);
         setIsPlaying(false);
       }
     } else if (!audioUrl && prevUrlRef.current) {
-      // Voice switched — stop old audio while new one loads
       prevUrlRef.current = null;
-      wasNullTransitionRef.current = true;
+      if (isStillGenerating && isPlayingRef.current) {
+        // Audio is still generating AND user was playing — mark for auto-resume
+        wasGeneratingWaitRef.current = true;
+      } else if (!isStillGenerating) {
+        // Voice switched — stop old audio while new one loads
+        wasNullTransitionRef.current = true;
+      }
       try {
         player.pause();
       } catch (e) {
-        if (__DEV__) console.error("Audio pause failed:", e); // eslint-disable-line no-console
+        audioLogger.error("Audio pause failed:", e);
       }
       setIsPlaying(false);
     }
-  }, [audioUrl, player, setIsPlaying]);
+  }, [audioUrl, player, setIsPlaying, isStillGenerating]);
 
   const playAudio = () => {
     try {
@@ -93,14 +107,14 @@ const StoryAudioPlayer = ({
       setIsPlaying(true);
       player.play();
     } catch (e) {
-      if (__DEV__) console.error("Audio playback failed:", e); // eslint-disable-line no-console
+      audioLogger.error("Audio playback failed:", e);
       setIsPlaying(false);
     }
   };
 
   return (
     <Pressable
-      disabled={isLoading || isError || !audioUrl}
+      disabled={isLoading || isError || isFailed || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
@@ -109,23 +123,35 @@ const StoryAudioPlayer = ({
       accessibilityHint={
         isLoading
           ? "Audio is loading"
-          : !audioUrl
-            ? "Audio is not available"
-            : undefined
+          : isFailed
+            ? "Audio failed to generate"
+            : !audioUrl
+              ? "Audio is not available"
+              : undefined
       }
     >
       <View className="flex flex-row items-center gap-x-2">
-        <View className="flex size-12 flex-col items-center justify-center rounded-full bg-blue">
-          <Ionicons name="volume-medium-outline" size={24} color="white" />
+        <View
+          className={`flex size-12 flex-col items-center justify-center rounded-full ${isFailed ? "bg-red-500" : "bg-blue"}`}
+        >
+          <Ionicons
+            name={isFailed ? "close-circle-outline" : "volume-medium-outline"}
+            size={24}
+            color="white"
+          />
         </View>
-        <Text className="font-[quilka] text-xl text-black">
+        <Text
+          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : "text-black"}`}
+        >
           {isLoading
             ? VOICE_LABELS.loading
-            : isError || !audioUrl
-              ? VOICE_LABELS.unavailable
-              : isPlaying
-                ? VOICE_LABELS.mute
-                : VOICE_LABELS.play}
+            : isFailed
+              ? "Audio failed"
+              : isError || !audioUrl
+                ? VOICE_LABELS.unavailable
+                : isPlaying
+                  ? VOICE_LABELS.mute
+                  : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
@@ -135,7 +161,7 @@ const StoryAudioPlayer = ({
           <Switch
             value={isPlaying}
             onValueChange={playAudio}
-            disabled={isLoading || isError || !audioUrl}
+            disabled={isError || isFailed || !audioUrl}
           />
         )}
       </View>

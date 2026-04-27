@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   Image,
   Modal,
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -12,6 +13,9 @@ import {
   View,
 } from "react-native";
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
+import useAuth from "../../contexts/AuthContext";
+import useRestorePurchases from "../../hooks/others/useRestorePurchases";
 import { QUERY_KEYS } from "../../constants";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
@@ -33,8 +37,11 @@ const StoryLimitModal = ({
   mode = "blocking",
   onClose,
 }: PropTypes) => {
-  const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const navigator = useNavigation<
+    ProtectedRoutesNavigationProp | GuestNavigatorProp
+  >();
   const queryClient = useQueryClient();
+  const { isGuest } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
 
   const isDismissible = mode === "reminder";
@@ -43,14 +50,27 @@ const StoryLimitModal = ({
     if (isDismissible && onClose) {
       onClose();
     } else {
-      navigator.reset({ index: 0, routes: [{ name: "parents" }] });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).reset({
+        index: 0,
+        routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+      });
     }
   };
 
   const handleSubscribed = () => {
     queryClient.invalidateQueries({ queryKey: ["story", storyId] });
     queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_STORY_QUOTA] });
-    onClose?.();
+    if (onClose) {
+      onClose();
+    } else {
+      // Blocking mode without onClose: navigate away after successful subscription
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).reset({
+        index: 0,
+        routes: [{ name: isGuest ? "guestTabs" : "parents" }],
+      });
+    }
   };
 
   const {
@@ -62,6 +82,12 @@ const StoryLimitModal = ({
     getPlanName,
   } = useSubscribeIAP(selectedPlan, handleSubscribed);
 
+  const {
+    handleRestore,
+    isRestoring,
+    error: restoreError,
+  } = useRestorePurchases();
+
   const used = quota?.used ?? 0;
   const totalAllowed = quota?.totalAllowed ?? 0;
 
@@ -72,6 +98,40 @@ const StoryLimitModal = ({
   const subtitle = !isDismissible
     ? `That was the last of your ${totalAllowed} free stories. With the Freemium plan, you'll receive 1 free story every week. Upgrade now for full access to our entire story library.`
     : `As a freemium user, you are entitled to ${totalAllowed} free stories overall and 1 free story weekly.`;
+
+  const navigateToTerms = () => {
+    onClose?.();
+    if (isGuest) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).navigate("termsOfService");
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).navigate("parents", {
+        screen: "profile",
+        params: {
+          screen: "helpAndSupport",
+          params: { screen: "termsAndConditions" },
+        },
+      });
+    }
+  };
+
+  const navigateToPrivacy = () => {
+    onClose?.();
+    if (isGuest) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).navigate("privacyScreen");
+    } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (navigator as any).navigate("parents", {
+        screen: "profile",
+        params: {
+          screen: "helpAndSupport",
+          params: { screen: "privacyAndPolicy" },
+        },
+      });
+    }
+  };
 
   return (
     <Modal
@@ -123,8 +183,8 @@ const StoryLimitModal = ({
 
             {/* Summary text */}
             <Text style={modalStyles.summaryText}>
-              Your child won't just listen, they'll have an unlimited learning
-              experience, with the voice type you choose for them.
+              You won't just listen, you'll have an unlimited learning
+              experience, with the voice type you choose.
             </Text>
 
             {/* Divider */}
@@ -154,6 +214,15 @@ const StoryLimitModal = ({
             {/* Divider */}
             <View style={modalStyles.divider} />
 
+            {/* Auto-renewal disclosure */}
+            <View style={modalStyles.disclosureBox}>
+              <Text style={modalStyles.disclosureText}>
+                {Platform.OS === "ios"
+                  ? "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Payment will be charged to your Apple ID account at confirmation of purchase. You can manage and cancel your subscriptions by going to your Account Settings on the App Store after purchase."
+                  : "Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Payment will be charged to your Google Play account at confirmation of purchase. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
+              </Text>
+            </View>
+
             {/* Buttons */}
             <View style={modalStyles.fullWidthGap12}>
               <Pressable
@@ -164,7 +233,8 @@ const StoryLimitModal = ({
                   // eslint-disable-next-line react-native/no-inline-styles
                   {
                     backgroundColor:
-                      selectedPlan && !isLoading ? "#FF8771" : "#FFB8AD",
+                      selectedPlan && !isLoading ? "#FF6B35" : "#FFB8AD",
+                    opacity: selectedPlan && !isLoading ? 1 : 0.6,
                   },
                 ]}
               >
@@ -172,6 +242,31 @@ const StoryLimitModal = ({
                   Subscribe to Premium
                 </Text>
               </Pressable>
+
+              <View style={modalStyles.legalLinks}>
+                <Pressable onPress={navigateToTerms}>
+                  <Text style={modalStyles.legalLinkText}>
+                    Terms of Service
+                  </Text>
+                </Pressable>
+                <Pressable onPress={navigateToPrivacy}>
+                  <Text style={modalStyles.legalLinkText}>Privacy Policy</Text>
+                </Pressable>
+              </View>
+
+              <Pressable
+                onPress={handleRestore}
+                disabled={isRestoring}
+                style={modalStyles.restoreButton}
+              >
+                <Text style={modalStyles.restoreLinkText}>
+                  {isRestoring ? "Restoring..." : "Restore Purchases"}
+                </Text>
+              </Pressable>
+              {restoreError ? (
+                <Text style={modalStyles.disclosureText}>{restoreError}</Text>
+              ) : null}
+
               <Pressable
                 onPress={handleCancel}
                 style={modalStyles.cancelButton}
@@ -300,6 +395,39 @@ const modalStyles = StyleSheet.create({
     fontFamily: "abeezee",
     fontSize: 16,
     color: "#212121",
+  },
+  disclosureBox: {
+    width: "100%",
+    backgroundColor: "#FFF9C4",
+    borderRadius: 16,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  disclosureText: {
+    fontFamily: "abeezee",
+    fontSize: 10,
+    lineHeight: 16,
+    color: "#616161",
+  },
+  legalLinks: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 16,
+  },
+  legalLinkText: {
+    fontFamily: "abeezee",
+    fontSize: 12,
+    color: "#866EFF",
+    textDecorationLine: "underline",
+  },
+  restoreButton: {
+    alignItems: "center",
+    paddingVertical: 8,
+  },
+  restoreLinkText: {
+    fontFamily: "abeezee",
+    fontSize: 14,
+    color: "#866EFF",
   },
 });
 
