@@ -56,7 +56,7 @@ jobs:
   approve-release:
     name: Approve Release
     type: require-approval
-    needs: [build-ios, build-android]
+    after: [build-ios, build-android, get-ios-build, get-android-build]
 
   submit-ios:
     name: Submit iOS to TestFlight
@@ -74,7 +74,7 @@ jobs:
 
   ota-ios:
     name: OTA Update iOS
-    needs: [get-ios-build]
+    needs: [approve-release, get-ios-build]
     if: ${{ needs.get-ios-build.outputs.build_id }}
     type: update
     params:
@@ -83,7 +83,7 @@ jobs:
 
   ota-android:
     name: OTA Update Android
-    needs: [get-android-build]
+    needs: [approve-release, get-android-build]
     if: ${{ needs.get-android-build.outputs.build_id }}
     type: update
     params:
