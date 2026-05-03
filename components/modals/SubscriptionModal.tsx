@@ -7,6 +7,8 @@ import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
+import ParentalGateModal from "./ParentalGateModal";
+import useParentalGate from "../../hooks/others/useParentalGate";
 
 type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose"> & {
   onSubscribed?: () => void;
@@ -14,6 +16,7 @@ type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose"> & {
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
+  const gate = useParentalGate();
   const {
     isLoading,
     errorMessage,
@@ -109,7 +112,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
             ariaLabel="Subscribe button"
             text="Subscribe"
             disabled={!selectedPlan}
-            onPress={handlePurchase}
+            onPress={() => gate.guard(handlePurchase)}
+          />
+          <ParentalGateModal
+            visible={gate.visible}
+            onPass={gate.onPass}
+            onCancel={gate.onCancel}
           />
           <CustomButton
             ariaLabel="Cancel button"
