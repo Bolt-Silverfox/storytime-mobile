@@ -126,7 +126,18 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(buildErrorMessage(response.status), response.status);
+      // Try to extract backend's error message before throwing generic one
+      let customMessage: string | null = null;
+      try {
+        const body = await response.json();
+        customMessage = body.message ?? body.error ?? body.msg ?? null;
+      } catch {
+        // No JSON body
+      }
+      throw new ApiError(
+        customMessage ?? buildErrorMessage(response.status),
+        response.status
+      );
     }
     return response;
   }
@@ -141,7 +152,18 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(buildErrorMessage(response.status), response.status);
+      // Try to extract backend's error message before throwing generic one
+      let customMessage: string | null = null;
+      try {
+        const body = await response.json();
+        customMessage = body.message ?? body.error ?? body.msg ?? null;
+      } catch {
+        // No JSON body — use generic message
+      }
+      throw new ApiError(
+        customMessage ?? buildErrorMessage(response.status),
+        response.status
+      );
     }
     return response;
   }
@@ -176,8 +198,16 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     if (retryResponse.status === 401) {
       triggerLogout();
     }
+    // Try to extract backend's error message before throwing generic one
+    let customMessage: string | null = null;
+    try {
+      const body = await retryResponse.json();
+      customMessage = body.message ?? body.error ?? body.msg ?? null;
+    } catch {
+      // No JSON body
+    }
     throw new ApiError(
-      buildErrorMessage(retryResponse.status),
+      customMessage ?? buildErrorMessage(retryResponse.status),
       retryResponse.status
     );
   }
