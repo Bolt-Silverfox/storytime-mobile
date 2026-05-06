@@ -1,6 +1,7 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
-import { Image, ScrollView, Text, View } from "react-native";
+import { Image, Pressable, ScrollView, Text, View } from "react-native";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 import { SubscriptionPlan } from "../../types";
@@ -17,6 +18,30 @@ type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose"> & {
 const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const gate = useParentalGate();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const navigator = useNavigation<any>();
+
+  const navigateToTerms = () => {
+    onClose?.();
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "termsAndConditions" },
+      },
+    });
+  };
+
+  const navigateToPrivacy = () => {
+    onClose?.();
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "privacyAndPolicy" },
+      },
+    });
+  };
   const {
     isLoading,
     errorMessage,
@@ -119,6 +144,18 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
             onPass={gate.onPass}
             onCancel={gate.onCancel}
           />
+          <View className="flex-row justify-center gap-x-4">
+            <Pressable onPress={navigateToTerms}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Terms of Service
+              </Text>
+            </Pressable>
+            <Pressable onPress={navigateToPrivacy}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Privacy Policy
+              </Text>
+            </Pressable>
+          </View>
           <CustomButton
             ariaLabel="Cancel button"
             text="Cancel"
