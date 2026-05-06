@@ -240,7 +240,9 @@ const UnsubscribedUserComponent = () => {
                     {couponMessage && (
                       <Text
                         className={`font-[abeezee] text-xs ${
-                          couponMessage.valid ? "text-green-600" : "text-red-500"
+                          couponMessage.valid
+                            ? "text-green-600"
+                            : "text-red-500"
                         }`}
                       >
                         {couponMessage.text}
@@ -249,7 +251,9 @@ const UnsubscribedUserComponent = () => {
 
                     {couponMessage?.valid && (
                       <CustomButton
-                        text={redeemMutation.isPending ? "Redeeming…" : "Redeem"}
+                        text={
+                          redeemMutation.isPending ? "Redeeming…" : "Redeem"
+                        }
                         disabled={
                           redeemMutation.isPending || validateMutation.isPending
                         }
