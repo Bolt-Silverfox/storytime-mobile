@@ -1,4 +1,5 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -28,6 +29,28 @@ import useParentalGate from "../../hooks/others/useParentalGate";
 const IS_IOS = Platform.OS === "ios";
 
 const UnsubscribedUserComponent = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const navigator = useNavigation<any>();
+
+  const navigateToTerms = () => {
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "termsAndConditions" },
+      },
+    });
+  };
+
+  const navigateToPrivacy = () => {
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "privacyAndPolicy" },
+      },
+    });
+  };
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const [couponExpanded, setCouponExpanded] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -274,6 +297,19 @@ const UnsubscribedUserComponent = () => {
               {restoreError}
             </Text>
           ) : null}
+
+          <View className="flex-row justify-center gap-x-4 py-2">
+            <Pressable onPress={navigateToTerms}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Terms of Service
+              </Text>
+            </Pressable>
+            <Pressable onPress={navigateToPrivacy}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Privacy Policy
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </ScrollView>
