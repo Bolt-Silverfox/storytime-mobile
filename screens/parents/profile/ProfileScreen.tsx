@@ -13,6 +13,7 @@ import {
 import React, { FC, useState } from "react";
 import {
   ImageBackground,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -120,12 +121,14 @@ const ProfileScreen: FC = () => {
               isTablet={isTablet}
               onPress={() => protectedNavigator.navigate("getPremium")}
             />
-            <MenuItem
-              icon={<Gift color={"#EC4007"} size={isTablet ? 20 : 18} />}
-              label="Redeem Coupon"
-              isTablet={isTablet}
-              onPress={() => navigator.navigate("redeemCoupon")}
-            />
+            {Platform.OS === "android" && (
+              <MenuItem
+                icon={<Gift color={"#EC4007"} size={isTablet ? 20 : 18} />}
+                label="Redeem Coupon"
+                isTablet={isTablet}
+                onPress={() => navigator.navigate("redeemCoupon")}
+              />
+            )}
             <MenuItem
               icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
               label="Help & Support"
