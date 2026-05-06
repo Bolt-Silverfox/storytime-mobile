@@ -27,6 +27,8 @@ import {
   useUnlinkProvider,
 } from "../../../hooks/tanstack/mutationHooks/useLinkAccount";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import ParentalGateModal from "../../../components/modals/ParentalGateModal";
+import useParentalGate from "../../../hooks/others/useParentalGate";
 import { AuthProvider, LinkedAccount } from "../../../types";
 
 const PROVIDERS: { key: AuthProvider; label: string }[] = [
@@ -41,6 +43,7 @@ export default function LinkedAccountsScreen() {
   const linkGoogle = useLinkGoogle();
   const linkApple = useLinkApple();
   const unlinkProvider = useUnlinkProvider();
+  const gate = useParentalGate();
 
   const accounts = Array.isArray(linkedAccounts) ? linkedAccounts : [];
   const linkedProviders = new Set(
@@ -187,9 +190,11 @@ export default function LinkedAccountsScreen() {
                       isLinked ? styles.unlinkButton : styles.linkButton,
                     ]}
                     onPress={() =>
-                      isLinked
-                        ? handleUnlink(provider.key)
-                        : handleLink(provider.key)
+                      gate.guard(() =>
+                        isLinked
+                          ? handleUnlink(provider.key)
+                          : handleLink(provider.key)
+                      )
                     }
                     disabled={isMutating}
                   >
@@ -210,6 +215,11 @@ export default function LinkedAccountsScreen() {
           })
         )}
       </View>
+      <ParentalGateModal
+        visible={gate.visible}
+        onPass={gate.onPass}
+        onCancel={gate.onCancel}
+      />
     </SafeAreaWrapper>
   );
 }
