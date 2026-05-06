@@ -21,7 +21,11 @@ type Props = {
   onCancel: () => void;
 };
 
-export default function ParentalGateModal({ visible, onPass, onCancel }: Props) {
+export default function ParentalGateModal({
+  visible,
+  onPass,
+  onCancel,
+}: Props) {
   const [challenge, setChallenge] = useState(generateChallenge);
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
@@ -87,7 +91,11 @@ export default function ParentalGateModal({ visible, onPass, onCancel }: Props) 
             <TouchableOpacity
               onPress={handleSubmit}
               disabled={!input}
-              style={[styles.button, styles.submitButton, !input && styles.disabled]}
+              style={[
+                styles.button,
+                styles.submitButton,
+                !input && styles.disabled,
+              ]}
               activeOpacity={0.7}
             >
               <Text style={styles.submitText}>Continue</Text>
