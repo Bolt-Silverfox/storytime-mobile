@@ -18,6 +18,8 @@ import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../../components/SubscriptionOptions";
 import CustomButton from "../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import ParentalGateModal from "../../components/modals/ParentalGateModal";
+import useParentalGate from "../../hooks/others/useParentalGate";
 import Icon from "../../components/Icon";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
@@ -29,6 +31,7 @@ const UnauthPaywallScreen = () => {
   const [isRestoring, setIsRestoring] = useState(false);
   const [restoreMessage, setRestoreMessage] = useState("");
 
+  const gate = useParentalGate();
   const {
     isLoading,
     errorMessage,
@@ -185,7 +188,12 @@ const UnauthPaywallScreen = () => {
               <CustomButton
                 text="Subscribe"
                 disabled={!selectedPlan || isLoading || isRestoring}
-                onPress={handlePurchase}
+                onPress={() => gate.guard(handlePurchase)}
+              />
+              <ParentalGateModal
+                visible={gate.visible}
+                onPass={gate.onPass}
+                onCancel={gate.onCancel}
               />
 
               <View className="flex-row items-center justify-center gap-x-4">

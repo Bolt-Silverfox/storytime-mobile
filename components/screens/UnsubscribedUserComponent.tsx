@@ -1,4 +1,5 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
+import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ActivityIndicator,
@@ -22,8 +23,34 @@ import {
 import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
+import ParentalGateModal from "../modals/ParentalGateModal";
+import useParentalGate from "../../hooks/others/useParentalGate";
+
+const IS_IOS = Platform.OS === "ios";
 
 const UnsubscribedUserComponent = () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const navigator = useNavigation<any>();
+
+  const navigateToTerms = () => {
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "termsAndConditions" },
+      },
+    });
+  };
+
+  const navigateToPrivacy = () => {
+    navigator.navigate("parents", {
+      screen: "profile",
+      params: {
+        screen: "helpAndSupport",
+        params: { screen: "privacyAndPolicy" },
+      },
+    });
+  };
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const [couponExpanded, setCouponExpanded] = useState(false);
   const [couponCode, setCouponCode] = useState("");
@@ -47,6 +74,8 @@ const UnsubscribedUserComponent = () => {
     error: restoreError,
     restoredCount,
   } = useRestorePurchases();
+
+  const gate = useParentalGate();
 
   const validateMutation = useValidateCoupon();
   const redeemMutation = useRedeemCoupon();
@@ -151,95 +180,105 @@ const UnsubscribedUserComponent = () => {
                 : "Payment will be charged to your Google Play account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
             </Text>
           </View>
-          {/* Coupon Redemption */}
-          {redeemSuccess ? (
-            <View className="rounded-2xl bg-green-50 px-4 py-4">
-              <Text className="text-center font-[abeezee] text-sm text-green-700">
-                {redeemSuccess}
-              </Text>
-            </View>
-          ) : (
-            <View className="rounded-2xl border border-border-light px-4 py-3">
-              <TouchableOpacity
-                onPress={() => setCouponExpanded((v) => !v)}
-                className="flex-row items-center justify-between"
-                activeOpacity={0.7}
-              >
-                <Text className="font-[abeezee] text-sm text-gray-600">
-                  Have a coupon code?
+          {/* Coupon Redemption — hidden on iOS per App Store guideline 3.1.1 */}
+          {!IS_IOS &&
+            (redeemSuccess ? (
+              <View className="rounded-2xl bg-green-50 px-4 py-4">
+                <Text className="text-center font-[abeezee] text-sm text-green-700">
+                  {redeemSuccess}
                 </Text>
-                <Text className="font-[abeezee] text-sm text-primary">
-                  {couponExpanded ? "Hide ▲" : "Show ▼"}
-                </Text>
-              </TouchableOpacity>
+              </View>
+            ) : (
+              <View className="rounded-2xl border border-border-light px-4 py-3">
+                <TouchableOpacity
+                  onPress={() => setCouponExpanded((v) => !v)}
+                  className="flex-row items-center justify-between"
+                  activeOpacity={0.7}
+                >
+                  <Text className="font-[abeezee] text-sm text-gray-600">
+                    Have a coupon code?
+                  </Text>
+                  <Text className="font-[abeezee] text-sm text-primary">
+                    {couponExpanded ? "Hide ▲" : "Show ▼"}
+                  </Text>
+                </TouchableOpacity>
 
-              {couponExpanded && (
-                <View className="mt-3 flex-col gap-y-2">
-                  <View className="flex-row items-center gap-x-2">
-                    <TextInput
-                      value={couponCode}
-                      onChangeText={(t) => {
-                        setCouponCode(t.toUpperCase());
-                        setCouponMessage(null);
-                      }}
-                      placeholder="Enter coupon code"
-                      autoCapitalize="characters"
-                      autoCorrect={false}
-                      className="flex-1 rounded-xl border border-border-light px-3 py-2 font-[abeezee] text-sm"
-                    />
-                    <TouchableOpacity
-                      onPress={handleValidate}
-                      disabled={
-                        !couponCode.trim() ||
-                        validateMutation.isPending ||
-                        redeemMutation.isPending
-                      }
-                      className="rounded-xl bg-gray-100 px-3 py-2"
-                      activeOpacity={0.7}
-                    >
-                      {validateMutation.isPending ? (
-                        <ActivityIndicator size="small" color="#666" />
-                      ) : (
-                        <Text className="font-[abeezee] text-sm text-gray-700">
-                          Check
-                        </Text>
-                      )}
-                    </TouchableOpacity>
+                {couponExpanded && (
+                  <View className="mt-3 flex-col gap-y-2">
+                    <View className="flex-row items-center gap-x-2">
+                      <TextInput
+                        value={couponCode}
+                        onChangeText={(t) => {
+                          setCouponCode(t.toUpperCase());
+                          setCouponMessage(null);
+                        }}
+                        placeholder="Enter coupon code"
+                        autoCapitalize="characters"
+                        autoCorrect={false}
+                        className="flex-1 rounded-xl border border-border-light px-3 py-2 font-[abeezee] text-sm"
+                      />
+                      <TouchableOpacity
+                        onPress={handleValidate}
+                        disabled={
+                          !couponCode.trim() ||
+                          validateMutation.isPending ||
+                          redeemMutation.isPending
+                        }
+                        className="rounded-xl bg-gray-100 px-3 py-2"
+                        activeOpacity={0.7}
+                      >
+                        {validateMutation.isPending ? (
+                          <ActivityIndicator size="small" color="#666" />
+                        ) : (
+                          <Text className="font-[abeezee] text-sm text-gray-700">
+                            Check
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+
+                    {couponMessage && (
+                      <Text
+                        className={`font-[abeezee] text-xs ${
+                          couponMessage.valid
+                            ? "text-green-600"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {couponMessage.text}
+                      </Text>
+                    )}
+
+                    {couponMessage?.valid && (
+                      <CustomButton
+                        text={
+                          redeemMutation.isPending ? "Redeeming…" : "Redeem"
+                        }
+                        disabled={
+                          redeemMutation.isPending || validateMutation.isPending
+                        }
+                        onPress={handleRedeem}
+                      />
+                    )}
                   </View>
-
-                  {couponMessage && (
-                    <Text
-                      className={`font-[abeezee] text-xs ${
-                        couponMessage.valid ? "text-green-600" : "text-red-500"
-                      }`}
-                    >
-                      {couponMessage.text}
-                    </Text>
-                  )}
-
-                  {couponMessage?.valid && (
-                    <CustomButton
-                      text={redeemMutation.isPending ? "Redeeming…" : "Redeem"}
-                      disabled={
-                        redeemMutation.isPending || validateMutation.isPending
-                      }
-                      onPress={handleRedeem}
-                    />
-                  )}
-                </View>
-              )}
-            </View>
-          )}
+                )}
+              </View>
+            ))}
 
           <CustomButton
             text="Subscribe"
-            disabled={!selectedPlan}
-            onPress={handlePurchase}
+            disabled={!selectedPlan || isLoading || isRestoring}
+            onPress={() => gate.guard(handlePurchase)}
+          />
+          <ParentalGateModal
+            visible={gate.visible}
+            onPass={gate.onPass}
+            onCancel={gate.onCancel}
           />
 
           <TouchableOpacity
-            onPress={handleRestore}
-            disabled={isRestoring}
+            onPress={() => gate.guard(handleRestore)}
+            disabled={isRestoring || isLoading}
             activeOpacity={0.7}
             className="items-center py-2"
             accessibilityLabel="Restore Purchases"
@@ -262,6 +301,19 @@ const UnsubscribedUserComponent = () => {
               {restoreError}
             </Text>
           ) : null}
+
+          <View className="flex-row justify-center gap-x-4 py-2">
+            <Pressable onPress={navigateToTerms}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Terms of Service
+              </Text>
+            </Pressable>
+            <Pressable onPress={navigateToPrivacy}>
+              <Text className="font-[abeezee] text-xs text-primary underline">
+                Privacy Policy
+              </Text>
+            </Pressable>
+          </View>
         </View>
       </View>
     </ScrollView>

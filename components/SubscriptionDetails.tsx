@@ -4,6 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import querySubscription from "../hooks/tanstack/queryHooks/querySubscriptionStatus";
 import useAuth from "../contexts/AuthContext";
 import ErrorComponent from "./ErrorComponent";
+import ParentalGateModal from "./modals/ParentalGateModal";
+import useParentalGate from "../hooks/others/useParentalGate";
 import { BUNDLE_IDENTIFIER } from "../constants";
 
 const formatPrice = (amount: number | string, currencyCode: string) => {
@@ -23,6 +25,7 @@ const formatPrice = (amount: number | string, currencyCode: string) => {
 
 const SubscriptionDetails = () => {
   const { user } = useAuth();
+  const gate = useParentalGate();
   const { isPending, data, error, refetch } = useQuery(
     querySubscription(user?.id)
   );
@@ -37,16 +40,24 @@ const SubscriptionDetails = () => {
     );
 
   const openURL = () => {
-    if (Platform.OS === "ios") {
-      return Linking.openURL("https://apps.apple.com/account/subscriptions");
-    }
-    Linking.openURL(
-      `https://play.google.com/store/account/subscriptions?package=${BUNDLE_IDENTIFIER}`
-    );
+    gate.guard(() => {
+      if (Platform.OS === "ios") {
+        Linking.openURL("https://apps.apple.com/account/subscriptions");
+        return;
+      }
+      Linking.openURL(
+        `https://play.google.com/store/account/subscriptions?package=${BUNDLE_IDENTIFIER}`
+      );
+    });
   };
 
   return (
     <View>
+      <ParentalGateModal
+        visible={gate.visible}
+        onPass={gate.onPass}
+        onCancel={gate.onCancel}
+      />
       <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-white/60" />
       <View className="flex flex-col gap-y-10 rounded-t-[32px] bg-white px-4 py-5">
         <View className="flex flex-col gap-y-4">
