@@ -250,8 +250,8 @@ const UnsubscribedUserComponent = () => {
           />
 
           <TouchableOpacity
-            onPress={handleRestore}
-            disabled={isRestoring}
+            onPress={() => gate.guard(handleRestore)}
+            disabled={isRestoring || isLoading}
             activeOpacity={0.7}
             className="items-center py-2"
             accessibilityLabel="Restore Purchases"
