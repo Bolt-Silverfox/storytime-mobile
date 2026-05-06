@@ -12,7 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-const IS_IOS = Platform.OS === "ios";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
 import useRestorePurchases from "../../hooks/others/useRestorePurchases";
@@ -25,6 +24,8 @@ import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import ParentalGateModal from "../modals/ParentalGateModal";
 import useParentalGate from "../../hooks/others/useParentalGate";
+
+const IS_IOS = Platform.OS === "ios";
 
 const UnsubscribedUserComponent = () => {
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
@@ -239,7 +240,7 @@ const UnsubscribedUserComponent = () => {
 
           <CustomButton
             text="Subscribe"
-            disabled={!selectedPlan}
+            disabled={!selectedPlan || isLoading || isRestoring}
             onPress={() => gate.guard(handlePurchase)}
           />
           <ParentalGateModal

@@ -33,27 +33,7 @@ import { validateEnv } from "./utils/env";
 import { STORY_DEEP_LINK_ROUTE } from "./constants";
 import * as Sentry from "@sentry/react-native";
 
-Sentry.init({
-  dsn: "https://3959484f69cf0297db9c7d7e6311efec@o4510959000616960.ingest.us.sentry.io/4511306118660096",
-
-  // Adds more context data to events (IP address, cookies, user, etc.)
-  // For more information, visit: https://docs.sentry.io/platforms/react-native/data-management/data-collected/
-  sendDefaultPii: true,
-
-  // Enable Logs
-  enableLogs: true,
-
-  // Configure Session Replay
-  replaysSessionSampleRate: 0.1,
-  replaysOnErrorSampleRate: 1,
-  integrations: [
-    Sentry.mobileReplayIntegration(),
-    Sentry.feedbackIntegration(),
-  ],
-
-  // uncomment the line below to enable Spotlight (https://spotlightjs.com)
-  // spotlight: __DEV__,
-});
+// Sentry is initialized in utils/sentry.ts via initSentry() called from index.ts
 
 const prefix = Linking.createURL("/");
 
