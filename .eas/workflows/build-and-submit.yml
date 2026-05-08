@@ -22,14 +22,14 @@ jobs:
     name: Build iOS
     type: build
     params:
-      platform: ios
+      platform: "ios"
       profile: ${{ inputs.profile }}
 
   build-android:
     name: Build Android
     type: build
     params:
-      platform: android
+      platform: "android"
       profile: ${{ inputs.profile }}
 
   submit-ios:
@@ -38,7 +38,7 @@ jobs:
     if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
-      platform: ios
+      platform: "ios"
       profile: production
 
   submit-android:
@@ -47,5 +47,5 @@ jobs:
     if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
-      platform: android
+      platform: "android"
       profile: production
