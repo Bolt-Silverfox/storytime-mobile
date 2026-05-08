@@ -80,6 +80,22 @@ const buildHeaders = (
   return headers;
 };
 
+const extractBackendMessage = async (
+  response: Response
+): Promise<string | null> => {
+  try {
+    const body: unknown = await response.json();
+    if (!body || typeof body !== "object") return null;
+    const record = body as Record<string, unknown>;
+    const candidate = record.message ?? record.error ?? record.msg;
+    return typeof candidate === "string" && candidate.trim()
+      ? candidate.trim()
+      : null;
+  } catch {
+    return null;
+  }
+};
+
 const buildErrorMessage = (status: number): string => {
   switch (status) {
     case 400:
@@ -126,14 +142,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      // Try to extract backend's error message before throwing generic one
-      let customMessage: string | null = null;
-      try {
-        const body = await response.json();
-        customMessage = body.message ?? body.error ?? body.msg ?? null;
-      } catch {
-        // No JSON body
-      }
+      const customMessage = await extractBackendMessage(response);
       throw new ApiError(
         customMessage ?? buildErrorMessage(response.status),
         response.status
@@ -152,14 +161,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      // Try to extract backend's error message before throwing generic one
-      let customMessage: string | null = null;
-      try {
-        const body = await response.json();
-        customMessage = body.message ?? body.error ?? body.msg ?? null;
-      } catch {
-        // No JSON body — use generic message
-      }
+      const customMessage = await extractBackendMessage(response);
       throw new ApiError(
         customMessage ?? buildErrorMessage(response.status),
         response.status
@@ -198,14 +200,7 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     if (retryResponse.status === 401) {
       triggerLogout();
     }
-    // Try to extract backend's error message before throwing generic one
-    let customMessage: string | null = null;
-    try {
-      const body = await retryResponse.json();
-      customMessage = body.message ?? body.error ?? body.msg ?? null;
-    } catch {
-      // No JSON body
-    }
+    const customMessage = await extractBackendMessage(retryResponse);
     throw new ApiError(
       customMessage ?? buildErrorMessage(retryResponse.status),
       retryResponse.status
