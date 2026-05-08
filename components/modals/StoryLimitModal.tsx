@@ -19,8 +19,10 @@ import useRestorePurchases from "../../hooks/others/useRestorePurchases";
 import { QUERY_KEYS } from "../../constants";
 import { subscriptionBenefits } from "../../data";
 import useSubscribeIAP from "../../hooks/others/useSubscribeIAP";
+import useParentalGate from "../../hooks/others/useParentalGate";
 import { StoryQuota, SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
+import ParentalGateModal from "./ParentalGateModal";
 
 type PropTypes = {
   visible: boolean;
@@ -81,6 +83,7 @@ const StoryLimitModal = ({
     handlePurchase,
     getPlanName,
   } = useSubscribeIAP(selectedPlan, handleSubscribed);
+  const gate = useParentalGate();
 
   const {
     handleRestore,
@@ -226,7 +229,7 @@ const StoryLimitModal = ({
             {/* Buttons */}
             <View style={modalStyles.fullWidthGap12}>
               <Pressable
-                onPress={handlePurchase}
+                onPress={() => gate.guard(handlePurchase)}
                 disabled={!selectedPlan || isLoading}
                 style={[
                   modalStyles.subscribeButton,
@@ -242,6 +245,11 @@ const StoryLimitModal = ({
                   Subscribe to Premium
                 </Text>
               </Pressable>
+              <ParentalGateModal
+                visible={gate.visible}
+                onPass={gate.onPass}
+                onCancel={gate.onCancel}
+              />
 
               <View style={modalStyles.legalLinks}>
                 <Pressable onPress={navigateToTerms}>

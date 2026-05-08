@@ -5,15 +5,18 @@ import { useNavigation } from "@react-navigation/native";
 import React from "react";
 import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
+import ParentalGateModal from "../../../../components/modals/ParentalGateModal";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
 import defaultStyles from "../../../../styles";
 import PageTitle from "../../../../components/PageTitle";
+import useParentalGate from "../../../../hooks/others/useParentalGate";
 
 export default function ContactUsScreen() {
   const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const gate = useParentalGate();
 
   const openURL = (url: string) => {
-    Linking.openURL(url).catch(() => {});
+    gate.guard(() => Linking.openURL(url).catch(() => {}));
   };
 
   return (
@@ -105,6 +108,11 @@ export default function ContactUsScreen() {
           </View>
         </View>
       </View>
+      <ParentalGateModal
+        visible={gate.visible}
+        onPass={gate.onPass}
+        onCancel={gate.onCancel}
+      />
     </SafeAreaWrapper>
   );
 }

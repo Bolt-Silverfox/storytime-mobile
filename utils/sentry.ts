@@ -6,9 +6,8 @@ export const reactNavigationIntegration = Sentry.reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
 });
 
-export function initSentry() {
-  if (!SENTRY_DSN || __DEV__) return;
-
+// Auto-initialize on import so Sentry.wrap() in App.tsx has an active client
+if (SENTRY_DSN && !__DEV__) {
   Sentry.init({
     dsn: SENTRY_DSN,
     environment: process.env.EXPO_PUBLIC_SENTRY_ENV ?? "production",
@@ -52,6 +51,11 @@ export function initSentry() {
       return event;
     },
   });
+}
+
+export function initSentry() {
+  // Sentry is now auto-initialized on import above.
+  // Kept for backward compatibility with index.ts.
 }
 
 export function setSentryUser(id: string, email?: string) {

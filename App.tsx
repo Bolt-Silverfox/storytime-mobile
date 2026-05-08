@@ -31,6 +31,9 @@ import { ToastProvider } from "./contexts/ToastContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { validateEnv } from "./utils/env";
 import { STORY_DEEP_LINK_ROUTE } from "./constants";
+import * as Sentry from "@sentry/react-native";
+
+// Sentry is initialized in utils/sentry.ts via initSentry() called from index.ts
 
 const prefix = Linking.createURL("/");
 
@@ -113,7 +116,7 @@ const onAppStateChange = (status: AppStateStatus) => {
   }
 };
 
-export default function App() {
+export default Sentry.wrap(function App() {
   const navigationRef = useNavigationContainerRef<RootNavigatorParamList>();
   const [loaded, error] = useFonts({
     quilka: require("./assets/fonts/Qilkabold-DO6BR.otf"),
@@ -162,4 +165,4 @@ export default function App() {
       </SafeAreaProvider>
     </ErrorBoundary>
   );
-}
+});
