@@ -80,6 +80,22 @@ const buildHeaders = (
   return headers;
 };
 
+const extractBackendMessage = async (
+  response: Response
+): Promise<string | null> => {
+  try {
+    const body: unknown = await response.json();
+    if (!body || typeof body !== "object") return null;
+    const record = body as Record<string, unknown>;
+    const candidate = record.message ?? record.error ?? record.msg;
+    return typeof candidate === "string" && candidate.trim()
+      ? candidate.trim()
+      : null;
+  } catch {
+    return null;
+  }
+};
+
 const buildErrorMessage = (status: number): string => {
   switch (status) {
     case 400:
@@ -126,7 +142,11 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(buildErrorMessage(response.status), response.status);
+      const customMessage = await extractBackendMessage(response);
+      throw new ApiError(
+        customMessage ?? buildErrorMessage(response.status),
+        response.status
+      );
     }
     return response;
   }
@@ -141,7 +161,11 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
     ) {
-      throw new ApiError(buildErrorMessage(response.status), response.status);
+      const customMessage = await extractBackendMessage(response);
+      throw new ApiError(
+        customMessage ?? buildErrorMessage(response.status),
+        response.status
+      );
     }
     return response;
   }
@@ -176,8 +200,9 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
     if (retryResponse.status === 401) {
       triggerLogout();
     }
+    const customMessage = await extractBackendMessage(retryResponse);
     throw new ApiError(
-      buildErrorMessage(retryResponse.status),
+      customMessage ?? buildErrorMessage(retryResponse.status),
       retryResponse.status
     );
   }
