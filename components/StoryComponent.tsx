@@ -375,37 +375,43 @@ const StoryComponent = ({
             </View>
           </ImageBackground>
         </Pressable>
-        <SelectReadingVoiceModal
-          isOpen={isVoiceModalOpen}
-          onClose={() => {
-            setIsVoiceModalOpen(false);
-            // Mark as dismissed so we don't re-show on next story
-            if (isFirstTimeVoiceSetup.current) {
-              AsyncStorage.setItem(getVoiceModalDismissedKey(), "true");
-              isFirstTimeVoiceSetup.current = false;
-            }
-          }}
-          selectedVoice={selectedVoice}
-          setSelectedVoice={setSelectedVoice}
-          storyId={storyId}
-          showSaveButton={isFirstTimeVoiceSetup.current}
-        />
-        <InStoryOptionsModal
-          handleVoiceModal={setIsVoiceModalOpen}
-          isOptionsModalOpen={isOptionsModalOpen}
-          setIsOptionsModalOpen={setIsOptionsModalOpen}
-          currentMode={currentMode}
-          onModeChange={setCurrentMode}
-          hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
-        />
+        {/* Modal management with priority: voice > options > quota reminder */}
+        {isVoiceModalOpen && (
+          <SelectReadingVoiceModal
+            isOpen={true}
+            onClose={() => {
+              setIsVoiceModalOpen(false);
+              if (isFirstTimeVoiceSetup.current) {
+                AsyncStorage.setItem(getVoiceModalDismissedKey(), "true").catch(() => {});
+                isFirstTimeVoiceSetup.current = false;
+              }
+            }}
+            selectedVoice={selectedVoice}
+            setSelectedVoice={setSelectedVoice}
+            storyId={storyId}
+            showSaveButton={isFirstTimeVoiceSetup.current}
+          />
+        )}
+        {!isVoiceModalOpen && isOptionsModalOpen && (
+          <InStoryOptionsModal
+            handleVoiceModal={setIsVoiceModalOpen}
+            isOptionsModalOpen={true}
+            setIsOptionsModalOpen={setIsOptionsModalOpen}
+            currentMode={currentMode}
+            onModeChange={setCurrentMode}
+            hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
+          />
+        )}
       </View>
-      <StoryLimitModal
-        visible={showQuotaReminder}
-        storyId={storyId}
-        quota={quota}
-        mode="reminder"
-        onClose={handleDismissQuotaReminder}
-      />
+      {!isVoiceModalOpen && !isOptionsModalOpen && showQuotaReminder && (
+        <StoryLimitModal
+          visible={true}
+          storyId={storyId}
+          quota={quota}
+          mode="reminder"
+          onClose={handleDismissQuotaReminder}
+        />
+      )}
     </SafeAreaWrapper>
   );
 };
