@@ -3,13 +3,13 @@ import { useAudioPlayer } from "expo-audio";
 import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { Image, Pressable, StyleSheet, Switch, Text, View } from "react-native";
 import { COLORS } from "../constants/ui";
-import { GUEST_DEFAULT_VOICE_ID } from "../constants";
 import { audioLogger } from "../utils/logger";
 import { AvailableVoices as VoiceData } from "../types";
 import useSetPreferredVoice from "../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useGetVoiceAccess from "../hooks/tanstack/queryHooks/useGetVoiceAccess";
 import useToast from "../contexts/ToastContext";
+import { isGuestDefaultVoice, isVoiceMatch } from "../utils/voice";
 import Icon from "./Icon";
 import SubscriptionModal from "./modals/SubscriptionModal";
 
@@ -62,17 +62,13 @@ const AvailableVoices = ({
 
   // Helper to check if a voice is selected (selectedVoice can be id, elevenLabsVoiceId, or name)
   const isVoiceSelected = (voice: VoiceData): boolean => {
-    return (
-      selectedVoice === voice.id ||
-      selectedVoice === voice.elevenLabsVoiceId ||
-      selectedVoice === voice.name
-    );
+    return isVoiceMatch(voice, selectedVoice);
   };
 
   const isVoiceAllowed = (voice: VoiceData): boolean => {
     // Guest users: only the default voice is allowed
     if (isGuest) {
-      return voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
+      return isGuestDefaultVoice(voice);
     }
 
     if (voiceAccessLoading) return false;
@@ -190,7 +186,7 @@ const AvailableVoices = ({
               const allowed = isVoiceAllowed(voice);
               const isFreeUserLocked = !isPremium && lockedVoiceId === voice.id;
               const isGuestDefaultLocked =
-                isGuest && voice.elevenLabsVoiceId === GUEST_DEFAULT_VOICE_ID;
+                isGuest && isGuestDefaultVoice(voice);
               const isPremiumStoryLocked =
                 isPremium && isStoryAtVoiceLimit && !allowed;
 
@@ -245,16 +241,14 @@ const AvailableVoices = ({
                         </Text>
                       </View>
                     )}
-                  {isGuest &&
-                    !allowed &&
-                    voice.elevenLabsVoiceId !== GUEST_DEFAULT_VOICE_ID && (
-                      <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
-                        <Icon name="Lock" size={12} color="#D97706" />
-                        <Text className="font-[abeezee] text-xs text-amber-600">
-                          Sign up
-                        </Text>
-                      </View>
-                    )}
+                  {isGuest && !allowed && !isGuestDefaultVoice(voice) && (
+                    <View className="mt-2 flex h-6 flex-row items-center justify-center gap-x-1 self-center rounded-full bg-amber-50 px-2">
+                      <Icon name="Lock" size={12} color="#D97706" />
+                      <Text className="font-[abeezee] text-xs text-amber-600">
+                        Sign up
+                      </Text>
+                    </View>
+                  )}
                   {!isFreeUserLocked &&
                     !isGuestDefaultLocked &&
                     !isPremiumStoryLocked &&

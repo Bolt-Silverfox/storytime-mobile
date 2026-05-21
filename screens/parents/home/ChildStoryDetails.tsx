@@ -246,12 +246,8 @@ const ChildStoryDetails = () => {
           ) : (
             <CustomButton
               disabled={isGuest && !guestQuota.isLoaded}
-              onPress={async () => {
-                if (isGuest) {
-                  if (!guestQuota.isLoaded) return;
-                  const granted = await guestQuota.tryAccessStory(id);
-                  if (!granted) return;
-                }
+              onPress={() => {
+                if (isGuest && !guestQuota.isLoaded) return;
                 navigator.navigate("readStory", {
                   storyId: id,
                   mode: selectedMode,
