@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
-import { BASE_URL, GUEST_DEFAULT_VOICE_ID } from "../../../constants";
+import { BASE_URL } from "../../../constants";
+import { DEFAULT_GUEST_VOICE_ID } from "../../../constants/constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import useAuth from "../../../contexts/AuthContext";
@@ -17,11 +18,36 @@ type VoiceAccess = {
 };
 
 const useGetVoiceAccess = (storyId?: string) => {
-  const { isGuest } = useAuth();
+  const { isGuest, user } = useAuth();
+  const isGuestReader = isGuest || !user;
+  const guestVoiceAccess: QueryResponse<VoiceAccess> = {
+    success: true,
+    statusCode: 200,
+    message: "Guest default voice access",
+    data: {
+      isPremium: false,
+      unlimited: false,
+      defaultVoice: DEFAULT_GUEST_VOICE_ID,
+      maxVoices: 1,
+      lockedVoiceId: DEFAULT_GUEST_VOICE_ID,
+      elevenLabsTrialStoryId: null,
+      usedVoicesForStory: [],
+      maxVoicesPerStory: 1,
+    },
+  };
 
   return useQuery({
-    queryKey: ["voiceAccess", storyId ?? null],
+    queryKey: [
+      "voiceAccess",
+      isGuestReader ? "guest" : "user",
+      storyId ?? null,
+    ],
+    initialData: isGuestReader ? guestVoiceAccess : undefined,
     queryFn: async () => {
+      if (isGuestReader) {
+        return guestVoiceAccess;
+      }
+
       try {
         const url = storyId
           ? `${BASE_URL}/voice/access?storyId=${encodeURIComponent(storyId)}`
@@ -33,28 +59,10 @@ const useGetVoiceAccess = (storyId?: string) => {
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err) {
-        // For guests, return default access if API fails
-        if (isGuest) {
-          return {
-            success: true,
-            statusCode: 200,
-            message: "Guest default voice access",
-            data: {
-              isPremium: false,
-              unlimited: false,
-              defaultVoice: "NIMBUS",
-              maxVoices: 1,
-              lockedVoiceId: GUEST_DEFAULT_VOICE_ID,
-              elevenLabsTrialStoryId: null,
-              usedVoicesForStory: [],
-              maxVoicesPerStory: 1,
-            },
-          };
-        }
         throw new Error(getErrorMessage(err));
       }
     },
-    staleTime: 30_000,
+    staleTime: isGuestReader ? Infinity : 30_000,
     select: (res) => res.data,
   });
 };

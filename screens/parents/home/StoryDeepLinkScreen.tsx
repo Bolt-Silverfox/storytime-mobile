@@ -17,7 +17,9 @@ const StoryDeepLinkScreen = () => {
   const navigator = useNavigation<StoryNavigatorProp>();
   const { params } = useRoute<RoutePropTypes>();
   const { storyId } = params;
-  const { data, isPending, error, refetch } = useQuery(useGetStory(storyId));
+  const { data, isPending, error, refetch } = useQuery(
+    useGetStory(storyId, { consumeGuestAccess: false })
+  );
 
   useEffect(() => {
     if (!data) return;
