@@ -10,6 +10,8 @@ import {
 import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useSetPreferredVoice from "../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import useAuth from "../../contexts/AuthContext";
+import { GUEST_DEFAULT_VOICE_ID } from "../../constants";
+import { isGuestDefaultVoice, isVoiceMatch } from "../../utils/voice";
 import Icon from "../Icon";
 import CustomModal, { CustomModalProps } from "./CustomModal";
 
@@ -37,16 +39,20 @@ const SelectReadingVoiceModal = ({
     isError: voicesError,
   } = useQuery(queryAvailableVoices);
   const { mutate: markPreferred } = useSetPreferredVoice();
-  const { isGuest } = useAuth();
-  const selectedVoiceDisplay = voices?.find(
-    (v) =>
-      v.id === selectedVoice ||
-      v.elevenLabsVoiceId === selectedVoice ||
-      v.name === selectedVoice
+  const { isGuest, user } = useAuth();
+  const isGuestReader = isGuest || !user;
+  const guestDefaultVoice = voices?.find(isGuestDefaultVoice);
+  const effectiveSelectedVoice =
+    selectedVoice ?? (isGuestReader ? GUEST_DEFAULT_VOICE_ID : null);
+  const selectedVoiceDisplay = voices?.find((v) =>
+    isVoiceMatch(v, effectiveSelectedVoice)
   );
+  const displayedSelectedVoice = isGuestReader
+    ? (guestDefaultVoice ?? selectedVoiceDisplay)
+    : selectedVoiceDisplay;
 
   const handleSave = () => {
-    if (isGuest) {
+    if (isGuestReader) {
       onClose();
       return;
     }
@@ -91,13 +97,15 @@ const SelectReadingVoiceModal = ({
                 Selected Story Voice
               </Text>
               <Text className="font-[quilka] text-2xl text-black">
-                {selectedVoiceDisplay?.displayName ??
-                  selectedVoiceDisplay?.name ??
-                  (!selectedVoice
-                    ? "No voice selected"
-                    : voices
-                      ? "Unknown voice"
-                      : "Loading...")}
+                {displayedSelectedVoice?.displayName ??
+                  displayedSelectedVoice?.name ??
+                  (isGuestReader
+                    ? "Guest default"
+                    : !effectiveSelectedVoice
+                      ? "No voice selected"
+                      : voices
+                        ? "Unknown voice"
+                        : "Loading...")}
               </Text>
             </View>
             <Icon name="CircleCheck" color="green" />
@@ -111,11 +119,11 @@ const SelectReadingVoiceModal = ({
           ) : (
             <Suspense fallback={<ActivityIndicator className="py-8" />}>
               <AvailableVoices
-                selectedVoice={selectedVoice}
+                selectedVoice={effectiveSelectedVoice}
                 setSelectedVoice={setSelectedVoice}
                 storyId={storyId}
                 deferSave={showSaveButton}
-                isGuest={isGuest}
+                isGuest={isGuestReader}
               />
             </Suspense>
           )}
