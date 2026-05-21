@@ -248,15 +248,21 @@ const StoryComponent = ({
     storyId,
   });
 
-  const hasRecordedGuestAccess = useRef(false);
+  const recordedGuestAccessStoryIds = useRef<Set<string>>(new Set());
   useEffect(() => {
-    if (!isGuest || !data || !isGuestQuotaLoaded) return;
-    if (hasRecordedGuestAccess.current) return;
-    hasRecordedGuestAccess.current = true;
+    if (!isGuestReader || !data || !isGuestQuotaLoaded) return;
+    if (recordedGuestAccessStoryIds.current.has(storyId)) return;
+    recordedGuestAccessStoryIds.current.add(storyId);
     recordGuestStoryAccess(storyId).catch(() => {
-      hasRecordedGuestAccess.current = false;
+      recordedGuestAccessStoryIds.current.delete(storyId);
     });
-  }, [data, isGuest, isGuestQuotaLoaded, recordGuestStoryAccess, storyId]);
+  }, [
+    data,
+    isGuestReader,
+    isGuestQuotaLoaded,
+    recordGuestStoryAccess,
+    storyId,
+  ]);
 
   const handleProgress = useCallback(
     (progress: number, completed: boolean) => {
