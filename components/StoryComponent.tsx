@@ -15,9 +15,11 @@ import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator"
 import useSetStoryProgress from "../hooks/tanstack/mutationHooks/UseSetStoryProgress";
 import useGetPreferredVoice from "../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import queryGetStory from "../hooks/tanstack/queryHooks/useGetStory";
-import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoices";
+import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import { StoryModes } from "../types";
+import { getDefaultVoiceListId, resolveVoiceIdForAudio } from "../utils/voice";
+import useGuestQuota from "../hooks/others/useGuestQuota";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
@@ -94,32 +96,31 @@ const StoryComponent = ({
 
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuth();
+  const isGuestReader = isGuest || !user;
+  const {
+    isLoaded: isGuestQuotaLoaded,
+    recordStoryAccess: recordGuestStoryAccess,
+  } = useGuestQuota();
   const { data: quota } = useGetStoryQuota();
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
 
-  // For guests, return the internal voice ID (DB row ID) for the default voice.
-  // Returns null when voices aren't loaded yet — callers should wait.
-  const guestVoiceId = useMemo(() => {
-    if (!availableVoices?.length) return null;
-    const nimbusVoice = availableVoices.find(
-      (v) => v.id === DEFAULT_GUEST_VOICE_ID
-    );
-    return nimbusVoice?.id ?? availableVoices[0].id;
-  }, [availableVoices]);
-
-  // Map internal DB voice ID to elevenLabsVoiceId for the audio API.
-  // Returns null when the voice isn't found — prevents sending raw strings.
-  const getVoiceIdForAudio = useCallback(
-    (voiceId: string | null) => {
-      if (!voiceId || !availableVoices) return null;
-      const voice = availableVoices.find((v) => v.id === voiceId);
-      return voice?.elevenLabsVoiceId ?? null;
-    },
+  const defaultAvailableVoiceId = useMemo(
+    () => getDefaultVoiceListId(availableVoices),
     [availableVoices]
   );
+  const effectiveSelectedVoice =
+    selectedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
+  const effectiveDebouncedVoice =
+    debouncedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
+  const voiceIdForAudio = resolveVoiceIdForAudio({
+    availableVoices,
+    isGuest: isGuestReader,
+    voiceId: effectiveDebouncedVoice,
+  });
+  const readyVoiceIdForAudio = data ? voiceIdForAudio : null;
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
@@ -137,21 +138,21 @@ const StoryComponent = ({
     return () => clearTimeout(timer);
   }, [selectedVoice]);
 
-  // Cancel stale batch queries when debounced voice changes (not on initial load)
-  const prevDebouncedVoice = useRef<string | null>(null);
+  // Cancel stale batch queries when the actual audio voice changes (not on initial load)
+  const prevAudioVoiceId = useRef<string | null>(null);
   useEffect(() => {
     if (
-      debouncedVoice &&
-      prevDebouncedVoice.current &&
-      prevDebouncedVoice.current !== debouncedVoice
+      readyVoiceIdForAudio &&
+      prevAudioVoiceId.current &&
+      prevAudioVoiceId.current !== readyVoiceIdForAudio
     ) {
       queryClient.cancelQueries({
         queryKey: ["batchStoryAudio", storyId],
-        predicate: (query) => query.queryKey[2] !== debouncedVoice,
+        predicate: (query) => query.queryKey[2] !== readyVoiceIdForAudio,
       });
     }
-    prevDebouncedVoice.current = debouncedVoice;
-  }, [debouncedVoice, storyId, queryClient]);
+    prevAudioVoiceId.current = readyVoiceIdForAudio;
+  }, [readyVoiceIdForAudio, storyId, queryClient]);
 
   const {
     data: batchAudio,
@@ -162,13 +163,14 @@ const StoryComponent = ({
     retryFailed,
     batchError,
     initialError,
-  } = useBatchStoryAudio(storyId, getVoiceIdForAudio(debouncedVoice));
+  } = useBatchStoryAudio(storyId, readyVoiceIdForAudio);
   audioLogger.debug(
-    `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${debouncedVoice}, mappedVoiceId=${getVoiceIdForAudio(debouncedVoice)}`
+    `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${effectiveDebouncedVoice}, mappedVoiceId=${readyVoiceIdForAudio}`
   );
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
-  const isVoiceTransitioning = selectedVoice !== debouncedVoice;
+  const isVoiceTransitioning =
+    !isGuestReader && selectedVoice !== debouncedVoice;
 
   const audioUrlMap = useMemo(() => {
     const map = new Map<number, string | null>();
@@ -178,54 +180,42 @@ const StoryComponent = ({
     return map;
   }, [batchAudio?.paragraphs]);
 
-  // Only sync preferred voice on initial load — user's local selection is
-  // authoritative after that.  Without this guard, the invalidated query
-  // refetch can overwrite the local VoiceType key with a DB UUID.
-  const getVoiceModalDismissedKey = useCallback(
-    () => `voiceModalDismissed:${user?.id ?? "anon"}`,
-    [user?.id]
-  );
-
   const hasInitializedVoice = useRef(false);
+  const hasAutoOpenedVoiceSetup = useRef(false);
   useEffect(() => {
     // For authenticated users, wait for voice query to fetch. For guests, skip this check.
-    if (!isGuest && !isVoiceFetched) return;
+    if (!isGuestReader && !isVoiceFetched) return;
     if (hasInitializedVoice.current) return;
-    // For authenticated users with a preferred voice, initialize immediately.
-    // For guests (or no preferred voice), wait until availableVoices loads
-    // so getGuestVoiceId() can return a real DB UUID instead of null.
-    // guestVoiceId is now memoized directly
-    const voiceToSet = preferredVoice?.id ?? guestVoiceId;
+    // Guests get a known default immediately. Authenticated users without a
+    // preferred voice wait for the voice list so the setup modal has a real
+    // local selection.
+    const voiceToSet =
+      preferredVoice?.id ??
+      (isGuestReader ? DEFAULT_GUEST_VOICE_ID : defaultAvailableVoiceId);
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
     hasInitializedVoice.current = true;
     audioLogger.debug(
-      `Initializing voice: preferredVoice?.id=${preferredVoice?.id}, guestVoiceId=${guestVoiceId}`
+      `Initializing voice: preferredVoice?.id=${preferredVoice?.id}, defaultAvailableVoiceId=${defaultAvailableVoiceId}`
     );
     setSelectedVoice(voiceToSet);
+  }, [isGuestReader, preferredVoice, isVoiceFetched, defaultAvailableVoiceId]);
 
-    // Auto-show voice selection modal for first-time non-guest users (no preferred voice).
-    // Only show once — if dismissed, don't nag on subsequent stories.
-    // Guests get default voice automatically and cannot change it.
-    let mounted = true;
-    if (!preferredVoice && !isGuest) {
-      AsyncStorage.getItem(getVoiceModalDismissedKey()).then((dismissed) => {
-        if (!dismissed && mounted) {
-          isFirstTimeVoiceSetup.current = true;
-          setIsVoiceModalOpen(true);
-        }
-      });
+  useEffect(() => {
+    if (isGuestReader || !isVoiceFetched || preferredVoice) return;
+    if (!hasAutoOpenedVoiceSetup.current) {
+      hasAutoOpenedVoiceSetup.current = true;
+      isFirstTimeVoiceSetup.current = true;
+      setIsVoiceModalOpen(true);
     }
-    return () => {
-      mounted = false;
-    };
-  }, [
-    isGuest,
-    preferredVoice,
-    isVoiceFetched,
-    getVoiceModalDismissedKey,
-    guestVoiceId,
-  ]);
+  }, [isGuestReader, isVoiceFetched, preferredVoice]);
+
+  useEffect(() => {
+    if (preferredVoice) {
+      hasAutoOpenedVoiceSetup.current = false;
+      isFirstTimeVoiceSetup.current = false;
+    }
+  }, [preferredVoice]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
@@ -257,6 +247,22 @@ const StoryComponent = ({
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
   });
+
+  const recordedGuestAccessStoryIds = useRef<Set<string>>(new Set());
+  useEffect(() => {
+    if (!isGuestReader || !data || !isGuestQuotaLoaded) return;
+    if (recordedGuestAccessStoryIds.current.has(storyId)) return;
+    recordedGuestAccessStoryIds.current.add(storyId);
+    recordGuestStoryAccess(storyId).catch(() => {
+      recordedGuestAccessStoryIds.current.delete(storyId);
+    });
+  }, [
+    data,
+    isGuestReader,
+    isGuestQuotaLoaded,
+    recordGuestStoryAccess,
+    storyId,
+  ]);
 
   const handleProgress = useCallback(
     (progress: number, completed: boolean) => {
@@ -381,12 +387,8 @@ const StoryComponent = ({
             isOpen={true}
             onClose={() => {
               setIsVoiceModalOpen(false);
-              if (isFirstTimeVoiceSetup.current) {
-                AsyncStorage.setItem(getVoiceModalDismissedKey(), "true").catch(() => {});
-                isFirstTimeVoiceSetup.current = false;
-              }
             }}
-            selectedVoice={selectedVoice}
+            selectedVoice={effectiveSelectedVoice}
             setSelectedVoice={setSelectedVoice}
             storyId={storyId}
             showSaveButton={isFirstTimeVoiceSetup.current}
