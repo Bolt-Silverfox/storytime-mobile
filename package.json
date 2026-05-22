@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "type-check": "tsc --noEmit",
-    "ci": "npm run type-check && npm run lint && npm run format:check"
+    "test": "jest",
+    "ci": "npm run type-check && npm run test -- --runInBand && npm run lint && npm run format:check"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
