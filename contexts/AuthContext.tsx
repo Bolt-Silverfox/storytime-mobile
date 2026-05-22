@@ -269,6 +269,14 @@ const clearGuestStoryAccessSafely = async () => {
   }
 };
 
+const clearGuestStorageSafely = async () => {
+  try {
+    await clearGuestStorage();
+  } catch (err) {
+    authLogger.warn("Failed to clear guest storage:", err);
+  }
+};
+
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isGuest, setIsGuest] = useState(false);
@@ -520,7 +528,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setGuestMode(false);
     setGuestSessionId(null);
     setGuestDeviceId(null);
-    await clearGuestStorage();
+    await clearGuestStorageSafely();
   }, []);
 
   // Get or create a persistent device ID for guest quota tracking
