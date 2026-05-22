@@ -1,10 +1,10 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   clearGuestSessionStorage,
-  clearGuestStorage,
+  clearGuestStateStorage,
   clearGuestStoryAccess,
   GUEST_SESSION_STORAGE_KEYS,
-  GUEST_STORAGE_KEYS,
+  GUEST_STATE_STORAGE_KEYS,
   GUEST_STORIES_KEY,
 } from "./guestStorage";
 
@@ -32,9 +32,12 @@ describe("guestStorage", () => {
     );
   });
 
-  it("clears all guest storage", async () => {
-    await clearGuestStorage();
+  it("clears guest state storage without resetting story access", async () => {
+    await clearGuestStateStorage();
 
-    expect(AsyncStorage.multiRemove).toHaveBeenCalledWith(GUEST_STORAGE_KEYS);
+    expect(AsyncStorage.multiRemove).toHaveBeenCalledWith(
+      GUEST_STATE_STORAGE_KEYS
+    );
+    expect(GUEST_STATE_STORAGE_KEYS).not.toContain(GUEST_STORIES_KEY);
   });
 });
