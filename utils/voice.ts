@@ -1,6 +1,6 @@
 import { GUEST_DEFAULT_VOICE_ID } from "../constants";
 import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
-import { AvailableVoices as VoiceData } from "../types";
+import type { AvailableVoices as VoiceData } from "../types";
 
 const isDefaultVoiceKey = (value: string | null | undefined) =>
   value?.trim().toUpperCase() === DEFAULT_GUEST_VOICE_ID;
