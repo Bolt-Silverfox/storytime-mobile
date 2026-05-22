@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { guestLogger } from "../../utils/logger";
+import { GUEST_STORIES_KEY } from "../../utils/guestStorage";
 
-const GUEST_STORIES_KEY = "guestStoriesRead";
 const GUEST_FREE_LIMIT = 3;
 
 /**

@@ -5,6 +5,11 @@ import { cleanupPushNotifications } from "../utils/notifications";
 import { authLogger } from "../utils/logger";
 import { setSentryUser, clearSentryUser } from "../utils/sentry";
 import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
+import {
+  clearGuestSessionStorage,
+  clearGuestStorage,
+  clearGuestStoryAccess,
+} from "../utils/guestStorage";
 // Environment validation should be called from app bootstrap, not here
 import {
   SESSION_REFRESH_THRESHOLD_MS,
@@ -256,6 +261,14 @@ const createGuestSession = async (
   return sessionCreationPromise;
 };
 
+const clearGuestStoryAccessSafely = async () => {
+  try {
+    await clearGuestStoryAccess();
+  } catch (err) {
+    authLogger.warn("Failed to clear guest story access:", err);
+  }
+};
+
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthContextType["user"]>(undefined);
   const [isGuest, setIsGuest] = useState(false);
@@ -386,10 +399,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
 
                 if (validationSucceeded && !sessionValid) {
                   // Session expired server-side, create new session and update state
-                  await AsyncStorage.multiRemove([
-                    "guestSessionId",
-                    "guestSessionCreatedAt",
-                  ]);
+                  await clearGuestSessionStorage();
                   const newSessionId = await createGuestSession(deviceId);
                   if (newSessionId) {
                     await AsyncStorage.setItem("guestSessionId", newSessionId);
@@ -398,6 +408,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
+                    await clearGuestStoryAccessSafely();
                   }
                 }
               })().catch(() => {
@@ -419,6 +430,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
+                    await clearGuestStoryAccessSafely();
                   }
                 } catch {
                   // Non-fatal: guest mode works without backend session
@@ -508,12 +520,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setGuestMode(false);
     setGuestSessionId(null);
     setGuestDeviceId(null);
-    await AsyncStorage.multiRemove([
-      "guestMode",
-      "guestSessionId",
-      "guestSessionCreatedAt",
-      "guestDeviceId",
-    ]);
+    await clearGuestStorage();
   }, []);
 
   // Get or create a persistent device ID for guest quota tracking
@@ -553,6 +560,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         await AsyncStorage.setItem("guestSessionId", newSessionId);
         await AsyncStorage.setItem("guestSessionCreatedAt", String(Date.now()));
         setGuestSessionId(newSessionId);
+        await clearGuestStoryAccessSafely();
       }
     } catch (err) {
       authLogger.warn("Failed to create guest session:", err);
