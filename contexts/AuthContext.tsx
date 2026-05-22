@@ -7,7 +7,7 @@ import { setSentryUser, clearSentryUser } from "../utils/sentry";
 import { setCrashlyticsUser, clearCrashlyticsUser } from "../utils/crashlytics";
 import {
   clearGuestSessionStorage,
-  clearGuestStorage,
+  clearGuestStateStorage,
   clearGuestStoryAccess,
 } from "../utils/guestStorage";
 // Environment validation should be called from app bootstrap, not here
@@ -269,11 +269,11 @@ const clearGuestStoryAccessSafely = async () => {
   }
 };
 
-const clearGuestStorageSafely = async () => {
+const clearGuestStateStorageSafely = async () => {
   try {
-    await clearGuestStorage();
+    await clearGuestStateStorage();
   } catch (err) {
-    authLogger.warn("Failed to clear guest storage:", err);
+    authLogger.warn("Failed to clear guest state storage:", err);
   }
 };
 
@@ -416,7 +416,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
-                    await clearGuestStoryAccessSafely();
+                    if (__DEV__) {
+                      await clearGuestStoryAccessSafely();
+                    }
                   }
                 }
               })().catch(() => {
@@ -438,7 +440,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
-                    await clearGuestStoryAccessSafely();
+                    if (__DEV__) {
+                      await clearGuestStoryAccessSafely();
+                    }
                   }
                 } catch {
                   // Non-fatal: guest mode works without backend session
@@ -528,7 +532,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setGuestMode(false);
     setGuestSessionId(null);
     setGuestDeviceId(null);
-    await clearGuestStorageSafely();
+    await clearGuestStateStorageSafely();
   }, []);
 
   // Get or create a persistent device ID for guest quota tracking
@@ -568,7 +572,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         await AsyncStorage.setItem("guestSessionId", newSessionId);
         await AsyncStorage.setItem("guestSessionCreatedAt", String(Date.now()));
         setGuestSessionId(newSessionId);
-        await clearGuestStoryAccessSafely();
+        if (__DEV__) {
+          await clearGuestStoryAccessSafely();
+        }
       }
     } catch (err) {
       authLogger.warn("Failed to create guest session:", err);
