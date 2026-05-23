@@ -15,10 +15,10 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetGuestStoryAccess from "../../../hooks/tanstack/queryHooks/useGetGuestStoryAccess";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../../hooks/useIsPremium";
-import useGuestQuota from "../../../hooks/others/useGuestQuota";
 import useAuth from "../../../contexts/AuthContext";
 import GuestQuotaBanner from "../../../components/GuestQuotaBanner";
 import {
@@ -53,13 +53,17 @@ const ChildStoryDetails = () => {
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
-  const guestQuota = useGuestQuota();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
+  const { data: guestStoryAccess, isPending: isGuestAccessPending } =
+    useGetGuestStoryAccess(id);
   const { data: storyProgress, isFetching: isProgressFetching } =
     useGetStoryProgress(id);
-  const hasExistingProgress = !!storyProgress;
+  const hasExistingProgress = isGuest
+    ? (guestStoryAccess?.alreadyRead ?? false)
+    : !!storyProgress;
+  const isGuestAccessCheckLoading = isGuest && isGuestAccessPending;
   const hasReachedLimit = isGuest
-    ? guestQuota.isLoaded && !guestQuota.canAccessStory(id)
+    ? !!guestStoryAccess && !isGuestAccessPending && !guestStoryAccess.canAccess
     : !isPremium &&
       !hasExistingProgress &&
       !isQuotaFetching &&
@@ -218,8 +222,8 @@ const ChildStoryDetails = () => {
           />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          {isGuest && guestQuota.isLoaded && !hasReachedLimit && (
-            <GuestQuotaBanner remaining={guestQuota.remaining} />
+          {isGuest && guestStoryAccess && !hasReachedLimit && (
+            <GuestQuotaBanner remaining={guestStoryAccess.remaining} />
           )}
           {!isGuest && !isPremium && quota && !hasReachedLimit && (
             <Text className="py-2 text-center font-[abeezee] text-xs text-text">
@@ -245,9 +249,9 @@ const ChildStoryDetails = () => {
             )
           ) : (
             <CustomButton
-              disabled={isGuest && !guestQuota.isLoaded}
+              disabled={isGuestAccessCheckLoading}
               onPress={() => {
-                if (isGuest && !guestQuota.isLoaded) return;
+                if (isGuestAccessCheckLoading) return;
                 navigator.navigate("readStory", {
                   storyId: id,
                   mode: selectedMode,
