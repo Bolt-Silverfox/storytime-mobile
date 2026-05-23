@@ -19,7 +19,6 @@ import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoi
 import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import { StoryModes } from "../types";
 import { getDefaultVoiceListId, resolveVoiceIdForAudio } from "../utils/voice";
-import useGuestQuota from "../hooks/others/useGuestQuota";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
@@ -97,10 +96,6 @@ const StoryComponent = ({
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuth();
   const isGuestReader = isGuest || !user;
-  const {
-    isLoaded: isGuestQuotaLoaded,
-    recordStoryAccess: recordGuestStoryAccess,
-  } = useGuestQuota();
   const { data: quota } = useGetStoryQuota();
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
@@ -247,22 +242,6 @@ const StoryComponent = ({
   const { mutate: setStoryProgress } = useSetStoryProgress({
     storyId,
   });
-
-  const recordedGuestAccessStoryIds = useRef<Set<string>>(new Set());
-  useEffect(() => {
-    if (!isGuestReader || !data || !isGuestQuotaLoaded) return;
-    if (recordedGuestAccessStoryIds.current.has(storyId)) return;
-    recordedGuestAccessStoryIds.current.add(storyId);
-    recordGuestStoryAccess(storyId).catch(() => {
-      recordedGuestAccessStoryIds.current.delete(storyId);
-    });
-  }, [
-    data,
-    isGuestReader,
-    isGuestQuotaLoaded,
-    recordGuestStoryAccess,
-    storyId,
-  ]);
 
   const handleProgress = useCallback(
     (progress: number, completed: boolean) => {

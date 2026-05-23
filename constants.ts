@@ -11,6 +11,7 @@ const QUERY_KEYS = {
   GET_SUBSCRIPTION_STATUS: "paymentStatus",
   GET_USER_PROFILE: "userProfile",
   GET_STORY_QUOTA: "storyQuota",
+  GET_GUEST_STORY_ACCESS: "guestStoryAccess",
   GET_LIBRARY_STORIES: "libraryStories",
   GET_INFINITE_STORIES: "stories",
   GET_STORY_PROGRESS: "storyProgress",
