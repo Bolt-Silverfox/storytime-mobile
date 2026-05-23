@@ -416,9 +416,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
-                    if (__DEV__) {
-                      await clearGuestStoryAccessSafely();
-                    }
+                    await clearGuestStoryAccessSafely();
                   }
                 }
               })().catch(() => {
@@ -440,9 +438,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
                       String(Date.now())
                     );
                     setGuestSessionId(newSessionId);
-                    if (__DEV__) {
-                      await clearGuestStoryAccessSafely();
-                    }
+                    await clearGuestStoryAccessSafely();
                   }
                 } catch {
                   // Non-fatal: guest mode works without backend session
@@ -533,6 +529,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setGuestSessionId(null);
     setGuestDeviceId(null);
     await clearGuestStateStorageSafely();
+    await clearGuestStoryAccessSafely();
   }, []);
 
   // Get or create a persistent device ID for guest quota tracking
@@ -572,9 +569,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         await AsyncStorage.setItem("guestSessionId", newSessionId);
         await AsyncStorage.setItem("guestSessionCreatedAt", String(Date.now()));
         setGuestSessionId(newSessionId);
-        if (__DEV__) {
-          await clearGuestStoryAccessSafely();
-        }
+        await clearGuestStoryAccessSafely();
       }
     } catch (err) {
       authLogger.warn("Failed to create guest session:", err);
