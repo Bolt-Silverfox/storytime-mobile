@@ -54,18 +54,16 @@ const ChildStoryDetails = () => {
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
-  const { data: guestStoryAccess, isFetching: isGuestAccessFetching } =
+  const { data: guestStoryAccess, isPending: isGuestAccessPending } =
     useGetGuestStoryAccess(id);
   const { data: storyProgress, isFetching: isProgressFetching } =
     useGetStoryProgress(id);
   const hasExistingProgress = isGuest
     ? (guestStoryAccess?.alreadyRead ?? false)
     : !!storyProgress;
-  const isGuestAccessCheckLoading = isGuest && isGuestAccessFetching;
+  const isGuestAccessCheckLoading = isGuest && isGuestAccessPending;
   const hasReachedLimit = isGuest
-    ? !!guestStoryAccess &&
-      !isGuestAccessFetching &&
-      !guestStoryAccess.canAccess
+    ? !!guestStoryAccess && !isGuestAccessPending && !guestStoryAccess.canAccess
     : !isPremium &&
       !hasExistingProgress &&
       !isQuotaFetching &&
