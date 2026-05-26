@@ -6,6 +6,7 @@ import {
   getGuestAudioVoiceId,
   isGuestDefaultVoice,
   isVoiceMatch,
+  normalizePreferredVoice,
   resolveVoiceIdForAudio,
 } from "./voice";
 
@@ -221,6 +222,24 @@ describe("voice helpers", () => {
           voiceId,
         })
       ).toBe("elevenlabs-friendly");
+    });
+  });
+
+  describe("normalizePreferredVoice", () => {
+    it("returns null for the backend default preferred voice placeholder", () => {
+      expect(
+        normalizePreferredVoice({
+          id: "default",
+          name: "default",
+          displayName: "Default Voice",
+        })
+      ).toBeNull();
+    });
+
+    it("keeps a real preferred voice", () => {
+      const voice = makeVoice({ id: "voice-id", name: "Nimbus" });
+
+      expect(normalizePreferredVoice(voice)).toBe(voice);
     });
   });
 });

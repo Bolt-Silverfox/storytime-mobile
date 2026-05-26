@@ -44,6 +44,18 @@ const getGuestAudioVoiceId = (voices: VoiceData[] | null | undefined) => {
   return defaultVoice?.elevenLabsVoiceId ?? GUEST_DEFAULT_VOICE_ID;
 };
 
+const normalizePreferredVoice = <T extends Partial<VoiceData> | null | undefined>(
+  voice: T
+) => {
+  if (!voice) return null;
+  const isBackendDefaultPlaceholder =
+    normalizeVoiceKey(voice.id) === "DEFAULT" &&
+    normalizeVoiceKey(voice.name) === "DEFAULT" &&
+    !voice.elevenLabsVoiceId;
+
+  return isBackendDefaultPlaceholder ? null : voice;
+};
+
 const resolveVoiceIdForAudio = ({
   availableVoices,
   isGuest,
@@ -65,5 +77,6 @@ export {
   getGuestAudioVoiceId,
   isGuestDefaultVoice,
   isVoiceMatch,
+  normalizePreferredVoice,
   resolveVoiceIdForAudio,
 };
