@@ -44,7 +44,9 @@ const getGuestAudioVoiceId = (voices: VoiceData[] | null | undefined) => {
   return defaultVoice?.elevenLabsVoiceId ?? GUEST_DEFAULT_VOICE_ID;
 };
 
-const normalizePreferredVoice = <T extends Partial<VoiceData> | null | undefined>(
+const normalizePreferredVoice = <
+  T extends Partial<VoiceData> | null | undefined,
+>(
   voice: T
 ) => {
   if (!voice) return null;
