@@ -4,6 +4,7 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { AvailableVoices, QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
+import { normalizePreferredVoice } from "../../../utils/voice";
 
 const useGetPreferredVoice = () => {
   const { user } = useAuth();
@@ -24,7 +25,7 @@ const useGetPreferredVoice = () => {
     },
     enabled: !!user,
     staleTime: Infinity,
-    select: (res) => res.data,
+    select: (res) => normalizePreferredVoice(res.data),
   });
 };
 
