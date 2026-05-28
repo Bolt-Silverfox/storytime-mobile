@@ -212,7 +212,7 @@ describe("voice helpers", () => {
           isGuest: false,
           voiceId: "NIMBUS",
         })
-      ).toBe("XrExE9yKIg1WjnnlVkGX");
+      ).toBe(GUEST_DEFAULT_VOICE_ID);
     });
 
     it.each([
@@ -236,6 +236,16 @@ describe("voice helpers", () => {
         normalizePreferredVoice({
           id: "default",
           name: "default",
+          displayName: "Default Voice",
+        })
+      ).toBeNull();
+    });
+
+    it("returns null when backend sends id default with display-like name", () => {
+      expect(
+        normalizePreferredVoice({
+          id: "default",
+          name: "Default Voice",
           displayName: "Default Voice",
         })
       ).toBeNull();

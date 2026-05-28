@@ -104,13 +104,18 @@ const StoryComponent = ({
   const { data: availableVoices } = useQuery(queryAvailableVoices);
   
   // For guests: check if this story was already read locally to avoid quota consumption
+  const canResolveGuestQuota = !isGuestReader || guestQuota.isLoaded;
   const storyAlreadyReadLocally = isGuestReader && guestQuota.isLoaded
     ? guestQuota.readStoryIds.includes(storyId)
     : false;
+  const shouldConsumeGuestAccess = isGuestReader
+    ? guestQuota.isLoaded && !storyAlreadyReadLocally
+    : false;
   
-  const { isPending, error, refetch, data } = useQuery(
-    queryGetStory(storyId, { consumeGuestAccess: !storyAlreadyReadLocally })
-  );
+  const { isPending, error, refetch, data } = useQuery({
+    ...queryGetStory(storyId, { consumeGuestAccess: shouldConsumeGuestAccess }),
+    enabled: canResolveGuestQuota,
+  });
 
   const defaultAvailableVoiceId = useMemo(
     () => getDefaultVoiceListId(availableVoices),
@@ -131,11 +136,21 @@ const StoryComponent = ({
   // Track story access for guests (only when consuming quota, not re-reading)
   const hasRecordedGuestAccess = useRef(false);
   useEffect(() => {
-    if (data && isGuestReader && !storyAlreadyReadLocally && !hasRecordedGuestAccess.current) {
+    hasRecordedGuestAccess.current = false;
+  }, [storyId]);
+
+  useEffect(() => {
+    if (
+      data &&
+      isGuestReader &&
+      guestQuota.isLoaded &&
+      !storyAlreadyReadLocally &&
+      !hasRecordedGuestAccess.current
+    ) {
       hasRecordedGuestAccess.current = true;
       guestQuota.recordStoryAccess(storyId);
     }
-  }, [data, isGuestReader, storyAlreadyReadLocally, storyId, guestQuota]);
+  }, [data, isGuestReader, guestQuota.isLoaded, storyAlreadyReadLocally, storyId, guestQuota.recordStoryAccess]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
