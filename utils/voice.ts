@@ -51,8 +51,8 @@ const normalizePreferredVoice = <
 ) => {
   if (!voice) return null;
   const isBackendDefaultPlaceholder =
-    normalizeVoiceKey(voice.id) === "DEFAULT" &&
-    normalizeVoiceKey(voice.name) === "DEFAULT" &&
+    (normalizeVoiceKey(voice.id) === "DEFAULT" ||
+      normalizeVoiceKey(voice.name) === "DEFAULT") &&
     !voice.elevenLabsVoiceId;
 
   return isBackendDefaultPlaceholder ? null : voice;
@@ -72,10 +72,9 @@ const resolveVoiceIdForAudio = ({
 
   // If voices haven't loaded yet, but voiceId is a known system voice,
   // return the appropriate ElevenLabs ID for that voice
-  const nimbusElevenLabsId = "XrExE9yKIg1WjnnlVkGX";
   const isNimbus = normalizeVoiceKey(voiceId) === "NIMBUS";
   if (isNimbus && !availableVoices?.length) {
-    return nimbusElevenLabsId;
+    return GUEST_DEFAULT_VOICE_ID;
   }
 
   if (!availableVoices?.length) return null;
