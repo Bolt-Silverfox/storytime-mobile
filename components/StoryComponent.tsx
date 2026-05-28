@@ -102,16 +102,17 @@ const StoryComponent = ({
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
   const { data: availableVoices } = useQuery(queryAvailableVoices);
-  
+
   // For guests: check if this story was already read locally to avoid quota consumption
   const canResolveGuestQuota = !isGuestReader || guestQuota.isLoaded;
-  const storyAlreadyReadLocally = isGuestReader && guestQuota.isLoaded
-    ? guestQuota.readStoryIds.includes(storyId)
-    : false;
+  const storyAlreadyReadLocally =
+    isGuestReader && guestQuota.isLoaded
+      ? guestQuota.readStoryIds.includes(storyId)
+      : false;
   const shouldConsumeGuestAccess = isGuestReader
     ? guestQuota.isLoaded && !storyAlreadyReadLocally
     : false;
-  
+
   const { isPending, error, refetch, data } = useQuery({
     ...queryGetStory(storyId, { consumeGuestAccess: shouldConsumeGuestAccess }),
     enabled: canResolveGuestQuota,
@@ -150,7 +151,14 @@ const StoryComponent = ({
       hasRecordedGuestAccess.current = true;
       guestQuota.recordStoryAccess(storyId);
     }
-  }, [data, isGuestReader, guestQuota.isLoaded, storyAlreadyReadLocally, storyId, guestQuota.recordStoryAccess]);
+  }, [
+    data,
+    isGuestReader,
+    guestQuota.isLoaded,
+    storyAlreadyReadLocally,
+    storyId,
+    guestQuota.recordStoryAccess,
+  ]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
