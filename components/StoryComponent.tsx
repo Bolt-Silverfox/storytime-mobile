@@ -28,6 +28,7 @@ import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
+import useGuestQuota from "../hooks/others/useGuestQuota";
 import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
 import { audioLogger } from "../utils/logger";
@@ -97,10 +98,19 @@ const StoryComponent = ({
   const { user, isGuest } = useAuth();
   const isGuestReader = isGuest || !user;
   const { data: quota } = useGetStoryQuota();
+  const guestQuota = useGuestQuota();
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
   const { data: availableVoices } = useQuery(queryAvailableVoices);
-  const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+  
+  // For guests: check if this story was already read locally to avoid quota consumption
+  const storyAlreadyReadLocally = isGuestReader && guestQuota.isLoaded
+    ? guestQuota.readStoryIds.includes(storyId)
+    : false;
+  
+  const { isPending, error, refetch, data } = useQuery(
+    queryGetStory(storyId, { consumeGuestAccess: !storyAlreadyReadLocally })
+  );
 
   const defaultAvailableVoiceId = useMemo(
     () => getDefaultVoiceListId(availableVoices),
@@ -117,6 +127,15 @@ const StoryComponent = ({
     voiceId: effectiveDebouncedVoice,
   });
   const readyVoiceIdForAudio = data ? voiceIdForAudio : null;
+
+  // Track story access for guests (only when consuming quota, not re-reading)
+  const hasRecordedGuestAccess = useRef(false);
+  useEffect(() => {
+    if (data && isGuestReader && !storyAlreadyReadLocally && !hasRecordedGuestAccess.current) {
+      hasRecordedGuestAccess.current = true;
+      guestQuota.recordStoryAccess(storyId);
+    }
+  }, [data, isGuestReader, storyAlreadyReadLocally, storyId, guestQuota]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
