@@ -115,6 +115,7 @@ const useGuestQuota = () => {
     recordStoryAccess,
     tryAccessStory,
     resetQuota,
+    readStoryIds,
   };
 };
 
