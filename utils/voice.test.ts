@@ -183,11 +183,6 @@ describe("voice helpers", () => {
     it.each([
       { label: "missing voice id", availableVoices: voices, voiceId: null },
       {
-        label: "missing available voices",
-        availableVoices: null,
-        voiceId: "voice-id",
-      },
-      {
         label: "empty available voices",
         availableVoices: [],
         voiceId: "voice-id",
@@ -209,6 +204,16 @@ describe("voice helpers", () => {
         ).toBeNull();
       }
     );
+
+    it("returns the hardcoded Nimbus ElevenLabs id when voices haven't loaded but voiceId is Nimbus", () => {
+      expect(
+        resolveVoiceIdForAudio({
+          availableVoices: null,
+          isGuest: false,
+          voiceId: "NIMBUS",
+        })
+      ).toBe("XrExE9yKIg1WjnnlVkGX");
+    });
 
     it.each([
       { label: "id", voiceId: "voice-id" },
