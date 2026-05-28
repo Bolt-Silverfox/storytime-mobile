@@ -68,7 +68,17 @@ const resolveVoiceIdForAudio = ({
   voiceId: string | null;
 }) => {
   if (isGuest) return getGuestAudioVoiceId(availableVoices);
-  if (!voiceId || !availableVoices?.length) return null;
+  if (!voiceId) return null;
+
+  // If voices haven't loaded yet, but voiceId is a known system voice,
+  // return the appropriate ElevenLabs ID for that voice
+  const nimbusElevenLabsId = "XrExE9yKIg1WjnnlVkGX";
+  const isNimbus = normalizeVoiceKey(voiceId) === "NIMBUS";
+  if (isNimbus && !availableVoices?.length) {
+    return nimbusElevenLabsId;
+  }
+
+  if (!availableVoices?.length) return null;
 
   const voice = availableVoices.find((v) => isVoiceMatch(v, voiceId));
   return voice?.elevenLabsVoiceId ?? null;

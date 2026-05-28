@@ -109,7 +109,7 @@ const StoryComponent = ({
   const effectiveSelectedVoice =
     selectedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
   const effectiveDebouncedVoice =
-    debouncedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
+    debouncedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : DEFAULT_GUEST_VOICE_ID);
   const voiceIdForAudio = resolveVoiceIdForAudio({
     availableVoices,
     isGuest: isGuestReader,
@@ -182,11 +182,11 @@ const StoryComponent = ({
     if (!isGuestReader && !isVoiceFetched) return;
     if (hasInitializedVoice.current) return;
     // Guests get a known default immediately. Authenticated users without a
-    // preferred voice wait for the voice list so the setup modal has a real
-    // local selection.
+    // preferred voice get the default voice to ensure audio works.
+    // Note: normalizePreferredVoice converts backend "default" placeholder to null.
     const voiceToSet =
       preferredVoice?.id ??
-      (isGuestReader ? DEFAULT_GUEST_VOICE_ID : defaultAvailableVoiceId);
+      (isGuestReader ? DEFAULT_GUEST_VOICE_ID : defaultAvailableVoiceId ?? DEFAULT_GUEST_VOICE_ID);
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
     hasInitializedVoice.current = true;
@@ -197,20 +197,20 @@ const StoryComponent = ({
   }, [isGuestReader, preferredVoice, isVoiceFetched, defaultAvailableVoiceId]);
 
   useEffect(() => {
-    if (isGuestReader || !isVoiceFetched || preferredVoice) return;
+    if (isGuestReader || !isVoiceFetched || preferredVoice?.id) return;
     if (!hasAutoOpenedVoiceSetup.current) {
       hasAutoOpenedVoiceSetup.current = true;
       isFirstTimeVoiceSetup.current = true;
       setIsVoiceModalOpen(true);
     }
-  }, [isGuestReader, isVoiceFetched, preferredVoice]);
+  }, [isGuestReader, isVoiceFetched, preferredVoice?.id]);
 
   useEffect(() => {
-    if (preferredVoice) {
+    if (preferredVoice?.id) {
       hasAutoOpenedVoiceSetup.current = false;
       isFirstTimeVoiceSetup.current = false;
     }
-  }, [preferredVoice]);
+  }, [preferredVoice?.id]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();
