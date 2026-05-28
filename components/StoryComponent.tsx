@@ -109,7 +109,8 @@ const StoryComponent = ({
   const effectiveSelectedVoice =
     selectedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
   const effectiveDebouncedVoice =
-    debouncedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : DEFAULT_GUEST_VOICE_ID);
+    debouncedVoice ??
+    (isGuestReader ? DEFAULT_GUEST_VOICE_ID : DEFAULT_GUEST_VOICE_ID);
   const voiceIdForAudio = resolveVoiceIdForAudio({
     availableVoices,
     isGuest: isGuestReader,
@@ -186,7 +187,9 @@ const StoryComponent = ({
     // Note: normalizePreferredVoice converts backend "default" placeholder to null.
     const voiceToSet =
       preferredVoice?.id ??
-      (isGuestReader ? DEFAULT_GUEST_VOICE_ID : defaultAvailableVoiceId ?? DEFAULT_GUEST_VOICE_ID);
+      (isGuestReader
+        ? DEFAULT_GUEST_VOICE_ID
+        : (defaultAvailableVoiceId ?? DEFAULT_GUEST_VOICE_ID));
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
     hasInitializedVoice.current = true;
