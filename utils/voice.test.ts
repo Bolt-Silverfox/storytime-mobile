@@ -6,6 +6,7 @@ import {
   getGuestAudioVoiceId,
   isGuestDefaultVoice,
   isVoiceMatch,
+  normalizePreferredVoice,
   resolveVoiceIdForAudio,
 } from "./voice";
 
@@ -182,11 +183,6 @@ describe("voice helpers", () => {
     it.each([
       { label: "missing voice id", availableVoices: voices, voiceId: null },
       {
-        label: "missing available voices",
-        availableVoices: null,
-        voiceId: "voice-id",
-      },
-      {
         label: "empty available voices",
         availableVoices: [],
         voiceId: "voice-id",
@@ -209,6 +205,16 @@ describe("voice helpers", () => {
       }
     );
 
+    it("returns the hardcoded Nimbus ElevenLabs id when voices haven't loaded but voiceId is Nimbus", () => {
+      expect(
+        resolveVoiceIdForAudio({
+          availableVoices: null,
+          isGuest: false,
+          voiceId: "NIMBUS",
+        })
+      ).toBe(GUEST_DEFAULT_VOICE_ID);
+    });
+
     it.each([
       { label: "id", voiceId: "voice-id" },
       { label: "name", voiceId: "Friendly Voice" },
@@ -221,6 +227,34 @@ describe("voice helpers", () => {
           voiceId,
         })
       ).toBe("elevenlabs-friendly");
+    });
+  });
+
+  describe("normalizePreferredVoice", () => {
+    it("returns null for the backend default preferred voice placeholder", () => {
+      expect(
+        normalizePreferredVoice({
+          id: "default",
+          name: "default",
+          displayName: "Default Voice",
+        })
+      ).toBeNull();
+    });
+
+    it("returns null when backend sends id default with display-like name", () => {
+      expect(
+        normalizePreferredVoice({
+          id: "default",
+          name: "Default Voice",
+          displayName: "Default Voice",
+        })
+      ).toBeNull();
+    });
+
+    it("keeps a real preferred voice", () => {
+      const voice = makeVoice({ id: "voice-id", name: "Nimbus" });
+
+      expect(normalizePreferredVoice(voice)).toBe(voice);
     });
   });
 });
