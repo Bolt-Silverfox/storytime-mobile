@@ -28,6 +28,7 @@ import StoryLimitModal from "./modals/StoryLimitModal";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
+import useGuestQuota from "../hooks/others/useGuestQuota";
 import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
 import { audioLogger } from "../utils/logger";
@@ -97,10 +98,25 @@ const StoryComponent = ({
   const { user, isGuest } = useAuth();
   const isGuestReader = isGuest || !user;
   const { data: quota } = useGetStoryQuota();
+  const guestQuota = useGuestQuota();
   const { data: preferredVoice, isFetched: isVoiceFetched } =
     useGetPreferredVoice();
   const { data: availableVoices } = useQuery(queryAvailableVoices);
-  const { isPending, error, refetch, data } = useQuery(queryGetStory(storyId));
+
+  // For guests: check if this story was already read locally to avoid quota consumption
+  const canResolveGuestQuota = !isGuestReader || guestQuota.isLoaded;
+  const storyAlreadyReadLocally =
+    isGuestReader && guestQuota.isLoaded
+      ? guestQuota.readStoryIds.includes(storyId)
+      : false;
+  const shouldConsumeGuestAccess = isGuestReader
+    ? guestQuota.isLoaded && !storyAlreadyReadLocally
+    : false;
+
+  const { isPending, error, refetch, data } = useQuery({
+    ...queryGetStory(storyId, { consumeGuestAccess: shouldConsumeGuestAccess }),
+    enabled: canResolveGuestQuota,
+  });
 
   const defaultAvailableVoiceId = useMemo(
     () => getDefaultVoiceListId(availableVoices),
@@ -109,13 +125,40 @@ const StoryComponent = ({
   const effectiveSelectedVoice =
     selectedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
   const effectiveDebouncedVoice =
-    debouncedVoice ?? (isGuestReader ? DEFAULT_GUEST_VOICE_ID : null);
+    debouncedVoice ??
+    (isGuestReader ? DEFAULT_GUEST_VOICE_ID : DEFAULT_GUEST_VOICE_ID);
   const voiceIdForAudio = resolveVoiceIdForAudio({
     availableVoices,
     isGuest: isGuestReader,
     voiceId: effectiveDebouncedVoice,
   });
   const readyVoiceIdForAudio = data ? voiceIdForAudio : null;
+
+  // Track story access for guests (only when consuming quota, not re-reading)
+  const hasRecordedGuestAccess = useRef(false);
+  useEffect(() => {
+    hasRecordedGuestAccess.current = false;
+  }, [storyId]);
+
+  useEffect(() => {
+    if (
+      data &&
+      isGuestReader &&
+      guestQuota.isLoaded &&
+      !storyAlreadyReadLocally &&
+      !hasRecordedGuestAccess.current
+    ) {
+      hasRecordedGuestAccess.current = true;
+      guestQuota.recordStoryAccess(storyId);
+    }
+  }, [
+    data,
+    isGuestReader,
+    guestQuota.isLoaded,
+    storyAlreadyReadLocally,
+    storyId,
+    guestQuota.recordStoryAccess,
+  ]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);
@@ -182,11 +225,13 @@ const StoryComponent = ({
     if (!isGuestReader && !isVoiceFetched) return;
     if (hasInitializedVoice.current) return;
     // Guests get a known default immediately. Authenticated users without a
-    // preferred voice wait for the voice list so the setup modal has a real
-    // local selection.
+    // preferred voice get the default voice to ensure audio works.
+    // Note: normalizePreferredVoice converts backend "default" placeholder to null.
     const voiceToSet =
       preferredVoice?.id ??
-      (isGuestReader ? DEFAULT_GUEST_VOICE_ID : defaultAvailableVoiceId);
+      (isGuestReader
+        ? DEFAULT_GUEST_VOICE_ID
+        : (defaultAvailableVoiceId ?? DEFAULT_GUEST_VOICE_ID));
     // Don't mark as initialized if we'd set null — wait for voices to load
     if (!voiceToSet) return;
     hasInitializedVoice.current = true;
@@ -197,20 +242,20 @@ const StoryComponent = ({
   }, [isGuestReader, preferredVoice, isVoiceFetched, defaultAvailableVoiceId]);
 
   useEffect(() => {
-    if (isGuestReader || !isVoiceFetched || preferredVoice) return;
+    if (isGuestReader || !isVoiceFetched || preferredVoice?.id) return;
     if (!hasAutoOpenedVoiceSetup.current) {
       hasAutoOpenedVoiceSetup.current = true;
       isFirstTimeVoiceSetup.current = true;
       setIsVoiceModalOpen(true);
     }
-  }, [isGuestReader, isVoiceFetched, preferredVoice]);
+  }, [isGuestReader, isVoiceFetched, preferredVoice?.id]);
 
   useEffect(() => {
-    if (preferredVoice) {
+    if (preferredVoice?.id) {
       hasAutoOpenedVoiceSetup.current = false;
       isFirstTimeVoiceSetup.current = false;
     }
-  }, [preferredVoice]);
+  }, [preferredVoice?.id]);
 
   const getQuotaReminderKey = useCallback(() => {
     const now = new Date();

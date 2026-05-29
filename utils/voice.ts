@@ -44,6 +44,20 @@ const getGuestAudioVoiceId = (voices: VoiceData[] | null | undefined) => {
   return defaultVoice?.elevenLabsVoiceId ?? GUEST_DEFAULT_VOICE_ID;
 };
 
+const normalizePreferredVoice = <
+  T extends Partial<VoiceData> | null | undefined,
+>(
+  voice: T
+) => {
+  if (!voice) return null;
+  const isBackendDefaultPlaceholder =
+    (normalizeVoiceKey(voice.id) === "DEFAULT" ||
+      normalizeVoiceKey(voice.name) === "DEFAULT") &&
+    !voice.elevenLabsVoiceId;
+
+  return isBackendDefaultPlaceholder ? null : voice;
+};
+
 const resolveVoiceIdForAudio = ({
   availableVoices,
   isGuest,
@@ -54,7 +68,16 @@ const resolveVoiceIdForAudio = ({
   voiceId: string | null;
 }) => {
   if (isGuest) return getGuestAudioVoiceId(availableVoices);
-  if (!voiceId || !availableVoices?.length) return null;
+  if (!voiceId) return null;
+
+  // If voices haven't loaded yet, but voiceId is a known system voice,
+  // return the appropriate ElevenLabs ID for that voice
+  const isNimbus = normalizeVoiceKey(voiceId) === "NIMBUS";
+  if (isNimbus && !availableVoices?.length) {
+    return GUEST_DEFAULT_VOICE_ID;
+  }
+
+  if (!availableVoices?.length) return null;
 
   const voice = availableVoices.find((v) => isVoiceMatch(v, voiceId));
   return voice?.elevenLabsVoiceId ?? null;
@@ -65,5 +88,6 @@ export {
   getGuestAudioVoiceId,
   isGuestDefaultVoice,
   isVoiceMatch,
+  normalizePreferredVoice,
   resolveVoiceIdForAudio,
 };

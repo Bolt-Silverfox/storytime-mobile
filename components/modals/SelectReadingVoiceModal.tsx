@@ -60,9 +60,9 @@ const SelectReadingVoiceModal = ({
       markPreferred(selectedVoice, {
         onSuccess: () => onClose(),
       });
-    } else {
-      onClose();
     }
+    // When showSaveButton is true (first-time setup), don't close without a voice selection
+    // When showSaveButton is false (manual open), allow closing even without selection
   };
 
   if (voicesError) {
@@ -86,6 +86,14 @@ const SelectReadingVoiceModal = ({
           </Text>
           <Icon name="SquareX" onPress={onClose} />
         </View>
+        {showSaveButton && (
+          <View className="rounded-2xl bg-blue/10 p-4">
+            <Text className="font-[abeezee] text-sm leading-5 text-text">
+              Choose a voice to enable audio for your stories. This will become
+              your default voice.
+            </Text>
+          </View>
+        )}
         <ScrollView
           className="flex-1"
           contentContainerClassName="pb-6"
@@ -130,7 +138,10 @@ const SelectReadingVoiceModal = ({
           {showSaveButton && (
             <Pressable
               onPress={handleSave}
-              className="mx-2 items-center rounded-full bg-primary px-2 py-3"
+              disabled={!selectedVoice}
+              className={`mx-2 items-center rounded-full px-2 py-3 ${
+                selectedVoice ? "bg-primary" : "bg-primary/50"
+              }`}
             >
               <Text className="font-[abeezee] text-base text-white">
                 Save default voice
