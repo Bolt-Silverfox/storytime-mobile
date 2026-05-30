@@ -17,6 +17,7 @@ import {
   ViewStyle,
 } from "react-native";
 import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { CONTROLS_FADE_MS } from "../constants";
 import { WORDS_PER_CHUNK } from "../constants/tts";
 import useIsPremium from "../hooks/useIsPremium";
@@ -99,6 +100,19 @@ const StoryContentContainer = ({
   );
   const isAdvancingRef = useRef(false);
   const activeParagraphRef = useRef(activeParagraph);
+  const hasAutoplayed = useRef(false); // Track if we've auto-played on entry
+  const keepAwakeActivated = useRef(false); // Track if keep awake is active
+
+  // Keep screen awake during active narration (V0-14)
+  useEffect(() => {
+    if (isPlaying && !keepAwakeActivated.current) {
+      keepAwakeActivated.current = true;
+      activateKeepAwakeAsync("story-narration").catch(() => {});
+    } else if (!isPlaying && keepAwakeActivated.current) {
+      keepAwakeActivated.current = false;
+      deactivateKeepAwake("story-narration").catch(() => {});
+    }
+  }, [isPlaying]);
 
   // Keep ref in sync so the stable callback always sees the latest value
   useEffect(() => {
@@ -118,6 +132,19 @@ const StoryContentContainer = ({
   const storyLength = paragraphs.length - 1;
   const isLastParagraph = activeParagraph === storyLength;
   const isFirstParagraph = activeParagraph === 0;
+
+  // Auto-play on story entry when audio is ready (V0-22)
+  useEffect(() => {
+    // Only autoplay on first paragraph when story loads and audio is available
+    if (hasAutoplayed.current) return;
+    if (isAudioLoading || isStillGenerating) return;
+    if (!audioUrl) return;
+    if (!isFirstParagraph) return;
+
+    // Auto-play when ready
+    hasAutoplayed.current = true;
+    setIsPlaying(true);
+  }, [isAudioLoading, isStillGenerating, audioUrl, isFirstParagraph]);
 
   useEffect(() => {
     if (isLastParagraph) {
