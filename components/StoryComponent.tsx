@@ -217,7 +217,7 @@ const StoryComponent = ({
     if (!isGuestReader && !isVoiceFetched) return;
     if (hasInitializedVoice.current) return;
     // Guests get a known default immediately. Authenticated users without a
-    // preferred voice get the default voice to ensure audio works.
+    // preferred voice get the voice selection to ensure audio works.
     // Note: normalizePreferredVoice converts backend "default" placeholder to null.
     const voiceToSet =
       preferredVoice?.id ??
@@ -234,13 +234,13 @@ const StoryComponent = ({
   }, [isGuestReader, preferredVoice, isVoiceFetched, defaultAvailableVoiceId]);
 
   useEffect(() => {
-    if (isGuestReader || !isVoiceFetched || preferredVoice?.id) return;
+    if (isGuestReader || !isVoiceFetched || selectedVoice) return;
     if (!hasAutoOpenedVoiceSetup.current) {
       hasAutoOpenedVoiceSetup.current = true;
       isFirstTimeVoiceSetup.current = true;
       setIsVoiceModalOpen(true);
     }
-  }, [isGuestReader, isVoiceFetched, preferredVoice?.id]);
+  }, [isGuestReader, isVoiceFetched, selectedVoice]);
 
   useEffect(() => {
     if (preferredVoice?.id) {

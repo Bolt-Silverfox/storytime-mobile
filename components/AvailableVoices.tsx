@@ -66,7 +66,7 @@ const AvailableVoices = ({
   };
 
   const isVoiceAllowed = (voice: VoiceData): boolean => {
-    // Guest users: only the default voice is allowed
+    // Guest users: only the voice selection is allowed
     if (isGuest) {
       return isGuestDefaultVoice(voice);
     }
