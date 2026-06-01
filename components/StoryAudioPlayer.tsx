@@ -50,6 +50,33 @@ const StoryAudioPlayer = ({
     }
   }, [status.didJustFinish]);
 
+  // Keep the native player in sync with parent-driven playback changes.
+  // This is required for autoplay, where the parent sets isPlaying=true
+  // without going through the local playAudio() handler.
+  useEffect(() => {
+    if (isLoading || isError || isFailed || !audioUrl) return;
+
+    try {
+      if (isPlaying && !status.playing) {
+        player.play();
+      } else if (!isPlaying && status.playing) {
+        player.pause();
+      }
+    } catch (e) {
+      audioLogger.error("Audio sync failed:", e);
+      setIsPlaying(false);
+    }
+  }, [
+    audioUrl,
+    isError,
+    isFailed,
+    isLoading,
+    isPlaying,
+    player,
+    setIsPlaying,
+    status.playing,
+  ]);
+
   // Track whether URL went through a null transition (voice switch)
   // vs a direct URL change (page navigation)
   const wasNullTransitionRef = useRef(false);

@@ -3,6 +3,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ImageBackground,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -10,7 +11,7 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
-import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import { makeStoryDeepLink } from "../../../constants";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
@@ -26,7 +27,7 @@ import {
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
-import { secondsToMinutes } from "../../../utils/utils";
+import { secondsToMinutes, shareContent } from "../../../utils/utils";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -49,7 +50,6 @@ const ChildStoryDetails = () => {
   const [selectedMode, setSelectedMode] = useState<StoryModes>("plain");
   const hasQuiz = isInteractive && questions && questions.length > 0;
   const [showAboutModal, setShowAboutModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
@@ -71,6 +71,20 @@ const ChildStoryDetails = () => {
       (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
+  const handleShare = () => {
+    const shareUrl = makeStoryDeepLink(id);
+    const shareMessage = `Check out "${title}" on Storytime!`;
+
+    shareContent({
+      message:
+        Platform.OS === "android"
+          ? `${shareMessage}\n${shareUrl}`
+          : shareMessage,
+      url: Platform.OS === "ios" ? shareUrl : undefined,
+      title,
+    });
+  };
+
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
@@ -207,7 +221,7 @@ const ChildStoryDetails = () => {
             </View>
           </View>
           <StoryDetailsCTA
-            setShowShareModal={setShowShareModal}
+            onShare={handleShare}
             story={{
               ageRange: `${ageMin}-${ageMax}`,
               id,
@@ -266,12 +280,6 @@ const ChildStoryDetails = () => {
         <AboutStoryModesModal
           isOpen={showAboutModal}
           onClose={() => setShowAboutModal(false)}
-        />
-        <ShareStoryModal
-          isOpen={showShareModal}
-          onClose={() => setShowShareModal(false)}
-          storyId={id}
-          storyTitle={title}
         />
         <SubscriptionModal
           isOpen={isSubscriptionModalOpen}
