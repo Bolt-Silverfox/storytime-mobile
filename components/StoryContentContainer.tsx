@@ -110,8 +110,15 @@ const StoryContentContainer = ({
       activateKeepAwakeAsync("story-narration").catch(() => {});
     } else if (!isPlaying && keepAwakeActivated.current) {
       keepAwakeActivated.current = false;
-      deactivateKeepAwake("story-narration").catch(() => {});
+      deactivateKeepAwake("story-narration");
     }
+
+    return () => {
+      if (keepAwakeActivated.current) {
+        keepAwakeActivated.current = false;
+        deactivateKeepAwake("story-narration");
+      }
+    };
   }, [isPlaying]);
 
   // Keep ref in sync so the stable callback always sees the latest value
@@ -137,14 +144,20 @@ const StoryContentContainer = ({
   useEffect(() => {
     // Only autoplay on first paragraph when story loads and audio is available
     if (hasAutoplayed.current) return;
-    if (isAudioLoading || isStillGenerating) return;
+    if (isAudioLoading || isStillGenerating || isAudioError) return;
     if (!audioUrl) return;
     if (!isFirstParagraph) return;
 
     // Auto-play when ready
     hasAutoplayed.current = true;
     setIsPlaying(true);
-  }, [isAudioLoading, isStillGenerating, audioUrl, isFirstParagraph]);
+  }, [
+    isAudioLoading,
+    isStillGenerating,
+    isAudioError,
+    audioUrl,
+    isFirstParagraph,
+  ]);
 
   useEffect(() => {
     if (isLastParagraph) {

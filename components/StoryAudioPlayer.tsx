@@ -54,7 +54,8 @@ const StoryAudioPlayer = ({
   // This is required for autoplay, where the parent sets isPlaying=true
   // without going through the local playAudio() handler.
   useEffect(() => {
-    if (isLoading || isError || isFailed || !audioUrl) return;
+    if (isLoading || isError || isFailed || !audioUrl || status.didJustFinish)
+      return;
 
     try {
       if (isPlaying && !status.playing) {
@@ -75,6 +76,7 @@ const StoryAudioPlayer = ({
     player,
     setIsPlaying,
     status.playing,
+    status.didJustFinish,
   ]);
 
   // Track whether URL went through a null transition (voice switch)

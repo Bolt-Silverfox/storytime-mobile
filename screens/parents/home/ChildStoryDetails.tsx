@@ -11,7 +11,7 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
-import { makeStoryDeepLink } from "../../../constants";
+import { makeStoryUniversalLink } from "../../../constants";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
@@ -72,7 +72,7 @@ const ChildStoryDetails = () => {
 
   const duration = secondsToMinutes(durationSeconds);
   const handleShare = () => {
-    const shareUrl = makeStoryDeepLink(id);
+    const shareUrl = makeStoryUniversalLink(id);
     const shareMessage = `Check out "${title}" on Storytime!`;
 
     shareContent({
