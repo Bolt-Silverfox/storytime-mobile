@@ -42,8 +42,16 @@ const READ_STATUS_COLORS = {
 /** Deep link prefix for shareable story links. */
 const SHARE_DEEP_LINK_URL = "storytime://story";
 
+const configuredShareStoryWebUrl =
+  process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.replace(/\/+$/, "");
+
 /** Web URL prefix for shareable story links. */
-const SHARE_STORY_WEB_URL = "https://www.storytimeapp.me/story";
+const SHARE_STORY_WEB_URL = configuredShareStoryWebUrl?.endsWith("/story")
+  ? configuredShareStoryWebUrl
+  : `${configuredShareStoryWebUrl ?? "https://www.storytimeapp.me"}/story`;
+
+/** Web link prefix used by React Navigation linking. */
+const SHARE_STORY_WEB_LINK_PREFIX = SHARE_STORY_WEB_URL.replace(/\/story$/, "");
 
 /** Story deep link route path (used in navigation config). */
 const STORY_DEEP_LINK_ROUTE = "story/:storyId";
@@ -74,6 +82,7 @@ export {
   IMAGE_MIME_MAP,
   READ_STATUS_COLORS,
   SHARE_DEEP_LINK_URL,
+  SHARE_STORY_WEB_LINK_PREFIX,
   SHARE_STORY_WEB_URL,
   STORY_DEEP_LINK_ROUTE,
   makeStoryDeepLink,
