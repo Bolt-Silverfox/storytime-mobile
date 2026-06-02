@@ -242,13 +242,14 @@ const StoryComponent = ({
   }, [isGuestReader, preferredVoice, isVoiceFetched, defaultAvailableVoiceId]);
 
   useEffect(() => {
-    if (isGuestReader || !isVoiceFetched || selectedVoice) return;
+    if (isGuestReader || !isVoiceFetched || preferredVoice?.id || selectedVoice)
+      return;
     if (!hasAutoOpenedVoiceSetup.current) {
       hasAutoOpenedVoiceSetup.current = true;
       isFirstTimeVoiceSetup.current = true;
       setIsVoiceModalOpen(true);
     }
-  }, [isGuestReader, isVoiceFetched, selectedVoice]);
+  }, [isGuestReader, isVoiceFetched, preferredVoice?.id, selectedVoice]);
 
   useEffect(() => {
     if (preferredVoice?.id) {
