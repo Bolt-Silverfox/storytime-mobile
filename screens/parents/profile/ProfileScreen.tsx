@@ -111,7 +111,7 @@ const ProfileScreen: FC = () => {
             />
             <MenuItem
               icon={<Volume2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
-              label="Default Voice"
+              label="Voice Selection"
               isTablet={isTablet}
               onPress={() => navigator.navigate("defaultVoice")}
             />

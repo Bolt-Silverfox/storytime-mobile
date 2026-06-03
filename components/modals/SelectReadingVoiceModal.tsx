@@ -21,7 +21,7 @@ type PropTypes = {
   selectedVoice: string | null;
   setSelectedVoice: Dispatch<SetStateAction<string | null>>;
   storyId?: string;
-  /** Show "Save default voice" button and defer persistence to button press */
+  /** Show "Save voice selection" button and defer persistence to button press */
   showSaveButton?: boolean;
 } & Omit<CustomModalProps, "children">;
 
@@ -90,7 +90,7 @@ const SelectReadingVoiceModal = ({
           <View className="rounded-2xl bg-blue/10 p-4">
             <Text className="font-[abeezee] text-sm leading-5 text-text">
               Choose a voice to enable audio for your stories. This will become
-              your default voice.
+              your voice selection.
             </Text>
           </View>
         )}
@@ -144,7 +144,7 @@ const SelectReadingVoiceModal = ({
               }`}
             >
               <Text className="font-[abeezee] text-base text-white">
-                Save default voice
+                Save voice selection
               </Text>
             </Pressable>
           )}

@@ -30,7 +30,10 @@ import RootNavigator, {
 import { ToastProvider } from "./contexts/ToastContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { validateEnv } from "./utils/env";
-import { STORY_DEEP_LINK_ROUTE } from "./constants";
+import {
+  SHARE_STORY_WEB_LINK_PREFIX,
+  STORY_DEEP_LINK_ROUTE,
+} from "./constants";
 import * as Sentry from "@sentry/react-native";
 
 // Sentry is initialized in utils/sentry.ts via initSentry() called from index.ts
@@ -38,7 +41,7 @@ import * as Sentry from "@sentry/react-native";
 const prefix = Linking.createURL("/");
 
 const linking: LinkingOptions<RootNavigatorParamList> = {
-  prefixes: [prefix, "storytime://", "https://www.storytimeapp.me"],
+  prefixes: [prefix, "storytime://", SHARE_STORY_WEB_LINK_PREFIX],
   config: {
     screens: {
       protected: {
