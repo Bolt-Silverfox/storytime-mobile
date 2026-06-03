@@ -42,12 +42,32 @@ const READ_STATUS_COLORS = {
 /** Deep link prefix for shareable story links. */
 const SHARE_DEEP_LINK_URL = "storytime://story";
 
+const configuredShareStoryWebUrl =
+  process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.trim().replace(/\/+$/, "");
+
+const shareStoryWebBaseUrl =
+  configuredShareStoryWebUrl && configuredShareStoryWebUrl.length > 0
+    ? configuredShareStoryWebUrl
+    : "https://www.storytimeapp.me";
+
+/** Web URL prefix for shareable story links. */
+const SHARE_STORY_WEB_URL = shareStoryWebBaseUrl.endsWith("/story")
+  ? shareStoryWebBaseUrl
+  : `${shareStoryWebBaseUrl}/story`;
+
+/** Web link prefix used by React Navigation linking. */
+const SHARE_STORY_WEB_LINK_PREFIX = SHARE_STORY_WEB_URL.replace(/\/story$/, "");
+
 /** Story deep link route path (used in navigation config). */
 const STORY_DEEP_LINK_ROUTE = "story/:storyId";
 
 /** Helper to construct full story deep link. */
 const makeStoryDeepLink = (storyId: string) =>
   `${SHARE_DEEP_LINK_URL}/${storyId}`;
+
+/** Helper to construct full story web link. */
+const makeStoryUniversalLink = (storyId: string) =>
+  `${SHARE_STORY_WEB_URL}/${storyId}`;
 
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;
@@ -67,8 +87,11 @@ export {
   IMAGE_MIME_MAP,
   READ_STATUS_COLORS,
   SHARE_DEEP_LINK_URL,
+  SHARE_STORY_WEB_LINK_PREFIX,
+  SHARE_STORY_WEB_URL,
   STORY_DEEP_LINK_ROUTE,
   makeStoryDeepLink,
+  makeStoryUniversalLink,
   CONTROLS_FADE_MS,
   DEFAULT_CURSOR_PAGE_SIZE,
   GUEST_DEFAULT_VOICE_ID,
