@@ -43,12 +43,17 @@ const READ_STATUS_COLORS = {
 const SHARE_DEEP_LINK_URL = "storytime://story";
 
 const configuredShareStoryWebUrl =
-  process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.replace(/\/+$/, "");
+  process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.trim().replace(/\/+$/, "");
+
+const shareStoryWebBaseUrl =
+  configuredShareStoryWebUrl && configuredShareStoryWebUrl.length > 0
+    ? configuredShareStoryWebUrl
+    : "https://www.storytimeapp.me";
 
 /** Web URL prefix for shareable story links. */
-const SHARE_STORY_WEB_URL = configuredShareStoryWebUrl?.endsWith("/story")
-  ? configuredShareStoryWebUrl
-  : `${configuredShareStoryWebUrl ?? "https://www.storytimeapp.me"}/story`;
+const SHARE_STORY_WEB_URL = shareStoryWebBaseUrl.endsWith("/story")
+  ? shareStoryWebBaseUrl
+  : `${shareStoryWebBaseUrl}/story`;
 
 /** Web link prefix used by React Navigation linking. */
 const SHARE_STORY_WEB_LINK_PREFIX = SHARE_STORY_WEB_URL.replace(/\/story$/, "");
