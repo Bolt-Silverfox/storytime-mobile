@@ -151,14 +151,7 @@ const StoryComponent = ({
       hasRecordedGuestAccess.current = true;
       guestQuota.recordStoryAccess(storyId);
     }
-  }, [
-    data,
-    isGuestReader,
-    guestQuota.isLoaded,
-    storyAlreadyReadLocally,
-    storyId,
-    guestQuota.recordStoryAccess,
-  ]);
+  }, [guestQuota, data, isGuestReader, storyAlreadyReadLocally, storyId]);
 
   // Debounce voice selection to prevent rapid batch requests
   const isInitialVoiceSet = useRef(false);

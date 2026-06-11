@@ -65,10 +65,12 @@ const styles = StyleSheet.create({
  * );
  * ```
  */
-export const adaptiveColumnItemStyle = StyleSheet.create({
+const columnStyles = StyleSheet.create({
   columnItem: {
     flex: 1,
     marginHorizontal: 6,
     marginBottom: 24,
   },
-}).columnItem;
+});
+
+export const adaptiveColumnItemStyle = columnStyles.columnItem;
