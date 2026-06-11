@@ -1,5 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { guestLogger } from "../../utils/logger";
 import { GUEST_STORIES_KEY } from "../../utils/guestStorage";
 
@@ -104,7 +104,7 @@ const useGuestQuota = () => {
     }
   }, []);
 
-  return {
+  return useMemo(() => ({
     isLoaded,
     used: readStoryIds.length,
     remaining: isLoaded
@@ -116,7 +116,7 @@ const useGuestQuota = () => {
     tryAccessStory,
     resetQuota,
     readStoryIds,
-  };
+  }), [isLoaded, readStoryIds, canAccessStory, recordStoryAccess, tryAccessStory, resetQuota]);
 };
 
 export default useGuestQuota;
