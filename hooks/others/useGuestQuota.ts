@@ -104,19 +104,29 @@ const useGuestQuota = () => {
     }
   }, []);
 
-  return useMemo(() => ({
-    isLoaded,
-    used: readStoryIds.length,
-    remaining: isLoaded
-      ? Math.max(0, GUEST_FREE_LIMIT - readStoryIds.length)
-      : 0,
-    totalAllowed: GUEST_FREE_LIMIT,
-    canAccessStory,
-    recordStoryAccess,
-    tryAccessStory,
-    resetQuota,
-    readStoryIds,
-  }), [isLoaded, readStoryIds, canAccessStory, recordStoryAccess, tryAccessStory, resetQuota]);
+  return useMemo(
+    () => ({
+      isLoaded,
+      used: readStoryIds.length,
+      remaining: isLoaded
+        ? Math.max(0, GUEST_FREE_LIMIT - readStoryIds.length)
+        : 0,
+      totalAllowed: GUEST_FREE_LIMIT,
+      canAccessStory,
+      recordStoryAccess,
+      tryAccessStory,
+      resetQuota,
+      readStoryIds,
+    }),
+    [
+      isLoaded,
+      readStoryIds,
+      canAccessStory,
+      recordStoryAccess,
+      tryAccessStory,
+      resetQuota,
+    ]
+  );
 };
 
 export default useGuestQuota;
