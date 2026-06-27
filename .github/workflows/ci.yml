@@ -2,7 +2,7 @@ name: Dev CI
 
 on:
   pull_request:
-    branches: ['dev-v1.0.0']
+    branches: ['dev-v*']
     types: [opened, synchronize]
 
 concurrency:
@@ -34,6 +34,9 @@ jobs:
 
       - name: TypeScript check
         run: npm run type-check
+
+      - name: Unit tests
+        run: npm test -- --runInBand
 
       - name: Lint
         run: npm run lint

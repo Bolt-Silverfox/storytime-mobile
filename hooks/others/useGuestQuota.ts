@@ -1,8 +1,8 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { guestLogger } from "../../utils/logger";
+import { GUEST_STORIES_KEY } from "../../utils/guestStorage";
 
-const GUEST_STORIES_KEY = "guestStoriesRead";
 const GUEST_FREE_LIMIT = 3;
 
 /**
@@ -104,18 +104,29 @@ const useGuestQuota = () => {
     }
   }, []);
 
-  return {
-    isLoaded,
-    used: readStoryIds.length,
-    remaining: isLoaded
-      ? Math.max(0, GUEST_FREE_LIMIT - readStoryIds.length)
-      : 0,
-    totalAllowed: GUEST_FREE_LIMIT,
-    canAccessStory,
-    recordStoryAccess,
-    tryAccessStory,
-    resetQuota,
-  };
+  return useMemo(
+    () => ({
+      isLoaded,
+      used: readStoryIds.length,
+      remaining: isLoaded
+        ? Math.max(0, GUEST_FREE_LIMIT - readStoryIds.length)
+        : 0,
+      totalAllowed: GUEST_FREE_LIMIT,
+      canAccessStory,
+      recordStoryAccess,
+      tryAccessStory,
+      resetQuota,
+      readStoryIds,
+    }),
+    [
+      isLoaded,
+      readStoryIds,
+      canAccessStory,
+      recordStoryAccess,
+      tryAccessStory,
+      resetQuota,
+    ]
+  );
 };
 
 export default useGuestQuota;

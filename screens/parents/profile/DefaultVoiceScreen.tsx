@@ -59,7 +59,7 @@ const DefaultVoiceScreen = () => {
             <Icon name="ArrowLeft" size={24} color="black" />
           </Pressable>
           <Text className="font-[abeezee] text-base text-black">
-            Default Voice
+            Voice Selection
           </Text>
           <View className="w-6" />
         </View>
@@ -95,11 +95,11 @@ const DefaultVoiceScreen = () => {
           <Pressable
             onPress={handleSave}
             className="mx-4 mt-2 items-center rounded-full bg-primary px-2 py-3"
-            accessibilityLabel="Save default voice"
+            accessibilityLabel="Save voice selection"
             accessibilityRole="button"
           >
             <Text className="font-[abeezee] text-base text-white">
-              Save default voice
+              Save voice selection
             </Text>
           </Pressable>
         </ScrollView>

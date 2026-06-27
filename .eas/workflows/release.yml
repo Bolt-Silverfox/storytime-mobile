@@ -41,7 +41,7 @@ jobs:
     if: ${{ !needs.get_ios_build.outputs.build_id }}
     type: build
     params:
-      platform: ios
+      platform: "ios"
       profile: production
 
   build_android:
@@ -50,7 +50,7 @@ jobs:
     if: ${{ !needs.get_android_build.outputs.build_id }}
     type: build
     params:
-      platform: android
+      platform: "android"
       profile: production
 
   approve_release:
@@ -79,7 +79,7 @@ jobs:
     type: update
     params:
       branch: production
-      platform: ios
+      platform: "ios"
 
   ota_android:
     name: OTA Update Android
@@ -88,4 +88,4 @@ jobs:
     type: update
     params:
       branch: production
-      platform: android
+      platform: "android"

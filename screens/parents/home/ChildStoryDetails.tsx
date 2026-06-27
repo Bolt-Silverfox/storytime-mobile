@@ -3,6 +3,7 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ImageBackground,
+  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -10,15 +11,15 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
-import ShareStoryModal from "../../../components/modals/ShareStoryModal";
+import { makeStoryUniversalLink } from "../../../constants";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useGetGuestStoryAccess from "../../../hooks/tanstack/queryHooks/useGetGuestStoryAccess";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../../hooks/useIsPremium";
-import useGuestQuota from "../../../hooks/others/useGuestQuota";
 import useAuth from "../../../contexts/AuthContext";
 import GuestQuotaBanner from "../../../components/GuestQuotaBanner";
 import {
@@ -26,7 +27,7 @@ import {
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
-import { secondsToMinutes } from "../../../utils/utils";
+import { secondsToMinutes, shareContent } from "../../../utils/utils";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -49,17 +50,20 @@ const ChildStoryDetails = () => {
   const [selectedMode, setSelectedMode] = useState<StoryModes>("plain");
   const hasQuiz = isInteractive && questions && questions.length > 0;
   const [showAboutModal, setShowAboutModal] = useState(false);
-  const [showShareModal, setShowShareModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
-  const guestQuota = useGuestQuota();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
+  const { data: guestStoryAccess, isPending: isGuestAccessPending } =
+    useGetGuestStoryAccess(id);
   const { data: storyProgress, isFetching: isProgressFetching } =
     useGetStoryProgress(id);
-  const hasExistingProgress = !!storyProgress;
+  const hasExistingProgress = isGuest
+    ? (guestStoryAccess?.alreadyRead ?? false)
+    : !!storyProgress;
+  const isGuestAccessCheckLoading = isGuest && isGuestAccessPending;
   const hasReachedLimit = isGuest
-    ? guestQuota.isLoaded && !guestQuota.canAccessStory(id)
+    ? !!guestStoryAccess && !isGuestAccessPending && !guestStoryAccess.canAccess
     : !isPremium &&
       !hasExistingProgress &&
       !isQuotaFetching &&
@@ -67,6 +71,20 @@ const ChildStoryDetails = () => {
       (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
+  const handleShare = () => {
+    const shareUrl = makeStoryUniversalLink(id);
+    const shareMessage = `Check out "${title}" on Storytime!`;
+
+    shareContent({
+      message:
+        Platform.OS === "android"
+          ? `${shareMessage}\n${shareUrl}`
+          : shareMessage,
+      url: Platform.OS === "ios" ? shareUrl : undefined,
+      title,
+    });
+  };
+
   return (
     <SafeAreaWrapper variant="transparent">
       <View className="relative flex flex-1 bg-bgLight pb-5">
@@ -203,7 +221,7 @@ const ChildStoryDetails = () => {
             </View>
           </View>
           <StoryDetailsCTA
-            setShowShareModal={setShowShareModal}
+            onShare={handleShare}
             story={{
               ageRange: `${ageMin}-${ageMax}`,
               id,
@@ -218,8 +236,8 @@ const ChildStoryDetails = () => {
           />
         </ScrollView>
         <View className="border-t border-t-border-light bg-bgLight px-4">
-          {isGuest && guestQuota.isLoaded && !hasReachedLimit && (
-            <GuestQuotaBanner remaining={guestQuota.remaining} />
+          {isGuest && guestStoryAccess && !hasReachedLimit && (
+            <GuestQuotaBanner remaining={guestStoryAccess.remaining} />
           )}
           {!isGuest && !isPremium && quota && !hasReachedLimit && (
             <Text className="py-2 text-center font-[abeezee] text-xs text-text">
@@ -245,13 +263,9 @@ const ChildStoryDetails = () => {
             )
           ) : (
             <CustomButton
-              disabled={isGuest && !guestQuota.isLoaded}
-              onPress={async () => {
-                if (isGuest) {
-                  if (!guestQuota.isLoaded) return;
-                  const granted = await guestQuota.tryAccessStory(id);
-                  if (!granted) return;
-                }
+              disabled={isGuestAccessCheckLoading}
+              onPress={() => {
+                if (isGuestAccessCheckLoading) return;
                 navigator.navigate("readStory", {
                   storyId: id,
                   mode: selectedMode,
@@ -266,12 +280,6 @@ const ChildStoryDetails = () => {
         <AboutStoryModesModal
           isOpen={showAboutModal}
           onClose={() => setShowAboutModal(false)}
-        />
-        <ShareStoryModal
-          isOpen={showShareModal}
-          onClose={() => setShowShareModal(false)}
-          storyId={id}
-          storyTitle={title}
         />
         <SubscriptionModal
           isOpen={isSubscriptionModalOpen}

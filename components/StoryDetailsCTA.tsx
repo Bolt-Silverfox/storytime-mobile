@@ -1,5 +1,5 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { useMemo } from "react";
 import { Pressable, Text, View } from "react-native";
 import { useToggleFavourites } from "../hooks/tanstack/mutationHooks/useToggleFavourites";
 import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentFavourites";
@@ -9,9 +9,9 @@ import useAuth from "../contexts/AuthContext";
 
 type PropTypes = {
   story: FavouriteStory;
-  setShowShareModal: Dispatch<SetStateAction<boolean>>;
+  onShare: () => void;
 };
-const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
+const StoryDetailsCTA = ({ story, onShare }: PropTypes) => {
   const { isGuest } = useAuth();
   const { data } = useQueryParentsFavourites();
 
@@ -31,7 +31,7 @@ const StoryDetailsCTA = ({ story, setShowShareModal }: PropTypes) => {
   return (
     <View className="flex flex-row gap-x-3 px-4">
       <Pressable
-        onPress={() => setShowShareModal(true)}
+        onPress={onShare}
         className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
       >
         <Icon name="Share2" />

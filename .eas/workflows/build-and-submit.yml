@@ -18,34 +18,34 @@ on:
         required: true
 
 jobs:
-  build-ios:
+  build_ios:
     name: Build iOS
     type: build
     params:
-      platform: ios
+      platform: "ios"
       profile: ${{ inputs.profile }}
 
-  build-android:
+  build_android:
     name: Build Android
     type: build
     params:
-      platform: android
+      platform: "android"
       profile: ${{ inputs.profile }}
 
-  submit-ios:
+  submit_ios:
     name: Submit iOS to TestFlight
-    needs: [build-ios]
+    needs: [build_ios]
     if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
-      platform: ios
+      platform: "ios"
       profile: production
 
-  submit-android:
+  submit_android:
     name: Submit Android to Play Store
-    needs: [build-android]
+    needs: [build_android]
     if: ${{ inputs.profile == 'production' }}
     type: submit
     params:
-      platform: android
+      platform: "android"
       profile: production

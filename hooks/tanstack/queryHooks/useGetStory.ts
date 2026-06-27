@@ -5,23 +5,36 @@ import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
-const useGetStory = (storyId: string) => {
+type UseGetStoryOptions = {
+  consumeGuestAccess?: boolean;
+};
+
+const useGetStory = (
+  storyId: string,
+  { consumeGuestAccess = true }: UseGetStoryOptions = {}
+) => {
   const { user, isGuest } = useAuth();
   const queryClient = useQueryClient();
 
   return queryOptions({
-    queryKey: ["story", storyId, isGuest ? "guest" : "user", user?.id ?? null],
+    queryKey: [
+      "story",
+      storyId,
+      isGuest ? "guest" : "user",
+      user?.id ?? null,
+      consumeGuestAccess ? "consume" : "preview",
+    ],
     queryFn: async () => {
       try {
         // For guests, use a different endpoint
         if (isGuest) {
-          const request = await apiFetch(
-            `${BASE_URL}/guest/stories/${storyId}`,
-            {
-              method: "GET",
-              passThroughStatuses: [403, 401],
-            }
-          );
+          const url = consumeGuestAccess
+            ? `${BASE_URL}/guest/stories/${storyId}`
+            : `${BASE_URL}/stories/${storyId}`;
+          const request = await apiFetch(url, {
+            method: "GET",
+            passThroughStatuses: consumeGuestAccess ? [403, 401] : [403],
+          });
           const response: QueryResponse<Story> = await request.json();
           if (response.statusCode === 403) {
             throw new Error(
@@ -30,9 +43,11 @@ const useGetStory = (storyId: string) => {
             );
           }
           if (!response.success) throw new Error(response.message);
-          queryClient.invalidateQueries({
-            queryKey: [QUERY_KEYS.GET_STORY_QUOTA, "guest"],
-          });
+          if (consumeGuestAccess) {
+            queryClient.invalidateQueries({
+              queryKey: [QUERY_KEYS.GET_STORY_QUOTA, "guest"],
+            });
+          }
           return response;
         }
 
