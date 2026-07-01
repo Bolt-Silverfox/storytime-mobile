@@ -53,13 +53,13 @@ const FavouriteStoryItem = ({
         <Text className="font-[abeezee] text-sm text-text">
           {story.ageRange} years
         </Text>
-        <Pressable className="flex size-11 items-center justify-center self-end rounded-full bg-black/5">
-          <FontAwesome
-            onPress={() => setActiveStory(story)}
-            name="heart"
-            size={24}
-            color="red"
-          />
+        <Pressable
+          onPress={() => setActiveStory(story)}
+          accessibilityRole="button"
+          accessibilityLabel="Remove from favourites"
+          className="flex size-11 items-center justify-center self-end rounded-full bg-black/5"
+        >
+          <FontAwesome name="heart" size={24} color="red" />
         </Pressable>
       </View>
     </Pressable>

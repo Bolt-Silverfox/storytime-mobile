@@ -150,11 +150,14 @@ const ChildStoryDetails = () => {
                 <Text className="font-[abeezee] text-sm text-black">
                   Select preferred story mode
                 </Text>
-                <Icon
+                <Pressable
                   onPress={() => setShowAboutModal(true)}
-                  name="CircleQuestionMark"
-                  size={18}
-                />
+                  accessibilityRole="button"
+                  accessibilityLabel="About story modes"
+                  hitSlop={12}
+                >
+                  <Icon name="CircleQuestionMark" size={18} />
+                </Pressable>
               </View>
               <View className="flex flex-row gap-x-2">
                 <Pressable

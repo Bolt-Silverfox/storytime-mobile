@@ -48,6 +48,8 @@ type PropTypes = {
   onRetryFailed: () => void;
   batchError?: string | null;
   initialError?: string | null;
+  initialPositionSec?: number;
+  onPositionChange?: (positionSec: number) => void;
 };
 
 type DisplayOptions =
@@ -74,6 +76,8 @@ const StoryContentContainer = ({
   onRetryFailed,
   batchError,
   initialError,
+  initialPositionSec,
+  onPositionChange,
 }: PropTypes) => {
   const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -102,6 +106,7 @@ const StoryContentContainer = ({
   const activeParagraphRef = useRef(activeParagraph);
   const hasAutoplayed = useRef(false); // Track if we've auto-played on entry
   const keepAwakeActivated = useRef(false); // Track if keep awake is active
+  const hasReportedCompletionRef = useRef(false); // Idempotent completion guard
 
   // Keep screen awake during active narration (V0-14)
   useEffect(() => {
@@ -140,6 +145,31 @@ const StoryContentContainer = ({
   const isLastParagraph = activeParagraph === storyLength;
   const isFirstParagraph = activeParagraph === 0;
 
+  // Reset the idempotent completion guard when switching to a different story.
+  useEffect(() => {
+    hasReportedCompletionRef.current = false;
+  }, [story.id]);
+
+  // Report completion at most once per story. Arrival on the last page, the
+  // "Finish story" button, and last-page navigation all funnel through here so
+  // we only ever send a single completed:true and never a racing completed:false.
+  const reportCompletion = useCallback(() => {
+    if (hasReportedCompletionRef.current) return;
+    hasReportedCompletionRef.current = true;
+    onProgress(paragraphs.length, true);
+  }, [onProgress, paragraphs.length]);
+
+  // Report page progress without ever downgrading a story that has already been
+  // completed this session (e.g. after "read again" + advancing). Once complete,
+  // subsequent progress pings keep completed:true so they can't reintroduce a
+  // completed:false overwrite.
+  const reportProgress = useCallback(
+    (page: number) => {
+      onProgress(page, hasReportedCompletionRef.current);
+    },
+    [onProgress],
+  );
+
   // Auto-play on story entry when audio is ready (V0-22)
   useEffect(() => {
     // Only autoplay on first paragraph when story loads and audio is available
@@ -161,9 +191,9 @@ const StoryContentContainer = ({
 
   useEffect(() => {
     if (isLastParagraph) {
-      onProgress(paragraphs.length, true);
+      reportCompletion();
     }
-  }, [isLastParagraph, paragraphs.length, onProgress]);
+  }, [isLastParagraph, reportCompletion]);
 
   const readAgain = () => {
     setCurrentlyDisplayed("story");
@@ -185,9 +215,15 @@ const StoryContentContainer = ({
     isAdvancingRef.current = true;
     const next = current + 1;
     setActiveParagraph(next);
-    onProgress(next + 1, false);
+    if (next >= storyLength) {
+      // Landing on the last page: let completion own the report so we never
+      // send a completed:false that could race the completed:true.
+      reportCompletion();
+    } else {
+      reportProgress(next + 1);
+    }
     setIsPlaying(true);
-  }, [storyLength, setActiveParagraph, onProgress]);
+  }, [storyLength, setActiveParagraph, reportProgress, reportCompletion]);
 
   const handleManualNavigation = (direction: "next" | "prev") => {
     // Manual navigation pauses audio
@@ -198,12 +234,18 @@ const StoryContentContainer = ({
     if (direction === "next") {
       if (isLastParagraph) {
         setCurrentlyDisplayed("endOfStoryMessage");
-        onProgress(paragraphs.length, true);
+        reportCompletion();
         return;
       }
       setActiveParagraph((a) => {
         const next = a + 1;
-        onProgress(next + 1, false);
+        if (next >= storyLength) {
+          // Navigating onto the last page: report completion (not a racing
+          // completed:false) — mirrors the audio-finish last-page handling.
+          reportCompletion();
+        } else {
+          reportProgress(next + 1);
+        }
         return next;
       });
     } else {
@@ -230,6 +272,8 @@ const StoryContentContainer = ({
               isPlaying={isPlaying}
               setIsPlaying={setIsPlaying}
               onPageFinished={handlePageAudioFinished}
+              initialPositionSec={initialPositionSec}
+              onPositionChange={onPositionChange}
             />
           </Animated.View>
           {isTTSDegraded && isPremium && (
@@ -313,7 +357,7 @@ const StoryContentContainer = ({
                 onPress={(e) => {
                   e.stopPropagation();
                   setCurrentlyDisplayed("endOfStoryMessage");
-                  onProgress(paragraphs.length, true);
+                  reportCompletion();
                 }}
                 className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
               >
