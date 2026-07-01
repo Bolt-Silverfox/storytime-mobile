@@ -3,7 +3,8 @@ import crashlytics from "@react-native-firebase/crashlytics";
 function getInstance() {
   try {
     return crashlytics();
-  } catch (_) { // eslint-disable-line @typescript-eslint/no-unused-vars
+  } catch (_) {
+     
     // Log in dev for visibility; production returns null gracefully
     if (__DEV__) {
       // console.warn("Failed to get Crashlytics instance:", e);

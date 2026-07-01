@@ -1,7 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import {
-  GoogleSignin,
-} from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import {
   appleAuth,
   appleAuthAndroid,

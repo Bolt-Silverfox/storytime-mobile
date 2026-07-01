@@ -42,9 +42,7 @@ import {
   WEB_CLIENT_ID,
 } from "../constants";
 import * as Application from "expo-application";
-import {
-  GoogleSignin,
-} from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Alert, Platform } from "react-native";
 import {
   appleAuth,
@@ -791,7 +789,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       let googleResponse;
       try {
         googleResponse = await GoogleSignin.signIn();
-      } catch (_) { // eslint-disable-line @typescript-eslint/no-unused-vars
+      } catch (_) {
+         
         throw new Error("Authentication unsuccessful, try again");
       }
       const { idToken } = googleResponse;
