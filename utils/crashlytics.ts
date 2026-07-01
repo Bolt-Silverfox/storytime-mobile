@@ -1,18 +1,12 @@
-import {
-  getCrashlytics,
-  log,
-  recordError,
-  setCrashlyticsCollectionEnabled,
-  setUserId,
-} from "@react-native-firebase/crashlytics";
+import crashlytics from "@react-native-firebase/crashlytics";
 
 function getInstance() {
   try {
-    return getCrashlytics();
-  } catch (e) {
+    return crashlytics();
+  } catch (_) { // eslint-disable-line @typescript-eslint/no-unused-vars
     // Log in dev for visibility; production returns null gracefully
     if (__DEV__) {
-      console.warn("Failed to get Crashlytics instance:", e);
+      // console.warn("Failed to get Crashlytics instance:", e);
     }
     return null;
   }
@@ -21,8 +15,8 @@ function getInstance() {
 export function initCrashlytics() {
   const instance = getInstance();
   if (instance) {
-    setCrashlyticsCollectionEnabled(instance, true).catch((e) => {
-      if (__DEV__) console.warn("Failed to enable Crashlytics:", e);
+    instance.setCrashlyticsCollectionEnabled(true).catch((_) => {
+      // if (__DEV__) console.warn("Failed to enable Crashlytics:", e);
     });
   }
 }
@@ -30,8 +24,8 @@ export function initCrashlytics() {
 export function setCrashlyticsUser(id: string) {
   const instance = getInstance();
   if (instance) {
-    setUserId(instance, id).catch((e) => {
-      if (__DEV__) console.warn("Failed to set Crashlytics user ID:", e);
+    instance.setUserId(id).catch((_) => {
+      // if (__DEV__) console.warn("Failed to set Crashlytics user ID:", e);
     });
   }
 }
@@ -39,8 +33,8 @@ export function setCrashlyticsUser(id: string) {
 export function clearCrashlyticsUser() {
   const instance = getInstance();
   if (instance) {
-    setUserId(instance, "").catch((e) => {
-      if (__DEV__) console.warn("Failed to clear Crashlytics user ID:", e);
+    instance.setUserId("").catch((_) => {
+      // if (__DEV__) console.warn("Failed to clear Crashlytics user ID:", e);
     });
   }
 }
@@ -48,8 +42,7 @@ export function clearCrashlyticsUser() {
 export function logNonFatal(error: unknown) {
   const instance = getInstance();
   if (!instance) return;
-  recordError(
-    instance,
+  instance.recordError(
     error instanceof Error ? error : new Error(String(error))
   );
 }
@@ -57,6 +50,6 @@ export function logNonFatal(error: unknown) {
 export function crashlyticsLog(message: string) {
   const instance = getInstance();
   if (instance) {
-    log(instance, message);
+    instance.log(message);
   }
 }

@@ -1,7 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
-  isSuccessResponse,
 } from "@react-native-google-signin/google-signin";
 import {
   appleAuth,
@@ -59,11 +58,7 @@ export default function LinkedAccountsScreen() {
         return;
       }
       const googleResponse = await GoogleSignin.signIn();
-      if (!isSuccessResponse(googleResponse)) {
-        Alert.alert("Error", "Google sign-in was cancelled.");
-        return;
-      }
-      const { idToken } = googleResponse.data;
+      const { idToken } = googleResponse;
       if (!idToken) {
         Alert.alert("Error", "No ID token received from Google.");
         return;
