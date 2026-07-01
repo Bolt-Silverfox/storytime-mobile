@@ -4,7 +4,6 @@ function getInstance() {
   try {
     return crashlytics();
   } catch (_) {
-     
     // Log in dev for visibility; production returns null gracefully
     if (__DEV__) {
       // console.warn("Failed to get Crashlytics instance:", e);
