@@ -84,7 +84,14 @@ const SelectReadingVoiceModal = ({
           <Text className="font-[abeezee] text-base text-black">
             Try new voice
           </Text>
-          <Icon name="SquareX" onPress={onClose} />
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            hitSlop={12}
+          >
+            <Icon name="SquareX" />
+          </Pressable>
         </View>
         {showSaveButton && (
           <View className="rounded-2xl bg-blue/10 p-4">

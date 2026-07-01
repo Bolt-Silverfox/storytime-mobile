@@ -14,6 +14,8 @@ const StoryAudioPlayer = ({
   isPlaying,
   setIsPlaying,
   onPageFinished,
+  initialPositionSec,
+  onPositionChange,
 }: {
   audioUrl: string | null;
   isLoading: boolean;
@@ -23,6 +25,10 @@ const StoryAudioPlayer = ({
   isPlaying: boolean;
   setIsPlaying: Dispatch<SetStateAction<boolean>>;
   onPageFinished: () => void;
+  // Position (in seconds) to resume the current page's audio from, applied once.
+  initialPositionSec?: number;
+  // Reports the current playback position (in seconds) so it can be persisted.
+  onPositionChange?: (positionSec: number) => void;
 }) => {
   const player = useAudioPlayer(audioUrl);
   const status = useAudioPlayerStatus(player);
@@ -30,6 +36,9 @@ const StoryAudioPlayer = ({
   const prevDidJustFinishRef = useRef(false);
   const isPlayingRef = useRef(isPlaying);
   const onPageFinishedRef = useRef(onPageFinished);
+  const onPositionChangeRef = useRef(onPositionChange);
+  // Ensures the resume seek is applied at most once per mount.
+  const initialSeekAppliedRef = useRef(false);
 
   // Keep refs in sync
   useEffect(() => {
@@ -38,6 +47,46 @@ const StoryAudioPlayer = ({
   useEffect(() => {
     onPageFinishedRef.current = onPageFinished;
   }, [onPageFinished]);
+  useEffect(() => {
+    onPositionChangeRef.current = onPositionChange;
+  }, [onPositionChange]);
+
+  // Resume mid-page playback: once the audio for the resume page is loaded,
+  // seek to the previously saved position. Applied a single time so that
+  // normal page-to-page navigation still starts each new page from 0.
+  useEffect(() => {
+    if (initialSeekAppliedRef.current) return;
+    if (!initialPositionSec || initialPositionSec <= 0) return;
+    if (isLoading || isError || isFailed || !audioUrl) return;
+    if (!status.isLoaded) return;
+    // Don't seek past (or to the very end of) the clip.
+    if (status.duration && initialPositionSec >= status.duration) {
+      initialSeekAppliedRef.current = true;
+      return;
+    }
+    initialSeekAppliedRef.current = true;
+    try {
+      player.seekTo(initialPositionSec);
+    } catch (e) {
+      audioLogger.error("Audio resume seek failed:", e);
+    }
+  }, [
+    initialPositionSec,
+    isLoading,
+    isError,
+    isFailed,
+    audioUrl,
+    status.isLoaded,
+    status.duration,
+    player,
+  ]);
+
+  // Report current position upward so the parent can persist it for resume.
+  useEffect(() => {
+    if (status.currentTime > 0) {
+      onPositionChangeRef.current?.(status.currentTime);
+    }
+  }, [status.currentTime]);
 
   // Detect edge transition: didJustFinish going from false → true
   // This fires exactly once per audio completion, regardless of re-renders

@@ -144,6 +144,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
             onPass={gate.onPass}
             onCancel={gate.onCancel}
           />
+          <CustomButton
+            ariaLabel="Cancel button"
+            text="Cancel"
+            onPress={onClose}
+            transparent
+          />
           <View className="flex-row justify-center gap-x-4">
             <Pressable onPress={navigateToTerms}>
               <Text className="font-[abeezee] text-xs text-primary underline">
@@ -156,12 +162,6 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
               </Text>
             </Pressable>
           </View>
-          <CustomButton
-            ariaLabel="Cancel button"
-            text="Cancel"
-            onPress={onClose}
-            transparent
-          />
         </View>
       </ScrollView>
     </CustomModal>
