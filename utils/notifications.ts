@@ -2,12 +2,7 @@ import * as Notifications from "expo-notifications";
 import * as Device from "expo-device";
 import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import {
-  getMessaging,
-  getToken,
-  onTokenRefresh as onMessagingTokenRefresh,
-  registerDeviceForRemoteMessages,
-} from "@react-native-firebase/messaging";
+import messaging from "@react-native-firebase/messaging";
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
 import type { DeviceTokenResponse } from "../types";
@@ -70,9 +65,9 @@ export const getDevicePushToken = async (): Promise<string | null> => {
   try {
     if (Platform.OS === "ios") {
       // Register with APNs first, then get the FCM token
-      const messaging = getMessaging();
-      await registerDeviceForRemoteMessages(messaging);
-      const fcmToken = await getToken(messaging);
+      const messagingInstance = messaging();
+      await messagingInstance.registerDeviceForRemoteMessages();
+      const fcmToken = await messagingInstance.getToken();
       return fcmToken;
     }
 
@@ -269,7 +264,7 @@ export const addTokenRefreshListener = (
 ): (() => void) => {
   if (Platform.OS === "ios") {
     // Use Firebase Messaging listener on iOS for FCM token refresh
-    return onMessagingTokenRefresh(getMessaging(), async (newToken: string) => {
+    return messaging().onTokenRefresh(async (newToken: string) => {
       const storedToken = await getStoredPushToken();
 
       if (newToken !== storedToken) {

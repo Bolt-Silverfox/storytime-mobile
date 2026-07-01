@@ -6,8 +6,11 @@ import {
 import * as Sentry from "@sentry/react-native";
 import { logNonFatal, crashlyticsLog } from "./crashlytics";
 
+/** Valid Sentry severity levels */
+type SentrySeverityLevel = "debug" | "info" | "warning" | "error" | "fatal";
+
 /** Map react-native-logs level names to valid Sentry SeverityLevel values */
-const SENTRY_LEVEL_MAP: Record<string, Sentry.SeverityLevel> = {
+const SENTRY_LEVEL_MAP: Record<string, SentrySeverityLevel> = {
   debug: "debug",
   info: "info",
   warn: "warning",

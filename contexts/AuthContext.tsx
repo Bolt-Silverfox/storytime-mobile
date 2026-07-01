@@ -42,10 +42,7 @@ import {
   WEB_CLIENT_ID,
 } from "../constants";
 import * as Application from "expo-application";
-import {
-  GoogleSignin,
-  isSuccessResponse,
-} from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Alert, Platform } from "react-native";
 import {
   appleAuth,
@@ -789,11 +786,16 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error(
           "You don't have google play services enabled, enable it and try again."
         );
-      const googleResponse = await GoogleSignin.signIn();
-      if (!isSuccessResponse(googleResponse)) {
-        throw new Error("Authentication unsuccesful, try again");
+      let googleResponse;
+      try {
+        googleResponse = await GoogleSignin.signIn();
+      } catch (_) {
+        throw new Error("Authentication unsuccessful, try again");
       }
-      const { idToken } = googleResponse.data;
+      const { idToken } = googleResponse;
+      if (!idToken) {
+        throw new Error("No identity token returned");
+      }
       const request = await fetch(`${BASE_URL}/auth/google`, {
         headers: publicHeaders,
         body: JSON.stringify({ id_token: idToken }),
