@@ -793,6 +793,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("Authentication unsuccessful, try again");
       }
       const { idToken } = googleResponse;
+      if (!idToken) {
+        throw new Error("No identity token returned");
+      }
       const request = await fetch(`${BASE_URL}/auth/google`, {
         headers: publicHeaders,
         body: JSON.stringify({ id_token: idToken }),
