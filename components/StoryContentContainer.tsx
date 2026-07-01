@@ -167,7 +167,7 @@ const StoryContentContainer = ({
     (page: number) => {
       onProgress(page, hasReportedCompletionRef.current);
     },
-    [onProgress],
+    [onProgress]
   );
 
   // Auto-play on story entry when audio is ready (V0-22)
