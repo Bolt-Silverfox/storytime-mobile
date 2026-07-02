@@ -1,8 +1,14 @@
-import crashlytics from "@react-native-firebase/crashlytics";
+import {
+  getCrashlytics,
+  setCrashlyticsCollectionEnabled,
+  setUserId,
+  recordError,
+  log,
+} from "@react-native-firebase/crashlytics";
 
 function getInstance() {
   try {
-    return crashlytics();
+    return getCrashlytics();
   } catch (_) {
     // Log in dev for visibility; production returns null gracefully
     if (__DEV__) {
@@ -15,7 +21,7 @@ function getInstance() {
 export function initCrashlytics() {
   const instance = getInstance();
   if (instance) {
-    instance.setCrashlyticsCollectionEnabled(true).catch((_) => {
+    setCrashlyticsCollectionEnabled(instance, true).catch((_) => {
       // if (__DEV__) console.warn("Failed to enable Crashlytics:", e);
     });
   }
@@ -24,7 +30,7 @@ export function initCrashlytics() {
 export function setCrashlyticsUser(id: string) {
   const instance = getInstance();
   if (instance) {
-    instance.setUserId(id).catch((_) => {
+    setUserId(instance, id).catch((_) => {
       // if (__DEV__) console.warn("Failed to set Crashlytics user ID:", e);
     });
   }
@@ -33,7 +39,7 @@ export function setCrashlyticsUser(id: string) {
 export function clearCrashlyticsUser() {
   const instance = getInstance();
   if (instance) {
-    instance.setUserId("").catch((_) => {
+    setUserId(instance, "").catch((_) => {
       // if (__DEV__) console.warn("Failed to clear Crashlytics user ID:", e);
     });
   }
@@ -42,7 +48,8 @@ export function clearCrashlyticsUser() {
 export function logNonFatal(error: unknown) {
   const instance = getInstance();
   if (!instance) return;
-  instance.recordError(
+  recordError(
+    instance,
     error instanceof Error ? error : new Error(String(error))
   );
 }
@@ -50,6 +57,6 @@ export function logNonFatal(error: unknown) {
 export function crashlyticsLog(message: string) {
   const instance = getInstance();
   if (instance) {
-    instance.log(message);
+    log(instance, message);
   }
 }
