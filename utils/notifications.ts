@@ -6,6 +6,8 @@ import {
   getMessaging,
   registerDeviceForRemoteMessages,
   getToken,
+  // aliased to avoid colliding with the `onTokenRefresh` callback parameter below
+  onTokenRefresh as fbOnTokenRefresh,
 } from "@react-native-firebase/messaging";
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
@@ -268,10 +270,8 @@ export const addTokenRefreshListener = (
 ): (() => void) => {
   if (Platform.OS === "ios") {
     // Use Firebase Messaging listener on iOS for FCM token refresh
-    // Standalone modular onTokenRefresh(messaging, listener) has a broken type
-    // (collides with the deprecated same-named instance method), so use the
-    // instance method off the modular getMessaging() accessor.
-    return getMessaging().onTokenRefresh(async (newToken: string) => {
+    // Non-deprecated modular onTokenRefresh(messaging, listener).
+    return fbOnTokenRefresh(getMessaging(), async (newToken: string) => {
       const storedToken = await getStoredPushToken();
 
       if (newToken !== storedToken) {
