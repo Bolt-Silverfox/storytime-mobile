@@ -1459,8 +1459,8 @@ const storiesByAgeImages: Record<AgeGroupType, string> = {
     "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_4-6_javzsh.jpg",
   "7-9":
     "https://res.cloudinary.com/billmal/image/upload/v1768243230/storytime/assets/Age_7-9_emuxav.jpg",
-  "10-12":
-    "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_10-12_1_ub4ist.jpg",
+  // "10-12" temporarily removed — no stories for that age yet (see types.ts ageGroups).
+  // Re-add with: "10-12": "https://res.cloudinary.com/billmal/image/upload/v1768243231/storytime/assets/Age_10-12_1_ub4ist.jpg",
 };
 
 export {

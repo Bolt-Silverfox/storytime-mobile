@@ -253,7 +253,9 @@ type CursorPaginatedData<T> = {
   };
 };
 
-const ageGroups = ["All", "1-3", "4-6", "7-9", "10-12"] as const;
+// "10-12" temporarily removed — no stories for that age yet. Re-add here when
+// stories become available (it flows through to the age selector + filters).
+const ageGroups = ["All", "1-3", "4-6", "7-9"] as const;
 
 type AgeGroupType = (typeof ageGroups)[number];
 
