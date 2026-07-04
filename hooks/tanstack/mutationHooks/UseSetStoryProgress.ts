@@ -31,10 +31,10 @@ const useSetStoryProgress = ({
         : `${BASE_URL}/stories/user/progress`;
 
       // Note: time parameter is preserved for future analytics but not currently sent
-      // Guest sessions don't persist session time to backend
-      const body = isGuest
-        ? { storyId, progress }
-        : { storyId, progress, completed };
+      // Guest sessions don't persist session time to backend.
+      // Send `completed` for guests too so a finished story is marked "done"
+      // even when progress is reported as a page count rather than a percentage.
+      const body = { storyId, progress, completed };
 
       const request = await apiFetch(url, {
         method: "POST",
