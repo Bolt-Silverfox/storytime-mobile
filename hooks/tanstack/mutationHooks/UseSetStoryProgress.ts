@@ -22,7 +22,7 @@ const useSetStoryProgress = ({
       time: _time,
     }: {
       progress?: number;
-      completed?: boolean;
+      completed: boolean; // Required so callers can't drop it from the request body
       time?: number; // Optional - only used for guest analytics
     }) => {
       // Use guest endpoint for guests, user endpoint for authenticated users
