@@ -126,7 +126,10 @@ const StoryComponent = ({
     : false;
 
   const { isPending, error, refetch, data } = useQuery({
-    ...queryGetStory(storyId, { consumeGuestAccess: shouldConsumeGuestAccess }),
+    ...queryGetStory(storyId, {
+      consumeGuestAccess: shouldConsumeGuestAccess,
+      guestAlreadyRead: storyAlreadyReadLocally,
+    }),
     enabled: canResolveGuestQuota,
   });
 

@@ -6,15 +6,31 @@ import { QueryResponse, Story } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 
 type UseGetStoryOptions = {
+  /** Consume a guest story slot for a brand-new read. */
   consumeGuestAccess?: boolean;
+  /**
+   * The guest has already read this story, so opening it is a free re-read.
+   * Routes through the guest endpoint (which serves already-read stories
+   * without consuming quota) instead of the quota-guarded /stories/:id route.
+   */
+  guestAlreadyRead?: boolean;
 };
 
 const useGetStory = (
   storyId: string,
-  { consumeGuestAccess = true }: UseGetStoryOptions = {}
+  {
+    consumeGuestAccess = true,
+    guestAlreadyRead = false,
+  }: UseGetStoryOptions = {}
 ) => {
   const { user, isGuest } = useAuth();
   const queryClient = useQueryClient();
+
+  // Use the guest endpoint whenever we intend to consume a slot OR the story
+  // has already been read (free re-read). Only a not-yet-read preview (e.g. a
+  // deep link opening the detail screen) falls through to /stories/:id, which
+  // checks quota without consuming.
+  const useGuestEndpoint = isGuest && (consumeGuestAccess || guestAlreadyRead);
 
   return queryOptions({
     queryKey: [
@@ -22,18 +38,17 @@ const useGetStory = (
       storyId,
       isGuest ? "guest" : "user",
       user?.id ?? null,
-      consumeGuestAccess ? "consume" : "preview",
+      useGuestEndpoint ? "guest-endpoint" : "preview",
     ],
     queryFn: async () => {
       try {
-        // For guests, use a different endpoint
-        if (isGuest) {
-          const url = consumeGuestAccess
-            ? `${BASE_URL}/guest/stories/${storyId}`
-            : `${BASE_URL}/stories/${storyId}`;
+        // Guest re-read or consuming read -> guest endpoint (already-read
+        // stories are served free; new reads consume a slot server-side).
+        if (useGuestEndpoint) {
+          const url = `${BASE_URL}/guest/stories/${storyId}`;
           const request = await apiFetch(url, {
             method: "GET",
-            passThroughStatuses: consumeGuestAccess ? [403, 401] : [403],
+            passThroughStatuses: [403, 401],
           });
           const response: QueryResponse<Story> = await request.json();
           if (response.statusCode === 403) {
