@@ -7,12 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "scheme": "storytime",
-    "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#fbf8f7"
-    },
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "net.emerj.storytime",
@@ -32,7 +26,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#fbf8f7"
       },
-      "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "googleServicesFile": "./google-services.json",
       "permissions": [
@@ -43,6 +36,14 @@
     },
     "plugins": [
       "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#fbf8f7"
+        }
+      ],
       [
         "expo-image-picker",
         {
@@ -98,7 +99,9 @@
           "project": "storytime-mobile"
         }
       ],
-      "@react-native-firebase/crashlytics"
+      "@react-native-firebase/crashlytics",
+      "@sentry/react-native",
+      "expo-status-bar"
     ],
     "extra": {
       "eas": {

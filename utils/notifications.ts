@@ -4,9 +4,10 @@ import { Platform } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   getMessaging,
-  getToken,
-  onTokenRefresh as onMessagingTokenRefresh,
   registerDeviceForRemoteMessages,
+  getToken,
+  // aliased to avoid colliding with the `onTokenRefresh` callback parameter below
+  onTokenRefresh as fbOnTokenRefresh,
 } from "@react-native-firebase/messaging";
 import apiFetch from "../apiFetch";
 import { BASE_URL } from "../constants";
@@ -70,9 +71,9 @@ export const getDevicePushToken = async (): Promise<string | null> => {
   try {
     if (Platform.OS === "ios") {
       // Register with APNs first, then get the FCM token
-      const messaging = getMessaging();
-      await registerDeviceForRemoteMessages(messaging);
-      const fcmToken = await getToken(messaging);
+      const messagingInstance = getMessaging();
+      await registerDeviceForRemoteMessages(messagingInstance);
+      const fcmToken = await getToken(messagingInstance);
       return fcmToken;
     }
 
@@ -269,7 +270,8 @@ export const addTokenRefreshListener = (
 ): (() => void) => {
   if (Platform.OS === "ios") {
     // Use Firebase Messaging listener on iOS for FCM token refresh
-    return onMessagingTokenRefresh(getMessaging(), async (newToken: string) => {
+    // Non-deprecated modular onTokenRefresh(messaging, listener).
+    return fbOnTokenRefresh(getMessaging(), async (newToken: string) => {
       const storedToken = await getStoredPushToken();
 
       if (newToken !== storedToken) {

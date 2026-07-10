@@ -1,8 +1,10 @@
 import * as Sentry from "@sentry/react-native";
+import { reactNavigationIntegration } from "@sentry/react-native";
 
 const SENTRY_DSN = process.env.EXPO_PUBLIC_SENTRY_DSN;
 
-export const reactNavigationIntegration = Sentry.reactNavigationIntegration({
+// Create the React Navigation integration
+const reactNavigationIntegrationInstance = reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
 });
 
@@ -26,7 +28,11 @@ if (SENTRY_DSN && !__DEV__) {
       Sentry.reactNativeTracingIntegration({
         enableHTTPTimings: true,
       }),
-      reactNavigationIntegration,
+      // The reactNavigationIntegration returns a ReactNavigationInstrumentation
+      // which implements the Integration interface at runtime but TypeScript
+      // doesn't recognize it due to missing setupOnce in the type definition.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      reactNavigationIntegrationInstance as any,
     ],
 
     beforeSend(event) {
@@ -52,6 +58,8 @@ if (SENTRY_DSN && !__DEV__) {
     },
   });
 }
+
+export { reactNavigationIntegrationInstance as reactNavigationIntegration };
 
 export function initSentry() {
   // Sentry is now auto-initialized on import above.

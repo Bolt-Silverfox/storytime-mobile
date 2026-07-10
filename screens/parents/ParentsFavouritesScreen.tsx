@@ -33,7 +33,7 @@ const AGE_FILTERS: readonly AgeRangeFilter[] = [
   { key: "1-3", label: "1 – 3 years", min: 1, max: 3 },
   { key: "4-6", label: "4 – 6 years", min: 4, max: 6 },
   { key: "7-9", label: "7 – 9 years", min: 7, max: 9 },
-  { key: "10-12", label: "10 – 12 years", min: 10, max: 12 },
+  // "10-12" temporarily removed — no stories for that age yet (see types.ts ageGroups)
 ] as const;
 
 const ParentsFavouritesScreen = () => {

@@ -39,7 +39,14 @@ const InStoryModeModal = ({
       <View className="flex flex-col gap-y-6 bg-white">
         <View className="flex flex-row items-center justify-between border-b border-b-border-light pb-6">
           <Text className="font-[abeezee] text-base">Change story mode</Text>
-          <Icon name="SquareX" onPress={handleClose} />
+          <Pressable
+            onPress={handleClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            hitSlop={12}
+          >
+            <Icon name="SquareX" />
+          </Pressable>
         </View>
         <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
           <Pressable

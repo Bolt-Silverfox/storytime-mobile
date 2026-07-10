@@ -13,7 +13,14 @@ const AboutStoryModesModal = ({
           <Text className="font-[quilka] text-xl">
             About preferred story mode
           </Text>
-          <Icon name="SquareX" onPress={onClose} />
+          <Pressable
+            onPress={onClose}
+            accessibilityRole="button"
+            accessibilityLabel="Close"
+            hitSlop={12}
+          >
+            <Icon name="SquareX" />
+          </Pressable>
         </View>
         <Text className="font-[abeezee] text-sm text-text">
           Here's a breakdown of the difference between the two preferred story

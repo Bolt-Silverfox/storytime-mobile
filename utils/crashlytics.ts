@@ -1,18 +1,18 @@
 import {
   getCrashlytics,
-  log,
-  recordError,
   setCrashlyticsCollectionEnabled,
   setUserId,
+  recordError,
+  log,
 } from "@react-native-firebase/crashlytics";
 
 function getInstance() {
   try {
     return getCrashlytics();
-  } catch (e) {
+  } catch (_) {
     // Log in dev for visibility; production returns null gracefully
     if (__DEV__) {
-      console.warn("Failed to get Crashlytics instance:", e);
+      // console.warn("Failed to get Crashlytics instance:", e);
     }
     return null;
   }
@@ -21,8 +21,8 @@ function getInstance() {
 export function initCrashlytics() {
   const instance = getInstance();
   if (instance) {
-    setCrashlyticsCollectionEnabled(instance, true).catch((e) => {
-      if (__DEV__) console.warn("Failed to enable Crashlytics:", e);
+    setCrashlyticsCollectionEnabled(instance, true).catch((_) => {
+      // if (__DEV__) console.warn("Failed to enable Crashlytics:", e);
     });
   }
 }
@@ -30,8 +30,8 @@ export function initCrashlytics() {
 export function setCrashlyticsUser(id: string) {
   const instance = getInstance();
   if (instance) {
-    setUserId(instance, id).catch((e) => {
-      if (__DEV__) console.warn("Failed to set Crashlytics user ID:", e);
+    setUserId(instance, id).catch((_) => {
+      // if (__DEV__) console.warn("Failed to set Crashlytics user ID:", e);
     });
   }
 }
@@ -39,8 +39,8 @@ export function setCrashlyticsUser(id: string) {
 export function clearCrashlyticsUser() {
   const instance = getInstance();
   if (instance) {
-    setUserId(instance, "").catch((e) => {
-      if (__DEV__) console.warn("Failed to clear Crashlytics user ID:", e);
+    setUserId(instance, "").catch((_) => {
+      // if (__DEV__) console.warn("Failed to clear Crashlytics user ID:", e);
     });
   }
 }

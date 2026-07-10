@@ -34,6 +34,9 @@ import useAuth from "../contexts/AuthContext";
 import { audioLogger } from "../utils/logger";
 
 const TOGGLE_DEBOUNCE_MS = 400;
+// Throttle for writing the mid-page audio position to AsyncStorage.
+const POSITION_PERSIST_INTERVAL_MS = 3000;
+const storyPositionKey = (storyId: string) => `storyPosition:${storyId}`;
 
 const StoryComponent = ({
   storyId,
@@ -50,6 +53,15 @@ const StoryComponent = ({
   const [activeParagraph, setActiveParagraph] = useState(() =>
     page && page > 0 ? page - 1 : 0
   );
+  // Mid-page audio position (seconds) to resume from, loaded once on entry.
+  const [resumePositionSec, setResumePositionSec] = useState<number | null>(
+    null
+  );
+  // Page the screen entered on — the only page the resume position applies to.
+  const initialPageRef = useRef(page && page > 0 ? page - 1 : 0);
+  const activeParagraphRef = useRef(activeParagraph);
+  const latestPositionRef = useRef(0);
+  const lastPositionPersistRef = useRef(0);
   const [currentMode, setCurrentMode] = useState<StoryModes>(storyMode);
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
   const [debouncedVoice, setDebouncedVoice] = useState<string | null>(null);
@@ -114,7 +126,10 @@ const StoryComponent = ({
     : false;
 
   const { isPending, error, refetch, data } = useQuery({
-    ...queryGetStory(storyId, { consumeGuestAccess: shouldConsumeGuestAccess }),
+    ...queryGetStory(storyId, {
+      consumeGuestAccess: shouldConsumeGuestAccess,
+      guestAlreadyRead: storyAlreadyReadLocally,
+    }),
     enabled: canResolveGuestQuota,
   });
 
@@ -282,6 +297,70 @@ const StoryComponent = ({
     storyId,
   });
 
+  // Keep a ref of the current page so persistence always pairs the saved
+  // position with the page it belongs to. Reset the latest position on page
+  // change so the unmount flush can't pair the new page with the previous
+  // page's audio time (the new page reports its own position once it plays).
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    latestPositionRef.current = 0;
+  }, [activeParagraph]);
+
+  // Load any saved mid-page position once on entry. Only resume if the saved
+  // page matches the page we're actually entering on (kept consistent with the
+  // page-level `progress` resume), otherwise start that page from the top.
+  useEffect(() => {
+    let active = true;
+    AsyncStorage.getItem(storyPositionKey(storyId))
+      .then((raw) => {
+        if (!active || !raw) return;
+        const saved = JSON.parse(raw) as { page: number; position: number };
+        if (saved?.page === initialPageRef.current && saved.position > 0) {
+          setResumePositionSec(saved.position);
+        }
+      })
+      .catch(() => {});
+    return () => {
+      active = false;
+    };
+  }, [storyId]);
+
+  // Receive the live playback position and persist it (throttled) so returning
+  // to the story resumes mid-page instead of restarting the narration.
+  const handlePositionChange = useCallback(
+    (positionSec: number) => {
+      latestPositionRef.current = positionSec;
+      const now = Date.now();
+      if (now - lastPositionPersistRef.current < POSITION_PERSIST_INTERVAL_MS) {
+        return;
+      }
+      lastPositionPersistRef.current = now;
+      AsyncStorage.setItem(
+        storyPositionKey(storyId),
+        JSON.stringify({
+          page: activeParagraphRef.current,
+          position: positionSec,
+        })
+      ).catch(() => {});
+    },
+    [storyId]
+  );
+
+  // Flush the latest position on unmount (the exit-mid-story case).
+  useEffect(() => {
+    return () => {
+      if (latestPositionRef.current > 0) {
+        AsyncStorage.setItem(
+          storyPositionKey(storyId),
+          JSON.stringify({
+            page: activeParagraphRef.current,
+            position: latestPositionRef.current,
+          })
+        ).catch(() => {});
+      }
+    };
+  }, [storyId]);
+
   const handleProgress = useCallback(
     (progress: number, completed: boolean) => {
       setStoryProgress({
@@ -289,8 +368,13 @@ const StoryComponent = ({
         completed,
         time: sessionStartTime.current,
       });
+      // Once finished, clear the saved position so re-reading starts fresh.
+      if (completed) {
+        latestPositionRef.current = 0;
+        AsyncStorage.removeItem(storyPositionKey(storyId)).catch(() => {});
+      }
     },
-    [setStoryProgress]
+    [setStoryProgress, storyId]
   );
 
   if (isPending) return <LoadingOverlay visible />;
@@ -395,6 +479,12 @@ const StoryComponent = ({
                 onRetryFailed={retryFailed}
                 batchError={batchError}
                 initialError={initialError}
+                initialPositionSec={
+                  activeParagraph === initialPageRef.current
+                    ? (resumePositionSec ?? undefined)
+                    : undefined
+                }
+                onPositionChange={handlePositionChange}
               />
             </View>
           </ImageBackground>
