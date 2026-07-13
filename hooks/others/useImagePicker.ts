@@ -1,26 +1,42 @@
+import {
+  ImageManipulator,
+  SaveFormat,
+} from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { Dispatch, SetStateAction } from "react";
 import { Alert } from "react-native";
-import { IMAGE_MIME_MAP, MAX_IMAGE_SIZE } from "../../constants";
+import { MAX_IMAGE_SIZE } from "../../constants";
 
-function validateImageAsset(
-  asset: ImagePicker.ImagePickerAsset,
-  skipExtensionCheck = false
+// Avatars never need to be larger than this; downscaling keeps the JPEG small
+// and well under the backend's 5MB limit.
+const MAX_AVATAR_DIMENSION = 1024;
+
+function validateImageSize(
+  asset: ImagePicker.ImagePickerAsset
 ): string | null {
   if (typeof asset.fileSize === "number" && asset.fileSize > MAX_IMAGE_SIZE) {
     return `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`;
   }
-
-  // Camera URIs on some Android devices lack file extensions (e.g. content://...),
-  // so callers can opt out of the extension check when the source is the camera.
-  if (!skipExtensionCheck) {
-    const ext = asset.uri.split("?")[0].split(".").pop()?.toLowerCase() ?? "";
-    if (!(ext in IMAGE_MIME_MAP)) {
-      return "Unsupported image format. Please use JPG, PNG, GIF, or WebP.";
-    }
-  }
-
   return null;
+}
+
+// Convert any picked asset (HEIC from iPhone photos, extensionless camera
+// captures, PNG, etc.) to a JPEG on-device. This guarantees a format the
+// backend accepts (png|jpeg|gif|webp) and a URI with a real .jpg extension,
+// which the upload path relies on.
+async function normalizeToJpeg(
+  asset: ImagePicker.ImagePickerAsset
+): Promise<string> {
+  const context = ImageManipulator.manipulate(asset.uri);
+  if (typeof asset.width === "number" && asset.width > MAX_AVATAR_DIMENSION) {
+    context.resize({ width: MAX_AVATAR_DIMENSION });
+  }
+  const rendered = await context.renderAsync();
+  const result = await rendered.saveAsync({
+    format: SaveFormat.JPEG,
+    compress: 0.8,
+  });
+  return result.uri;
 }
 
 const useImagePicker = ({
@@ -48,13 +64,21 @@ const useImagePicker = ({
     });
 
     if (!result.canceled) {
-      const error = validateImageAsset(result.assets[0]);
+      const error = validateImageSize(result.assets[0]);
       if (error) {
         Alert.alert("Invalid Image", error);
         onClose();
         return;
       }
-      setImage(result.assets[0].uri);
+      try {
+        const uri = await normalizeToJpeg(result.assets[0]);
+        setImage(uri);
+      } catch {
+        Alert.alert(
+          "Invalid Image",
+          "We couldn't process that image. Please try a different photo."
+        );
+      }
       onClose();
     }
   };
@@ -78,13 +102,21 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      const error = validateImageAsset(result.assets[0], true);
+      const error = validateImageSize(result.assets[0]);
       if (error) {
         Alert.alert("Invalid Image", error);
         onClose();
         return;
       }
-      setImage(result.assets[0].uri);
+      try {
+        const uri = await normalizeToJpeg(result.assets[0]);
+        setImage(uri);
+      } catch {
+        Alert.alert(
+          "Invalid Image",
+          "We couldn't process that image. Please try a different photo."
+        );
+      }
       onClose();
     }
   };

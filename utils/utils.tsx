@@ -109,12 +109,12 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
 
     const cleanUri = imageUri.split("?")[0];
     const ext = cleanUri.split(".").pop()?.toLowerCase() ?? "";
-    if (!(ext in IMAGE_MIME_MAP)) {
-      throw new Error(
-        "Unsupported image format. Please use JPG, PNG, GIF, or WebP."
-      );
-    }
-    const validExt = ext as keyof typeof IMAGE_MIME_MAP;
+    // Images are normalized to JPEG before reaching here (see useImagePicker),
+    // but fall back to JPEG for any extensionless/unknown URI rather than
+    // rejecting a valid file.
+    const validExt = (
+      ext in IMAGE_MIME_MAP ? ext : "jpg"
+    ) as keyof typeof IMAGE_MIME_MAP;
     const mimeType = IMAGE_MIME_MAP[validExt];
 
     formData.append("image", {
