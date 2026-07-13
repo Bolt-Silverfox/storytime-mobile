@@ -1,7 +1,4 @@
-import {
-  ImageManipulator,
-  SaveFormat,
-} from "expo-image-manipulator";
+import { ImageManipulator, SaveFormat } from "expo-image-manipulator";
 import * as ImagePicker from "expo-image-picker";
 import { Dispatch, SetStateAction } from "react";
 import { Alert } from "react-native";
@@ -11,9 +8,7 @@ import { MAX_IMAGE_SIZE } from "../../constants";
 // and well under the backend's 5MB limit.
 const MAX_AVATAR_DIMENSION = 1024;
 
-function validateImageSize(
-  asset: ImagePicker.ImagePickerAsset
-): string | null {
+function validateImageSize(asset: ImagePicker.ImagePickerAsset): string | null {
   if (typeof asset.fileSize === "number" && asset.fileSize > MAX_IMAGE_SIZE) {
     return `Maximum image size is ${MAX_IMAGE_SIZE / (1024 * 1024)}MB`;
   }
