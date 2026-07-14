@@ -1,6 +1,13 @@
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import * as Clipboard from "expo-clipboard";
-import { Platform, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Linking,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { makeStoryUniversalLink } from "../../constants";
 import { shareContent } from "../../utils/utils";
 import useToast from "../../contexts/ToastContext";
@@ -52,6 +59,32 @@ const ShareStoryModal = ({
     });
   };
 
+  // Per-app share intents (https universal links open the installed app, else
+  // the web share dialog). Instagram has no link-share URL, so it — and any
+  // failure to open — falls back to the OS share sheet.
+  const handleSocialShare = async (platform: string) => {
+    const encodedUrl = encodeURIComponent(shareUrl);
+    const targets: Record<string, string | undefined> = {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`,
+      whatsapp: `https://wa.me/?text=${encodeURIComponent(`${shareMessage} ${shareUrl}`)}`,
+      "x-twitter": `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareMessage
+      )}&url=${encodedUrl}`,
+    };
+
+    const target = targets[platform];
+    if (!target) {
+      handleShare();
+      return;
+    }
+    try {
+      await Linking.openURL(target);
+    } catch {
+      handleShare();
+    }
+  };
+
   return (
     <CustomModal onClose={onClose} isOpen={isOpen}>
       <View className="flex flex-col gap-y-6">
@@ -88,7 +121,7 @@ const ShareStoryModal = ({
           {SOCIAL_ICONS.map((icon) => (
             <Pressable
               key={icon.name}
-              onPress={handleShare}
+              onPress={() => handleSocialShare(icon.name)}
               style={styles.socialButton}
               accessibilityLabel={`Share on ${icon.label}`}
               accessibilityRole="button"
