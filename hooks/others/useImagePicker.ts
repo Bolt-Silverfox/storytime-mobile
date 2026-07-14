@@ -23,8 +23,16 @@ async function normalizeToJpeg(
   asset: ImagePicker.ImagePickerAsset
 ): Promise<string> {
   const context = ImageManipulator.manipulate(asset.uri);
-  if (typeof asset.width === "number" && asset.width > MAX_AVATAR_DIMENSION) {
-    context.resize({ width: MAX_AVATAR_DIMENSION });
+  // Constrain the longer edge so both wide and tall images are downscaled while
+  // preserving aspect ratio (resizing only one dimension scales the other).
+  const width = typeof asset.width === "number" ? asset.width : 0;
+  const height = typeof asset.height === "number" ? asset.height : 0;
+  if (Math.max(width, height) > MAX_AVATAR_DIMENSION) {
+    context.resize(
+      width >= height
+        ? { width: MAX_AVATAR_DIMENSION }
+        : { height: MAX_AVATAR_DIMENSION }
+    );
   }
   const rendered = await context.renderAsync();
   const result = await rendered.saveAsync({
@@ -32,6 +40,28 @@ async function normalizeToJpeg(
     compress: 0.8,
   });
   return result.uri;
+}
+
+// Shared size-check -> normalize-to-JPEG -> setImage flow, with a single
+// alert path for both invalid-size and processing failures. Used by the
+// library and camera handlers so they can't silently diverge.
+async function processPickedAsset(
+  asset: ImagePicker.ImagePickerAsset,
+  setImage: Dispatch<SetStateAction<string | undefined>>
+): Promise<void> {
+  const error = validateImageSize(asset);
+  if (error) {
+    Alert.alert("Invalid Image", error);
+    return;
+  }
+  try {
+    setImage(await normalizeToJpeg(asset));
+  } catch {
+    Alert.alert(
+      "Invalid Image",
+      "We couldn't process that image. Please try a different photo."
+    );
+  }
 }
 
 const useImagePicker = ({
@@ -59,21 +89,7 @@ const useImagePicker = ({
     });
 
     if (!result.canceled) {
-      const error = validateImageSize(result.assets[0]);
-      if (error) {
-        Alert.alert("Invalid Image", error);
-        onClose();
-        return;
-      }
-      try {
-        const uri = await normalizeToJpeg(result.assets[0]);
-        setImage(uri);
-      } catch {
-        Alert.alert(
-          "Invalid Image",
-          "We couldn't process that image. Please try a different photo."
-        );
-      }
+      await processPickedAsset(result.assets[0], setImage);
       onClose();
     }
   };
@@ -97,21 +113,7 @@ const useImagePicker = ({
       shape: "oval",
     });
     if (!result.canceled) {
-      const error = validateImageSize(result.assets[0]);
-      if (error) {
-        Alert.alert("Invalid Image", error);
-        onClose();
-        return;
-      }
-      try {
-        const uri = await normalizeToJpeg(result.assets[0]);
-        setImage(uri);
-      } catch {
-        Alert.alert(
-          "Invalid Image",
-          "We couldn't process that image. Please try a different photo."
-        );
-      }
+      await processPickedAsset(result.assets[0], setImage);
       onClose();
     }
   };
