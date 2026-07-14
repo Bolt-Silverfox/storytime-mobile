@@ -1,7 +1,8 @@
+import { File } from "expo-file-system";
 import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 import apiFetch, { ApiError } from "../apiFetch";
-import { BASE_URL, IMAGE_MIME_MAP } from "../constants";
+import { BASE_URL } from "../constants";
 import type {
   Notification,
   NotificationCategory,
@@ -107,21 +108,13 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
   try {
     const formData = new FormData();
 
-    const cleanUri = imageUri.split("?")[0];
-    const ext = cleanUri.split(".").pop()?.toLowerCase() ?? "";
-    // Images are normalized to JPEG before reaching here (see useImagePicker),
-    // but fall back to JPEG for any extensionless/unknown URI rather than
-    // rejecting a valid file.
-    const validExt = (
-      ext in IMAGE_MIME_MAP ? ext : "jpg"
-    ) as keyof typeof IMAGE_MIME_MAP;
-    const mimeType = IMAGE_MIME_MAP[validExt];
-
-    formData.append("image", {
-      uri: imageUri,
-      type: mimeType,
-      name: `avatar.${validExt}`,
-    } as unknown as Blob);
+    // The global fetch is expo/fetch (since SDK 56), which rejects React
+    // Native's { uri, name, type } FormData shorthand with "Unsupported
+    // FormDataPart implementation". expo-file-system's File implements Blob and
+    // is file-backed, so it streams the file and carries the correct filename
+    // and content-type (image/jpeg for the JPEG produced by useImagePicker).
+    const file = new File(imageUri);
+    formData.append("image", file as unknown as Blob);
 
     formData.append("userId", userId);
     const request = await apiFetch(`${BASE_URL}/avatars/upload/user`, {
