@@ -65,9 +65,27 @@ const STORY_DEEP_LINK_ROUTE = "story/:storyId";
 const makeStoryDeepLink = (storyId: string) =>
   `${SHARE_DEEP_LINK_URL}/${storyId}`;
 
-/** Helper to construct full story web link. */
-const makeStoryUniversalLink = (storyId: string) =>
-  `${SHARE_STORY_WEB_URL}/${storyId}`;
+/** Slugify a story title for readable share URLs (e.g. "the-brave-little-fox"). */
+const slugifyStoryTitle = (title: string) =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-+)|(-+$)/g, "")
+    .slice(0, 60)
+    .replace(/-+$/g, "");
+
+/**
+ * Helper to construct a full story web link. When a title is provided the URL
+ * gets a readable slug prefix (`/story/<slug>-<uuid>`) so recipients can see
+ * the story name; the trailing UUID keeps it uniquely resolvable. Falls back to
+ * `/story/<uuid>` when no title is available.
+ */
+const makeStoryUniversalLink = (storyId: string, title?: string) => {
+  const slug = title ? slugifyStoryTitle(title) : "";
+  return slug
+    ? `${SHARE_STORY_WEB_URL}/${slug}-${storyId}`
+    : `${SHARE_STORY_WEB_URL}/${storyId}`;
+};
 
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;

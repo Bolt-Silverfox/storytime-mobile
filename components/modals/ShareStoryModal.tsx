@@ -26,7 +26,7 @@ const ShareStoryModal = ({
   storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
-  const shareUrl = makeStoryUniversalLink(storyId);
+  const shareUrl = makeStoryUniversalLink(storyId, storyTitle);
   const { notify } = useToast();
 
   const handleCopy = async () => {
