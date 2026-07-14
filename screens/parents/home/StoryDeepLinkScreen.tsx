@@ -5,6 +5,7 @@ import { Text, View } from "react-native";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { extractStoryId } from "../../../constants";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
 import {
   StoryNavigatorParamList,
@@ -16,7 +17,8 @@ type RoutePropTypes = RouteProp<StoryNavigatorParamList, "storyDeepLink">;
 const StoryDeepLinkScreen = () => {
   const navigator = useNavigation<StoryNavigatorProp>();
   const { params } = useRoute<RoutePropTypes>();
-  const { storyId } = params;
+  // Universal links arrive as `<slug>-<uuid>`; the API needs the bare UUID.
+  const storyId = extractStoryId(params.storyId);
   const { data, isPending, error, refetch } = useQuery(
     useGetStory(storyId, { consumeGuestAccess: false })
   );

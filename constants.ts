@@ -87,6 +87,19 @@ const makeStoryUniversalLink = (storyId: string, title?: string) => {
     : `${SHARE_STORY_WEB_URL}/${storyId}`;
 };
 
+/** Matches a v4-style UUID anywhere in a string. */
+const STORY_UUID_REGEX =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+/**
+ * Extract the story UUID from a possibly slug-prefixed identifier
+ * (`<slug>-<uuid>` → `<uuid>`). Incoming universal links carry the slugged form,
+ * so deep-link screens must normalize before querying the API. Returns the input
+ * unchanged when it's already a bare id.
+ */
+const extractStoryId = (value: string): string =>
+  value.match(STORY_UUID_REGEX)?.[0] ?? value;
+
 /** Duration of the story controls fade animation in ms. */
 const CONTROLS_FADE_MS = 200;
 
@@ -110,6 +123,7 @@ export {
   STORY_DEEP_LINK_ROUTE,
   makeStoryDeepLink,
   makeStoryUniversalLink,
+  extractStoryId,
   CONTROLS_FADE_MS,
   DEFAULT_CURSOR_PAGE_SIZE,
   GUEST_DEFAULT_VOICE_ID,
