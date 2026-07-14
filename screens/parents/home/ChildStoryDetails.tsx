@@ -3,7 +3,6 @@ import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 import {
   ImageBackground,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -11,7 +10,7 @@ import {
 } from "react-native";
 import Icon from "../../../components/Icon";
 import AboutStoryModesModal from "../../../components/modals/AboutStoryModesModal";
-import { makeStoryUniversalLink } from "../../../constants";
+import ShareStoryModal from "../../../components/modals/ShareStoryModal";
 import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
@@ -27,7 +26,7 @@ import {
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
 import { StoryModes } from "../../../types";
-import { secondsToMinutes, shareContent } from "../../../utils/utils";
+import { secondsToMinutes } from "../../../utils/utils";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "childStoryDetails">;
 
@@ -51,6 +50,7 @@ const ChildStoryDetails = () => {
   const hasQuiz = isInteractive && questions && questions.length > 0;
   const [showAboutModal, setShowAboutModal] = useState(false);
   const [isSubscriptionModalOpen, setIsSubscriptionModalOpen] = useState(false);
+  const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
@@ -71,19 +71,7 @@ const ChildStoryDetails = () => {
       (quota?.remaining ?? 0) === 0;
 
   const duration = secondsToMinutes(durationSeconds);
-  const handleShare = () => {
-    const shareUrl = makeStoryUniversalLink(id);
-    const shareMessage = `Check out "${title}" on Storytime!`;
-
-    shareContent({
-      message:
-        Platform.OS === "android"
-          ? `${shareMessage}\n${shareUrl}`
-          : shareMessage,
-      url: Platform.OS === "ios" ? shareUrl : undefined,
-      title,
-    });
-  };
+  const handleShare = () => setIsShareModalOpen(true);
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -287,6 +275,12 @@ const ChildStoryDetails = () => {
         <SubscriptionModal
           isOpen={isSubscriptionModalOpen}
           onClose={() => setIsSubscriptionModalOpen(false)}
+        />
+        <ShareStoryModal
+          isOpen={isShareModalOpen}
+          onClose={() => setIsShareModalOpen(false)}
+          storyId={id}
+          storyTitle={title}
         />
       </View>
     </SafeAreaWrapper>
