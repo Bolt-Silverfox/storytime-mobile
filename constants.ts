@@ -48,7 +48,7 @@ const configuredShareStoryWebUrl =
 const shareStoryWebBaseUrl =
   configuredShareStoryWebUrl && configuredShareStoryWebUrl.length > 0
     ? configuredShareStoryWebUrl
-    : "https://www.storytimeapp.me";
+    : "https://web.storytimeapp.me";
 
 /** Web URL prefix for shareable story links. */
 const SHARE_STORY_WEB_URL = shareStoryWebBaseUrl.endsWith("/story")
