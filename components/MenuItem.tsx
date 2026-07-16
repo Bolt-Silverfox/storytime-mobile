@@ -66,7 +66,7 @@ const MenuItem: FC<PropTypes> = ({
         </View>
 
         {isOpen && (
-          <View style={styles.openBorder} className="px-4 pb-4 ">
+          <View style={styles.openBorder} className="px-4 pb-4">
             <Text style={[defaultStyles.defaultText]}>{description}</Text>
           </View>
         )}

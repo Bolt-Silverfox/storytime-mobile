@@ -24,7 +24,7 @@ const SuccessScreen = ({
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="mb-4 text-center font-[abeezee] text-base  text-text">
+        <Text className="mb-4 text-center font-[abeezee] text-base text-text">
           {secondaryMessage}
         </Text>
       )}

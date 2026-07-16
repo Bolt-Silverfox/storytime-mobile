@@ -51,12 +51,12 @@ const HomepageStoriesContainer = ({
   return (
     <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
       <View className="mx-auto flex w-full max-w-screen-md flex-row items-center justify-between lg:max-w-screen-lg xl:max-w-screen-xl">
-        <Text className="font-[abeezee]  text-base leading-5 text-black">
+        <Text className="font-[abeezee] text-base leading-5 text-black">
           {title}
         </Text>
         <Text
           onPress={onViewAll}
-          className="font-[abeezee]  text-base leading-5 text-[#0731EC]"
+          className="font-[abeezee] text-base leading-5 text-[#0731EC]"
         >
           View all
         </Text>

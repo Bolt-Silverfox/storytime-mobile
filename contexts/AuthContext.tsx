@@ -177,8 +177,7 @@ type AuthErrorResponse = {
 };
 
 type AuthResponse<T = { message: string }> =
-  | AuthSuccessResponse<T>
-  | AuthErrorResponse;
+  AuthSuccessResponse<T> | AuthErrorResponse;
 
 type SetErrorCallback = Dispatch<SetStateAction<string>>;
 

@@ -17,7 +17,7 @@ const PageTitle = ({
       >
         <Icon name="ChevronLeft" color="#212121" />
       </Pressable>
-      <Text className="flex-1 text-center  font-[abeezee] text-[18px]">
+      <Text className="flex-1 text-center font-[abeezee] text-[18px]">
         {title}
       </Text>
     </View>

@@ -52,13 +52,13 @@ export default function DeleteAccount() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 ">
+      <View className="flex-1">
         <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
         <ScrollView
-          className="mx-[16] flex-1 "
+          className="mx-[16] flex-1"
           showsVerticalScrollIndicator={false}
         >
-          <View className="mt-12  items-center">
+          <View className="mt-12 items-center">
             <Text
               style={[defaultStyles.defaultText, styles.textFontSize]}
               className="mt-4 max-w-[311px] text-center"
@@ -81,7 +81,7 @@ export default function DeleteAccount() {
             {apiError && <ErrorMessageDisplay errorMessage={apiError} />}
           </View>
         </ScrollView>
-        <View className="mx-[16] my-8 flex  justify-center gap-6">
+        <View className="mx-[16] my-8 flex justify-center gap-6">
           <Pressable onPress={handleSubmit}>
             <Text
               style={[defaultStyles.defaultText, styles.whiteText]}
@@ -101,7 +101,7 @@ export default function DeleteAccount() {
           >
             <Text
               style={[defaultStyles.defaultText, styles.blackText]}
-              className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+              className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
             >
               Cancel
             </Text>
