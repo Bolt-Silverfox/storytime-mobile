@@ -67,7 +67,7 @@ const InStoryOptionsModal = ({
             onPress={() => setIsExitModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Exit Story"
-            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl  border border-border-light"
+            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-border-light"
           >
             <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-[#FFC8C8] bg-[#FFE0E0]">
               <Icon name="LogOut" color="#EC0707" />

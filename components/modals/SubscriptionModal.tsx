@@ -93,7 +93,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
           aria-labelledby="subscription plans"
           className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
-          <Text className="font-[quilka] text-[18px] text-black ">
+          <Text className="font-[quilka] text-[18px] text-black">
             What you'll enjoy
           </Text>
           <View className="flex flex-col gap-y-5">

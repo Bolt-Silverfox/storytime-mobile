@@ -16,7 +16,7 @@ const ParentsLibraryScreen = () => {
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 flex-col gap-y-8 bg-bgLight">
         <View className="flex flex-row border-b border-b-border-lighter bg-white px-4 pb-5 pt-2">
-          <Text className="flex-1  font-[abeezee] text-[18px]">Library</Text>
+          <Text className="flex-1 font-[abeezee] text-[18px]">Library</Text>
         </View>
         <View className="mx-4 flex flex-row items-center justify-between gap-x-2">
           {libraryFilters.map((filter) => (

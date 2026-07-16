@@ -18,8 +18,7 @@ import CustomButton from "../../components/UI/CustomButton";
 type VerifyEmailRouteProp = RouteProp<AuthNavigatorParamList, "verifyEmail">;
 
 type SuccessMessageType =
-  | "Otp resent successfully"
-  | "Start enjoying amazing stories.";
+  "Otp resent successfully" | "Start enjoying amazing stories.";
 
 const EXPIRY_KEY = "verify-email-otp_expiry";
 const OTP_DURATION = 60;
@@ -135,7 +134,7 @@ const VerifyEmailScreen = () => {
               <Text
                 onPress={handleResendEmail}
                 disabled={countDown > 0}
-                className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+                className={`my-11 text-center font-[abeezee] text-base ${countDown > 0 ? "text-link/40" : "text-link"} `}
               >
                 Resend OTP
               </Text>

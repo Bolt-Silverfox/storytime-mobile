@@ -81,7 +81,7 @@ const Item = ({
         style={{
           color: colour,
         }}
-        className="rounded-lg  font-[abeezee] text-sm"
+        className="rounded-lg font-[abeezee] text-sm"
       >
         {category}
       </Text>
