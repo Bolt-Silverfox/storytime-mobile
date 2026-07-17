@@ -48,8 +48,12 @@ export const useNotifications = (isAuthenticated: boolean) => {
 
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = useCallback(
-    (data: NotificationData) => {
-      const { category, storyId, kidId, screen } = data;
+    (data: NotificationData | null | undefined) => {
+      // A push payload can arrive with a null/absent `data` object (a
+      // notification sent without custom data). Coalesce so destructuring never
+      // throws — this is the launch crash "Cannot read property 'category' of
+      // null" when the app is cold-started from such a notification.
+      const { category, storyId, kidId, screen } = data ?? {};
 
       const goToNotifications = () => {
         // @ts-expect-error - dynamic navigation
