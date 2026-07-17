@@ -20,7 +20,11 @@
         "aps-environment": "production"
       },
       "googleServicesFile": "./GoogleService-Info.plist",
-      "associatedDomains": ["applinks:web.storytimeapp.me"]
+      "associatedDomains": [
+        "applinks:web.storytimeapp.me",
+        "applinks:dev.web.storytimeapp.me",
+        "applinks:staging.web.storytimeapp.me"
+      ]
     },
     "android": {
       "adaptiveIcon": {
@@ -42,6 +46,16 @@
             {
               "scheme": "https",
               "host": "web.storytimeapp.me",
+              "pathPrefix": "/story"
+            },
+            {
+              "scheme": "https",
+              "host": "dev.web.storytimeapp.me",
+              "pathPrefix": "/story"
+            },
+            {
+              "scheme": "https",
+              "host": "staging.web.storytimeapp.me",
               "pathPrefix": "/story"
             }
           ],
