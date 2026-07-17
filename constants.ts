@@ -45,10 +45,35 @@ const SHARE_DEEP_LINK_URL = "storytime://story";
 const configuredShareStoryWebUrl =
   process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.trim().replace(/\/+$/, "");
 
+/**
+ * Derive the share web host from the API host so share links always match the
+ * environment the build talks to (dev/staging/prod). The web host mirrors the
+ * API host with the `api` label swapped for `web`:
+ *   https://dev.api.storytimeapp.me/api/v1     → https://dev.web.storytimeapp.me
+ *   https://staging.api.storytimeapp.me/api/v1 → https://staging.web.storytimeapp.me
+ *   https://api.storytimeapp.me/api/v1         → https://web.storytimeapp.me
+ * Returns undefined if the API URL is unset/unparseable so the prod default applies.
+ */
+const deriveShareWebUrlFromApi = (apiUrl?: string): string | undefined => {
+  if (!apiUrl) {
+    return undefined;
+  }
+  try {
+    const { protocol, host } = new URL(apiUrl);
+    const webHost = host.replace(/(^|\.)api(\.|$)/, (_m, pre, post) =>
+      pre === "." ? `${pre}web${post}` : `web${post}`
+    );
+    // Only accept the derivation if it actually changed an `api` label.
+    return webHost === host ? undefined : `${protocol}//${webHost}`;
+  } catch {
+    return undefined;
+  }
+};
+
 const shareStoryWebBaseUrl =
   configuredShareStoryWebUrl && configuredShareStoryWebUrl.length > 0
     ? configuredShareStoryWebUrl
-    : "https://web.storytimeapp.me";
+    : (deriveShareWebUrlFromApi(BASE_URL) ?? "https://web.storytimeapp.me");
 
 /** Web URL prefix for shareable story links. */
 const SHARE_STORY_WEB_URL = shareStoryWebBaseUrl.endsWith("/story")
