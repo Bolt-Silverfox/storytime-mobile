@@ -1,10 +1,12 @@
-// Temporary: throw on any deprecated react-native-firebase namespaced API
-// usage at runtime to catch missed migrations to the modular API.
-// Remove after the modular API migration is verified in production.
+// Dev-only: throw on any deprecated react-native-firebase namespaced API usage
+// to catch missed migrations to the modular API. Gated to __DEV__ so a stray
+// deprecated call can never hard-crash a production build.
 // Must be set BEFORE any @react-native-firebase/* import.
-(
-  globalThis as { RNFB_MODULAR_DEPRECATION_STRICT_MODE?: boolean }
-).RNFB_MODULAR_DEPRECATION_STRICT_MODE = true;
+if (__DEV__) {
+  (
+    globalThis as { RNFB_MODULAR_DEPRECATION_STRICT_MODE?: boolean }
+  ).RNFB_MODULAR_DEPRECATION_STRICT_MODE = true;
+}
 
 import { registerRootComponent } from "expo";
 
