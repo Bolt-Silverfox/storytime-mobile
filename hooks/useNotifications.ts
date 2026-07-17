@@ -47,8 +47,11 @@ export const useNotifications = (isAuthenticated: boolean) => {
 
   // Handle notification navigation based on category/data
   const handleNotificationNavigation = useCallback(
-    (data: NotificationData) => {
-      const { category, storyId, screen } = data;
+    (data: NotificationData | null | undefined) => {
+      // Push payloads may arrive with a null/absent `data` object (e.g. a
+      // notification sent without custom data). Coalesce so destructuring never
+      // throws — an empty payload falls through to the notifications inbox.
+      const { category, storyId, screen } = data ?? {};
 
       const goToNotifications = () => {
         // @ts-expect-error - dynamic navigation
@@ -182,8 +185,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
 
     // Listener for when user taps on a notification
     responseListener.current = addNotificationResponseListener((response) => {
-      const data = response.notification.request.content
-        .data as NotificationData;
+      const data = (response.notification.request.content.data ??
+        {}) as NotificationData;
 
       notifLogger.debug("Notification tapped", {
         category: data.category,
@@ -203,8 +206,8 @@ export const useNotifications = (isAuthenticated: boolean) => {
     // Check for notification that opened the app (cold start)
     getLastNotificationResponse().then((response) => {
       if (response) {
-        const data = response.notification.request.content
-          .data as NotificationData;
+        const data = (response.notification.request.content.data ??
+          {}) as NotificationData;
 
         notifLogger.debug("App opened from notification", {
           category: data.category,
