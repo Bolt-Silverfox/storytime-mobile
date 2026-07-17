@@ -26,7 +26,7 @@ const AboutStoryModesModal = ({
           Here's a breakdown of the difference between the two preferred story
           modes.
         </Text>
-        <View className="flex flex-col gap-y-8 ">
+        <View className="flex flex-col gap-y-8">
           <View className="flex flex-row gap-x-3">
             <Pressable className="flex size-14 items-center justify-center rounded-full border border-border-lighter">
               <Icon name="BookOpenText" />

@@ -173,7 +173,7 @@ const ParentsFavouritesScreen = () => {
           </View>
         )}
         {activeFilterOption === "search" && (
-          <View className=" px-4 py-3 ">
+          <View className="px-4 py-3">
             <View className="flex-row items-center rounded-full border px-4 py-1">
               <Icon name="Search" />
               <TextInput

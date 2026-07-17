@@ -61,10 +61,10 @@ export default function DeleteAccount() {
   };
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 ">
+      <View className="flex-1">
         <PageTitle title="Delete Account" goBack={() => navigator.goBack()} />
         <ScrollView className="mx-4" showsVerticalScrollIndicator={false}>
-          <View className="mt-12  items-center">
+          <View className="mt-12 items-center">
             <Text style={[defaultStyles.heading, styles.headingFontSize]}>
               We are sorry to see you go
             </Text>
@@ -76,7 +76,7 @@ export default function DeleteAccount() {
               better{" "}
             </Text>
           </View>
-          <View className="mt-8 gap-8  ">
+          <View className="mt-8 gap-8">
             {deleteCheckList.map((reason) => (
               <Pressable
                 key={reason.id}
@@ -101,7 +101,7 @@ export default function DeleteAccount() {
                 placeholder="Please let us know about your experience and how to improve"
                 onChangeText={setMessage}
                 value={message}
-                className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+                className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
                 placeholderTextColor={errors.message ? "red" : colours.text}
                 multiline
               />
@@ -130,7 +130,7 @@ export default function DeleteAccount() {
             >
               <Text
                 style={[defaultStyles.defaultText, styles.blackText]}
-                className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
               >
                 Cancel
               </Text>

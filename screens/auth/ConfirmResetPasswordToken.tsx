@@ -123,7 +123,7 @@ const ConfirmResetPasswordTokenScreen = () => {
             <Pressable disabled={isLoading || countDown > 0}>
               <Text
                 onPress={handleResendEmail}
-                className={`my-11 text-center font-[abeezee] text-base  ${countDown > 0 ? "text-link/40" : "text-link"} `}
+                className={`my-11 text-center font-[abeezee] text-base ${countDown > 0 ? "text-link/40" : "text-link"} `}
               >
                 Resend OTP
               </Text>

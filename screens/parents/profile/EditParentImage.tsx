@@ -20,7 +20,7 @@ export default function EditParentImage() {
   });
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bg-light ">
+      <View className="flex-1 bg-bg-light">
         <PageTitle title="Edit Image" goBack={() => navigator.goBack()} />
 
         <View className="flex-1">
@@ -79,7 +79,7 @@ export default function EditParentImage() {
             >
               <Text
                 style={[defaultStyles.defaultText, editStyles.whiteText]}
-                className={` mx-auto w-full rounded-[99px] px-2 py-3 text-center ${image ? "bg-[#EC4007]" : "bg-[#FF8771] "}`}
+                className={`mx-auto w-full rounded-[99px] px-2 py-3 text-center ${image ? "bg-[#EC4007]" : "bg-[#FF8771]"}`}
               >
                 Save
               </Text>
@@ -88,7 +88,7 @@ export default function EditParentImage() {
               <Pressable onPress={() => setImage("")}>
                 <Text
                   style={[defaultStyles.defaultText, editStyles.blackText]}
-                  className="mx-auto w-full  rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                  className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
                 >
                   Cancel
                 </Text>

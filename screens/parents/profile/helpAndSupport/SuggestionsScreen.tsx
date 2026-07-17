@@ -119,7 +119,7 @@ export default function SuggestionsScreen() {
               style={suggestStyles.textArea}
               onChangeText={setMessage}
               value={message}
-              className={`relative min-h-[40]  justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+              className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
               placeholderTextColor={errors.message ? "red" : colours.text}
               multiline
               maxLength={2000}
@@ -130,7 +130,7 @@ export default function SuggestionsScreen() {
             {apiError ? <ErrorMessageDisplay errorMessage={apiError} /> : null}
           </View>
         </View>
-        <View className="flex-1 justify-end  gap-6 px-4">
+        <View className="flex-1 justify-end gap-6 px-4">
           <Pressable
             className="pb-10"
             onPress={handleSubmit}
@@ -138,7 +138,7 @@ export default function SuggestionsScreen() {
           >
             <Text
               style={[defaultStyles.defaultText, suggestStyles.whiteText]}
-              className={` mx-auto w-full rounded-[99px] px-2 py-3 text-center  ${
+              className={`mx-auto w-full rounded-[99px] px-2 py-3 text-center ${
                 Object.keys(errors).length === 0 && !isPending
                   ? "bg-[#EC4007]"
                   : "bg-[#FF8771]"

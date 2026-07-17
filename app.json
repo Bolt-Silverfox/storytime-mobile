@@ -19,7 +19,8 @@
         "com.apple.developer.applesignin": ["Default"],
         "aps-environment": "production"
       },
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "associatedDomains": ["applinks:web.storytimeapp.me"]
     },
     "android": {
       "adaptiveIcon": {
@@ -32,7 +33,21 @@
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "com.android.vending.BILLING"
       ],
-      "package": "net.emerj.storytime"
+      "package": "net.emerj.storytime",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "web.storytimeapp.me",
+              "pathPrefix": "/story"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
     },
     "plugins": [
       "expo-font",

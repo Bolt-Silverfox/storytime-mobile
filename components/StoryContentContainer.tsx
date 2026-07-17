@@ -53,10 +53,7 @@ type PropTypes = {
 };
 
 type DisplayOptions =
-  | "story"
-  | "endOfStoryMessage"
-  | "quiz"
-  | "endOfQuizMessage";
+  "story" | "endOfStoryMessage" | "quiz" | "endOfQuizMessage";
 
 const StoryContentContainer = ({
   story,
@@ -316,7 +313,7 @@ const StoryContentContainer = ({
         </View>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8 ">
+        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8">
           <Text className="font-[quilka] text-xl text-black">
             {paragraphs[activeParagraph]}
           </Text>

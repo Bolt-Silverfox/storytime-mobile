@@ -86,7 +86,7 @@ const ProfileScreen: FC = () => {
             </CustomText>
           </View>
 
-          <View className="mx-auto mt-7 w-[90%]  max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+          <View className="mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
             <MenuItem
               icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
               label="Notification Settings"

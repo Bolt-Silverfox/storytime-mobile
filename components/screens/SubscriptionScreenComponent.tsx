@@ -14,8 +14,8 @@ const SubscriptionScreenComponent = ({ goBack }: PropTypes) => {
 
   return (
     <SafeAreaWrapper variant="solid" backgroundColor="#866EFF">
-      <View className="flex flex-1 flex-col gap-y-3  bg-[#866EFF]">
-        <View className="flex flex-row px-4  py-4">
+      <View className="flex flex-1 flex-col gap-y-3 bg-[#866EFF]">
+        <View className="flex flex-row px-4 py-4">
           <Pressable onPress={goBack}>
             <Feather name="chevron-left" size={24} color="white" />
           </Pressable>

@@ -90,8 +90,8 @@ function OnboardingItem({ item }: { item: SlideItems }) {
           <ActivityIndicator size="large" color="#EC4007" />
         </View>
       )}
-      <View className=" flex-1 justify-end">
-        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8  ">
+      <View className="flex-1 justify-end">
+        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8">
           <Pagination data={item} />
           <View>
             <Text style={styles.titleText} className="text-center text-[28px]">
@@ -153,7 +153,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 
 function Pagination({ data }: { data: SlideItems }) {
   return (
-    <View className="mb-6 flex-row justify-center gap-[6px]  ">
+    <View className="mb-6 flex-row justify-center gap-[6px]">
       {data.dot.map((item, i) => {
         return (
           <View

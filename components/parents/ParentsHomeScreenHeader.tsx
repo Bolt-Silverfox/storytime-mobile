@@ -74,7 +74,7 @@ const ParentsHomeScreenHeader = () => {
             onPress={() =>
               navigator.navigate("notification", { screen: "index" })
             }
-            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white "
+            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white"
           >
             <Icon name="Bell" />
           </Pressable>

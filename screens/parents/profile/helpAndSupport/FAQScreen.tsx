@@ -21,7 +21,7 @@ export default function FaQScreen() {
       <View className="flex-1 bg-bg-light">
         <PageTitle goBack={() => navigator.goBack()} title="FAQs" />
         <ScrollView contentContainerStyle={faqStyles.scrollContent}>
-          <View className="mt-9  items-center">
+          <View className="mt-9 items-center">
             <Text
               style={[defaultStyles.defaultText, faqStyles.subtitle]}
               className="max-w-[311px] text-center"

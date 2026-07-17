@@ -86,7 +86,7 @@ const ChildStoryDetails = () => {
               accessibilityRole="button"
               accessibilityLabel="Go back"
               onPress={() => navigator.goBack()}
-              className="absolute  left-4 top-10 flex size-10 items-center justify-center rounded-full bg-primary"
+              className="absolute left-4 top-10 flex size-10 items-center justify-center rounded-full bg-primary"
             >
               <Entypo name="chevron-thin-left" size={24} color="white" />
             </Pressable>
