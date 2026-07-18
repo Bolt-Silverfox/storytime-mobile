@@ -24,6 +24,13 @@ jobs:
   ota-update:
     name: OTA Update (${{ inputs.channel }})
     type: update
+    # The update (expo export) must resolve the same EXPO_PUBLIC_* runtime env
+    # (API URL, client IDs, Sentry DSN) as the native build. Build jobs read
+    # eas.json build-profile env; update jobs do NOT — they read the EAS
+    # environment selected here. Without this, the OTA shipped with no API URL
+    # and the app hung on "stuck loading" (2026-07-18). channel names
+    # (development|production) match the EAS environment names.
+    environment: ${{ inputs.channel }}
     params:
       branch: ${{ inputs.channel }}
       message: ${{ inputs.message }}
