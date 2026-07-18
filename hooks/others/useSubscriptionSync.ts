@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../contexts/AuthContext";
 import apiFetch from "../../apiFetch";
 import { BASE_URL, BUNDLE_IDENTIFIER, QUERY_KEYS } from "../../constants";
+import { iapLogger } from "../../utils/logger";
 
 const useSubscriptionSync = () => {
   const hasRun = useRef(false);
@@ -24,7 +25,8 @@ const useSubscriptionSync = () => {
         if (status.data?.isActive) return; // Backend already active, nothing to do
 
         // 2. Check store purchases (dynamic import like useRestorePurchases does)
-        const { getAvailablePurchases } = await import("expo-iap");
+        const { getAvailablePurchases, finishTransaction } =
+          await import("expo-iap");
         const purchases = await getAvailablePurchases({
           alsoPublishToEventListenerIOS: false,
           onlyIncludeActiveItemsIOS: true,
@@ -52,6 +54,18 @@ const useSubscriptionSync = () => {
           const data = await res.json();
           if (data.success) {
             synced = true;
+            // Now that the purchase is verified server-side, finish the
+            // transaction so StoreKit stops redelivering it on every
+            // session/background wake (the source of the 401 redelivery loop
+            // when this runs before verification could succeed).
+            try {
+              await finishTransaction({ purchase });
+            } catch (finishErr) {
+              iapLogger.error(
+                `Failed to finish synced transaction ${purchase.productId}`,
+                finishErr
+              );
+            }
             break;
           }
         }

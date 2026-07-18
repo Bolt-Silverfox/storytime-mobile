@@ -1,5 +1,5 @@
 import { ErrorCode, useIAP } from "expo-iap";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import apiFetch from "../../apiFetch";
 import {
   BASE_URL,
@@ -23,6 +23,14 @@ const useSubscribeIAP = (
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
+  // Keep the latest authenticated user in a ref so the long-lived
+  // onPurchaseSuccess listener (registered once by useIAP) always reads the
+  // current auth state instead of a stale closure value.
+  const userRef = useRef(user);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
   const {
     connected,
     subscriptions,
@@ -31,6 +39,19 @@ const useSubscribeIAP = (
     finishTransaction,
   } = useIAP({
     onPurchaseSuccess: async (purchase) => {
+      // onPurchaseSuccess also fires for redelivered/pending StoreKit
+      // transactions (e.g. on cold start or background wake), not only for
+      // interactive purchases. Verifying without an authenticated session hits
+      // /payment/verify-purchase (AuthSessionGuard) with no valid token -> 401,
+      // so finishTransaction never runs and StoreKit keeps redelivering the
+      // same transaction every session -> an infinite 401 loop + error spam.
+      // Defer instead: leave the transaction pending (never finish an
+      // unverified purchase) so useSubscriptionSync can verify and finish it
+      // once the user is authenticated.
+      if (!userRef.current?.id) {
+        return;
+      }
+
       const { store, productId, purchaseToken, transactionId } = purchase;
       const token = store === "apple" ? transactionId : purchaseToken;
       if (!token) {
