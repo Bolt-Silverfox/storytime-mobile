@@ -4,6 +4,7 @@ Shared hooks for this repo, enabled via `core.hooksPath` (set automatically by t
 `prepare` script on install).
 
 ## pre-push — CodeRabbit local review
+
 Runs a CodeRabbit review of your changes before each push so issues are caught
 locally instead of on the PR.
 
