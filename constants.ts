@@ -1,0 +1,155 @@
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
+const IOS_CLIENT_ID = process.env.EXPO_PUBLIC_IOS_CLIENT_ID;
+const WEB_CLIENT_ID = process.env.EXPO_PUBLIC_WEB_CLIENT_ID;
+const BUNDLE_IDENTIFIER = "net.emerj.storytime";
+const SUBSCRIPTION_IDS = [
+  "1_month_subscription",
+  "1_year_subscription",
+] as const;
+const QUERY_KEYS = {
+  GET_SUBSCRIPTION_STATUS: "paymentStatus",
+  GET_USER_PROFILE: "userProfile",
+  GET_STORY_QUOTA: "storyQuota",
+  GET_GUEST_STORY_ACCESS: "guestStoryAccess",
+  GET_LIBRARY_STORIES: "libraryStories",
+  GET_INFINITE_STORIES: "stories",
+  GET_STORY_PROGRESS: "storyProgress",
+  GET_LINKED_ACCOUNTS: "linkedAccounts",
+} as const;
+
+/** Default page size for cursor-paginated API calls. */
+const DEFAULT_CURSOR_PAGE_SIZE = 20;
+
+/** Maximum image upload size in bytes (5 MB), matching backend limit. */
+const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+
+/** Extension → MIME type map for image uploads. Single source of truth for both
+ *  client-side validation (useImagePicker) and upload FormData (uploadUserAvatar). */
+const IMAGE_MIME_MAP = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+} as const satisfies Record<string, string>;
+
+const READ_STATUS_COLORS = {
+  done: "#16A34A",
+  reading: "#EA580C",
+} as const;
+
+/** Deep link prefix for shareable story links. */
+const SHARE_DEEP_LINK_URL = "storytime://story";
+
+const configuredShareStoryWebUrl =
+  process.env.EXPO_PUBLIC_SHARE_STORY_WEB_URL?.trim().replace(/\/+$/, "");
+
+/**
+ * Derive the share web host from the API host so share links always match the
+ * environment the build talks to (dev/staging/prod). The web host mirrors the
+ * API host with the `api` label swapped for `web`:
+ *   https://dev.api.storytimeapp.me/api/v1     → https://dev.web.storytimeapp.me
+ *   https://staging.api.storytimeapp.me/api/v1 → https://staging.web.storytimeapp.me
+ *   https://api.storytimeapp.me/api/v1         → https://web.storytimeapp.me
+ * Returns undefined if the API URL is unset/unparseable so the prod default applies.
+ */
+const deriveShareWebUrlFromApi = (apiUrl?: string): string | undefined => {
+  if (!apiUrl) {
+    return undefined;
+  }
+  try {
+    const { protocol, host } = new URL(apiUrl);
+    const webHost = host.replace(/(^|\.)api(\.|$)/, (_m, pre, post) =>
+      pre === "." ? `${pre}web${post}` : `web${post}`
+    );
+    // Only accept the derivation if it actually changed an `api` label.
+    return webHost === host ? undefined : `${protocol}//${webHost}`;
+  } catch {
+    return undefined;
+  }
+};
+
+const shareStoryWebBaseUrl =
+  configuredShareStoryWebUrl && configuredShareStoryWebUrl.length > 0
+    ? configuredShareStoryWebUrl
+    : (deriveShareWebUrlFromApi(BASE_URL) ?? "https://web.storytimeapp.me");
+
+/** Web URL prefix for shareable story links. */
+const SHARE_STORY_WEB_URL = shareStoryWebBaseUrl.endsWith("/story")
+  ? shareStoryWebBaseUrl
+  : `${shareStoryWebBaseUrl}/story`;
+
+/** Web link prefix used by React Navigation linking. */
+const SHARE_STORY_WEB_LINK_PREFIX = SHARE_STORY_WEB_URL.replace(/\/story$/, "");
+
+/** Story deep link route path (used in navigation config). */
+const STORY_DEEP_LINK_ROUTE = "story/:storyId";
+
+/** Helper to construct full story deep link. */
+const makeStoryDeepLink = (storyId: string) =>
+  `${SHARE_DEEP_LINK_URL}/${storyId}`;
+
+/** Slugify a story title for readable share URLs (e.g. "the-brave-little-fox"). */
+const slugifyStoryTitle = (title: string) =>
+  title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-+)|(-+$)/g, "")
+    .slice(0, 60)
+    .replace(/-+$/g, "");
+
+/**
+ * Helper to construct a full story web link. When a title is provided the URL
+ * gets a readable slug prefix (`/story/<slug>-<uuid>`) so recipients can see
+ * the story name; the trailing UUID keeps it uniquely resolvable. Falls back to
+ * `/story/<uuid>` when no title is available.
+ */
+const makeStoryUniversalLink = (storyId: string, title?: string) => {
+  const slug = title ? slugifyStoryTitle(title) : "";
+  return slug
+    ? `${SHARE_STORY_WEB_URL}/${slug}-${storyId}`
+    : `${SHARE_STORY_WEB_URL}/${storyId}`;
+};
+
+/** Matches a v4-style UUID anywhere in a string. */
+const STORY_UUID_REGEX =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+/**
+ * Extract the story UUID from a possibly slug-prefixed identifier
+ * (`<slug>-<uuid>` → `<uuid>`). Incoming universal links carry the slugged form,
+ * so deep-link screens must normalize before querying the API. Returns the input
+ * unchanged when it's already a bare id.
+ */
+const extractStoryId = (value: string): string =>
+  value.match(STORY_UUID_REGEX)?.[0] ?? value;
+
+/** Duration of the story controls fade animation in ms. */
+const CONTROLS_FADE_MS = 200;
+
+/** Default ElevenLabs voice ID assigned to guest users. */
+const GUEST_DEFAULT_VOICE_ID = "XrExE9yKIg1WjnnlVkGX";
+
+export {
+  emailRegex,
+  BASE_URL,
+  WEB_CLIENT_ID,
+  IOS_CLIENT_ID,
+  SUBSCRIPTION_IDS,
+  QUERY_KEYS,
+  BUNDLE_IDENTIFIER,
+  MAX_IMAGE_SIZE,
+  IMAGE_MIME_MAP,
+  READ_STATUS_COLORS,
+  SHARE_DEEP_LINK_URL,
+  SHARE_STORY_WEB_LINK_PREFIX,
+  SHARE_STORY_WEB_URL,
+  STORY_DEEP_LINK_ROUTE,
+  makeStoryDeepLink,
+  makeStoryUniversalLink,
+  extractStoryId,
+  CONTROLS_FADE_MS,
+  DEFAULT_CURSOR_PAGE_SIZE,
+  GUEST_DEFAULT_VOICE_ID,
+};

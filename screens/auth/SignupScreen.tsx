@@ -1,0 +1,140 @@
+import { useNavigation } from "@react-navigation/native";
+import {
+  Image,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import colours from "../../colours";
+import SignupForm from "../../components/SignupForm";
+import { RootNavigatorProp } from "../../Navigation/RootNavigator";
+import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
+import defaultStyles from "../../styles";
+import LoadingOverlay from "../../components/LoadingOverlay";
+import useAuth from "../../contexts/AuthContext";
+import PageTitle from "../../components/PageTitle";
+import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+
+const SignupScreen = () => {
+  const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
+  const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
+  return (
+    <SafeAreaWrapper variant="solid">
+      <View className="flex flex-1 bg-bg-light">
+        <PageTitle title="" goBack={() => navigator.goBack()} />
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className=""
+          contentContainerClassName=""
+        >
+          <View className="mt-8 flex flex-1 flex-col gap-y-8 px-4">
+            <View style={styles.textContainer}>
+              <Text style={defaultStyles.heading}>Welcome to Storytime</Text>
+              <Text style={styles.text}>The world's first story library</Text>
+            </View>
+            <SignupForm />
+            <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
+              <View className="flex-1 border-b border-black" />
+              <Text className="text-center font-[abeezee]">
+                Or sign up with
+              </Text>
+              <View className="flex-1 border-b border-black" />
+            </View>
+            <View className="flex flex-row items-center justify-center gap-x-6">
+              <Pressable
+                onPress={handleGoogleAuth}
+                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                accessibilityLabel="Sign up with Google"
+                accessibilityRole="button"
+                accessibilityHint="Opens Google sign-up flow"
+              >
+                <Image source={require("../../assets/icons/google-icon.png")} />
+              </Pressable>
+              {Platform.OS === "ios" && (
+                <Pressable
+                  onPress={() => handleAppleAuth("signup")}
+                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  accessibilityLabel="Sign up with Apple"
+                  accessibilityRole="button"
+                  accessibilityHint="Opens Apple sign-up flow"
+                >
+                  <Image
+                    source={require("../../assets/icons/apple-icon.png")}
+                  />
+                </Pressable>
+              )}
+            </View>
+            <Text style={{ ...styles.text }}>
+              If you already have an account{" "}
+              <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("login")}
+                style={{ ...defaultStyles.defaultText, color: colours.link }}
+              >
+                Log in
+              </Text>
+            </Text>
+          </View>
+          <View style={styles.footer}>
+            <Text style={styles.footerText}>
+              By accepting to continue, you agree to Storytime's{" "}
+            </Text>
+            <Text style={styles.footerText}>
+              <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("termsOfService")}
+                style={styles.footerLinkText}
+              >
+                Terms and conditions
+              </Text>{" "}
+              and{" "}
+              <Text
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                onPress={() => (navigator as any).navigate("privacyScreen")}
+                style={styles.footerLinkText}
+              >
+                Privacy Policy
+              </Text>
+            </Text>
+          </View>
+          <LoadingOverlay visible={isLoading} />
+        </ScrollView>
+      </View>
+    </SafeAreaWrapper>
+  );
+};
+
+export default SignupScreen;
+
+const styles = StyleSheet.create({
+  text: {
+    ...defaultStyles.defaultText,
+    textAlign: "center",
+  },
+  textContainer: {
+    gap: 8,
+  },
+  footer: {
+    paddingTop: 48,
+    paddingBottom: 36,
+    backgroundColor: colours["bg-light"],
+    paddingHorizontal: 16,
+    display: "flex",
+    gap: 6,
+  },
+  footerText: {
+    ...defaultStyles.defaultText,
+    textAlign: "center",
+    width: "100%",
+    maxWidth: 600,
+    alignSelf: "center",
+    fontSize: 14,
+  },
+  footerLinkText: {
+    ...defaultStyles.linkText,
+    fontSize: 14,
+  },
+});
