@@ -1,0 +1,406 @@
+import Feather from "@expo/vector-icons/Feather";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import {
+  Pressable,
+  StyleSheet as RNStyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from "react-native";
+import Animated, { AnimatedStyle } from "react-native-reanimated";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import { CONTROLS_FADE_MS } from "../constants";
+import { WORDS_PER_CHUNK } from "../constants/tts";
+import useIsPremium from "../hooks/useIsPremium";
+import { Story } from "../types";
+import { splitByWordCountPreservingSentences } from "../utils/utils";
+import Icon from "./Icon";
+import StoryAudioPlayer from "./StoryAudioPlayer";
+import ProgressBar from "./UI/ProgressBar";
+import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
+import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
+import StoryQuiz from "./modals/storyModals/StoryQuiz";
+
+type PropTypes = {
+  story: Story;
+  isInteractive: boolean;
+  activeParagraph: number;
+  audioUrl: string | null;
+  isAudioLoading: boolean;
+  isAudioError: boolean;
+  isStillGenerating: boolean;
+  setActiveParagraph: Dispatch<SetStateAction<number>>;
+  onProgress: (progress: number, completed: boolean) => void;
+  controlsInteractive: boolean;
+  controlsVisible: boolean;
+  animatedControlsStyle: AnimatedStyle<ViewStyle>;
+  isTTSDegraded: boolean;
+  failedParagraphs: number[];
+  onRetryFailed: () => void;
+  batchError?: string | null;
+  initialError?: string | null;
+  initialPositionSec?: number;
+  onPositionChange?: (positionSec: number) => void;
+};
+
+type DisplayOptions =
+  "story" | "endOfStoryMessage" | "quiz" | "endOfQuizMessage";
+
+const StoryContentContainer = ({
+  story,
+  isInteractive,
+  setActiveParagraph,
+  activeParagraph,
+  onProgress,
+  audioUrl,
+  isAudioLoading,
+  isAudioError,
+  isStillGenerating,
+  controlsInteractive,
+  controlsVisible,
+  animatedControlsStyle,
+  isTTSDegraded,
+  failedParagraphs,
+  onRetryFailed,
+  batchError,
+  initialError,
+  initialPositionSec,
+  onPositionChange,
+}: PropTypes) => {
+  const { isPremium } = useIsPremium();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentlyDisplayed, setCurrentlyDisplayed] =
+    useState<DisplayOptions>("story");
+  // Collapse control layout after fade-out so text drops to bottom
+  const [controlsInLayout, setControlsInLayout] = useState(true);
+
+  useEffect(() => {
+    if (controlsVisible) {
+      // Restore layout immediately before fade-in starts
+      setControlsInLayout(true);
+    } else {
+      // Remove from layout after fade-out completes + small buffer
+      const timer = setTimeout(
+        () => setControlsInLayout(false),
+        CONTROLS_FADE_MS + 20
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [controlsVisible]);
+  const [quizResults, setQuizResults] = useState<Array<boolean | null>>(
+    new Array(story?.questions?.length ?? 0).fill(null)
+  );
+  const isAdvancingRef = useRef(false);
+  const activeParagraphRef = useRef(activeParagraph);
+  const hasAutoplayed = useRef(false); // Track if we've auto-played on entry
+  const keepAwakeActivated = useRef(false); // Track if keep awake is active
+  const hasReportedCompletionRef = useRef(false); // Idempotent completion guard
+
+  // Keep screen awake during active narration (V0-14)
+  useEffect(() => {
+    if (isPlaying && !keepAwakeActivated.current) {
+      keepAwakeActivated.current = true;
+      activateKeepAwakeAsync("story-narration").catch(() => {});
+    } else if (!isPlaying && keepAwakeActivated.current) {
+      keepAwakeActivated.current = false;
+      deactivateKeepAwake("story-narration");
+    }
+
+    return () => {
+      if (keepAwakeActivated.current) {
+        keepAwakeActivated.current = false;
+        deactivateKeepAwake("story-narration");
+      }
+    };
+  }, [isPlaying]);
+
+  // Keep ref in sync so the stable callback always sees the latest value
+  useEffect(() => {
+    activeParagraphRef.current = activeParagraph;
+    // Reset the advancing guard once React has committed the new page
+    isAdvancingRef.current = false;
+  }, [activeParagraph]);
+
+  const paragraphs = useMemo(
+    () =>
+      splitByWordCountPreservingSentences(story.textContent, WORDS_PER_CHUNK),
+    [story.textContent]
+  );
+
+  const isCurrentParagraphFailed = failedParagraphs.includes(activeParagraph);
+
+  const storyLength = paragraphs.length - 1;
+  const isLastParagraph = activeParagraph === storyLength;
+  const isFirstParagraph = activeParagraph === 0;
+
+  // Reset the idempotent completion guard when switching to a different story.
+  useEffect(() => {
+    hasReportedCompletionRef.current = false;
+  }, [story.id]);
+
+  // Report completion at most once per story. Arrival on the last page, the
+  // "Finish story" button, and last-page navigation all funnel through here so
+  // we only ever send a single completed:true and never a racing completed:false.
+  const reportCompletion = useCallback(() => {
+    if (hasReportedCompletionRef.current) return;
+    hasReportedCompletionRef.current = true;
+    onProgress(paragraphs.length, true);
+  }, [onProgress, paragraphs.length]);
+
+  // Report page progress without ever downgrading a story that has already been
+  // completed this session (e.g. after "read again" + advancing). Once complete,
+  // subsequent progress pings keep completed:true so they can't reintroduce a
+  // completed:false overwrite.
+  const reportProgress = useCallback(
+    (page: number) => {
+      onProgress(page, hasReportedCompletionRef.current);
+    },
+    [onProgress]
+  );
+
+  // Auto-play on story entry when audio is ready (V0-22)
+  useEffect(() => {
+    // Only autoplay on first paragraph when story loads and audio is available
+    if (hasAutoplayed.current) return;
+    if (isAudioLoading || isStillGenerating || isAudioError) return;
+    if (!audioUrl) return;
+    if (!isFirstParagraph) return;
+
+    // Auto-play when ready
+    hasAutoplayed.current = true;
+    setIsPlaying(true);
+  }, [
+    isAudioLoading,
+    isStillGenerating,
+    isAudioError,
+    audioUrl,
+    isFirstParagraph,
+  ]);
+
+  useEffect(() => {
+    if (isLastParagraph) {
+      reportCompletion();
+    }
+  }, [isLastParagraph, reportCompletion]);
+
+  const readAgain = () => {
+    setCurrentlyDisplayed("story");
+    setActiveParagraph(0);
+  };
+
+  // Stable callback — no dependencies that change per page.
+  // Uses refs to read the latest activeParagraph, and a guard to prevent double-firing.
+  const handlePageAudioFinished = useCallback(() => {
+    // Prevent double-advance if the listener fires twice before React re-renders
+    if (isAdvancingRef.current) return;
+
+    const current = activeParagraphRef.current;
+    if (current >= storyLength) {
+      setIsPlaying(false);
+      return;
+    }
+
+    isAdvancingRef.current = true;
+    const next = current + 1;
+    setActiveParagraph(next);
+    if (next >= storyLength) {
+      // Landing on the last page: let completion own the report so we never
+      // send a completed:false that could race the completed:true.
+      reportCompletion();
+    } else {
+      reportProgress(next + 1);
+    }
+    setIsPlaying(true);
+  }, [storyLength, setActiveParagraph, reportProgress, reportCompletion]);
+
+  const handleManualNavigation = (direction: "next" | "prev") => {
+    // Manual navigation pauses audio
+    if (isPlaying) {
+      setIsPlaying(false);
+    }
+
+    if (direction === "next") {
+      if (isLastParagraph) {
+        setCurrentlyDisplayed("endOfStoryMessage");
+        reportCompletion();
+        return;
+      }
+      setActiveParagraph((a) => {
+        const next = a + 1;
+        if (next >= storyLength) {
+          // Navigating onto the last page: report completion (not a racing
+          // completed:false) — mirrors the audio-finish last-page handling.
+          reportCompletion();
+        } else {
+          reportProgress(next + 1);
+        }
+        return next;
+      });
+    } else {
+      setActiveParagraph((a) => a - 1);
+    }
+  };
+
+  return (
+    <View className="flex flex-1 flex-col justify-end gap-y-3">
+      {currentlyDisplayed === "story" && (
+        <View
+          style={!controlsInLayout ? contentContainerStyles.hidden : undefined}
+        >
+          <Animated.View
+            style={animatedControlsStyle}
+            pointerEvents={controlsInteractive ? "auto" : "none"}
+          >
+            <StoryAudioPlayer
+              audioUrl={audioUrl}
+              isLoading={isAudioLoading}
+              isError={isAudioError}
+              isStillGenerating={isStillGenerating}
+              isFailed={isCurrentParagraphFailed}
+              isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
+              onPageFinished={handlePageAudioFinished}
+              initialPositionSec={initialPositionSec}
+              onPositionChange={onPositionChange}
+            />
+          </Animated.View>
+          {isTTSDegraded && isPremium && (
+            <View className="mt-2 flex flex-row items-center gap-x-2 rounded-lg bg-amber-500/90 px-3 py-2">
+              <Icon name="TriangleAlert" size={16} color="white" />
+              <Text className="flex-1 font-[abeezee] text-xs text-white">
+                Audio quality may be reduced due to service issues.
+              </Text>
+            </View>
+          )}
+          {(failedParagraphs.length > 0 ||
+            batchError ||
+            isAudioError ||
+            initialError) &&
+            !isStillGenerating && (
+              <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
+                <View className="flex-1 flex-row items-center gap-x-2">
+                  <Feather name="alert-circle" size={16} color="#dc2626" />
+                  <Text className="flex-1 font-[abeezee] text-sm text-red-700">
+                    {initialError
+                      ? initialError
+                      : batchError
+                        ? batchError
+                        : failedParagraphs.length > 0
+                          ? `${failedParagraphs.length} paragraph${failedParagraphs.length > 1 ? "s" : ""} failed to generate`
+                          : "Audio unavailable. Please try again."}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={onRetryFailed}
+                  activeOpacity={0.7}
+                  className="ml-2 rounded-lg bg-red-100 px-3 py-1.5"
+                >
+                  <Text className="font-[abeezee] text-sm font-medium text-red-700">
+                    Retry
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+        </View>
+      )}
+      {currentlyDisplayed === "story" && (
+        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8">
+          <Text className="font-[quilka] text-xl text-black">
+            {paragraphs[activeParagraph]}
+          </Text>
+        </View>
+      )}
+      {currentlyDisplayed === "story" && controlsInLayout && (
+        <Animated.View
+          style={animatedControlsStyle}
+          pointerEvents={controlsInteractive ? "auto" : "none"}
+          className="flex flex-col gap-y-3"
+        >
+          <View className="flex flex-row items-center justify-between">
+            <Pressable
+              onPress={
+                !isFirstParagraph
+                  ? (e) => {
+                      e.stopPropagation();
+                      handleManualNavigation("prev");
+                    }
+                  : undefined
+              }
+              className={`flex size-12 items-center justify-center rounded-full ${isFirstParagraph ? "bg-transparent" : "bg-blue"}`}
+            >
+              {!isFirstParagraph && <Icon name="SkipBack" color="white" />}
+            </Pressable>
+            {!isLastParagraph ? (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleManualNavigation("next");
+                }}
+                className="flex size-12 items-center justify-center rounded-full bg-blue"
+              >
+                <Icon name="SkipForward" color="white" />
+              </Pressable>
+            ) : (
+              <Pressable
+                onPress={(e) => {
+                  e.stopPropagation();
+                  setCurrentlyDisplayed("endOfStoryMessage");
+                  reportCompletion();
+                }}
+                className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
+              >
+                <Text className="font-[abeezee] text-sm text-white">
+                  Finish story
+                </Text>
+              </Pressable>
+            )}
+          </View>
+          <View className="rounded-2xl bg-white p-4">
+            <ProgressBar
+              backgroundColor="#4807EC"
+              currentStep={activeParagraph + 1}
+              label="Page"
+              totalSteps={paragraphs.length}
+              height={11}
+            />
+          </View>
+        </Animated.View>
+      )}
+      <EndOfStoryMessage
+        isInteractive={isInteractive}
+        isOpen={currentlyDisplayed === "endOfStoryMessage"}
+        onTestKnowledge={() => setCurrentlyDisplayed("quiz")}
+        readAgain={readAgain}
+        storyTitle={story.title}
+      />
+      <StoryQuiz
+        isOpen={currentlyDisplayed === "quiz"}
+        onClose={() => setCurrentlyDisplayed("endOfQuizMessage")}
+        storyId={story.id}
+        questions={story.questions}
+        setQuizResults={setQuizResults}
+      />
+      <EndOfQuizMessage
+        results={quizResults}
+        isOpen={currentlyDisplayed === "endOfQuizMessage"}
+        readAgain={readAgain}
+        storyTitle={story.title}
+      />
+    </View>
+  );
+};
+
+const contentContainerStyles = RNStyleSheet.create({
+  hidden: { height: 0, overflow: "hidden" },
+});
+
+export default StoryContentContainer;
