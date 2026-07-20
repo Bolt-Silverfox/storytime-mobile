@@ -9,7 +9,7 @@ import {
   // aliased to avoid colliding with the `onTokenRefresh` callback parameter below
   onTokenRefresh as fbOnTokenRefresh,
 } from "@react-native-firebase/messaging";
-import apiFetch from "../apiFetch";
+import apiFetch, { ApiError } from "../apiFetch";
 import { BASE_URL } from "../constants";
 import type { DeviceTokenResponse } from "../types";
 import { notifLogger } from "./logger";
@@ -86,35 +86,104 @@ export const getDevicePushToken = async (): Promise<string | null> => {
   }
 };
 
+const REGISTER_MAX_ATTEMPTS = 3;
+const REGISTER_BACKOFF_MS = 800;
+
+const delay = (ms: number): Promise<void> =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
+const messageOf = (error: unknown): string =>
+  error instanceof Error ? error.message : String(error);
+
+// Failures we expect during normal operation and that are outside our control:
+// a stale session being logged out (401), rate-limiting (429), a transient
+// server outage (5xx), or a network blip (non-ApiError throw). These are logged
+// at `warn` (a Sentry breadcrumb only) rather than `error` (a Sentry issue),
+// so they don't page us for conditions the user's next launch will resolve.
+const isExpectedRegisterFailure = (error: unknown): boolean => {
+  if (error instanceof ApiError) {
+    return error.status === 401 || error.status === 429 || error.status >= 500;
+  }
+  // A SyntaxError from response.json() means a 2xx body wasn't valid JSON —
+  // a backend contract violation, not a transient condition. Surface it as a
+  // real error rather than a warn.
+  if (error instanceof SyntaxError) return false;
+  // Any other non-ApiError throw is network-level (RN's fetch rejects with a
+  // TypeError "Network request failed" on connectivity/DNS/refused) — expected.
+  return true;
+};
+
+// A genuinely expired session won't recover by retrying (apiFetch already
+// triggered logout), so only retry transient auth failures, rate-limits,
+// server errors and network-level throws.
+const isRetryableRegisterFailure = (error: unknown): boolean => {
+  if (error instanceof ApiError) {
+    return (
+      error.transientAuth === true ||
+      error.status === 429 ||
+      error.status >= 500
+    );
+  }
+  // A malformed-JSON SyntaxError won't fix itself on retry — don't retry it.
+  if (error instanceof SyntaxError) return false;
+  // Network-level throws are transient — retry.
+  return true;
+};
+
 // Register device token with backend
 export const registerDeviceToken = async (
   token: string
 ): Promise<DeviceTokenResponse | null> => {
-  try {
-    const platform = Platform.OS as "ios" | "android";
-    const deviceName = Device.modelName || undefined;
+  const platform = Platform.OS as "ios" | "android";
+  const deviceName = Device.modelName || undefined;
 
-    const response = await apiFetch(`${BASE_URL}/devices/register`, {
-      method: "POST",
-      body: JSON.stringify({
-        token,
-        platform,
-        deviceName,
-      }),
-    });
+  let lastError: unknown = null;
 
-    const data = await response.json();
+  for (let attempt = 1; attempt <= REGISTER_MAX_ATTEMPTS; attempt++) {
+    try {
+      const response = await apiFetch(`${BASE_URL}/devices/register`, {
+        method: "POST",
+        body: JSON.stringify({
+          token,
+          platform,
+          deviceName,
+        }),
+      });
 
-    if (data.success) {
-      return data.data;
+      const data = await response.json();
+
+      if (data.success) {
+        return data.data;
+      }
+
+      // 2xx with success:false is an unexpected backend contract violation —
+      // retrying won't help and it's worth surfacing as a real error.
+      notifLogger.error("Failed to register device token:", data.message);
+      return null;
+    } catch (error) {
+      lastError = error;
+      if (
+        attempt < REGISTER_MAX_ATTEMPTS &&
+        isRetryableRegisterFailure(error)
+      ) {
+        await delay(REGISTER_BACKOFF_MS * attempt);
+        continue;
+      }
+      break;
     }
-
-    notifLogger.error("Failed to register device token:", data.message);
-    return null;
-  } catch (error) {
-    notifLogger.error("Error registering device token:", error);
-    return null;
   }
+
+  // Retries exhausted (or the failure was non-retryable). Expected, recoverable
+  // conditions are warnings; anything else is a real error worth investigating.
+  if (isExpectedRegisterFailure(lastError)) {
+    notifLogger.warn(
+      "Could not register device token (will retry on next launch):",
+      messageOf(lastError)
+    );
+  } else {
+    notifLogger.error("Error registering device token:", lastError);
+  }
+  return null;
 };
 
 // Unregister device token from backend (on logout)
@@ -130,7 +199,9 @@ export const unregisterDeviceToken = async (
     // Backend returns 204 No Content on success
     return response.ok;
   } catch (error) {
-    notifLogger.error("Error unregistering device token:", error);
+    // Best-effort cleanup during logout — a network/server blip here is
+    // expected and non-actionable, so warn (breadcrumb) rather than error.
+    notifLogger.warn("Could not unregister device token:", messageOf(error));
     return false;
   }
 };
