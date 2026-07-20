@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "main": "index.ts",
   "scripts": {
-    "prepare": "git config core.hooksPath .githooks || true",
+    "prepare": "command -v git >/dev/null 2>&1 && { git config core.hooksPath .githooks || echo '[prepare] warning: failed to configure core.hooksPath for git hooks' >&2; }; true",
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
