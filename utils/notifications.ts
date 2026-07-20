@@ -104,6 +104,12 @@ const isExpectedRegisterFailure = (error: unknown): boolean => {
   if (error instanceof ApiError) {
     return error.status === 401 || error.status === 429 || error.status >= 500;
   }
+  // A SyntaxError from response.json() means a 2xx body wasn't valid JSON —
+  // a backend contract violation, not a transient condition. Surface it as a
+  // real error rather than a warn.
+  if (error instanceof SyntaxError) return false;
+  // Any other non-ApiError throw is network-level (RN's fetch rejects with a
+  // TypeError "Network request failed" on connectivity/DNS/refused) — expected.
   return true;
 };
 
@@ -118,6 +124,9 @@ const isRetryableRegisterFailure = (error: unknown): boolean => {
       error.status >= 500
     );
   }
+  // A malformed-JSON SyntaxError won't fix itself on retry — don't retry it.
+  if (error instanceof SyntaxError) return false;
+  // Network-level throws are transient — retry.
   return true;
 };
 
