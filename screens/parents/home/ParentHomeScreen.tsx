@@ -1,0 +1,133 @@
+import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo } from "react";
+import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
+import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
+import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
+import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
+import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
+import TodaysTopPicksComponent from "../../../components/parents/TodaysTopPicksComponent";
+import ParentsTopRecommendations from "../../../components/parents/ParentTopRecommendations";
+import SeasonalStoriesComponent from "../../../components/parents/SeasonalStoriesComponent";
+import StoriesByAgeComponent from "../../../components/parents/StoriesByAgeComponent";
+import StoryCategoriesList from "../../../components/parents/StoryCategoriesList";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useNotificationBanner from "../../../hooks/useNotificationBanner";
+import useRefreshControl from "../../../hooks/others/useRefreshControl";
+import useAuth from "../../../contexts/AuthContext";
+
+type SectionKey =
+  | "storiesByAge"
+  | "topRecommendations"
+  | "todaysTopPicks"
+  | "seasonalStories"
+  | "funAndAdventures"
+  | "storyCategoriesList";
+
+type SectionItem = { key: SectionKey };
+
+const sectionKeyExtractor = (item: SectionItem) => item.key;
+
+const SECTIONS: SectionItem[] = [
+  { key: "storiesByAge" },
+  { key: "topRecommendations" },
+  { key: "todaysTopPicks" },
+  { key: "seasonalStories" },
+  { key: "funAndAdventures" },
+  { key: "storyCategoriesList" },
+];
+
+const ParentHomeScreen = () => {
+  const { isGuest } = useAuth();
+  const {
+    showBanner,
+    permissionStatus,
+    handleDismiss,
+    handlePermissionGranted,
+  } = useNotificationBanner();
+
+  const queryClient = useQueryClient();
+  const invalidateAll = useCallback(
+    () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["stories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyCategories"] }),
+        queryClient.invalidateQueries({ queryKey: ["storyQuota"] }),
+        queryClient.invalidateQueries({ queryKey: ["parentsFavourites"] }),
+      ]),
+    [queryClient]
+  );
+  const { refreshing, onRefresh } = useRefreshControl(invalidateAll);
+
+  const renderSection = useCallback(({ item }: { item: SectionItem }) => {
+    switch (item.key) {
+      case "storiesByAge":
+        return <StoriesByAgeComponent />;
+      case "topRecommendations":
+        return <ParentsTopRecommendations />;
+      case "todaysTopPicks":
+        return <TodaysTopPicksComponent />;
+      case "seasonalStories":
+        return <SeasonalStoriesComponent />;
+      case "funAndAdventures":
+        return <FunAndAdventuresComponent />;
+      case "storyCategoriesList":
+        return <StoryCategoriesList />;
+      default: {
+        const _exhaustiveCheck: never = item.key;
+        throw new Error(`Unhandled SectionKey: ${String(_exhaustiveCheck)}`);
+      }
+    }
+  }, []);
+
+  const listHeader = useMemo(
+    () => (
+      <View style={styles.listHeader}>
+        {showBanner && !isGuest && (
+          <NotificationPermissionBanner
+            permissionStatus={permissionStatus}
+            onDismiss={handleDismiss}
+            onPermissionGranted={handlePermissionGranted}
+          />
+        )}
+        <FreeStoriesBanner />
+      </View>
+    ),
+    [
+      showBanner,
+      isGuest,
+      permissionStatus,
+      handleDismiss,
+      handlePermissionGranted,
+    ]
+  );
+
+  return (
+    <SafeAreaWrapper variant="solid">
+      <View className="flex-1 bg-bgLight px-4">
+        <ParentsHomeScreenHeader />
+        <FlatList
+          data={SECTIONS}
+          keyExtractor={sectionKeyExtractor}
+          renderItem={renderSection}
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.listContent}
+          removeClippedSubviews={false}
+          initialNumToRender={4}
+          maxToRenderPerBatch={3}
+          windowSize={10}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListHeaderComponent={listHeader}
+        />
+      </View>
+    </SafeAreaWrapper>
+  );
+};
+
+const styles = StyleSheet.create({
+  listContent: { gap: 16, paddingBottom: 32 },
+  listHeader: { gap: 12 },
+});
+
+export default ParentHomeScreen;
