@@ -1,0 +1,148 @@
+{
+  "expo": {
+    "name": "Storytime",
+    "slug": "storytime-mobile",
+    "version": "1.2.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "scheme": "storytime",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "net.emerj.storytime",
+      "icon": "./assets/icon.png",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false,
+        "UIBackgroundModes": ["remote-notification"]
+      },
+      "entitlements": {
+        "com.apple.developer.applesignin": ["Default"],
+        "aps-environment": "production"
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "associatedDomains": [
+        "applinks:web.storytimeapp.me",
+        "applinks:dev.web.storytimeapp.me",
+        "applinks:staging.web.storytimeapp.me"
+      ]
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#fbf8f7"
+      },
+      "predictiveBackGestureEnabled": false,
+      "googleServicesFile": "./google-services.json",
+      "permissions": [
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "com.android.vending.BILLING"
+      ],
+      "package": "net.emerj.storytime",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "https",
+              "host": "web.storytimeapp.me",
+              "pathPrefix": "/story"
+            },
+            {
+              "scheme": "https",
+              "host": "dev.web.storytimeapp.me",
+              "pathPrefix": "/story"
+            },
+            {
+              "scheme": "https",
+              "host": "staging.web.storytimeapp.me",
+              "pathPrefix": "/story"
+            }
+          ],
+          "category": ["BROWSABLE", "DEFAULT"]
+        }
+      ]
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#fbf8f7"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Storytime uses your photo library to let you choose a profile picture for your account.",
+          "cameraPermission": "Storytime uses your camera to let you take a profile picture for your account.",
+          "microphonePermission": false
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": false,
+          "recordAudioAndroid": false
+        }
+      ],
+      [
+        "@react-native-google-signin/google-signin",
+        {
+          "iosUrlScheme": "com.googleusercontent.apps.368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba"
+        }
+      ],
+      "expo-asset",
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#6366f1",
+          "defaultChannel": "storytime_default"
+        }
+      ],
+      "@react-native-firebase/app",
+      "@react-native-firebase/messaging",
+      [
+        "expo-build-properties",
+        {
+          "ios": {
+            "useFrameworks": "static",
+            "forceStaticLinking": [
+              "RNFBApp",
+              "RNFBMessaging",
+              "RNFBCrashlytics"
+            ]
+          }
+        }
+      ],
+      "expo-iap",
+      "./plugins/withFirebaseMessagingManifestFix",
+      [
+        "@sentry/react-native/expo",
+        {
+          "organization": "emerj",
+          "project": "storytime-mobile"
+        }
+      ],
+      "@react-native-firebase/crashlytics",
+      "@sentry/react-native",
+      "expo-status-bar"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "b117024d-5005-477f-8eae-03dce4fd8e45"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b117024d-5005-477f-8eae-03dce4fd8e45"
+    },
+    "platforms": ["ios", "android"]
+  }
+}
