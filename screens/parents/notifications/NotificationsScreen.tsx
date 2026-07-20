@@ -106,14 +106,16 @@ const NotificationsScreen = () => {
                       {group.notifications.map((noti) => (
                         <Pressable
                           onPress={() => handleNotificationPress(noti)}
-                          className="flex-row gap-x-4"
+                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-white" : "bg-purple-light/30"}`}
                           key={noti.id}
                         >
                           {getNotificationIcon(
                             mapCategoryToIconType(noti.category)
                           )}
                           <View className="flex flex-1 flex-col gap-y-1.5">
-                            <Text className="w-full text-wrap font-[abeezee] text-base leading-6 text-black">
+                            <Text
+                              className={`w-full text-wrap font-[abeezee] text-base leading-6 ${noti.isRead ? "text-text" : "text-black"}`}
+                            >
                               {noti.title}
                             </Text>
                             <Text className="font-[abeezee] text-xs leading-6 text-text">
