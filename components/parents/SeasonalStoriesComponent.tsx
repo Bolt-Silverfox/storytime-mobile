@@ -1,0 +1,32 @@
+import { useNavigation } from "@react-navigation/native";
+import { useQuery } from "@tanstack/react-query";
+import queryGetStories from "../../hooks/tanstack/queryHooks/queryGetStories";
+import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
+import HomepageStoriesContainer from "../HomepageStoriesContainer";
+import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+
+const SeasonalStoriesComponent = () => {
+  const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { data, error, refetch, isPending } = useQuery(
+    queryGetStories({ isSeasonal: true, shuffle: true })
+  );
+
+  return (
+    <HomeScreenCarouselComponent
+      isPending={isPending}
+      error={error}
+      refetch={refetch}
+      hasData={!!data}
+    >
+      <HomepageStoriesContainer
+        title="Seasonal stories"
+        onViewAll={() => navigator.navigate("seasonalStories")}
+        stories={data ?? []}
+        error={error}
+        isPending={isPending}
+      />
+    </HomeScreenCarouselComponent>
+  );
+};
+
+export default SeasonalStoriesComponent;
