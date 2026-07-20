@@ -109,7 +109,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                     return (
                       <View
                         key={item.category}
-                        className={`flex flex-row items-center justify-between${!isLast ? "border-b border-b-border-light" : ""}`}
+                        className={`flex flex-row items-center justify-between ${!isLast ? "border-b border-b-border-light" : ""}`}
                       >
                         <Text className="font-[abeezee] text-base text-black">
                           {item.label}

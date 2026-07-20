@@ -10,6 +10,7 @@ import {
 import { ProtectedRoutesNavigationProp } from "../../Navigation/ProtectedNavigator";
 import useIsPremium from "../../hooks/useIsPremium";
 import useGetUserProfile from "../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { useGetUnreadNotificationsCount } from "../../hooks/tanstack/queryHooks/useGetNotifications";
 import useAuth from "../../contexts/AuthContext";
 import useUpgradeNavigation from "../../hooks/useUpgradeNavigation";
 import { getGreeting } from "../../utils/utils";
@@ -23,6 +24,8 @@ const ParentsHomeScreenHeader = () => {
 
   const { data, isPending } = useGetUserProfile();
   const { isPremium: isUserSubscribed } = useIsPremium();
+  const { data: unreadCount } = useGetUnreadNotificationsCount();
+  const hasUnread = (unreadCount ?? 0) > 0;
   if (isPending && !isGuest) return <ActivityIndicator size={"large"} />;
 
   return (
@@ -74,9 +77,12 @@ const ParentsHomeScreenHeader = () => {
             onPress={() =>
               navigator.navigate("notification", { screen: "index" })
             }
-            className="flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white"
+            className="relative flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white"
           >
             <Icon name="Bell" />
+            {hasUnread && (
+              <View className="absolute right-2.5 top-2.5 size-2.5 rounded-full border border-white bg-primary" />
+            )}
           </Pressable>
         )}
       </View>
