@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useCallback, useMemo } from "react";
 import { FlatList, RefreshControl, StyleSheet, View } from "react-native";
 import NotificationPermissionBanner from "../../../components/NotificationPermissionBanner";
+import CreateStoryCard from "../../../components/parents/CreateStoryCard";
 import FreeStoriesBanner from "../../../components/parents/FreeStoriesBanner";
 import FunAndAdventuresComponent from "../../../components/parents/FunAndAdventuresComponent";
 import ParentsHomeScreenHeader from "../../../components/parents/ParentsHomeScreenHeader";
@@ -90,6 +91,7 @@ const ParentHomeScreen = () => {
           />
         )}
         <FreeStoriesBanner />
+        {!isGuest && <CreateStoryCard />}
       </View>
     ),
     [
