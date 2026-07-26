@@ -34,9 +34,7 @@ const CreateStoryCard = () => {
         <Feather name="feather" size={24} color="white" />
       </View>
       <View className="flex-1">
-        <Text className="font-[quilka] text-lg text-white">
-          Create a Story
-        </Text>
+        <Text className="font-[quilka] text-lg text-white">Create a Story</Text>
         <Text className="font-[abeezee] text-sm text-purple-light">
           Let our AI write a brand-new story for you.
         </Text>
