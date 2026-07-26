@@ -86,6 +86,23 @@ export const getDevicePushToken = async (): Promise<string | null> => {
   }
 };
 
+// Device-token registration fails for many benign, self-correcting reasons — a
+// stale session (401), rate-limiting (429), a transient 5xx, or offline/DNS
+// (RN fetch rejects with a TypeError). None are actionable, so they should log
+// at `warn` (a Sentry breadcrumb) rather than `error` (which becomes a Sentry
+// issue). Only genuinely unexpected failures should page.
+const isExpectedRegisterFailure = (error: unknown): boolean => {
+  const status = (error as { status?: number } | null)?.status;
+  if (typeof status === "number") {
+    return status === 401 || status === 429 || status >= 500;
+  }
+  // A SyntaxError (a 2xx body that wasn't valid JSON) is a real backend
+  // contract violation — surface it as an error.
+  if (error instanceof SyntaxError) return false;
+  // Any other throw is network-level (offline/DNS/refused) — expected.
+  return true;
+};
+
 // Register device token with backend
 export const registerDeviceToken = async (
   token: string
@@ -112,7 +129,14 @@ export const registerDeviceToken = async (
     notifLogger.error("Failed to register device token:", data.message);
     return null;
   } catch (error) {
-    notifLogger.error("Error registering device token:", error);
+    if (isExpectedRegisterFailure(error)) {
+      notifLogger.warn(
+        "Could not register device token (will retry on next launch):",
+        error
+      );
+    } else {
+      notifLogger.error("Error registering device token:", error);
+    }
     return null;
   }
 };
