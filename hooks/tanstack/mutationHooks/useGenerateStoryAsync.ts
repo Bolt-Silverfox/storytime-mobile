@@ -24,7 +24,9 @@ const useGenerateStoryAsync = () => {
         throw new Error(getErrorMessage(err));
       });
       const data: GenerateStoryJobResponse = await response.json();
-      if (!data?.jobId || data.queued === false) {
+      // Require an affirmative queue ack: a jobId AND queued === true. A missing
+      // `queued` must NOT be treated as started.
+      if (!data?.jobId || data.queued !== true) {
         throw new Error(
           data?.error ?? "We couldn't start your story. Please try again."
         );

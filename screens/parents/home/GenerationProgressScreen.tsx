@@ -27,17 +27,30 @@ const GenerationProgressScreen = () => {
   const { mutate: cancelJob, isPending: isCancelling } = useCancelStoryJob();
 
   const [resolvedStoryId, setResolvedStoryId] = useState<string | null>(null);
+  const [cancelError, setCancelError] = useState<string | null>(null);
   const navigatedRef = useRef(false);
 
   // Fall back to polling the status endpoint only once the SSE stream errors.
   const pollingEnabled = sse.sseFailed && !resolvedStoryId;
-  const { data: status } = useStoryJobStatus(jobId, pollingEnabled);
+  const {
+    data: status,
+    isError: statusErrored,
+    error: statusError,
+  } = useStoryJobStatus(jobId, pollingEnabled);
 
-  // When the poll fallback reports "completed" but we never got a storyId from
-  // the SSE `completed` event, fetch the result endpoint to finalize.
+  // Finalize via the result endpoint when EITHER the poll fallback reports
+  // "completed", OR the SSE `completed` event arrived without a storyId (the SSE
+  // hook only sets storyId when the payload carries one). Without the second
+  // case the screen would hang forever waiting on a storyId that never comes.
   const pollCompleted = status?.status === "completed";
-  const needResult = pollCompleted && !resolvedStoryId;
-  const { data: result } = useStoryJobResult(jobId, needResult);
+  const sseCompletedWithoutId = sse.status === "completed" && !sse.storyId;
+  const needResult =
+    (pollCompleted || sseCompletedWithoutId) && !resolvedStoryId;
+  const {
+    data: result,
+    isError: resultErrored,
+    error: resultError,
+  } = useStoryJobResult(jobId, needResult);
 
   // Surface a storyId from whichever source resolves first.
   useEffect(() => {
@@ -59,31 +72,50 @@ const GenerationProgressScreen = () => {
     }
   }, [resolvedStoryId, navigation]);
 
+  // Treat persistent poll/result request errors as a failure too — otherwise, if
+  // the fallback requests keep erroring after SSE already failed, `status`/
+  // `result` stay undefined forever and the user is stuck on the spinner.
   const failed =
     sse.status === "failed" ||
     status?.status === "failed" ||
-    status?.status === "cancelled";
+    status?.status === "cancelled" ||
+    statusErrored ||
+    resultErrored;
 
   const errorMessage =
     sse.error ??
     status?.error ??
+    (statusErrored ? statusError?.message : undefined) ??
+    (resultErrored ? resultError?.message : undefined) ??
     "Something went wrong while creating your story.";
 
   // Prefer live SSE values; fall back to the polled status once SSE has failed.
+  // Take the max so the bar never jumps backward during the SSE->poll handoff.
   const progress = clampProgress(
-    sse.sseFailed ? (status?.progress ?? 0) : sse.progress
+    sse.sseFailed ? Math.max(sse.progress, status?.progress ?? 0) : sse.progress
   );
   const progressMessage = sse.sseFailed
     ? status?.progressMessage
     : sse.progressMessage;
 
   const handleCancel = () => {
+    setCancelError(null);
     cancelJob(jobId, {
-      onSettled: () => {
+      // Only navigate away on a CONFIRMED cancel. On failure the job may still
+      // be running server-side, so keep the user here and surface the error
+      // rather than silently pretending it was cancelled.
+      onSuccess: () => {
         if (!navigatedRef.current) {
           navigatedRef.current = true;
           navigation.goBack();
         }
+      },
+      onError: (err) => {
+        setCancelError(
+          err instanceof Error
+            ? err.message
+            : "Couldn't cancel — your story may still be generating."
+        );
       },
     });
   };
@@ -165,6 +197,11 @@ const GenerationProgressScreen = () => {
                   transparent
                   ariaLabel="Cancel story generation"
                 />
+              )}
+              {cancelError && (
+                <Text className="mt-2 text-center font-[abeezee] text-xs text-red-600">
+                  {cancelError}
+                </Text>
               )}
             </View>
           </>

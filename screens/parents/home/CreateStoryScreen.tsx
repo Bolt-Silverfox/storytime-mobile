@@ -34,8 +34,10 @@ const parseList = (value: string): string[] =>
 const parseAge = (value: string): number | undefined => {
   const trimmed = value.trim();
   if (!trimmed) return undefined;
-  const parsed = Number.parseInt(trimmed, 10);
-  return Number.isFinite(parsed) && parsed >= 0 ? parsed : undefined;
+  // Parse the WHOLE value (Number, not parseInt) so "4.5"/"4years" are rejected
+  // rather than silently truncated to 4.
+  const parsed = Number(trimmed);
+  return Number.isInteger(parsed) && parsed >= 0 ? parsed : undefined;
 };
 
 const inputClass =
