@@ -21,7 +21,8 @@ type VoiceJobPayload = {
   error?: string;
 };
 
-export type BatchSSEStatus = "connecting" | "processing" | "completed" | "failed";
+export type BatchSSEStatus =
+  "connecting" | "processing" | "completed" | "failed";
 
 export type UseStoryAudioBatchSSEResult = {
   /** Paragraphs whose audio has been delivered over the stream so far. */

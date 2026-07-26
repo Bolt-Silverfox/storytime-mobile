@@ -148,7 +148,8 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         status: mapped,
         completedParagraphs: sse.completedParagraphs,
         failedParagraphs: [],
-        totalQueued: sse.totalParagraphs ?? batchQuery.data?.totalParagraphs ?? 0,
+        totalQueued:
+          sse.totalParagraphs ?? batchQuery.data?.totalParagraphs ?? 0,
         error: sse.error,
       };
     }
@@ -275,7 +276,13 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         );
       }
     }
-  }, [statusData, usingSSE, mergeParagraphs, syncToCache, batchQuery.data?.totalParagraphs]);
+  }, [
+    statusData,
+    usingSSE,
+    mergeParagraphs,
+    syncToCache,
+    batchQuery.data?.totalParagraphs,
+  ]);
 
   // Stop polling only on terminal errors (404 = expired batch)
   // Transient failures (5xx, network) are retried by TanStack Query
