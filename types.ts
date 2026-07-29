@@ -105,6 +105,8 @@ type UserProfile = {
   createdAt: string;
   updatedAt: string;
   subscriptionStatus: "free" | "active";
+  hasRatedApp?: boolean;
+  rateAppDismissedAt?: string | null;
 };
 
 type KidReport = {

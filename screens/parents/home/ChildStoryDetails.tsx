@@ -20,6 +20,7 @@ import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryP
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useIsPremium from "../../../hooks/useIsPremium";
 import useAuth from "../../../contexts/AuthContext";
+import useRateUs from "../../../contexts/RateUsContext";
 import GuestQuotaBanner from "../../../components/GuestQuotaBanner";
 import {
   StoryNavigatorParamList,
@@ -53,6 +54,7 @@ const ChildStoryDetails = () => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const { isPremium } = useIsPremium();
   const { isGuest } = useAuth();
+  const { maybePromptRateUs } = useRateUs();
   const { data: quota, isFetching: isQuotaFetching } = useGetStoryQuota();
   const { data: guestStoryAccess, isPending: isGuestAccessPending } =
     useGetGuestStoryAccess(id);
@@ -255,13 +257,16 @@ const ChildStoryDetails = () => {
           ) : (
             <CustomButton
               disabled={isGuestAccessCheckLoading}
-              onPress={() => {
+              onPress={async () => {
                 if (isGuestAccessCheckLoading) return;
-                navigator.navigate("readStory", {
-                  storyId: id,
-                  mode: selectedMode,
-                  page: params.page,
-                });
+                const goToStory = () =>
+                  navigator.navigate("readStory", {
+                    storyId: id,
+                    mode: selectedMode,
+                    page: params.page,
+                  });
+                const shown = await maybePromptRateUs(goToStory);
+                if (!shown) goToStory();
               }}
               text="Start Reading"
               ariaLabel="Start reading this story"
