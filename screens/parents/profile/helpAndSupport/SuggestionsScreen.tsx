@@ -67,7 +67,9 @@ export default function SuggestionsScreen() {
       fullname: fullName.trim(),
       email: email.trim().toLowerCase(),
       message: message.trim(),
-      category: "Bug Report",
+      // Generic feedback from the Suggestions & Feedback screen (the design has
+      // no category picker); "Bug Report" mislabelled every submission.
+      category: "Feedback",
     });
   };
 
