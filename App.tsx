@@ -28,6 +28,7 @@ import RootNavigator, {
   RootNavigatorParamList,
 } from "./Navigation/RootNavigator";
 import { ToastProvider } from "./contexts/ToastContext";
+import { RateUsProvider } from "./contexts/RateUsContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { validateEnv } from "./utils/env";
 import {
@@ -149,19 +150,21 @@ export default Sentry.wrap(function App() {
         <AuthProvider>
           <ToastProvider>
             <QueryClientProvider client={queryClient}>
-              <NavigationContainer
-                ref={navigationRef}
-                linking={linking}
-                onReady={() => {
-                  reactNavigationIntegration.registerNavigationContainer(
-                    navigationRef
-                  );
-                }}
-              >
-                <NotificationHandler>
-                  <RootNavigator />
-                </NotificationHandler>
-              </NavigationContainer>
+              <RateUsProvider>
+                <NavigationContainer
+                  ref={navigationRef}
+                  linking={linking}
+                  onReady={() => {
+                    reactNavigationIntegration.registerNavigationContainer(
+                      navigationRef
+                    );
+                  }}
+                >
+                  <NotificationHandler>
+                    <RootNavigator />
+                  </NotificationHandler>
+                </NavigationContainer>
+              </RateUsProvider>
             </QueryClientProvider>
           </ToastProvider>
         </AuthProvider>
