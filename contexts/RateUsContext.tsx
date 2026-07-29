@@ -36,6 +36,9 @@ const RateUsProvider = ({ children }: { children: ReactNode }) => {
   const [visible, setVisible] = useState(false);
   const pendingProceedRef = useRef<(() => void) | null>(null);
   const promptedThisSessionRef = useRef(false);
+  // Reserved synchronously while an eligibility check is awaiting storage, so two
+  // rapid calls can't both pass the guards and clobber pendingProceedRef.
+  const checkInFlightRef = useRef(false);
 
   const runPending = useCallback(() => {
     const proceed = pendingProceedRef.current;
@@ -47,7 +50,13 @@ const RateUsProvider = ({ children }: { children: ReactNode }) => {
 
   const rateNow = useCallback(() => {
     openStoreForRating();
-    markAppRated.mutate();
+    markAppRated.mutate(undefined, {
+      onError: () => {
+        // Persisting the rating failed — allow the prompt to reappear so the
+        // decision can still be recorded rather than being silently lost.
+        promptedThisSessionRef.current = false;
+      },
+    });
   }, [markAppRated]);
 
   const maybePromptRateUs = useCallback(
@@ -57,20 +66,27 @@ const RateUsProvider = ({ children }: { children: ReactNode }) => {
         !profile ||
         profile.hasRatedApp ||
         profile.rateAppDismissedAt ||
-        promptedThisSessionRef.current
+        promptedThisSessionRef.current ||
+        checkInFlightRef.current
       ) {
         return false;
       }
 
-      const finishedStoryCount = await getFinishedStoryCount(user?.id);
-      if (finishedStoryCount < 1) {
-        return false;
+      // Reserve the check synchronously (before the awaited storage read) so a
+      // concurrent call falls through to its own navigation instead of racing.
+      checkInFlightRef.current = true;
+      try {
+        const finishedStoryCount = await getFinishedStoryCount(user?.id);
+        if (finishedStoryCount < 1) {
+          return false;
+        }
+        pendingProceedRef.current = onProceed ?? null;
+        promptedThisSessionRef.current = true;
+        setVisible(true);
+        return true;
+      } finally {
+        checkInFlightRef.current = false;
       }
-
-      pendingProceedRef.current = onProceed ?? null;
-      promptedThisSessionRef.current = true;
-      setVisible(true);
-      return true;
     },
     [profile, user?.id]
   );
@@ -86,7 +102,13 @@ const RateUsProvider = ({ children }: { children: ReactNode }) => {
           runPending();
         }}
         onDismiss={() => {
-          dismissAppRating.mutate();
+          dismissAppRating.mutate(undefined, {
+            onError: () => {
+              // Dismissal didn't persist — let the prompt reappear so it isn't
+              // silently treated as dismissed without the Profile card showing.
+              promptedThisSessionRef.current = false;
+            },
+          });
           close();
           runPending();
         }}
