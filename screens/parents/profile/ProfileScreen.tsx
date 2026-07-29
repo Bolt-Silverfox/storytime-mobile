@@ -14,6 +14,7 @@ import React, { FC, useState } from "react";
 import {
   ImageBackground,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,11 +29,17 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
+import useRateUs from "../../../contexts/RateUsContext";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
   const { user, isLoading, logout } = useAuth();
+  const { rateNow } = useRateUs();
+  const { data: profile } = useGetUserProfile();
+  const showRateCard =
+    !!profile && !profile.hasRatedApp && !!profile.rateAppDismissedAt;
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
@@ -164,6 +171,26 @@ const ProfileScreen: FC = () => {
               isLastItem
             />
           </View>
+
+          {showRateCard && (
+            <View className="mx-auto mt-5 w-[90%] max-w-screen-md rounded-3xl bg-[#866EFF] p-6 lg:max-w-screen-lg xl:max-w-screen-xl">
+              <Text className="font-[quilka] text-lg text-white">
+                Enjoying Storytime4Kids?
+              </Text>
+              <Text className="mt-1 font-[abeezee] text-sm text-white/90">
+                Tap below to rate us on the store, it only takes a moment.
+              </Text>
+              <Pressable
+                onPress={rateNow}
+                aria-labelledby="Rate Storytime4Kids on the store"
+                className="mt-4 h-[46px] items-center justify-center rounded-full bg-[#FFD84D]"
+              >
+                <Text className="font-[abeezee] text-base font-semibold text-[#212121]">
+                  Rate Us
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </ScrollView>
         <ParentProfileModal
           open={openModal}
