@@ -1,0 +1,189 @@
+import { ErrorCode, useIAP } from "expo-iap";
+import { useEffect, useRef, useState } from "react";
+import apiFetch from "../../apiFetch";
+import {
+  BASE_URL,
+  BUNDLE_IDENTIFIER,
+  QUERY_KEYS,
+  SUBSCRIPTION_IDS,
+} from "../../constants";
+import { QueryResponse, SubscriptionPlan } from "../../types";
+import { getErrorMessage } from "../../utils/utils";
+import { useQueryClient } from "@tanstack/react-query";
+import useAuth from "../../contexts/AuthContext";
+import { iapLogger } from "../../utils/logger";
+
+const useSubscribeIAP = (
+  selectedPlan: SubscriptionPlan,
+  onSubscribed?: () => void
+) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isUserCancelled, setIsUserCancelled] = useState(false);
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  // Keep the latest authenticated user in a ref so the long-lived
+  // onPurchaseSuccess listener (registered once by useIAP) always reads the
+  // current auth state instead of a stale closure value.
+  const userRef = useRef(user);
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
+  const {
+    connected,
+    subscriptions,
+    fetchProducts,
+    requestPurchase,
+    finishTransaction,
+  } = useIAP({
+    onPurchaseSuccess: async (purchase) => {
+      // onPurchaseSuccess also fires for redelivered/pending StoreKit
+      // transactions (e.g. on cold start or background wake), not only for
+      // interactive purchases. Verifying without an authenticated session hits
+      // /payment/verify-purchase (AuthSessionGuard) with no valid token -> 401,
+      // so finishTransaction never runs and StoreKit keeps redelivering the
+      // same transaction every session -> an infinite 401 loop + error spam.
+      // Defer instead: leave the transaction pending (never finish an
+      // unverified purchase) so useSubscriptionSync can verify and finish it
+      // once the user is authenticated.
+      if (!userRef.current?.id) {
+        return;
+      }
+
+      const { store, productId, purchaseToken, transactionId } = purchase;
+      const token = store === "apple" ? transactionId : purchaseToken;
+      if (!token) {
+        setErrorMessage("Purchase token missing. Please try again.");
+        return;
+      }
+      try {
+        await verifyPurchase({
+          platform: store,
+          productId: productId,
+          purchaseToken: token,
+          packageName: BUNDLE_IDENTIFIER,
+        });
+
+        await finishTransaction({ purchase });
+        queryClient.refetchQueries({
+          queryKey: [QUERY_KEYS.GET_USER_PROFILE, user?.id],
+        });
+        queryClient.refetchQueries({
+          queryKey: [QUERY_KEYS.GET_SUBSCRIPTION_STATUS, user?.id],
+        });
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.GET_STORY_QUOTA],
+        });
+        onSubscribed?.();
+      } catch (err) {
+        iapLogger.error("Verification failed, NOT finishing transaction", err);
+        setErrorMessage(getErrorMessage(err));
+      }
+    },
+    onPurchaseError: (error) => {
+      if (error.code === ErrorCode.UserCancelled) {
+        setIsUserCancelled(true);
+        setErrorMessage("No worries! You can subscribe anytime.");
+      } else {
+        setIsUserCancelled(false);
+        iapLogger.error("Subscription failed", error);
+        setErrorMessage(error.message ?? "Unexpected error, try again");
+      }
+    },
+  });
+
+  useEffect(() => {
+    if (!connected) {
+      setIsLoading(true);
+
+      const timeout = setTimeout(() => {
+        setIsLoading(false);
+        setErrorMessage("Could not connect to the store. Please try again.");
+      }, 10_000);
+
+      return () => clearTimeout(timeout);
+    }
+
+    const loadSubscriptions = async () => {
+      try {
+        setIsLoading(true);
+        setErrorMessage("");
+        await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
+      } catch (err) {
+        iapLogger.error("Failed to fetch products from google play store", err);
+        setErrorMessage(getErrorMessage(err));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    (async () => {
+      await loadSubscriptions();
+    })();
+  }, [connected, fetchProducts]);
+
+  const getPlanName = (id: string): "Monthly" | "Yearly" => {
+    return id === "1_month_subscription" ? "Monthly" : "Yearly";
+  };
+
+  const verifyPurchase = async (params: {
+    platform: string;
+    productId: string;
+    purchaseToken: string;
+    packageName: string;
+  }) => {
+    try {
+      const request = await apiFetch(`${BASE_URL}/payment/verify-purchase`, {
+        body: JSON.stringify(params),
+        method: "POST",
+      });
+      const response: QueryResponse = await request.json();
+      if (!response.success) throw new Error(response.message);
+      return response;
+    } catch (err) {
+      iapLogger.error("purchase verification failed", err);
+      throw new Error(getErrorMessage(err));
+    }
+  };
+
+  const handlePurchase = async () => {
+    if (isLoading) return;
+    try {
+      setIsLoading(true);
+      setErrorMessage("");
+      setIsUserCancelled(false);
+      if (!selectedPlan) throw new Error("Select a valid plan");
+      const sub = subscriptions.find((s) => {
+        const id = s.id;
+        return id ? getPlanName(id) === selectedPlan : false;
+      });
+      if (!sub) throw new Error("Subscription not found, retry.");
+      const productId = sub.id;
+      if (!productId) throw new Error("Product not found");
+      await requestPurchase({
+        request: {
+          apple: { sku: productId },
+          google: { skus: [productId] },
+        },
+        type: "subs",
+      });
+    } catch (err) {
+      setErrorMessage(getErrorMessage(err));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return {
+    isLoading,
+    errorMessage,
+    isUserCancelled,
+    subscriptions,
+    handlePurchase,
+    getPlanName,
+  };
+};
+
+export default useSubscribeIAP;

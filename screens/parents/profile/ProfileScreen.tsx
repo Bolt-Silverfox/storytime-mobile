@@ -1,0 +1,237 @@
+import AntDesign from "@expo/vector-icons/AntDesign";
+import Feather from "@expo/vector-icons/Feather";
+import { useNavigation } from "@react-navigation/native";
+import {
+  BellRing,
+  CreditCard,
+  Gift,
+  HelpCircle,
+  KeyRound,
+  Link2,
+  Volume2,
+} from "lucide-react-native";
+import React, { FC, useState } from "react";
+import {
+  ImageBackground,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
+import colours from "../../../colours";
+import Avatar from "../../../components/Avatar";
+import CustomText from "../../../components/CustomText";
+import LoadingOverlay from "../../../components/LoadingOverlay";
+import MenuItem from "../../../components/MenuItem";
+import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
+import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import useAuth from "../../../contexts/AuthContext";
+import useRateUs from "../../../contexts/RateUsContext";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
+import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
+import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+
+const ProfileScreen: FC = () => {
+  const { user, isLoading, logout } = useAuth();
+  const { rateNow } = useRateUs();
+  const { data: profile } = useGetUserProfile();
+  const showRateCard =
+    !!profile && !profile.hasRatedApp && !!profile.rateAppDismissedAt;
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
+  const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
+    false
+  );
+
+  const { width } = useWindowDimensions();
+  const isTablet = width >= 768;
+
+  return (
+    <SafeAreaWrapper variant="transparent">
+      <View style={styles.container}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollContent}
+        >
+          <ImageBackground
+            source={require("../../../assets/bg-adaptive-image.png")}
+            style={styles.header}
+            imageStyle={styles.imageBackground}
+          >
+            <Text className="mx-4 mt-10 font-[abeezee] text-xl">Profile</Text>
+            <Avatar
+              onPress={() => {
+                navigator.navigate("editParentImage");
+              }}
+              edit={true}
+              size={80}
+              style={styles.avatar}
+            />
+          </ImageBackground>
+
+          <View style={styles.nameContainer}>
+            <CustomText
+              style={[
+                styles.profileName,
+                // eslint-disable-next-line react-native/no-inline-styles
+                { fontSize: isTablet ? 32 : 24 },
+              ]}
+            >
+              {user?.name}
+            </CustomText>
+            <CustomText
+              style={[
+                styles.profileEmail,
+                // eslint-disable-next-line react-native/no-inline-styles
+                { fontSize: isTablet ? 18 : 14 },
+              ]}
+            >
+              {user?.email}
+            </CustomText>
+          </View>
+
+          <View className="mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border border-border-lighter bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+            <MenuItem
+              icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
+              label="Notification Settings"
+              onPress={() =>
+                protectedNavigator.navigate("notification", {
+                  screen: "settings",
+                })
+              }
+              isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<KeyRound color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Change Password"
+              onPress={() => navigator.navigate("changePassword")}
+              isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Link2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Linked Accounts"
+              onPress={() => navigator.navigate("linkedAccounts")}
+              isTablet={isTablet}
+            />
+            <MenuItem
+              icon={<Volume2 color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Voice Selection"
+              isTablet={isTablet}
+              onPress={() => navigator.navigate("defaultVoice")}
+            />
+            <MenuItem
+              icon={<CreditCard color={"#EC4007"} size={isTablet ? 20 : 18} />}
+              label="Subscription"
+              isTablet={isTablet}
+              onPress={() => protectedNavigator.navigate("getPremium")}
+            />
+            {Platform.OS === "android" && (
+              <MenuItem
+                icon={<Gift color={"#EC4007"} size={isTablet ? 20 : 18} />}
+                label="Redeem Coupon"
+                isTablet={isTablet}
+                onPress={() => navigator.navigate("redeemCoupon")}
+              />
+            )}
+            <MenuItem
+              icon={<HelpCircle color="#EC4007" size={isTablet ? 20 : 18} />}
+              label="Help & Support"
+              isTablet={isTablet}
+              onPress={() =>
+                navigator.navigate("helpAndSupport", { screen: "index" })
+              }
+            />
+            <MenuItem
+              icon={
+                <AntDesign
+                  name="logout"
+                  color="#EC4007"
+                  size={isTablet ? 20 : 18}
+                />
+              }
+              label="Log Out"
+              isTablet={isTablet}
+              onPress={() => setOpenModal("logout")}
+            />
+            <MenuItem
+              icon={
+                <Feather
+                  name="trash"
+                  color="#EC4007"
+                  size={isTablet ? 20 : 18}
+                />
+              }
+              label="Delete Account"
+              textColor="#DC2626"
+              isTablet={isTablet}
+              onPress={() => setOpenModal("delete")}
+              isLastItem
+            />
+          </View>
+
+          {showRateCard && (
+            <View className="mx-auto mt-5 w-[90%] max-w-screen-md rounded-3xl bg-[#866EFF] p-6 lg:max-w-screen-lg xl:max-w-screen-xl">
+              <Text className="font-[quilka] text-lg text-white">
+                Enjoying Storytime4Kids?
+              </Text>
+              <Text className="mt-1 font-[abeezee] text-sm text-white/90">
+                Tap below to rate us on the store, it only takes a moment.
+              </Text>
+              <Pressable
+                onPress={rateNow}
+                aria-labelledby="Rate Storytime4Kids on the store"
+                className="mt-4 h-[46px] items-center justify-center rounded-full bg-[#FFD84D]"
+              >
+                <Text className="font-[abeezee] text-base font-semibold text-[#212121]">
+                  Rate Us
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </ScrollView>
+        <ParentProfileModal
+          open={openModal}
+          setOpen={setOpenModal}
+          logout={logout}
+          deleteAccount={() => navigator.navigate("deleteAccount")}
+        />
+        <LoadingOverlay visible={isLoading} />
+      </View>
+    </SafeAreaWrapper>
+  );
+};
+
+export default ProfileScreen;
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
+  scrollContent: { paddingBottom: 10 },
+  header: {
+    width: "100%",
+    height: 192,
+    position: "relative",
+    overflow: "visible",
+  },
+  nameContainer: { alignItems: "center", marginTop: 30 },
+  imageBackground: {
+    borderBottomLeftRadius: 24,
+    borderBottomRightRadius: 24,
+  },
+  avatar: {
+    bottom: -60,
+    alignSelf: "center",
+  },
+  profileName: {
+    fontFamily: "quilka",
+    textAlign: "center",
+    color: colours.black,
+  },
+  profileEmail: {
+    color: "#6B7280",
+    textAlign: "center",
+    marginTop: 4,
+  },
+});

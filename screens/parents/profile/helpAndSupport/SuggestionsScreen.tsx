@@ -1,0 +1,181 @@
+import { useNavigation } from "@react-navigation/native";
+import React, { useState } from "react";
+import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
+import { z } from "zod";
+import colours from "../../../../colours";
+import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
+import PageTitle from "../../../../components/PageTitle";
+import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
+import SuccessScreen from "../../../../components/UI/SuccessScreen";
+import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
+import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
+import defaultStyles from "../../../../styles";
+import useAuth from "../../../../contexts/AuthContext";
+
+const feedBack = z.object({
+  fullName: z
+    .string()
+    .trim()
+    .min(1, "Name is required")
+    .max(100, "Name is too long"),
+
+  email: z.email("Invalid email, try again"),
+
+  message: z
+    .string()
+    .min(10, "Please provide more detail (at least 10 characters)")
+    .max(2000, "Message is too long (max 2000 characters)"),
+});
+
+type FeedBackSchema = z.infer<typeof feedBack>;
+type Errors = Partial<Record<keyof FeedBackSchema, string>>;
+
+export default function SuggestionsScreen() {
+  const { user } = useAuth();
+  const [fullName, setFullName] = useState(user?.name ?? "");
+  const [email, setEmail] = useState(user?.email ?? "");
+  const [message, setMessage] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [apiError, setApiError] = useState("");
+
+  const navigator = useNavigation<ParentProfileNavigatorProp>();
+  const [errors, setErrors] = useState<Errors>({});
+
+  const { mutate: submitFeedback, isPending } = useSubmitFeedback({
+    onSuccess: () => setSuccess(true),
+    onError: (msg) => setApiError(msg),
+  });
+
+  const handleSubmit = () => {
+    setErrors({});
+    setApiError("");
+    const result = feedBack.safeParse({
+      fullName,
+      email,
+      message,
+    });
+    if (!result.success) {
+      const formatted: Record<string, string> = {};
+      result.error.issues.forEach((err) => {
+        const field = err.path[0] as keyof FeedBackSchema;
+        formatted[field] = err.message;
+      });
+      setErrors(formatted);
+      return;
+    }
+    submitFeedback({
+      fullname: fullName.trim(),
+      email: email.trim().toLowerCase(),
+      message: message.trim(),
+      // Generic feedback from the Suggestions & Feedback screen (the design has
+      // no category picker); "Bug Report" mislabelled every submission.
+      category: "Feedback",
+    });
+  };
+
+  return (
+    <SafeAreaWrapper variant="solid">
+      <PageTitle
+        goBack={() => navigator.goBack()}
+        title="Suggestions & Feedback"
+      />
+      <View className="flex-1 bg-[#FFFCFBFB]">
+        <View className="mb-8 mt-9 items-center">
+          <Text
+            style={[defaultStyles.defaultText, suggestStyles.subtitle]}
+            className="max-w-[311px] text-center"
+          >
+            Share your ideas, suggestions or issues to help us improve your
+            experience
+          </Text>
+        </View>
+        <View className="mx-4 gap-4">
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Name:</Text>
+            <TextInput
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.fullName ? "red" : colours.text}
+              onChangeText={setFullName}
+              value={fullName}
+              maxLength={100}
+            />
+            {errors.fullName && (
+              <Text className="text-sm text-red-600">{errors.fullName}</Text>
+            )}
+          </View>
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Email:</Text>
+            <TextInput
+              onChangeText={setEmail}
+              value={email}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.email ? "red" : colours.text}
+            />
+            {errors.email && (
+              <Text className="text-sm text-red-600">{errors.email}</Text>
+            )}
+          </View>
+          <View style={styles.formItem}>
+            <Text style={defaultStyles.label}>Message:</Text>
+            <TextInput
+              style={suggestStyles.textArea}
+              onChangeText={setMessage}
+              value={message}
+              className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+              placeholderTextColor={errors.message ? "red" : colours.text}
+              multiline
+              maxLength={2000}
+            />
+            {errors.message && (
+              <Text className="text-sm text-red-600">{errors.message}</Text>
+            )}
+            {apiError ? <ErrorMessageDisplay errorMessage={apiError} /> : null}
+          </View>
+        </View>
+        <View className="flex-1 justify-end gap-6 px-4">
+          <Pressable
+            className="pb-10"
+            onPress={handleSubmit}
+            disabled={isPending}
+          >
+            <Text
+              style={[defaultStyles.defaultText, suggestStyles.whiteText]}
+              className={`mx-auto w-full rounded-[99px] px-2 py-3 text-center ${
+                Object.keys(errors).length === 0 && !isPending
+                  ? "bg-[#EC4007]"
+                  : "bg-[#FF8771]"
+              }`}
+            >
+              {isPending ? "Sending…" : "Save"}
+            </Text>
+          </Pressable>
+        </View>
+        <SuccessScreen
+          message="Success!"
+          secondaryMessage="Your message has been sent successfully"
+          visible={success}
+          onProceed={() => navigator.goBack()}
+        />
+      </View>
+    </SafeAreaWrapper>
+  );
+}
+
+const styles = StyleSheet.create({
+  formItem: {
+    gap: 4,
+  },
+});
+
+const suggestStyles = StyleSheet.create({
+  subtitle: {
+    fontSize: 16,
+  },
+  textArea: {
+    height: 150,
+    textAlignVertical: "top",
+  },
+  whiteText: {
+    color: "white",
+  },
+});
