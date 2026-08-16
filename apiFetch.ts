@@ -14,6 +14,29 @@ let _guestSessionId: string | null = null;
 // Guest device ID for persistent quota tracking
 let _guestDeviceId: string | null = null;
 
+// Guest session refresh callback - registered by AuthContext so the API layer
+// can recover from a server-side session expiry (the backend TTL can lapse
+// mid-use even when the client-side timestamp still looks fresh). Returns the
+// new session id, or null if recreation failed.
+let guestSessionRefreshCallback: (() => Promise<string | null>) | null = null;
+// Dedupe concurrent refreshes the same way token refresh does.
+let guestRefreshPromise: Promise<string | null> | null = null;
+
+const setGuestSessionRefreshCallback = (
+  callback: (() => Promise<string | null>) | null
+) => {
+  guestSessionRefreshCallback = callback;
+};
+
+const refreshGuestSessionWithLock = (): Promise<string | null> => {
+  if (!guestSessionRefreshCallback) return Promise.resolve(null);
+  if (guestRefreshPromise) return guestRefreshPromise;
+  guestRefreshPromise = guestSessionRefreshCallback().finally(() => {
+    guestRefreshPromise = null;
+  });
+  return guestRefreshPromise;
+};
+
 const setGuestMode = (value: boolean) => {
   _guestMode = value;
 };
@@ -130,14 +153,35 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
 
   // Guest mode: skip auth token requirements and make unauthenticated requests
   if (_guestMode) {
-    const headers = buildHeaders(null, options);
-    if (_guestSessionId) {
-      headers["X-Guest-Session-Id"] = _guestSessionId;
+    const buildGuestHeaders = () => {
+      const headers = buildHeaders(null, options);
+      if (_guestSessionId) {
+        headers["X-Guest-Session-Id"] = _guestSessionId;
+      }
+      if (_guestDeviceId) {
+        headers["X-Guest-Device-Id"] = _guestDeviceId;
+      }
+      return headers;
+    };
+
+    let response = await fetch(url, { ...options, headers: buildGuestHeaders() });
+
+    // The backend guest session can expire server-side while the client still
+    // considers it fresh. Recover once: recreate the session and retry.
+    if (
+      response.status === 401 &&
+      !options.passThroughStatuses?.includes(401)
+    ) {
+      const newSessionId = await refreshGuestSessionWithLock();
+      if (newSessionId) {
+        _guestSessionId = newSessionId;
+        response = await fetch(url, {
+          ...options,
+          headers: buildGuestHeaders(),
+        });
+      }
     }
-    if (_guestDeviceId) {
-      headers["X-Guest-Device-Id"] = _guestDeviceId;
-    }
-    const response = await fetch(url, { ...options, headers });
+
     if (
       !response.ok &&
       !options.passThroughStatuses?.includes(response.status)
@@ -271,6 +315,7 @@ export {
   setGuestMode,
   setGuestSessionId,
   setGuestDeviceId,
+  setGuestSessionRefreshCallback,
   ApiError,
 };
 export default apiFetch;
