@@ -209,7 +209,26 @@ const StoryComponent = ({
     retryFailed,
     batchError,
     initialError,
+    isAccessDenied,
   } = useBatchStoryAudio(storyId, readyVoiceIdForAudio);
+
+  // If the batch request is denied (403 — e.g. the persisted preferred voice is
+  // premium but the account no longer is), fall back to an accessible voice
+  // instead of dead-ending the reader. One-shot per story to avoid loops.
+  const hasFallenBackVoice = useRef(false);
+  useEffect(() => {
+    hasFallenBackVoice.current = false;
+  }, [storyId]);
+  useEffect(() => {
+    if (!isAccessDenied || hasFallenBackVoice.current) return;
+    const fallbackVoice = defaultAvailableVoiceId ?? DEFAULT_GUEST_VOICE_ID;
+    if (!fallbackVoice || fallbackVoice === selectedVoice) return;
+    hasFallenBackVoice.current = true;
+    audioLogger.warn(
+      `Voice access denied for ${selectedVoice}; falling back to ${fallbackVoice}`
+    );
+    setSelectedVoice(fallbackVoice);
+  }, [isAccessDenied, defaultAvailableVoiceId, selectedVoice]);
   audioLogger.debug(
     `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${effectiveDebouncedVoice}, mappedVoiceId=${readyVoiceIdForAudio}`
   );
