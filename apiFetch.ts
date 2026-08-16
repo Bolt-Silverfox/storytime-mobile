@@ -164,7 +164,10 @@ const apiFetch = async (url: string, options: FetchOptions = {}) => {
       return headers;
     };
 
-    let response = await fetch(url, { ...options, headers: buildGuestHeaders() });
+    let response = await fetch(url, {
+      ...options,
+      headers: buildGuestHeaders(),
+    });
 
     // The backend guest session can expire server-side while the client still
     // considers it fresh. Recover once: recreate the session and retry.
