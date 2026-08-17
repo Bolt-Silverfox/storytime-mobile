@@ -32,6 +32,7 @@ import {
   setGuestMode,
   setGuestSessionId,
   setGuestDeviceId,
+  setGuestSessionRefreshCallback,
   refreshTokensWithLock,
   RefreshResult,
 } from "../apiFetch";
@@ -573,6 +574,30 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     // Only set guest mode after session ID is established
     setIsGuest(true);
     setGuestMode(true);
+  }, [getOrCreateDeviceId]);
+
+  // Let the API layer recover from server-side guest-session expiry: recreate
+  // the session, persist it, and hand the new id back for a one-shot retry.
+  useEffect(() => {
+    setGuestSessionRefreshCallback(async () => {
+      try {
+        const deviceId = await getOrCreateDeviceId();
+        const newSessionId = await createGuestSession(deviceId);
+        if (newSessionId) {
+          await AsyncStorage.setItem("guestSessionId", newSessionId);
+          await AsyncStorage.setItem(
+            "guestSessionCreatedAt",
+            String(Date.now())
+          );
+          setGuestSessionId(newSessionId);
+        }
+        return newSessionId;
+      } catch (err) {
+        authLogger.warn("Guest session refresh failed:", err);
+        return null;
+      }
+    });
+    return () => setGuestSessionRefreshCallback(null);
   }, [getOrCreateDeviceId]);
 
   const logout = useCallback(async () => {

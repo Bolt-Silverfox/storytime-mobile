@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import apiFetch from "../../../apiFetch";
+import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
@@ -81,6 +81,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     enabled: !!storyId && !!voiceId,
     queryFn: () => fetchBatchAudio(storyId, voiceId!),
     select: (res) => res?.data,
+    // Access denials (403) are deterministic — retrying can't succeed.
+    retry: (failureCount, error) =>
+      !(error instanceof ApiError && error.status === 403) && failureCount < 3,
   });
 
   // When batch response arrives, capture batchJobId and initialize merged paragraphs
@@ -274,6 +277,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     retryFailed,
     batchError,
     initialError: batchQuery.error?.message ?? null,
+    // 403 = access denial (e.g. premium voice) — callers can recover by
+    // switching to an accessible voice instead of showing a dead-end error.
+    isAccessDenied:
+      batchQuery.error instanceof ApiError && batchQuery.error.status === 403,
   };
 };
 
@@ -293,6 +300,14 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
+    // 403 is an expected business rejection (e.g. premium-voice access), not a
+    // defect — log at warn so it doesn't surface as a Sentry error. The reader
+    // recovers by falling back to an accessible voice.
+    if (err instanceof ApiError && err.status === 403) {
+      audioLogger.warn(`fetchBatchAudio denied:`, err);
+      // Rethrow unchanged so callers can detect the denial by status.
+      throw err;
+    }
     audioLogger.error(`fetchBatchAudio error:`, err);
     throw new Error(getErrorMessage(err));
   }
