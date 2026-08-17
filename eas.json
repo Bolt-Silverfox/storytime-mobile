@@ -13,7 +13,7 @@
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
         "EXPO_PUBLIC_WEB_CLIENT_ID": "368397094060-m0ets81k8l0asa8vj0q0d24c783fgsat.apps.googleusercontent.com",
         "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://72df6b1d1f0f99a7db8ee83cca758667@o4510959000616960.ingest.us.sentry.io/4510959006842880",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://3959484f69cf0297db9c7d7e6311efec@o4510959000616960.ingest.us.sentry.io/4511306118660096",
         "EXPO_PUBLIC_SENTRY_ENV": "development"
       }
     },
@@ -29,7 +29,7 @@
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
         "EXPO_PUBLIC_WEB_CLIENT_ID": "368397094060-m0ets81k8l0asa8vj0q0d24c783fgsat.apps.googleusercontent.com",
         "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://72df6b1d1f0f99a7db8ee83cca758667@o4510959000616960.ingest.us.sentry.io/4510959006842880",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://3959484f69cf0297db9c7d7e6311efec@o4510959000616960.ingest.us.sentry.io/4511306118660096",
         "EXPO_PUBLIC_SENTRY_ENV": "development"
       }
     },
@@ -41,7 +41,7 @@
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
         "EXPO_PUBLIC_WEB_CLIENT_ID": "368397094060-m0ets81k8l0asa8vj0q0d24c783fgsat.apps.googleusercontent.com",
         "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://72df6b1d1f0f99a7db8ee83cca758667@o4510959000616960.ingest.us.sentry.io/4510959006842880",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://3959484f69cf0297db9c7d7e6311efec@o4510959000616960.ingest.us.sentry.io/4511306118660096",
         "EXPO_PUBLIC_SENTRY_ENV": "preview",
         "SENTRY_DISABLE_AUTO_UPLOAD": "true"
       }
@@ -54,7 +54,7 @@
         "EXPO_PUBLIC_IOS_CLIENT_ID": "368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba.apps.googleusercontent.com",
         "EXPO_PUBLIC_WEB_CLIENT_ID": "368397094060-m0ets81k8l0asa8vj0q0d24c783fgsat.apps.googleusercontent.com",
         "EXPO_PUBLIC_ANDROID_CLIENT_ID": "368397094060-vod23klq2qv8t2dgfsiutgn611t4j82s.apps.googleusercontent.com",
-        "EXPO_PUBLIC_SENTRY_DSN": "https://72df6b1d1f0f99a7db8ee83cca758667@o4510959000616960.ingest.us.sentry.io/4510959006842880",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://3959484f69cf0297db9c7d7e6311efec@o4510959000616960.ingest.us.sentry.io/4511306118660096",
         "EXPO_PUBLIC_SENTRY_ENV": "production"
       }
     }
