@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 import { Alert } from "react-native";
-import apiFetch from "../../../apiFetch";
+import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse } from "../../../types";
@@ -14,6 +15,10 @@ const useSetStoryProgress = ({
 }) => {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuth();
+  // Progress saves fire on every page turn; if saving is broken, alerting on
+  // each one spams the reader (seen in prod when a Redis restart invalidated
+  // guest sessions mid-read). Surface the problem at most once per screen.
+  const hasAlertedRef = useRef(false);
 
   return useMutation({
     mutationFn: async ({
@@ -45,6 +50,14 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
+      // Guest session expiry is recovered transparently by apiFetch (the
+      // session is recreated and the next save succeeds). Reading continues
+      // unaffected either way, so a popup can only annoy — skip it.
+      if (isGuest && err instanceof ApiError && err.status === 401) {
+        return;
+      }
+      if (hasAlertedRef.current) return;
+      hasAlertedRef.current = true;
       const crypticPatterns = [
         "Cannot read prop",
         "undefined is not",
