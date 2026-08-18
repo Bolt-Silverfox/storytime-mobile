@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useRef } from "react";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
@@ -14,6 +15,10 @@ const useSetStoryProgress = ({
 }) => {
   const queryClient = useQueryClient();
   const { user, isGuest } = useAuth();
+  // Progress saves fire on every page turn; if saving is broken, alerting on
+  // each one spams the reader (seen in prod when a Redis restart invalidated
+  // guest sessions mid-read). Surface the problem at most once per screen.
+  const hasAlertedRef = useRef(false);
 
   return useMutation({
     mutationFn: async ({
@@ -45,6 +50,12 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
+      // A guest 401 reaching here means apiFetch's transparent session
+      // recovery was ALSO unable to restore the session — worth one alert,
+      // like any other persistent failure. The dedup below is what prevents
+      // the per-page-turn popup spam.
+      if (hasAlertedRef.current) return;
+      hasAlertedRef.current = true;
       const crypticPatterns = [
         "Cannot read prop",
         "undefined is not",
