@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRef } from "react";
 import { Alert } from "react-native";
-import apiFetch, { ApiError } from "../../../apiFetch";
+import apiFetch from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse } from "../../../types";
@@ -50,12 +50,10 @@ const useSetStoryProgress = ({
       return response;
     },
     onError: (err: Error) => {
-      // Guest session expiry is recovered transparently by apiFetch (the
-      // session is recreated and the next save succeeds). Reading continues
-      // unaffected either way, so a popup can only annoy — skip it.
-      if (isGuest && err instanceof ApiError && err.status === 401) {
-        return;
-      }
+      // A guest 401 reaching here means apiFetch's transparent session
+      // recovery was ALSO unable to restore the session — worth one alert,
+      // like any other persistent failure. The dedup below is what prevents
+      // the per-page-turn popup spam.
       if (hasAlertedRef.current) return;
       hasAlertedRef.current = true;
       const crypticPatterns = [
