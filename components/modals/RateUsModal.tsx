@@ -35,7 +35,7 @@ const RateUsModal = ({
   }, [visible]);
 
   const isPositive = rating >= STORE_RATING_THRESHOLD;
-  const primaryLabel = isPositive ? "Rate on Play Store" : "Send us a Feedback";
+  const primaryLabel = isPositive ? "Rate on Play Store" : "Send us feedback";
 
   const handlePrimary = () => {
     if (rating === 0) return;
