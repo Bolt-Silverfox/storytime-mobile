@@ -70,7 +70,9 @@ const RateUsModal = ({
                   key={value}
                   onPress={() => setRating(value)}
                   hitSlop={6}
-                  aria-labelledby={`Rate ${value} star${value > 1 ? "s" : ""}`}
+                  accessibilityRole="button"
+                  aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
+                  accessibilityState={{ selected: value <= rating }}
                 >
                   <FontAwesome5
                     name="star"

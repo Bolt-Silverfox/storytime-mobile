@@ -185,7 +185,7 @@ const ProfileScreen: FC = () => {
               </View>
               <Pressable
                 onPress={rateNow}
-                aria-labelledby="Rate Storytime4Kids on the store"
+                aria-label="Rate Storytime4Kids on the store"
                 className="h-10 w-[179px] items-center justify-center rounded-[20px] bg-[#ECC607]"
               >
                 <Text className="font-[abeezee] text-base text-[#212121]">

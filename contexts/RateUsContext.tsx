@@ -121,15 +121,7 @@ const RateUsProvider = ({
           pendingProceedRef.current = null;
           close();
           if (navigationRef.isReady()) {
-            // The root "protected" route is typed with undefined params, so the
-            // deeply-nested navigate target isn't expressible through its types;
-            // cast the method to a permissive signature for this one call.
-            (
-              navigationRef.navigate as (
-                name: string,
-                params?: Record<string, unknown>
-              ) => void
-            )("protected", {
+            navigationRef.navigate("protected", {
               screen: "parents",
               params: {
                 screen: "profile",
