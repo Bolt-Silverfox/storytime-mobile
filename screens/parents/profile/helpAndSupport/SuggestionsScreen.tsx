@@ -89,11 +89,12 @@ export default function SuggestionsScreen() {
             experience
           </Text>
         </View>
-        <View className="mx-4 gap-4">
+        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-[#E0E0E0] bg-white p-4">
           <View style={styles.formItem}>
-            <Text style={defaultStyles.label}>Name:</Text>
+            <Text style={defaultStyles.label}>Full name:</Text>
             <TextInput
               className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
+              placeholder="Enter full name"
               placeholderTextColor={errors.fullName ? "red" : colours.text}
               onChangeText={setFullName}
               value={fullName}
@@ -109,6 +110,7 @@ export default function SuggestionsScreen() {
               onChangeText={setEmail}
               value={email}
               className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
+              placeholder="Enter email address"
               placeholderTextColor={errors.email ? "red" : colours.text}
             />
             {errors.email && (
@@ -122,6 +124,7 @@ export default function SuggestionsScreen() {
               onChangeText={setMessage}
               value={message}
               className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+              placeholder="Enter message"
               placeholderTextColor={errors.message ? "red" : colours.text}
               multiline
               maxLength={2000}
@@ -146,7 +149,7 @@ export default function SuggestionsScreen() {
                   : "bg-[#FF8771]"
               }`}
             >
-              {isPending ? "Sending…" : "Save"}
+              {isPending ? "Sending…" : "Send"}
             </Text>
           </Pressable>
         </View>
