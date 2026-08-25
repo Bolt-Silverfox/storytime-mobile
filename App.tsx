@@ -150,7 +150,7 @@ export default Sentry.wrap(function App() {
         <AuthProvider>
           <ToastProvider>
             <QueryClientProvider client={queryClient}>
-              <RateUsProvider>
+              <RateUsProvider navigationRef={navigationRef}>
                 <NavigationContainer
                   ref={navigationRef}
                   linking={linking}

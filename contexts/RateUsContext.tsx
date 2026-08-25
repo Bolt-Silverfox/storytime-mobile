@@ -6,7 +6,9 @@ import {
   useRef,
   useState,
 } from "react";
+import { NavigationContainerRefWithCurrent } from "@react-navigation/native";
 import RateUsModal from "../components/modals/RateUsModal";
+import { RootNavigatorParamList } from "../Navigation/RootNavigator";
 import useDismissAppRating from "../hooks/tanstack/mutationHooks/useDismissAppRating";
 import useMarkAppRated from "../hooks/tanstack/mutationHooks/useMarkAppRated";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
@@ -27,7 +29,13 @@ type RateUsContextType = {
 
 const RateUsContext = createContext<RateUsContextType | undefined>(undefined);
 
-const RateUsProvider = ({ children }: { children: ReactNode }) => {
+const RateUsProvider = ({
+  children,
+  navigationRef,
+}: {
+  children: ReactNode;
+  navigationRef: NavigationContainerRefWithCurrent<RootNavigatorParamList>;
+}) => {
   const { user } = useAuth();
   const { data: profile } = useGetUserProfile();
   const markAppRated = useMarkAppRated();
@@ -100,6 +108,38 @@ const RateUsProvider = ({ children }: { children: ReactNode }) => {
           rateNow();
           close();
           runPending();
+        }}
+        onSendFeedback={() => {
+          dismissAppRating.mutate(undefined, {
+            onError: () => {
+              promptedThisSessionRef.current = false;
+            },
+          });
+          // The user is heading to the feedback form, so drop any queued
+          // post-prompt navigation (e.g. opening the next story) that would
+          // otherwise override it.
+          pendingProceedRef.current = null;
+          close();
+          if (navigationRef.isReady()) {
+            // The root "protected" route is typed with undefined params, so the
+            // deeply-nested navigate target isn't expressible through its types;
+            // cast the method to a permissive signature for this one call.
+            (
+              navigationRef.navigate as (
+                name: string,
+                params?: Record<string, unknown>,
+              ) => void
+            )("protected", {
+              screen: "parents",
+              params: {
+                screen: "profile",
+                params: {
+                  screen: "helpAndSupport",
+                  params: { screen: "suggestions" },
+                },
+              },
+            });
+          }
         }}
         onDismiss={() => {
           dismissAppRating.mutate(undefined, {
