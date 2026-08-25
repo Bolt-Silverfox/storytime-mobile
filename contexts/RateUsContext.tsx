@@ -127,7 +127,7 @@ const RateUsProvider = ({
             (
               navigationRef.navigate as (
                 name: string,
-                params?: Record<string, unknown>,
+                params?: Record<string, unknown>
               ) => void
             )("protected", {
               screen: "parents",
