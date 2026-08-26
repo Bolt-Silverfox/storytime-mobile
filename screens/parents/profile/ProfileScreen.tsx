@@ -173,19 +173,22 @@ const ProfileScreen: FC = () => {
           </View>
 
           {showRateCard && (
-            <View className="mx-auto mt-5 w-[90%] max-w-screen-md rounded-3xl bg-[#866EFF] p-6 lg:max-w-screen-lg xl:max-w-screen-xl">
-              <Text className="font-[quilka] text-lg text-white">
-                Enjoying Storytime4Kids?
-              </Text>
-              <Text className="mt-1 font-[abeezee] text-sm text-white/90">
-                Tap below to rate us on the store, it only takes a moment.
-              </Text>
+            <View className="mx-auto mt-5 w-[90%] max-w-screen-md gap-4 rounded-2xl bg-[#4807EC] px-6 py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+              <View className="gap-1.5">
+                <Text className="font-[quilka] text-2xl text-white">
+                  Rate us in Google play store
+                </Text>
+                <Text className="font-[abeezee] text-base text-[#D3C9FA]">
+                  We would greatly appreciate if you could take a moment to rate
+                  Storytime4kids.
+                </Text>
+              </View>
               <Pressable
                 onPress={rateNow}
-                aria-labelledby="Rate Storytime4Kids on the store"
-                className="mt-4 h-[46px] items-center justify-center rounded-full bg-[#FFD84D]"
+                aria-label="Rate Storytime4Kids on the store"
+                className="h-10 w-[179px] items-center justify-center rounded-[20px] bg-[#ECC607]"
               >
-                <Text className="font-[abeezee] text-base font-semibold text-[#212121]">
+                <Text className="font-[abeezee] text-base text-[#212121]">
                   Rate Us
                 </Text>
               </Pressable>
