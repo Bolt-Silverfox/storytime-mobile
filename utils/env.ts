@@ -21,9 +21,9 @@ class EnvironmentValidator {
 
     // Check required environment variables
     // Direct access to process.env allows Expo to inline these at build time
-    if (!process.env.EXPO_PUBLIC_BASE_URL) {
+    if (!process.env.EXPO_PUBLIC_API_URL) {
       this.warnings.push(
-        "EXPO_PUBLIC_BASE_URL is not set - API calls may fail"
+        "EXPO_PUBLIC_API_URL is not set - API calls may fail"
       );
     }
 
