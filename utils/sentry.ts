@@ -8,10 +8,14 @@ const reactNavigationIntegrationInstance = reactNavigationIntegration({
   enableTimeToInitialDisplay: true,
 });
 
-// Auto-initialize on import so Sentry.wrap() in App.tsx has an active client
-if (SENTRY_DSN && !__DEV__) {
+// Auto-initialize on import so Sentry.wrap() in App.tsx always has an active
+// client (avoids the "Sentry.wrap was called before Sentry.init" warning).
+// We still initialize in dev, but `enabled: !__DEV__` means no events are sent
+// from development builds.
+if (SENTRY_DSN) {
   Sentry.init({
     dsn: SENTRY_DSN,
+    enabled: !__DEV__,
     environment: process.env.EXPO_PUBLIC_SENTRY_ENV ?? "production",
     debug: false,
 
