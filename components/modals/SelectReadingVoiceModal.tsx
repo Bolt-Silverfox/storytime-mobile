@@ -1,21 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
-import { Dispatch, lazy, SetStateAction, Suspense } from "react";
-import {
-  ActivityIndicator,
-  Pressable,
-  ScrollView,
-  Text,
-  View,
-} from "react-native";
+import { Dispatch, SetStateAction } from "react";
+import { Pressable, ScrollView, Text, View } from "react-native";
 import queryAvailableVoices from "../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useSetPreferredVoice from "../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
 import useAuth from "../../contexts/AuthContext";
 import { GUEST_DEFAULT_VOICE_ID } from "../../constants";
 import { isGuestDefaultVoice, isVoiceMatch } from "../../utils/voice";
+import AvailableVoices from "../AvailableVoices";
 import Icon from "../Icon";
 import CustomModal, { CustomModalProps } from "./CustomModal";
-
-const AvailableVoices = lazy(() => import("../AvailableVoices"));
 
 type PropTypes = {
   selectedVoice: string | null;
@@ -132,15 +125,13 @@ const SelectReadingVoiceModal = ({
               </Text>
             </View>
           ) : (
-            <Suspense fallback={<ActivityIndicator className="py-8" />}>
-              <AvailableVoices
-                selectedVoice={effectiveSelectedVoice}
-                setSelectedVoice={setSelectedVoice}
-                storyId={storyId}
-                deferSave={showSaveButton}
-                isGuest={isGuestReader}
-              />
-            </Suspense>
+            <AvailableVoices
+              selectedVoice={effectiveSelectedVoice}
+              setSelectedVoice={setSelectedVoice}
+              storyId={storyId}
+              deferSave={showSaveButton}
+              isGuest={isGuestReader}
+            />
           )}
           {showSaveButton && (
             <Pressable
