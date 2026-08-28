@@ -1,20 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import { lazy, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import queryAvailableVoices from "../../../hooks/tanstack/queryHooks/queryAvailableVoices";
 import useGetPreferredVoice from "../../../hooks/tanstack/queryHooks/useGetPreferredVoice";
 import useSetPreferredVoice from "../../../hooks/tanstack/mutationHooks/useSetPreferredVoice";
+import AvailableVoices from "../../../components/AvailableVoices";
 import Icon from "../../../components/Icon";
-import SuspenseWrapper from "../../../components/supsense/SuspenseWrapper";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
-
-const AvailableVoices = lazy(
-  () => import("../../../components/AvailableVoices")
-);
+import useAuth from "../../../contexts/AuthContext";
 
 const DefaultVoiceScreen = () => {
   const navigation = useNavigation();
+  const { isGuest, user } = useAuth();
+  const isGuestReader = isGuest || !user;
   const { data: preferredVoice } = useGetPreferredVoice();
   const { data: voices } = useQuery(queryAvailableVoices);
   const { mutate: markPreferred } = useSetPreferredVoice();
@@ -85,13 +84,12 @@ const DefaultVoiceScreen = () => {
             </View>
             <Icon name="CircleCheck" color="green" />
           </View>
-          <SuspenseWrapper>
-            <AvailableVoices
-              selectedVoice={selectedVoice}
-              setSelectedVoice={setSelectedVoice}
-              deferSave
-            />
-          </SuspenseWrapper>
+          <AvailableVoices
+            selectedVoice={selectedVoice}
+            setSelectedVoice={setSelectedVoice}
+            deferSave
+            isGuest={isGuestReader}
+          />
           <Pressable
             onPress={handleSave}
             className="mx-4 mt-2 items-center rounded-full bg-primary px-2 py-3"
