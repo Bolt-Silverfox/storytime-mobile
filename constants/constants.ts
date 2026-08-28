@@ -9,6 +9,11 @@ export const SESSION_REFRESH_THRESHOLD_MS = 6 * 24 * 60 * 60 * 1000; // 6 days i
 export const REQUEST_TIMEOUT_MS = 5000; // 5 seconds
 export const MAX_RETRY_ATTEMPTS = 2;
 
+// Feature flags
+// AI story generation (async + live SSE progress) is not shipping in this
+// release yet — keep the Home-screen entry point hidden until it's ready.
+export const FEATURE_AI_STORY_GENERATION = false;
+
 export const onBoardingSlide: {
   id: string;
   image: ImageSourcePropType;
