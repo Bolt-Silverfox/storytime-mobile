@@ -194,7 +194,8 @@ const StoryAudioPlayer = ({
   // URL hasn't arrived yet but the batch job is running, so this is a "please
   // wait" state, not a failure. Show a spinner + "Generating audio…" rather
   // than the dead "unavailable" state.
-  const isGenerating = isStillGenerating && !audioUrl && !isLoading && !isError;
+  const isGenerating =
+    isStillGenerating && !audioUrl && !isLoading && !isError && !isFailed;
   const isBusy = isLoading || isGenerating;
 
   return (
