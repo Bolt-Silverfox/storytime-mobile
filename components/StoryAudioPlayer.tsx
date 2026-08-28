@@ -190,22 +190,31 @@ const StoryAudioPlayer = ({
     }
   };
 
+  // Audio for this paragraph is still being generated in the background: the
+  // URL hasn't arrived yet but the batch job is running, so this is a "please
+  // wait" state, not a failure. Show a spinner + "Generating audio…" rather
+  // than the dead "unavailable" state.
+  const isGenerating = isStillGenerating && !audioUrl && !isLoading && !isError;
+  const isBusy = isLoading || isGenerating;
+
   return (
     <Pressable
-      disabled={isLoading || isError || isFailed || !audioUrl}
+      disabled={isBusy || isError || isFailed || !audioUrl}
       onPress={(e) => {
         e.stopPropagation();
         playAudio();
       }}
-      className={`${isLoading || !audioUrl ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      className={`${isBusy || !audioUrl ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
       accessibilityHint={
         isLoading
           ? "Audio is loading"
-          : isFailed
-            ? "Audio failed to generate"
-            : !audioUrl
-              ? "Audio is not available"
-              : undefined
+          : isGenerating
+            ? "Audio is generating, please wait"
+            : isFailed
+              ? "Audio failed to generate"
+              : !audioUrl
+                ? "Audio is not available"
+                : undefined
       }
     >
       <View className="flex flex-row items-center gap-x-2">
@@ -223,17 +232,19 @@ const StoryAudioPlayer = ({
         >
           {isLoading
             ? VOICE_LABELS.loading
-            : isFailed
-              ? "Audio failed"
-              : isError || !audioUrl
-                ? VOICE_LABELS.unavailable
-                : isPlaying
-                  ? VOICE_LABELS.mute
-                  : VOICE_LABELS.play}
+            : isGenerating
+              ? VOICE_LABELS.generating
+              : isFailed
+                ? "Audio failed"
+                : isError || !audioUrl
+                  ? VOICE_LABELS.unavailable
+                  : isPlaying
+                    ? VOICE_LABELS.mute
+                    : VOICE_LABELS.play}
         </Text>
       </View>
       <View className="flex flex-row items-center gap-x-3">
-        {isLoading ? (
+        {isBusy ? (
           <ActivityIndicator size={"large"} />
         ) : (
           <Switch
