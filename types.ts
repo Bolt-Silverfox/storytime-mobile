@@ -105,6 +105,8 @@ type UserProfile = {
   createdAt: string;
   updatedAt: string;
   subscriptionStatus: "free" | "active";
+  hasRatedApp?: boolean;
+  rateAppDismissedAt?: string | null;
 };
 
 type KidReport = {
@@ -361,6 +363,75 @@ type LibraryStory = Pick<
   | "readStatus"
 > & { progress: number; totalTimeSpent: number; lastAccessed: string };
 
+// ---------------------------------------------------------------------------
+// AI story generation (async job + live SSE progress)
+// ---------------------------------------------------------------------------
+
+/** Body for POST /stories/generate/async. All fields optional (generic gen). */
+type GenerateStoryInput = {
+  themes?: string[];
+  categories?: string[];
+  seasonIds?: string[];
+  kidId?: string;
+  kidName?: string;
+  ageMin?: number;
+  ageMax?: number;
+  language?: string;
+  additionalContext?: string;
+};
+
+/** Response from POST /stories/generate/async (HTTP 202). */
+type GenerateStoryJobResponse = {
+  queued: boolean;
+  jobId: string;
+  estimatedWaitTime?: number;
+  error?: string;
+};
+
+/** Job lifecycle states reported by the backend queue. */
+type StoryJobStatus =
+  | "queued"
+  | "waiting"
+  | "active"
+  | "processing"
+  | "completed"
+  | "failed"
+  | "cancelled"
+  | "delayed"
+  | "unknown";
+
+/** Response from GET /stories/generate/jobs/:jobId. */
+type StoryJobStatusResponse = {
+  jobId: string;
+  status: StoryJobStatus;
+  progress: number;
+  progressMessage?: string;
+  createdAt: string;
+  startedAt?: string;
+  completedAt?: string;
+  result?: unknown;
+  error?: string;
+  estimatedTimeRemaining?: number;
+};
+
+/** Response from DELETE /stories/generate/jobs/:jobId. */
+type CancelStoryJobResponse = {
+  cancelled: boolean;
+  reason?: string;
+};
+
+/** A single decoded SSE event from GET /events/jobs/:jobId. */
+type StoryJobSSEEvent = {
+  type: "progress" | "completed" | "failed" | "heartbeat";
+  jobId: string;
+  jobType: "story" | "voice";
+  progress: number;
+  progressMessage?: string;
+  result?: { storyId: string; title: string; audioUrl: string };
+  error?: string;
+  timestamp: string | number;
+};
+
 const libraryFilters = ["ongoing", "completed"] as const;
 type LibraryFilterType = (typeof libraryFilters)[number];
 type DisclaimerData = Array<{
@@ -400,6 +471,12 @@ export type {
   AuthProvider,
   LinkedAccount,
   DisclaimerData,
+  GenerateStoryInput,
+  GenerateStoryJobResponse,
+  StoryJobStatus,
+  StoryJobStatusResponse,
+  CancelStoryJobResponse,
+  StoryJobSSEEvent,
 };
 
 export { ageGroups, libraryFilters };

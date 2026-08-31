@@ -134,6 +134,13 @@ const auth = {
     });
     return await response.json();
   },
+  // NOTE: this in-app PIN change (old -> new) targets POST /user/me/pin/reset,
+  // which does not exist on the backend (green or blue) — only OTP-based reset
+  // (request-reset -> validate-otp -> reset-with-otp) is supported. The method
+  // is wired into AuthContext but not reached by any UI screen; the live PIN
+  // reset flow uses resetInAppPin (reset-with-otp). Left in place (latent) to
+  // avoid breaking the AuthContext type; remove the whole chain if the
+  // change-with-old-pin feature is confirmed dead.
   udpateInAppPin: async (data: {
     oldPin: string;
     newPin: string;

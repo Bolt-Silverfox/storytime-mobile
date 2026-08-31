@@ -19,6 +19,7 @@ import queryAvailableVoices from "../hooks/tanstack/queryHooks/queryAvailableVoi
 import { DEFAULT_GUEST_VOICE_ID } from "../constants/constants";
 import { StoryModes } from "../types";
 import { getDefaultVoiceListId, resolveVoiceIdForAudio } from "../utils/voice";
+import { incrementFinishedStoryCount } from "../utils/rateUsStorage";
 import ErrorComponent from "./ErrorComponent";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
@@ -391,9 +392,11 @@ const StoryComponent = ({
       if (completed) {
         latestPositionRef.current = 0;
         AsyncStorage.removeItem(storyPositionKey(storyId)).catch(() => {});
+        // Track finished-story count locally to gate the "Rate Us" prompt.
+        incrementFinishedStoryCount(user?.id);
       }
     },
-    [setStoryProgress, storyId]
+    [setStoryProgress, storyId, user?.id]
   );
 
   if (isPending) return <LoadingOverlay visible />;

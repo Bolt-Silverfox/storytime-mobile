@@ -1,10 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import apiFetch, { ApiError } from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import { audioLogger } from "../../../utils/logger";
+import useStoryAudioBatchSSE from "../../useStoryAudioBatchSSE";
 
 export type BatchParagraph = {
   index: number;
@@ -114,10 +115,13 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     }
   }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs]);
 
-  // Phase 2: Poll for completed paragraphs
+  // Phase 2 (primary): stream completed paragraphs over SSE instead of polling.
+  const sse = useStoryAudioBatchSSE(batchJobId);
+
+  // Phase 2 (fallback): poll ONLY when the SSE stream can't be established.
   const pollingQuery = useQuery({
     queryKey: ["batchStatus", batchJobId],
-    enabled: !!batchJobId,
+    enabled: !!batchJobId && sse.sseFailed,
     queryFn: () => fetchBatchStatus(batchJobId!),
     refetchInterval: (query) => {
       const status = query.state.data?.status;
@@ -128,6 +132,40 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     gcTime: 0,
     structuralSharing: false,
   });
+
+  // Whether the SSE stream is the live source (vs the poll fallback).
+  const usingSSE = !!batchJobId && !sse.sseFailed;
+
+  // Normalize whichever source is live into the BatchStatusResponse shape the
+  // merge effect already understands. SSE `failedParagraphs` indices are
+  // reconciled in the effect at terminal (the stream reports only a count).
+  const statusData: BatchStatusResponse | null = useMemo(() => {
+    if (usingSSE) {
+      const mapped: BatchStatusResponse["status"] =
+        sse.status === "completed"
+          ? "completed"
+          : sse.status === "failed"
+            ? "failed"
+            : "processing";
+      return {
+        status: mapped,
+        completedParagraphs: sse.completedParagraphs,
+        failedParagraphs: [],
+        totalQueued:
+          sse.totalParagraphs ?? batchQuery.data?.totalParagraphs ?? 0,
+        error: sse.error,
+      };
+    }
+    return pollingQuery.data ?? null;
+  }, [
+    usingSSE,
+    sse.status,
+    sse.completedParagraphs,
+    sse.totalParagraphs,
+    sse.error,
+    pollingQuery.data,
+    batchQuery.data?.totalParagraphs,
+  ]);
 
   // Merge newly completed paragraphs into the list.
   // Returns the merged result synchronously so callers can pass it to syncToCache.
@@ -202,35 +240,52 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   );
 
   useEffect(() => {
-    if (pollingQuery.data) {
-      const merged = mergeParagraphs(pollingQuery.data);
+    if (!statusData) return;
 
-      // Always sync failed paragraphs from poll (clears if backend retries succeeded)
-      setFailedParagraphs(pollingQuery.data.failedParagraphs ?? []);
+    const merged = mergeParagraphs(statusData);
+    const isTerminal =
+      statusData.status === "completed" || statusData.status === "failed";
 
-      // Capture error message on failure
-      if (pollingQuery.data.status === "failed" && pollingQuery.data.error) {
-        setBatchError(pollingQuery.data.error);
+    // Failed indices: authoritative when polling. Over SSE the stream reports
+    // only a COUNT, so at terminal we derive indices from any position that
+    // never received audio (the backend guarantees no more will arrive).
+    let failed = statusData.failedParagraphs ?? [];
+    if (usingSSE && isTerminal) {
+      const total =
+        statusData.totalQueued || batchQuery.data?.totalParagraphs || 0;
+      const source = merged ?? mergedParagraphsRef.current ?? [];
+      const derived: number[] = [];
+      for (let i = 0; i < total; i++) {
+        const p = source.find((x) => x.index === i);
+        if (!p || !p.audioUrl) derived.push(i);
       }
+      failed = derived;
+    }
+    setFailedParagraphs(failed);
 
-      // Stop polling when batch is done and sync final state to cache
-      if (
-        pollingQuery.data.status === "completed" ||
-        pollingQuery.data.status === "failed"
-      ) {
-        setBatchJobId(null);
-        if (merged) {
-          syncToCache(
-            merged,
-            pollingQuery.data.failedParagraphs ?? [],
-            pollingQuery.data.status === "failed"
-              ? (pollingQuery.data.error ?? null)
-              : null
-          );
-        }
+    // Capture error message on failure
+    if (statusData.status === "failed" && statusData.error) {
+      setBatchError(statusData.error);
+    }
+
+    // Stop the subscription when the batch is done and sync final state to cache
+    if (isTerminal) {
+      setBatchJobId(null);
+      if (merged) {
+        syncToCache(
+          merged,
+          failed,
+          statusData.status === "failed" ? (statusData.error ?? null) : null
+        );
       }
     }
-  }, [pollingQuery.data, mergeParagraphs, syncToCache]);
+  }, [
+    statusData,
+    usingSSE,
+    mergeParagraphs,
+    syncToCache,
+    batchQuery.data?.totalParagraphs,
+  ]);
 
   // Stop polling only on terminal errors (404 = expired batch)
   // Transient failures (5xx, network) are retried by TanStack Query

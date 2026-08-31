@@ -6,6 +6,8 @@ import { Story, StoryModes } from "../types";
 import ChildStoryDetails from "../screens/parents/home/ChildStoryDetails";
 import ReadStoryScreen from "../screens/parents/home/ReadStoryScreen";
 import StoryDeepLinkScreen from "../screens/parents/home/StoryDeepLinkScreen";
+import CreateStoryScreen from "../screens/parents/home/CreateStoryScreen";
+import GenerationProgressScreen from "../screens/parents/home/GenerationProgressScreen";
 
 type StoryNavigatorParamList = {
   childStoryDetails: {
@@ -26,6 +28,8 @@ type StoryNavigatorParamList = {
   };
   readStory: { storyId: string; mode: StoryModes; page?: number };
   storyDeepLink: { storyId: string };
+  createStory: undefined;
+  generationProgress: { jobId: string; estimatedWaitTime?: number };
 };
 type StoryNavigatorProp = NativeStackNavigationProp<StoryNavigatorParamList>;
 const Stack = createNativeStackNavigator();
@@ -40,6 +44,12 @@ const StoryNavigator = () => {
       <Stack.Screen name="childStoryDetails" component={ChildStoryDetails} />
       <Stack.Screen name="readStory" component={ReadStoryScreen} />
       <Stack.Screen name="storyDeepLink" component={StoryDeepLinkScreen} />
+      <Stack.Screen name="createStory" component={CreateStoryScreen} />
+      <Stack.Screen
+        name="generationProgress"
+        component={GenerationProgressScreen}
+        options={{ gestureEnabled: false }}
+      />
     </Stack.Navigator>
   );
 };

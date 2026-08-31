@@ -9,12 +9,14 @@ import CustomSplashScreen from "../components/CustomSplashScreen";
 import useAuth from "../contexts/AuthContext";
 import AuthNavigator, { AuthNavigatorParamList } from "./AuthNavigator";
 import GuestNavigator, { GuestNavigatorParamList } from "./GuestNavigator";
-import ProtectedRoutesNavigator from "./ProtectedNavigator";
+import ProtectedRoutesNavigator, {
+  ProtectedRoutesParamList,
+} from "./ProtectedNavigator";
 
 type RootNavigatorParamList = {
   auth: NavigatorScreenParams<AuthNavigatorParamList>;
   guest: NavigatorScreenParams<GuestNavigatorParamList>;
-  protected: undefined;
+  protected: NavigatorScreenParams<ProtectedRoutesParamList>;
 };
 
 type RootNavigatorProp = NativeStackNavigationProp<RootNavigatorParamList>;

@@ -14,6 +14,7 @@ import React, { FC, useState } from "react";
 import {
   ImageBackground,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
@@ -28,11 +29,17 @@ import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
+import useRateUs from "../../../contexts/RateUsContext";
+import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
 
 const ProfileScreen: FC = () => {
   const { user, isLoading, logout } = useAuth();
+  const { rateNow } = useRateUs();
+  const { data: profile } = useGetUserProfile();
+  const showRateCard =
+    !!profile && !profile.hasRatedApp && !!profile.rateAppDismissedAt;
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const protectedNavigator = useNavigation<ProtectedRoutesNavigationProp>();
   const [openModal, setOpenModal] = useState<"delete" | "logout" | boolean>(
@@ -164,6 +171,29 @@ const ProfileScreen: FC = () => {
               isLastItem
             />
           </View>
+
+          {showRateCard && (
+            <View className="mx-auto mt-5 w-[90%] max-w-screen-md gap-4 rounded-2xl bg-[#4807EC] px-6 py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+              <View className="gap-1.5">
+                <Text className="font-[quilka] text-2xl text-white">
+                  Rate us in Google play store
+                </Text>
+                <Text className="font-[abeezee] text-base text-[#D3C9FA]">
+                  We would greatly appreciate if you could take a moment to rate
+                  Storytime4kids.
+                </Text>
+              </View>
+              <Pressable
+                onPress={rateNow}
+                aria-label="Rate Storytime4Kids on the store"
+                className="h-10 w-[179px] items-center justify-center rounded-[20px] bg-[#ECC607]"
+              >
+                <Text className="font-[abeezee] text-base text-[#212121]">
+                  Rate Us
+                </Text>
+              </Pressable>
+            </View>
+          )}
         </ScrollView>
         <ParentProfileModal
           open={openModal}

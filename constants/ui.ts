@@ -69,6 +69,7 @@ export const COLORS = {
 // Voice player labels
 export const VOICE_LABELS = {
   loading: "Loading voice",
+  generating: "Generating audio…",
   play: "Play Voice",
   mute: "Mute Voice",
   unavailable: "Audio unavailable",
