@@ -10,6 +10,9 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "net.emerj.storytime",
+      "scheme": [
+        "com.googleusercontent.apps.368397094060-1gdqnqpt78l583nkkj9i4eukk36m42ba"
+      ],
       "icon": "./assets/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
