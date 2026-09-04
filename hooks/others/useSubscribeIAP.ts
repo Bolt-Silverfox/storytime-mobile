@@ -86,6 +86,12 @@ const useSubscribeIAP = (
       if (error.code === ErrorCode.UserCancelled) {
         setIsUserCancelled(true);
         setErrorMessage("No worries! You can subscribe anytime.");
+      } else if (error.code === ErrorCode.IapNotAvailable) {
+        // Expected store condition (no billing on device/emulator, restricted
+        // account). warn-level = Sentry breadcrumb only, not an error issue.
+        setIsUserCancelled(false);
+        iapLogger.warn("IAP not available on this device", error);
+        setErrorMessage("In-app purchases aren't available on this device.");
       } else {
         setIsUserCancelled(false);
         iapLogger.error("Subscription failed", error);
@@ -112,7 +118,9 @@ const useSubscribeIAP = (
         setErrorMessage("");
         await fetchProducts({ skus: [...SUBSCRIPTION_IDS], type: "subs" });
       } catch (err) {
-        iapLogger.error("Failed to fetch products from google play store", err);
+        // Store product queries fail transiently (network/store-side) and the
+        // user already sees the message; warn-level = breadcrumb, not a Sentry error.
+        iapLogger.warn("Failed to fetch products from google play store", err);
         setErrorMessage(getErrorMessage(err));
       } finally {
         setIsLoading(false);
