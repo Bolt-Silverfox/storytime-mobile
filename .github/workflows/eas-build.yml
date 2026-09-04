@@ -89,7 +89,7 @@ jobs:
           SUBMIT: ${{ inputs.submit }}
         run: |
           # Inputs were validated against an allowlist in a prior step. Reference
-          # them via env vars (not ${{ }} interpolation) to avoid shell injection.
+          # them via env vars (not GitHub-expression interpolation) to avoid shell injection.
           AUTO_SUBMIT=""
           if [ "$SUBMIT" = "true" ]; then
             AUTO_SUBMIT="--auto-submit"
