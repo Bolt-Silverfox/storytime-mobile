@@ -30,8 +30,17 @@ jobs:
         uses: step-security/harden-runner@v2
         with:
           egress-policy: audit
+      - name: Guard auto-submit to production profile
+        if: ${{ inputs.submit }}
+        run: |
+          if [ "${{ inputs.profile }}" != "production" ]; then
+            echo "::error::Auto-submit is only supported for the 'production' profile. The '${{ inputs.profile }}' profile uses internal distribution (APK / ad hoc) and cannot be submitted to the stores."
+            exit 1
+          fi
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
