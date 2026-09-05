@@ -152,10 +152,16 @@ eas build --platform ios
 
 ### Publishing Updates
 
-```bash
-# Publish updates to Expo
-eas update --branch production
-```
+Production OTA updates are published by the EAS workflow
+`.eas/workflows/release.yml` on every push to `main`, except pushes whose only
+changes are Markdown files, `docs/**` or `.eas/workflows/**` (so config changes
+such as `app.json` or `eas.json` do trigger it). The fingerprint decides
+whether to ship an OTA or a new build. For a manual OTA,
+run the `OTA Update` EAS workflow (`.eas/workflows/ota-update.yml`) against
+`main` with `channel=production` (the input defaults to `development`).
+
+Never run `eas update` from a local checkout: a stale-branch hand publish on
+2026-09-03 re-exposed unreleased features to production users.
 
 ## Debugging
 
