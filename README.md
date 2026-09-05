@@ -153,9 +153,10 @@ eas build --platform ios
 ### Publishing Updates
 
 Production OTA updates are published by the EAS workflow
-`.eas/workflows/release.yml` on pushes to `main` that touch app code (pushes
-changing only Markdown, `docs/**` or `.eas/workflows/**` are ignored). The
-fingerprint decides whether to ship an OTA or a new build. For a manual OTA,
+`.eas/workflows/release.yml` on every push to `main`, except pushes whose only
+changes are Markdown files, `docs/**` or `.eas/workflows/**` (so config changes
+such as `app.json` or `eas.json` do trigger it). The fingerprint decides
+whether to ship an OTA or a new build. For a manual OTA,
 run the `OTA Update` EAS workflow (`.eas/workflows/ota-update.yml`) against
 `main` with `channel=production` (the input defaults to `development`).
 

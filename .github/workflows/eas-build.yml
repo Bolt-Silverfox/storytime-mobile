@@ -1,0 +1,102 @@
+name: EAS Build
+
+on:
+  workflow_dispatch:
+    inputs:
+      platform:
+        description: 'Platform to build'
+        type: choice
+        options: [android, ios, all]
+        default: android
+      profile:
+        description: 'EAS build profile'
+        type: choice
+        options: [production, preview, blue, development]
+        default: production
+      submit:
+        description: 'Auto-submit to the store after a successful build'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: EAS Build (${{ inputs.platform }} / ${{ inputs.profile }})
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+      - name: Validate dispatch inputs
+        env:
+          PLATFORM: ${{ inputs.platform }}
+          PROFILE: ${{ inputs.profile }}
+          SUBMIT: ${{ inputs.submit }}
+        run: |
+          # workflow_dispatch choice options are NOT enforced when triggered via
+          # the REST API, so validate every input against an allowlist before it
+          # is ever used. Values are read from env vars (never interpolated into
+          # the shell) to avoid command injection (CWE-78).
+          case "$PLATFORM" in
+            android|ios|all) ;;
+            *) echo "::error::Invalid platform '$PLATFORM'. Allowed: android, ios, all." ; exit 1 ;;
+          esac
+          case "$PROFILE" in
+            production|preview|blue|development) ;;
+            *) echo "::error::Invalid profile '$PROFILE'. Allowed: production, preview, blue, development." ; exit 1 ;;
+          esac
+          case "$SUBMIT" in
+            true|false) ;;
+            *) echo "::error::Invalid submit '$SUBMIT'. Allowed: true, false." ; exit 1 ;;
+          esac
+          if [ "$SUBMIT" = "true" ]; then
+            if [ "$PROFILE" != "production" ]; then
+              echo "::error::Auto-submit is only supported for the 'production' profile. The '$PROFILE' profile uses internal distribution (APK / ad hoc) and cannot be submitted to the stores."
+              exit 1
+            fi
+            # eas.json defines submit.production.ios only; Android has no submit
+            # profile/credentials configured, so a non-interactive Android
+            # submission would fail. Reject it until submit.production.android is
+            # configured.
+            if [ "$PLATFORM" = "android" ] || [ "$PLATFORM" = "all" ]; then
+              echo "::error::Auto-submit for Android is not configured. eas.json defines submit.production.ios only; add submit.production.android (with a Google Service Account key) before enabling Android auto-submit."
+              exit 1
+            fi
+          fi
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Run EAS build
+        env:
+          PLATFORM: ${{ inputs.platform }}
+          PROFILE: ${{ inputs.profile }}
+          SUBMIT: ${{ inputs.submit }}
+        run: |
+          # Inputs were validated against an allowlist in a prior step. Reference
+          # them via env vars (not GitHub-expression interpolation) to avoid shell injection.
+          AUTO_SUBMIT=""
+          if [ "$SUBMIT" = "true" ]; then
+            AUTO_SUBMIT="--auto-submit"
+          fi
+          eas build \
+            --platform "$PLATFORM" \
+            --profile "$PROFILE" \
+            --non-interactive \
+            --no-wait \
+            $AUTO_SUBMIT
