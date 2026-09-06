@@ -1,10 +1,24 @@
 # yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
-# Auto-review the green default (dev-v1.2.0) plus every versioned line (e.g. dev-v1.3.0 "blue").
-# Without this, CodeRabbit only reviews PRs into the repo default branch, so blue PRs were skipped.
+# CodeRabbit configuration.
+#
+# Auto-review is OFF deliberately. Reviews are a limited quota shared across the
+# org, and auto-reviewing every push burned it on trivial commits — this repo hit
+# the cap on PR #369 on 2026-09-06, and a rate-limited run still reports a green
+# "CodeRabbit" status check, so a review that never happened looks like a pass.
+#
+# Review locally first (`coderabbit --agent`, or just read and run the change),
+# then ask for a hosted review deliberately by commenting:
+#
+#     @coderabbitai review
+#
+# base_branches is kept so that when a review IS requested on a dev-v* PR it is
+# still in scope rather than being skipped for targeting a non-default branch.
 language: en-US
 reviews:
+  profile: chill
   auto_review:
-    enabled: true
+    enabled: false
+    drafts: false
     base_branches:
-      - "dev-v\\d+\\.\\d+\\.\\d+"
       - "main"
+      - "dev-v\\d+\\.\\d+\\.\\d+"
