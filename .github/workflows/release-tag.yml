@@ -5,6 +5,20 @@ on:
     branches: [main]
     types: [closed]
 
+concurrency:
+  # Serialise tag creation. Two runs on the same version can both observe the
+  # tag as missing, then race on `git push`; the loser fails and never creates
+  # its GitHub Release. cancel-in-progress is false on purpose — a run that has
+  # already pushed a tag must be allowed to finish creating the release.
+  group: release-tag-${{ github.repository }}
+  cancel-in-progress: false
+  # Default queueing is `single`: only one run may sit pending, and a newer run
+  # replaces it. For release tagging that means a merged release can be dropped
+  # and never tagged. `max` keeps up to 100 pending runs in FIFO order. Allowed
+  # only because cancel-in-progress is false — GitHub rejects `queue: max`
+  # together with `cancel-in-progress: true`.
+  queue: max
+
 jobs:
   tag-release:
     if: github.event.pull_request.merged == true
@@ -21,36 +35,38 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          VERSION=$(jq -r '.version // empty' package.json)
-          if [ -z "$VERSION" ]; then
-            echo "::error file=package.json::package.json has no \"version\" field."
+          # Validate INSIDE jq, against the raw JSON, before any value reaches a
+          # shell variable. Three separate traps live on this boundary:
+          #
+          #   * `$(jq ...; printf x)` returns printf's status, so a jq failure
+          #     is masked even under `set -e`.
+          #   * Command substitution silently drops NUL bytes and trailing
+          #     newlines, so a doctored value arrives looking pristine.
+          #   * jq reads a *stream*, so {"version":"1.2"} {"version":".3"}
+          #     concatenates to a valid "1.2.3" that neither document declares.
+          #
+          # `-s` with `length == 1` requires exactly one document and makes a
+          # parse failure a rejection rather than an empty string. \A and \z,
+          # not ^ and $, because Oniguruma lets $ match before a trailing
+          # newline.
+          SEMVER='\A(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(\+([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?\z'
+          if ! jq -s -e --arg re "$SEMVER" \
+                'length == 1 and ((.[0].version // "") | test($re))' \
+                package.json >/dev/null 2>&1; then
+            # tojson, not the raw value: this reports a manifest already judged
+            # malformed, and a CR/LF inside an ::error annotation would start a
+            # new workflow command (`::add-mask::` and friends).
+            FOUND=$(jq -s -r 'if length == 1 then ((.[0].version // "<missing>") | tojson) else "<\(length) JSON documents>" end' package.json 2>/dev/null | tr -d '\000' | head -c 60 || true)
+            echo "::error file=package.json::version is missing, malformed, or not valid SemVer 2.0.0 (saw: ${FOUND:-<unparseable>}) — refusing to tag."
             exit 1
           fi
 
-          # This value becomes a git tag and a $GITHUB_OUTPUT line, so validate
-          # it before use. A whitelist first, because grep is line-oriented and
-          # "1.2.3\nskip=true" would match on its first line while injecting a
-          # second line into the step output; then a whole-string bash match.
-          case "$VERSION" in
-            *[!0-9A-Za-z.+-]*)
-              echo "::error file=package.json::version contains characters that are not valid in a SemVer string (newlines or control characters?). Refusing to tag."
-              exit 1
-              ;;
-          esac
-
-          SEMVER='^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(-((0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(\.(0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(\+([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*))?$'
-          if [[ ! "$VERSION" =~ $SEMVER ]]; then
-            echo "::error file=package.json::\"$VERSION\" is not valid SemVer 2.0.0 — refusing to tag."
-            exit 1
-          fi
-
+          # Safe by construction: anything passing the check above is a
+          # single-line SemVer string drawn from [0-9A-Za-z.+-].
+          VERSION=$(jq -r '.version' package.json)
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Release version: $VERSION"
 
-      # A pre-existing tag has two very different meanings, and the original
-      # version of this step treated them the same — reporting success either
-      # way. That is how v1.3.1 reached TestFlight untagged: package.json still
-      # read 1.3.0, v1.3.0 already existed, so this silently skipped.
       - name: Check if tag already exists
         id: check_tag
         env:
