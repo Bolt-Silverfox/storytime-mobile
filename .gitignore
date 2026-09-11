@@ -63,3 +63,7 @@ CLAUDE.md
 build-*.apk
 
 .env.local
+
+# Scanner checkout made by the shared malware-scan workflow. Tracking anything
+# here fails that job by design.
+.storytime-ci/
