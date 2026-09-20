@@ -96,7 +96,22 @@ const useStoryAudioBatchSSE = (
         if (!data) return;
         let payload: VoiceJobPayload;
         try {
-          payload = JSON.parse(data) as VoiceJobPayload;
+          const outer: unknown = JSON.parse(data);
+          // The job stream wraps each event in an envelope whose `data` is the
+          // event re-encoded as a string: {id, type, data: "{...}"}. The
+          // envelope also carries `type`, so parsing only the outer layer looks
+          // like it works — the branch is entered, but `result` lives in the
+          // inner payload, so paragraphIndex/audioUrl come back undefined and
+          // every progress event is silently dropped. Completed audio then
+          // never merges and the reader reports the whole batch as failed.
+          // Unwrap one level when present; a plain event still works.
+          const inner =
+            outer &&
+            typeof outer === "object" &&
+            typeof (outer as { data?: unknown }).data === "string"
+              ? JSON.parse((outer as { data: string }).data)
+              : outer;
+          payload = inner as VoiceJobPayload;
         } catch {
           return;
         }

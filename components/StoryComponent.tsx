@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { ImageBackground, Pressable, StyleSheet, View } from "react-native";
 import Animated, {
-  runOnJS,
   useSharedValue,
   useAnimatedStyle,
   withTiming,
@@ -32,6 +31,7 @@ import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio"
 import useGuestQuota from "../hooks/others/useGuestQuota";
 import { CONTROLS_FADE_MS } from "../constants";
 import useAuth from "../contexts/AuthContext";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { audioLogger } from "../utils/logger";
 
 const TOGGLE_DEBOUNCE_MS = 400;
@@ -78,6 +78,8 @@ const StoryComponent = ({
     opacity: controlsOpacity.value,
   }));
 
+  const insets = useSafeAreaInsets();
+
   const isTogglingRef = useRef(false);
   const toggleControls = useCallback(() => {
     if (isTogglingRef.current) return;
@@ -88,23 +90,19 @@ const StoryComponent = ({
     }, TOGGLE_DEBOUNCE_MS);
   }, []);
 
+  // Drive the animation from controlsVisible, but set controlsInteractive
+  // synchronously. Relying on the animation completion callback is fragile:
+  // `finished` is false whenever the timing is interrupted by a concurrent
+  // re-render (audio loading, TanStack Query updates, mid-story position
+  // persistence), which strands controlsInteractive at false and leaves every
+  // control in the reader behind pointerEvents="none" — the screen stops
+  // responding to touch entirely, with no way to recover.
+  // This restores d3912d6, which b16803b reverted.
   useEffect(() => {
-    if (!controlsVisible) {
-      // Hiding — disable interaction immediately
-      setControlsInteractive(false);
-    }
-    controlsOpacity.value = withTiming(
-      controlsVisible ? 1 : 0,
-      {
-        duration: CONTROLS_FADE_MS,
-      },
-      (finished) => {
-        if (controlsVisible && finished) {
-          // Showing — enable interaction after animation completes
-          runOnJS(setControlsInteractive)(true);
-        }
-      }
-    );
+    setControlsInteractive(controlsVisible);
+    controlsOpacity.value = withTiming(controlsVisible ? 1 : 0, {
+      duration: CONTROLS_FADE_MS,
+    });
   }, [controlsVisible, controlsOpacity]);
 
   const queryClient = useQueryClient();
@@ -230,9 +228,14 @@ const StoryComponent = ({
     );
     setSelectedVoice(fallbackVoice);
   }, [isAccessDenied, defaultAvailableVoiceId, selectedVoice]);
-  audioLogger.debug(
-    `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${effectiveDebouncedVoice}, mappedVoiceId=${readyVoiceIdForAudio}`
-  );
+  // Log only when the inputs actually change. Calling the logger in the render
+  // body fires a side effect on every render (twice under StrictMode) and
+  // buried the real signal in the dev console.
+  useEffect(() => {
+    audioLogger.debug(
+      `useBatchStoryAudio: storyId=${storyId}, debouncedVoice=${effectiveDebouncedVoice}, mappedVoiceId=${readyVoiceIdForAudio}`
+    );
+  }, [storyId, effectiveDebouncedVoice, readyVoiceIdForAudio]);
   // preferredProvider is only present when the backend fell back to a different provider
   const isTTSDegraded = !!batchAudio?.preferredProvider;
   const isVoiceTransitioning =
@@ -440,8 +443,15 @@ const StoryComponent = ({
           <ImageBackground
             source={{ uri: data.coverImageUrl }}
             resizeMode="cover"
-            className="flex flex-1 flex-col p-4 pt-12"
-            style={storyStyles.storyBackground}
+            className="flex flex-1 flex-col p-4"
+            // The wrapper omits the top safe-area edge so the cover art is
+            // full-bleed, so pad by the real inset. A fixed `pt-12` (48pt) sat
+            // above the 59pt inset on notched devices, putting the top of the
+            // home/options buttons under the status bar.
+            style={[
+              storyStyles.storyBackground,
+              { paddingTop: insets.top + 8 },
+            ]}
           >
             <View className="flex flex-1 flex-col">
               <Animated.View
@@ -534,16 +544,20 @@ const StoryComponent = ({
             hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
           />
         )}
+        {/* Kept inside the same container as the other reader modals. As a
+            sibling of that container it mounted a Modal whose native window
+            captured every touch while never presenting its content, which
+            left the whole reader unresponsive. */}
+        {!isVoiceModalOpen && !isOptionsModalOpen && showQuotaReminder && (
+          <StoryLimitModal
+            visible={true}
+            storyId={storyId}
+            quota={quota}
+            mode="reminder"
+            onClose={handleDismissQuotaReminder}
+          />
+        )}
       </View>
-      {!isVoiceModalOpen && !isOptionsModalOpen && showQuotaReminder && (
-        <StoryLimitModal
-          visible={true}
-          storyId={storyId}
-          quota={quota}
-          mode="reminder"
-          onClose={handleDismissQuotaReminder}
-        />
-      )}
     </SafeAreaWrapper>
   );
 };

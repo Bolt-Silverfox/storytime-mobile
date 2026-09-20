@@ -57,6 +57,9 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     mergedParagraphsRef.current = mergedParagraphs;
   }, [mergedParagraphs]);
 
+  // Batch ids already revalidated after reporting failures, so a batch can
+  // trigger at most one refetch.
+  const revalidatedBatchRef = useRef<string | null>(null);
   const prevVoiceRef = useRef<string | null>(voiceId);
   const lastInitializedBatchIdRef = useRef<string | null>(null);
   const lastDataUpdatedAtRef = useRef<number>(0);
@@ -71,6 +74,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       setBatchError(null);
       lastInitializedBatchIdRef.current = null;
       lastDataUpdatedAtRef.current = 0;
+      revalidatedBatchRef.current = null;
     }
   }, [voiceId]);
 
@@ -270,6 +274,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
     // Stop the subscription when the batch is done and sync final state to cache
     if (isTerminal) {
+      const finishedBatchId = batchJobId;
       setBatchJobId(null);
       if (merged) {
         syncToCache(
@@ -278,6 +283,23 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
           statusData.status === "failed" ? (statusData.error ?? null) : null
         );
       }
+
+      // A local "failed" verdict can simply mean this client is behind the
+      // server: paragraphs beyond the first page arrive only over SSE, and an
+      // event that lands after terminal leaves the index looking audio-less.
+      // The batch response is cached for 30 minutes, so that verdict would
+      // otherwise stick for the whole session and show "N paragraphs failed to
+      // generate" over audio the server already has. Re-read the authoritative
+      // state once per batch; the guard keeps this from looping.
+      if (
+        failed.length > 0 &&
+        revalidatedBatchRef.current !== finishedBatchId
+      ) {
+        revalidatedBatchRef.current = finishedBatchId;
+        queryClient.invalidateQueries({
+          queryKey: ["batchStoryAudio", storyId, voiceId],
+        });
+      }
     }
   }, [
     statusData,
@@ -285,6 +307,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     mergeParagraphs,
     syncToCache,
     batchQuery.data?.totalParagraphs,
+    batchJobId,
+    queryClient,
+    storyId,
+    voiceId,
   ]);
 
   // Stop polling only on terminal errors (404 = expired batch)
@@ -314,6 +340,23 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     });
   }, [queryClient, storyId, voiceId]);
 
+  // `failedParagraphs` is only ever written while a batch is in flight: at
+  // terminal the hook clears `batchJobId`, `statusData` goes null, and the
+  // merge effect early-returns, so the list is frozen at its terminal snapshot.
+  // Any paragraph whose audio lands after that — a late SSE event already
+  // merged in, a retry, or rehydration from the query cache — stayed marked as
+  // failed, leaving "N paragraphs failed to generate" on screen over audio that
+  // plays fine. Derive the exposed list so an index with audio is never
+  // reported as failed.
+  const effectiveFailedParagraphs = useMemo(() => {
+    if (failedParagraphs.length === 0) return failedParagraphs;
+    const paragraphs = mergedParagraphs ?? batchQuery.data?.paragraphs;
+    if (!paragraphs) return failedParagraphs;
+    return failedParagraphs.filter(
+      (index) => !paragraphs.find((p) => p.index === index)?.audioUrl
+    );
+  }, [failedParagraphs, mergedParagraphs, batchQuery.data?.paragraphs]);
+
   // Build the final data object with merged paragraphs
   const data = batchQuery.data
     ? {
@@ -328,9 +371,11 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     isError: batchQuery.isError,
     isStillGenerating: !!batchJobId,
     pollingError: pollingQuery.error,
-    failedParagraphs,
+    failedParagraphs: effectiveFailedParagraphs,
     retryFailed,
-    batchError,
+    // A batch-level error is only meaningful while something is still broken;
+    // once every paragraph has audio the banner is noise.
+    batchError: effectiveFailedParagraphs.length > 0 ? batchError : null,
     initialError: batchQuery.error?.message ?? null,
     // 403 = access denial (e.g. premium voice) — callers can recover by
     // switching to an accessible voice instead of showing a dead-end error.

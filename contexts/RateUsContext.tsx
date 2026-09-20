@@ -144,6 +144,15 @@ const RateUsProvider = ({
           close();
           runPending();
         }}
+        onCancel={() => {
+          // Closed without choosing (scrim tap / hardware back). The prompt is
+          // only ever shown once per account, so persisting this would burn it
+          // on an accidental tap and the Profile card — which only appears once
+          // `rateAppDismissedAt` is set — would never show either. Suppress for
+          // this session only; the next launch can ask again.
+          close();
+          runPending();
+        }}
       />
     </RateUsContext.Provider>
   );

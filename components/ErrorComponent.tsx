@@ -1,4 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
+import { sanitizeUserFacingMessage } from "../utils/errorMessages";
 
 const ErrorComponent = ({
   message,
@@ -10,7 +11,7 @@ const ErrorComponent = ({
   return (
     <View className="my-4 flex w-full flex-col items-center justify-center gap-y-4 rounded-2xl bg-bg-light px-6 py-10">
       <Text className="text-center font-[quilka] text-lg text-primary">
-        {message ?? "An unexpected error occurred!"}
+        {sanitizeUserFacingMessage(message, "An unexpected error occurred!")}
       </Text>
       <TouchableOpacity
         onPress={refetch}
