@@ -14,6 +14,7 @@ import { ProtectedRoutesNavigationProp } from "../Navigation/ProtectedNavigator"
 import { AgeGroupType } from "../types";
 import useRefreshControl from "../hooks/others/useRefreshControl";
 import ErrorComponent from "./ErrorComponent";
+import { getUserFacingError } from "../utils/errorMessages";
 import StoryItem from "./parents/StoryItem";
 import StoryCarouselSkeleton from "./skeletons/StoryCarouselSkeleton";
 import AgeSelectionComponent from "./UI/AgeSelectionComponent";
@@ -95,7 +96,9 @@ const GroupedStoriesStoryCarousel = ({
 
   if (isPending) return <StoryCarouselSkeleton variant="vertical" />;
   if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
+    );
 
   if (!stories.length) {
     const isFilterDefault = selectedAgeGroup === "All";

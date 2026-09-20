@@ -11,14 +11,36 @@ import { ApiError } from "../apiFetch";
  * reworded slightly without silently falling back to generic text.
  */
 const USER_FACING_PATTERNS: RegExp[] = [
+  // Sign-in / sign-up
   /email not verified/i,
+  /email .*already verified/i,
   /invalid (email|password|credentials)/i,
   /incorrect (email|password)/i,
   /email .*already (exists|registered|in use)/i,
-  /password must be/i,
   /too many requests/i,
+
+  // Password rules and reset
+  /password (must|should|needs to) (be|contain|include|have)/i,
+  /password is too (weak|short|long|common)/i,
+  /password too (weak|short|long|common)/i,
+  /passwords? do(es)? not match/i,
+
+  // Verification codes, OTPs and reset tokens
+  /\b(verification|confirmation|reset) (code|token|link)\b/i,
+  /\botps?\b/i,
+  /\b(code|token|link) (has )?expired\b/i,
+  /invalid or expired/i,
+
+  // In-app PIN
+  /\b(incorrect|invalid|expired|current|new|old|confirm) pin\b/i,
+  /\bpins? (do(es)? not match|is incorrect|is invalid|has expired|must be)\b/i,
+
+  // Entitlements. `subscription` alone is too broad — it also appears in
+  // plumbing failures like "Failed to fetch subscription from RevenueCat: 500",
+  // which must never reach a parent. Require entitlement wording alongside it.
   /free stor(y|ies)/i,
-  /subscription/i,
+  /\bsubscription\b[^.]*\b(required|expired|inactive|cancell?ed|renew|not active|no longer active)\b/i,
+  /\b(requires?|needs?|need) (an? )?(active )?subscription\b/i,
   /upgrade to premium/i,
   /story (limit|quota)/i,
 ];
@@ -51,9 +73,11 @@ const GENERIC = "Something went wrong. Please try again.";
 const OFFLINE =
   "You appear to be offline. Check your connection and try again.";
 
+const OFFLINE_PATTERN = /network request failed|network error|timeout|offline/i;
+
 const isOfflineError = (err: unknown): boolean => {
   const message = err instanceof Error ? err.message : String(err ?? "");
-  return /network request failed|network error|timeout|offline/i.test(message);
+  return OFFLINE_PATTERN.test(message);
 };
 
 /**
@@ -103,7 +127,7 @@ export const sanitizeUserFacingMessage = (
 ): string => {
   const trimmed = message?.trim();
   if (!trimmed) return fallback;
-  if (/network request failed|network error|timeout|offline/i.test(trimmed)) {
+  if (OFFLINE_PATTERN.test(trimmed)) {
     return OFFLINE;
   }
   if (USER_FACING_PATTERNS.some((p) => p.test(trimmed))) return trimmed;

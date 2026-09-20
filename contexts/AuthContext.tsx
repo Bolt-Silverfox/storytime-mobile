@@ -741,7 +741,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.requestPasswordReset(email)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -762,7 +762,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.vaildateResetToken(email, token)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -780,7 +780,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.resetpassword(email, token, newPassword)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -941,7 +941,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.setInAppPin(pin)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -957,7 +957,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.verifyInAppPin(pin)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -975,7 +975,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -990,7 +990,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.requestPinReset()
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1006,7 +1006,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.validatePinResetOtp(otp)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1024,7 +1024,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.resetInAppPin({ otp, newPin, confirmNewPin })
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1041,7 +1041,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.changePassword(oldPassword, newPassword)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1053,7 +1053,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.deleteAccount()
     );
     if (!request.success) {
-      setErrorCb(request.message);
+      setErrorCb(sanitizeUserFacingMessage(request.message));
       return;
     }
     await Promise.all([

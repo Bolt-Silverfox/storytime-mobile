@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import ErrorComponent from "../ErrorComponent";
+import { getUserFacingError } from "../../utils/errorMessages";
 import StoryCarouselSkeleton from "../skeletons/StoryCarouselSkeleton";
 
 type PropTypes = {
@@ -19,7 +20,9 @@ const HomeScreenCarouselComponent = ({
 }: PropTypes) => {
   if (isPending) return <StoryCarouselSkeleton />;
   if (error && !hasData)
-    return <ErrorComponent refetch={refetch} message={error.message} />;
+    return (
+      <ErrorComponent refetch={refetch} message={getUserFacingError(error)} />
+    );
   return children;
 };
 

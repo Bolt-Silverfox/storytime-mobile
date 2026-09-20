@@ -15,6 +15,7 @@ import { useGetNotifications } from "../../../hooks/tanstack/queryHooks/useGetNo
 import useMarkNotificationRead from "../../../hooks/tanstack/mutationHooks/useMarkNotificationRead";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import CustomEmptyState from "../../../components/emptyState/CustomEmptyState";
 import type { Notification } from "../../../types";
 
@@ -64,7 +65,7 @@ const NotificationsScreen = () => {
   if (error)
     return (
       <SafeAreaWrapper variant="solid">
-        <ErrorComponent message={error.message} refetch={refetch} />
+        <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
       </SafeAreaWrapper>
     );
 

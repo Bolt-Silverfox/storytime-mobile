@@ -20,6 +20,7 @@ import { StoryModes } from "../types";
 import { getDefaultVoiceListId, resolveVoiceIdForAudio } from "../utils/voice";
 import { incrementFinishedStoryCount } from "../utils/rateUsStorage";
 import ErrorComponent from "./ErrorComponent";
+import { getUserFacingError } from "../utils/errorMessages";
 import LoadingOverlay from "./LoadingOverlay";
 import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
@@ -425,7 +426,9 @@ const StoryComponent = ({
         </SafeAreaWrapper>
       );
     }
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
+    );
   }
   if (!data) {
     return (
@@ -544,10 +547,14 @@ const StoryComponent = ({
             hasQuiz={!!(data?.isInteractive && data?.questions?.length)}
           />
         )}
-        {/* Kept inside the same container as the other reader modals. As a
-            sibling of that container it mounted a Modal whose native window
-            captured every touch while never presenting its content, which
-            left the whole reader unresponsive. */}
+        {/* Rendered alongside the other reader modals purely for readability —
+            a React Native <Modal> presents into its own native window, so its
+            position in the JSX tree has no bearing on touch handling. The
+            unresponsive reader was caused by presenting mid-transition, which
+            yields a native window that renders nothing yet swallows every
+            touch; the fix is the useModalPresentationGate inside
+            StoryLimitModal, plus the isVoiceModalOpen/isOptionsModalOpen
+            guards below that keep two modals from presenting at once. */}
         {!isVoiceModalOpen && !isOptionsModalOpen && showQuotaReminder && (
           <StoryLimitModal
             visible={true}

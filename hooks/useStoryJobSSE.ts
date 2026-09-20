@@ -4,6 +4,7 @@ import { BASE_URL } from "../constants";
 import { StoryJobSSEEvent } from "../types";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { apiLogger } from "../utils/logger";
+import { parseJobSSEPayload } from "../utils/jobSSEPayload";
 
 type SSEPhase = "connecting" | "progress" | "completed" | "failed";
 
@@ -66,14 +67,15 @@ const useStoryJobSSE = (jobId: string | null): UseStoryJobSSEResult => {
         pollingInterval: 0,
       });
 
-      const handlePayload = (data: string | null | undefined) => {
-        if (!data) return;
-        let payload: StoryJobSSEEvent;
-        try {
-          payload = JSON.parse(data) as StoryJobSSEEvent;
-        } catch {
-          return;
-        }
+      // Same envelope handling as the batch-audio stream: this endpoint wraps
+      // each event as {id, type, data: "<json>"}, so the inner payload must be
+      // unwrapped or `result`/`progress` read back undefined.
+      const handlePayload = (
+        data: string | null | undefined,
+        eventName?: JobEventName
+      ) => {
+        const payload = parseJobSSEPayload<StoryJobSSEEvent>(data, eventName);
+        if (!payload) return;
 
         if (payload.type === "heartbeat") return;
 
@@ -107,7 +109,7 @@ const useStoryJobSSE = (jobId: string | null): UseStoryJobSSEResult => {
       ];
       namedEvents.forEach((name) => {
         es?.addEventListener(name, (event) => {
-          handlePayload((event as { data?: string | null }).data);
+          handlePayload((event as { data?: string | null }).data, name);
         });
       });
       // Fallback for a server that emits unnamed events.
