@@ -45,6 +45,45 @@ const USER_FACING_PATTERNS: RegExp[] = [
   /story (limit|quota)/i,
 ];
 
+/**
+ * A message may only be shown verbatim if it LOOKS like copy written for a
+ * person. `USER_FACING_PATTERNS` matches substrings, which classifies well but
+ * does not bound what else the string contains: "Database error: invalid
+ * password hash for user 123" matches /invalid (email|password|credentials)/
+ * and would otherwise be rendered to a parent in full.
+ *
+ * Anchoring the patterns instead was considered and rejected — legitimate copy
+ * matches mid-string ("You have used all your free stories", "Your
+ * subscription has expired"), so anchoring would silently downgrade real
+ * messages to generic text, which is the failure this allowlist exists to
+ * avoid.
+ */
+const INTERNAL_MARKERS: RegExp[] = [
+  /\n/, // multi-line: a stack trace or a dump, never UI copy
+  /\b(database|sql|postgres|prisma|redis|mongo|sequelize)\b/i,
+  /\b(exception|stacktrace|stack trace|econnrefused|etimedout|enotfound)\b/i,
+  /\bat\s+\w+[.(]/, // "at Object.foo (" — a stack frame
+  /\w+error:/i, // "TypeError:", "Database error:", "AxiosError:"
+  /\b(null|undefined|NaN)\b/,
+  /https?:\/\//i, // internal URLs and provider endpoints
+  /[{}[\]]/, // JSON or object fragments
+  /\/(usr|home|var|app|src|node_modules)\//, // filesystem paths
+];
+
+/** Longest plausible sentence of user-facing copy. Beyond this it is a dump. */
+const MAX_USER_FACING_LENGTH = 200;
+
+const looksUserFacing = (message: string): boolean =>
+  message.length <= MAX_USER_FACING_LENGTH &&
+  !INTERNAL_MARKERS.some((p) => p.test(message));
+
+/**
+ * Allowlist AND guard. The pattern says "this is a class of error we show";
+ * the guard says "and this particular string is safe to show".
+ */
+const isSafeToShow = (message: string): boolean =>
+  USER_FACING_PATTERNS.some((p) => p.test(message)) && looksUserFacing(message);
+
 /** Copy shown when we will not pass the server's own wording through. */
 const STATUS_COPY: { test: (status: number) => boolean; copy: string }[] = [
   {
@@ -93,10 +132,7 @@ export const getUserFacingError = (err: unknown): string => {
 
   if (err instanceof ApiError) {
     const serverMessage = err.message?.trim();
-    if (
-      serverMessage &&
-      USER_FACING_PATTERNS.some((p) => p.test(serverMessage))
-    ) {
+    if (serverMessage && isSafeToShow(serverMessage)) {
       return serverMessage;
     }
     const match = STATUS_COPY.find((entry) => entry.test(err.status));
@@ -106,7 +142,7 @@ export const getUserFacingError = (err: unknown): string => {
   // Non-ApiError: a message we produced ourselves is usually already friendly,
   // but we cannot distinguish it from a leaked internal, so allowlist it too.
   const message = err instanceof Error ? err.message?.trim() : "";
-  if (message && USER_FACING_PATTERNS.some((p) => p.test(message))) {
+  if (message && isSafeToShow(message)) {
     return message;
   }
   return GENERIC;
@@ -130,7 +166,7 @@ export const sanitizeUserFacingMessage = (
   if (OFFLINE_PATTERN.test(trimmed)) {
     return OFFLINE;
   }
-  if (USER_FACING_PATTERNS.some((p) => p.test(trimmed))) return trimmed;
+  if (isSafeToShow(trimmed)) return trimmed;
   return fallback;
 };
 
