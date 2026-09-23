@@ -15,6 +15,7 @@ import SubscriptionModal from "../../../components/modals/SubscriptionModal";
 import StoryDetailsCTA from "../../../components/StoryDetailsCTA";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import useGetGuestStoryAccess from "../../../hooks/tanstack/queryHooks/useGetGuestStoryAccess";
 import useGetStoryProgress from "../../../hooks/tanstack/queryHooks/useGetStoryProgress";
 import useGetStoryQuota from "../../../hooks/tanstack/queryHooks/useGetStoryQuota";
@@ -74,6 +75,7 @@ const ChildStoryDetails = () => {
 
   const duration = secondsToMinutes(durationSeconds);
   const handleShare = () => setIsShareModalOpen(true);
+  const insets = useSafeAreaInsets();
 
   return (
     <SafeAreaWrapper variant="transparent">
@@ -88,7 +90,13 @@ const ChildStoryDetails = () => {
               accessibilityRole="button"
               accessibilityLabel="Go back"
               onPress={() => navigator.goBack()}
-              className="absolute left-4 top-10 flex size-10 items-center justify-center rounded-full bg-primary"
+              hitSlop={8}
+              // The cover image is deliberately full-bleed (the wrapper omits
+              // the top safe-area edge), so this button must offset itself by
+              // the inset. A fixed `top-10` put most of its 40pt target under
+              // the status bar, leaving only a ~10pt strip that responded.
+              style={{ top: insets.top + 8 }}
+              className="absolute left-4 flex size-10 items-center justify-center rounded-full bg-primary"
             >
               <Entypo name="chevron-thin-left" size={24} color="white" />
             </Pressable>

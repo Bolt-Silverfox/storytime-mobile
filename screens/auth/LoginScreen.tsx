@@ -50,8 +50,20 @@ const LoginScreen = () => {
                   className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
                   placeholder="Enter your email"
                   placeholderTextColor={error ? "red" : colours.text}
-                  onChangeText={setEmail}
+                  onChangeText={(text) => {
+                    // Clear the previous failure as soon as the field is
+                    // edited, otherwise a stale "Invalid Email" sits under a
+                    // corrected address and the form looks rejected when it
+                    // isn't.
+                    if (error) setError("");
+                    setEmail(text);
+                  }}
                   value={email}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  keyboardType="email-address"
+                  textContentType="emailAddress"
+                  inputMode="email"
                 />
                 {error && <ErrorMessageDisplay errorMessage={error} />}
               </View>

@@ -12,6 +12,7 @@ import {
 } from "react-native";
 import CustomEmptyState from "../../components/emptyState/CustomEmptyState";
 import ErrorComponent from "../../components/ErrorComponent";
+import { getUserFacingError } from "../../utils/errorMessages";
 import FavouriteStoryItem from "../../components/FavouriteStoryItem";
 import Icon from "../../components/Icon";
 import LoadingOverlay from "../../components/LoadingOverlay";
@@ -102,7 +103,9 @@ const ParentsFavouritesScreen = () => {
   );
 
   if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
+    );
   if (isPending) return <LoadingOverlay visible />;
 
   const showNoData = favourites.length === 0;

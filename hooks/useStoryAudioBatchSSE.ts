@@ -3,6 +3,7 @@ import EventSource from "react-native-sse";
 import { BASE_URL } from "../constants";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { audioLogger } from "../utils/logger";
+import { parseJobSSEPayload } from "../utils/jobSSEPayload";
 
 /** Named SSE events emitted by the backend (NestJS sets `type` as the event name). */
 type JobEventName = "progress" | "completed" | "failed" | "heartbeat";
@@ -61,16 +62,22 @@ const useStoryAudioBatchSSE = (
   const cancelledRef = useRef(false);
 
   useEffect(() => {
-    if (!batchJobId) return;
-
-    cancelledRef.current = false;
-    // Reset per-batch state so a new batchJobId starts clean.
+    // Reset per-batch state BEFORE the null guard. The caller clears
+    // `batchJobId` the moment a batch reaches terminal, so resetting after the
+    // guard would leave `status === "completed"` hanging around with no batch
+    // in flight — and the next batch would then be judged terminal the instant
+    // it arrived, deriving "every paragraph failed" before a single event had
+    // been received.
     setCompletedParagraphs([]);
     setStatus("connecting");
     setTotalParagraphs(undefined);
     setFailedCount(undefined);
     setError(undefined);
     setSseFailed(false);
+
+    if (!batchJobId) return;
+
+    cancelledRef.current = false;
 
     let es: EventSource<JobEventName> | null = null;
 
@@ -92,14 +99,12 @@ const useStoryAudioBatchSSE = (
         }
       );
 
-      const handlePayload = (data: string | null | undefined) => {
-        if (!data) return;
-        let payload: VoiceJobPayload;
-        try {
-          payload = JSON.parse(data) as VoiceJobPayload;
-        } catch {
-          return;
-        }
+      const handlePayload = (
+        data: string | null | undefined,
+        eventName?: JobEventName
+      ) => {
+        const payload = parseJobSSEPayload<VoiceJobPayload>(data, eventName);
+        if (!payload) return;
 
         if (payload.type === "heartbeat") return;
 
@@ -138,7 +143,7 @@ const useStoryAudioBatchSSE = (
       ];
       namedEvents.forEach((name) => {
         es?.addEventListener(name, (event) => {
-          handlePayload((event as { data?: string | null }).data);
+          handlePayload((event as { data?: string | null }).data, name);
         });
       });
       // Fallback for a server that emits unnamed events.

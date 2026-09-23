@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { Text, View } from "react-native";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import { extractStoryId } from "../../../constants";
 import useGetStory from "../../../hooks/tanstack/queryHooks/useGetStory";
@@ -46,7 +47,7 @@ const StoryDeepLinkScreen = () => {
   if (error) {
     return (
       <SafeAreaWrapper variant="solid">
-        <ErrorComponent message={error.message} refetch={refetch} />
+        <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
       </SafeAreaWrapper>
     );
   }

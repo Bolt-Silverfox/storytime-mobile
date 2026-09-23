@@ -35,6 +35,9 @@ todo.txt
 # local env files
 .env*.local
 .env
+# any .env copy/backup — these hold real keys and must never be committed
+.env.*
+!.env.example
 
 # FCM Configuration Files (contain sensitive credentials)
 google-services.json

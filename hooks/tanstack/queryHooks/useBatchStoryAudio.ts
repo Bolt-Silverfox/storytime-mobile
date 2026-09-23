@@ -268,7 +268,16 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       setBatchError(statusData.error);
     }
 
-    // Stop the subscription when the batch is done and sync final state to cache
+    // Stop the subscription when the batch is done and sync final state to
+    // cache. Deliberately no invalidateQueries here: a stale "failed" verdict
+    // (a late SSE event landing after terminal leaves an index looking
+    // audio-less) is NOT corrected by refetching, because the batch endpoint is
+    // a POST that ENQUEUES generation and hands back a NEW batchJobId — a
+    // refetch re-queues TTS and starts another batch rather than re-reading the
+    // finished one, and the new id defeats any id-keyed loop guard.
+    // `effectiveFailedParagraphs` below is what clears the stale list: it drops
+    // any index that now has audio, whether it arrived late, from a retry, or
+    // from the query cache.
     if (isTerminal) {
       setBatchJobId(null);
       if (merged) {
@@ -314,6 +323,29 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     });
   }, [queryClient, storyId, voiceId]);
 
+  // `failedParagraphs` is only ever written while a batch is in flight: at
+  // terminal the hook clears `batchJobId`, `statusData` goes null, and the
+  // merge effect early-returns, so the list is frozen at its terminal snapshot.
+  // Any paragraph whose audio lands after that — a late SSE event already
+  // merged in, a retry, or rehydration from the query cache — stayed marked as
+  // failed, leaving "N paragraphs failed to generate" on screen over audio that
+  // plays fine. Derive the exposed list so an index with audio is never
+  // reported as failed.
+  const effectiveFailedParagraphs = useMemo(() => {
+    if (failedParagraphs.length === 0) return failedParagraphs;
+    const paragraphs = mergedParagraphs ?? batchQuery.data?.paragraphs;
+    if (!paragraphs) return failedParagraphs;
+    return failedParagraphs.filter(
+      (index) => !paragraphs.find((p) => p.index === index)?.audioUrl
+    );
+  }, [failedParagraphs, mergedParagraphs, batchQuery.data?.paragraphs]);
+
+  // True when per-paragraph failures were reported and all of them have since
+  // gained audio. Distinct from "no failed indices", which is also what a
+  // job-level failure looks like.
+  const hasResolvedAllFailures =
+    failedParagraphs.length > 0 && effectiveFailedParagraphs.length === 0;
+
   // Build the final data object with merged paragraphs
   const data = batchQuery.data
     ? {
@@ -328,9 +360,14 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     isError: batchQuery.isError,
     isStillGenerating: !!batchJobId,
     pollingError: pollingQuery.error,
-    failedParagraphs,
+    failedParagraphs: effectiveFailedParagraphs,
     retryFailed,
-    batchError,
+    // Suppress the banner ONLY when we know the failure was per-paragraph and
+    // every one of those paragraphs has since gained audio — then it is noise.
+    // A job-level failure reports no indices at all ({status: "failed", error,
+    // failedParagraphs: []}); keying on `effectiveFailedParagraphs` alone would
+    // hide it, leaving the user with no message and no Retry.
+    batchError: hasResolvedAllFailures ? null : batchError,
     initialError: batchQuery.error?.message ?? null,
     // 403 = access denial (e.g. premium voice) — callers can recover by
     // switching to an accessible voice instead of showing a dead-end error.

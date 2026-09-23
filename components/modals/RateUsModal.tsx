@@ -1,6 +1,14 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useEffect, useState } from "react";
-import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Modal,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import useModalPresentationGate from "../../hooks/useModalPresentationGate";
 
 type PropTypes = {
   visible: boolean;
@@ -8,9 +16,21 @@ type PropTypes = {
   onRate: () => void;
   /** Called when the user rates 1-3 stars: route to the in-app feedback form. */
   onSendFeedback: () => void;
-  /** Called on "Not now". */
+  /** Called on "Not now" — an explicit decision, persisted. */
   onDismiss: () => void;
+  /**
+   * Called when the sheet is closed without a decision (scrim tap, hardware
+   * back). Must NOT be persisted: the prompt shows once per account, so
+   * treating an incidental dismissal as final silently burns it.
+   */
+  onCancel: () => void;
 };
+
+/** The store this build actually links to, for copy that names it. */
+const STORE_NAME = Platform.select({
+  ios: "App Store",
+  default: "Play Store",
+});
 
 /** 4+ stars is treated as a happy rating and routed to the store. */
 const STORE_RATING_THRESHOLD = 4;
@@ -26,6 +46,7 @@ const RateUsModal = ({
   onRate,
   onSendFeedback,
   onDismiss,
+  onCancel,
 }: PropTypes) => {
   const [rating, setRating] = useState(0);
 
@@ -34,8 +55,15 @@ const RateUsModal = ({
     if (visible) setRating(0);
   }, [visible]);
 
+  // Presenting a Modal while a screen is still transitioning leaves an empty
+  // modal window on top: nothing renders, but it swallows every touch. The
+  // prompt fires right as the reader is being pushed, so it hit this reliably.
+  const canPresent = useModalPresentationGate(visible);
+
   const isPositive = rating >= STORE_RATING_THRESHOLD;
-  const primaryLabel = isPositive ? "Rate on Play Store" : "Send us feedback";
+  const primaryLabel = isPositive
+    ? `Rate on ${STORE_NAME}`
+    : "Send us feedback";
 
   const handlePrimary = () => {
     if (rating === 0) return;
@@ -45,20 +73,22 @@ const RateUsModal = ({
 
   return (
     <Modal
-      visible={visible}
+      visible={visible && canPresent}
       transparent
       animationType="slide"
-      onRequestClose={onDismiss}
+      onRequestClose={onCancel}
     >
-      <Pressable onPress={onDismiss} style={styles.overlay}>
+      <Pressable onPress={onCancel} style={styles.overlay}>
         <Pressable style={styles.sheet}>
           <View style={styles.header}>
-            <Text style={styles.emoji}>🌟</Text>
+            <View style={styles.iconCircle}>
+              <FontAwesome5 name="star" size={36} solid color="#ECC607" />
+            </View>
             <Text style={styles.title}>Are you enjoying Storytime4Kids?</Text>
             <Text style={styles.subtitle}>
               We would greatly appreciate if you could take a moment to rate
-              Storytime4kids on the Google Play Store. Your feedback is crucial
-              in helping others discover the value of our service.
+              Storytime4kids on the {STORE_NAME}. Your feedback is crucial in
+              helping others discover the value of our service.
             </Text>
           </View>
 
@@ -127,9 +157,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 12,
   },
-  emoji: {
-    fontSize: 64,
-    lineHeight: 72,
+  iconCircle: {
+    width: 88,
+    height: 88,
+    borderRadius: 44,
+    alignItems: "center",
+    justifyContent: "center",
+    borderWidth: 2,
+    borderColor: "#ECC607",
   },
   title: {
     fontFamily: "quilka",
