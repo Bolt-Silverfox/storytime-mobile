@@ -9,8 +9,18 @@ import { InteractionManager } from "react-native";
  */
 const MAX_WAIT_MS = 600;
 
+/**
+ * Absolute ceiling. `transitionStart` without a matching `transitionEnd` (an
+ * interrupted or cancelled gesture) would otherwise gate the modal forever,
+ * and a modal that never opens is worse than one that opens a beat late.
+ */
+const HARD_CAP_MS = 3000;
+
 type TransitionEmitter = {
-  addListener: (type: "transitionEnd", callback: () => void) => () => void;
+  addListener: (
+    type: "transitionStart" | "transitionEnd",
+    callback: () => void
+  ) => () => void;
 };
 
 /**
@@ -44,21 +54,41 @@ const useModalPresentationGate = (
     }
 
     let settled = false;
+    let transitioning = false;
+
     const settle = () => {
       if (settled) return;
       settled = true;
       setCanPresent(true);
     };
 
-    const unsubscribe = navigation?.addListener("transitionEnd", settle);
-    const task = InteractionManager.runAfterInteractions(settle);
-    const fallback = setTimeout(settle, MAX_WAIT_MS);
+    // The fallbacks are a safety net for the no-navigation case, not a second
+    // opinion on the transition. `InteractionManager` is global and MAX_WAIT_MS
+    // is a guess, so either can fire while the native stack is still animating
+    // — presenting the modal in exactly the window this hook exists to avoid.
+    // While a transition is known to be running, only `transitionEnd` settles.
+    const settleIfIdle = () => {
+      if (!transitioning) settle();
+    };
+
+    const offStart = navigation?.addListener("transitionStart", () => {
+      transitioning = true;
+    });
+    const offEnd = navigation?.addListener("transitionEnd", () => {
+      transitioning = false;
+      settle();
+    });
+    const task = InteractionManager.runAfterInteractions(settleIfIdle);
+    const fallback = setTimeout(settleIfIdle, MAX_WAIT_MS);
+    const hardCap = setTimeout(settle, HARD_CAP_MS);
 
     return () => {
       settled = true;
-      unsubscribe?.();
+      offStart?.();
+      offEnd?.();
       task.cancel();
       clearTimeout(fallback);
+      clearTimeout(hardCap);
     };
   }, [visible, navigation]);
 
