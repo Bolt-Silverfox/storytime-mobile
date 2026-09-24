@@ -44,6 +44,13 @@ const USER_FACING_PATTERNS: RegExp[] = [
   /upgrade to premium/i,
   /story (limit|quota)/i,
 
+  // Anchored to END of message, not just to the rejection phrase. Without the
+  // lookahead these matched a valid phrase with diagnostics trailing it —
+  // "Coupon has expired for tenant 9, refetching from origin" is under the
+  // length limit and trips no INTERNAL_MARKER, so it rendered verbatim. Every
+  // real message from storytime_be/src/coupon/ is a single complete sentence,
+  // so requiring end-of-string costs nothing; the `here` alternative exists
+  // only for "This coupon type cannot be redeemed here".
   // Coupons and promo codes. Bare `coupon` is far too broad — it appears in
   // plumbing failures too ("Failed to fetch coupon from Stripe: 500"). Nor is
   // it enough to require a generic failure word nearby: "invalid", "expired"
@@ -55,9 +62,9 @@ const USER_FACING_PATTERNS: RegExp[] = [
   // which is what separates "coupon has expired" from "coupon shard has
   // expired". Patterns are checked against the real messages in
   // storytime_be/src/coupon/; see utils/errorMessages.test.ts.
-  /\b(invalid|expired|unknown) (?:coupon code|coupon|promo(?:tional)? code)(?=$|[.,!?])/i,
-  /\b(?:coupon|promo(?:tional)? code)\s+(?:(?:is|has|was|type|or account)\s+)?(?:expired|no longer (?:valid|available|active)|not (?:yet )?valid|no valid|reached its usage limit|cannot be redeemed|already (?:been )?redeemed)\b/i,
-  /\balready redeemed (?:this|that|the|your) (?:coupon|promo(?:tional)? code)\b/i,
+  /\b(invalid|expired|unknown) (?:coupon code|coupon|promo(?:tional)? code)(?=[.!?]?\s*$)/i,
+  /\b(?:coupon|promo(?:tional)? code)\s+(?:(?:is|has|was|type|or account)\s+)?(?:expired|no longer (?:valid|available|active)|not (?:yet )?valid|no valid|reached its usage limit|cannot be redeemed(?:\s+here)?|already (?:been )?redeemed)(?=[.!?]?\s*$)/i,
+  /\balready redeemed (?:this|that|the|your) (?:coupon|promo(?:tional)? code)(?=[.!?]?\s*$)/i,
 ];
 
 /**
