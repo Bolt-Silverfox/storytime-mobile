@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { getErrorMessage, uploadUserAvatar } from "../../../utils/utils";
+import { uploadUserAvatar } from "../../../utils/utils";
 import useAuth from "../../../contexts/AuthContext";
 import { Alert } from "react-native";
+import { getUserFacingError } from "../../../utils/errorMessages";
 
 const useUploadCustomAvatar = ({ onSuccess }: { onSuccess: () => void }) => {
   const queryClient = useQueryClient();
@@ -19,7 +20,7 @@ const useUploadCustomAvatar = ({ onSuccess }: { onSuccess: () => void }) => {
       onSuccess();
     },
     onError: (err) => {
-      Alert.alert("Failed to upload avatar", getErrorMessage(err));
+      Alert.alert("Failed to upload avatar", getUserFacingError(err));
     },
   });
 };

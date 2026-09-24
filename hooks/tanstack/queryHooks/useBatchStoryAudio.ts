@@ -6,6 +6,10 @@ import { QueryResponse } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
 import { audioLogger } from "../../../utils/logger";
 import useStoryAudioBatchSSE from "../../useStoryAudioBatchSSE";
+import {
+  getUserFacingError,
+  sanitizeUserFacingMessage,
+} from "../../../utils/errorMessages";
 
 export type BatchParagraph = {
   index: number;
@@ -367,8 +371,17 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     // A job-level failure reports no indices at all ({status: "failed", error,
     // failedParagraphs: []}); keying on `effectiveFailedParagraphs` alone would
     // hide it, leaving the user with no message and no Retry.
-    batchError: hasResolvedAllFailures ? null : batchError,
-    initialError: batchQuery.error?.message ?? null,
+    // Sanitised here rather than at each setter: `batchError` is fed from the
+    // SSE `failed` payload, the polled status body AND the query cache, and
+    // this is the single point every one of them passes through on its way to
+    // the banner in StoryContentContainer.
+    batchError:
+      hasResolvedAllFailures || !batchError
+        ? null
+        : sanitizeUserFacingMessage(batchError, "Audio generation failed."),
+    initialError: batchQuery.error
+      ? getUserFacingError(batchQuery.error)
+      : null,
     // 403 = access denial (e.g. premium voice) — callers can recover by
     // switching to an accessible voice instead of showing a dead-end error.
     isAccessDenied:

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 import { Alert } from "react-native";
 
 const useUploadVoice = (onSuccess?: () => void) => {
@@ -25,7 +26,9 @@ const useUploadVoice = (onSuccess?: () => void) => {
       });
     },
     onError: (err) => {
-      Alert.alert(err.message ?? "Unexpected error, try again.");
+      Alert.alert(
+        sanitizeUserFacingMessage(err.message, "Unexpected error, try again.")
+      );
     },
   });
 };

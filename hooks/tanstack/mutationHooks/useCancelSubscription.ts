@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { getErrorMessage } from "../../../utils/utils";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import { QueryResponse } from "../../../types";
@@ -23,7 +24,7 @@ const useCancelSubscription = (onSuccessCb?: () => void) => {
       onSuccessCb?.();
     },
     onError: (err) => {
-      Alert.alert("Payment cancellation failed", err.message);
+      Alert.alert("Payment cancellation failed", getUserFacingError(err));
       iapLogger.error("Cancel payment error", err);
     },
   });

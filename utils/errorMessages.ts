@@ -43,6 +43,21 @@ const USER_FACING_PATTERNS: RegExp[] = [
   /\b(requires?|needs?|need) (an? )?(active )?subscription\b/i,
   /upgrade to premium/i,
   /story (limit|quota)/i,
+
+  // Coupons and promo codes. Bare `coupon` is far too broad — it appears in
+  // plumbing failures too ("Failed to fetch coupon from Stripe: 500"). Nor is
+  // it enough to require a generic failure word nearby: "invalid", "expired"
+  // and "not found" are ubiquitous in infrastructure errors ("Coupon lookup
+  // failed: invalid response from Stripe"), and any character-budget gap is
+  // wide enough to swallow an internal noun ("coupon cache has expired for
+  // tenant 9"). So these match specific rejection phrases, and the only words
+  // allowed between the noun and the phrase are a closed set of connectors —
+  // which is what separates "coupon has expired" from "coupon shard has
+  // expired". Patterns are checked against the real messages in
+  // storytime_be/src/coupon/; see utils/errorMessages.test.ts.
+  /\b(invalid|expired|unknown) (?:coupon code|coupon|promo(?:tional)? code)(?=$|[.,!?])/i,
+  /\b(?:coupon|promo(?:tional)? code)\s+(?:(?:is|has|was|type|or account)\s+)?(?:expired|no longer (?:valid|available|active)|not (?:yet )?valid|no valid|reached its usage limit|cannot be redeemed|already (?:been )?redeemed)\b/i,
+  /\balready redeemed (?:this|that|the|your) (?:coupon|promo(?:tional)? code)\b/i,
 ];
 
 /**

@@ -12,6 +12,7 @@ import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "generationProgress">;
 
@@ -82,12 +83,20 @@ const GenerationProgressScreen = () => {
     statusErrored ||
     resultErrored;
 
-  const errorMessage =
+  // None of these sources is trusted copy: the SSE `failed` payload and the
+  // polled job body are server text, and the query errors cover transport
+  // failures as well. So the resolved value goes through the allowlist before
+  // it is rendered. Sanitise the result of the `??` chain rather than each
+  // branch, and keep our own copy in the `fallback` argument — a hard-coded
+  // string passed as the FIRST argument would be allowlist-tested and
+  // discarded, which is why useStoryJobSSE deliberately leaves `error` unset.
+  const errorMessage = sanitizeUserFacingMessage(
     sse.error ??
-    status?.error ??
-    (statusErrored ? statusError?.message : undefined) ??
-    (resultErrored ? resultError?.message : undefined) ??
-    "Something went wrong while creating your story.";
+      status?.error ??
+      (statusErrored ? statusError?.message : undefined) ??
+      (resultErrored ? resultError?.message : undefined),
+    "Something went wrong while creating your story."
+  );
 
   // Prefer live SSE values; fall back to the polled status once SSE has failed.
   // Take the max so the bar never jumps backward during the SSE->poll handoff.
@@ -112,9 +121,10 @@ const GenerationProgressScreen = () => {
       },
       onError: (err) => {
         setCancelError(
-          err instanceof Error
-            ? err.message
-            : "Couldn't cancel — your story may still be generating."
+          sanitizeUserFacingMessage(
+            err instanceof Error ? err.message : undefined,
+            "Couldn't cancel — your story may still be generating."
+          )
         );
       },
     });
