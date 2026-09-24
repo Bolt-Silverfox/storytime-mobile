@@ -44,27 +44,15 @@ const USER_FACING_PATTERNS: RegExp[] = [
   /upgrade to premium/i,
   /story (limit|quota)/i,
 
-  // Anchored to END of message, not just to the rejection phrase. Without the
-  // lookahead these matched a valid phrase with diagnostics trailing it —
-  // "Coupon has expired for tenant 9, refetching from origin" is under the
-  // length limit and trips no INTERNAL_MARKER, so it rendered verbatim. Every
-  // real message from storytime_be/src/coupon/ is a single complete sentence,
-  // so requiring end-of-string costs nothing; the `here` alternative exists
-  // only for "This coupon type cannot be redeemed here".
-  // Coupons and promo codes. Bare `coupon` is far too broad — it appears in
-  // plumbing failures too ("Failed to fetch coupon from Stripe: 500"). Nor is
-  // it enough to require a generic failure word nearby: "invalid", "expired"
-  // and "not found" are ubiquitous in infrastructure errors ("Coupon lookup
-  // failed: invalid response from Stripe"), and any character-budget gap is
-  // wide enough to swallow an internal noun ("coupon cache has expired for
-  // tenant 9"). So these match specific rejection phrases, and the only words
-  // allowed between the noun and the phrase are a closed set of connectors —
-  // which is what separates "coupon has expired" from "coupon shard has
-  // expired". Patterns are checked against the real messages in
-  // storytime_be/src/coupon/; see utils/errorMessages.test.ts.
-  /\b(invalid|expired|unknown) (?:coupon code|coupon|promo(?:tional)? code)(?=[.!?]?\s*$)/i,
-  /\b(?:coupon|promo(?:tional)? code)\s+(?:(?:is|has|was|type|or account)\s+)?(?:expired|no longer (?:valid|available|active)|not (?:yet )?valid|no valid|reached its usage limit|cannot be redeemed(?:\s+here)?|already (?:been )?redeemed)(?=[.!?]?\s*$)/i,
-  /\balready redeemed (?:this|that|the|your) (?:coupon|promo(?:tional)? code)(?=[.!?]?\s*$)/i,
+  // Coupons are an EXACT closed set, not a pattern guess. Two attempts at
+  // patterns here leaked ("Coupon has expired for tenant 9, refetching from
+  // origin" passed a phrase-anchored version), and tightening them then broke
+  // two real messages -- the compound "or has reached its usage limit" and
+  // "has no valid free days". The full list of user-facing strings lives in
+  // storytime_be/src/coupon/coupon.service.ts and is short and stable, so
+  // matching it exactly removes the whole class of problem. Fails closed: if
+  // the backend rewords one, the user gets generic copy rather than a leak.
+  /^(?:coupon is no longer valid(?: or has reached its usage limit)?|coupon or account no longer available|invalid coupon code|you have already redeemed this coupon|this coupon (?:has expired|has no valid free days|has reached its usage limit|is no longer active|is not yet valid|type cannot be redeemed here))\.?$/i,
 ];
 
 /**
