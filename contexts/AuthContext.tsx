@@ -42,7 +42,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
-import { sanitizeUserFacingMessage } from "../utils/errorMessages";
+import {
+  getUserFacingError,
+  sanitizeUserFacingMessage,
+} from "../utils/errorMessages";
 import * as Application from "expo-application";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Alert, Platform } from "react-native";
@@ -844,9 +847,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       await processOAuthResponse(response);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unexpected error, try again";
-      Alert.alert(message);
+      Alert.alert(getUserFacingError(error));
     } finally {
       setIsLoading(false);
     }
@@ -923,9 +924,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       await processOAuthResponse(response);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unexpected error, try again";
-      Alert.alert(message);
+      Alert.alert(getUserFacingError(error));
     } finally {
       setIsLoading(false);
     }

@@ -92,9 +92,11 @@ const useStoryJobSSE = (jobId: string | null): UseStoryJobSSEResult => {
           es?.close();
         } else if (payload.type === "failed") {
           setStatus("failed");
-          setError(
-            payload.error ?? "Story generation failed. Please try again."
-          );
+          // Left raw (and possibly undefined): the only consumer,
+          // GenerationProgressScreen, runs this through the user-facing
+          // allowlist and supplies the fallback copy. Substituting our own
+          // string here would just be downgraded to generic text there.
+          setError(payload.error);
           es?.close();
         } else {
           setStatus("progress");

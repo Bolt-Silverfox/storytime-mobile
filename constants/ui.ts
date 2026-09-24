@@ -80,6 +80,11 @@ export const ERROR_MESSAGES = {
   favourites: {
     toggleFailed: "Failed to add/remove story from favourites",
   },
+  coupon: {
+    // Shown when the backend's own rejection text isn't safe to display.
+    applyFailed:
+      "That coupon couldn't be applied. Please check the code and try again.",
+  },
 } as const;
 
 // Query keys

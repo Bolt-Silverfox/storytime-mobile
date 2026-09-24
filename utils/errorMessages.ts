@@ -43,6 +43,16 @@ const USER_FACING_PATTERNS: RegExp[] = [
   /\b(requires?|needs?|need) (an? )?(active )?subscription\b/i,
   /upgrade to premium/i,
   /story (limit|quota)/i,
+
+  // Coupons are an EXACT closed set, not a pattern guess. Two attempts at
+  // patterns here leaked ("Coupon has expired for tenant 9, refetching from
+  // origin" passed a phrase-anchored version), and tightening them then broke
+  // two real messages -- the compound "or has reached its usage limit" and
+  // "has no valid free days". The full list of user-facing strings lives in
+  // storytime_be/src/coupon/coupon.service.ts and is short and stable, so
+  // matching it exactly removes the whole class of problem. Fails closed: if
+  // the backend rewords one, the user gets generic copy rather than a leak.
+  /^(?:coupon is no longer valid(?: or has reached its usage limit)?|coupon or account no longer available|invalid coupon code|you have already redeemed this coupon|this coupon (?:has expired|has no valid free days|has reached its usage limit|is no longer active|is not yet valid|type cannot be redeemed here))\.?$/i,
 ];
 
 /**

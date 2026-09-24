@@ -58,6 +58,16 @@ const RateUsModal = ({
   // Presenting a Modal while a screen is still transitioning leaves an empty
   // modal window on top: nothing renders, but it swallows every touch. The
   // prompt fires right as the reader is being pushed, so it hit this reliably.
+  //
+  // No `navigation` is passed, and no useful one exists: this modal is rendered by
+  // RateUsProvider (contexts/RateUsContext.tsx), which App.tsx mounts *outside*
+  // NavigationContainer, so there is no hosting screen whose transitionStart/
+  // transitionEnd events the gate could subscribe to. (The provider does hold a
+  // navigationRef, but those are per-screen stack events, not container-ref
+  // ones, so it would not help.) The gate therefore always
+  // settles via the hook's InteractionManager/timeout fallback rather than the
+  // precise transition signal. Don't assume the gate is authoritative here — if
+  // the empty-window bug ever recurs for this prompt, that fallback is why.
   const canPresent = useModalPresentationGate(visible);
 
   const isPositive = rating >= STORE_RATING_THRESHOLD;

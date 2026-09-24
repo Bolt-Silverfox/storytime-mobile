@@ -25,6 +25,8 @@ import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import ParentalGateModal from "../modals/ParentalGateModal";
 import useParentalGate from "../../hooks/others/useParentalGate";
+import { sanitizeUserFacingMessage } from "../../utils/errorMessages";
+import { ERROR_MESSAGES } from "../../constants/ui";
 
 const IS_IOS = Platform.OS === "ios";
 
@@ -88,7 +90,13 @@ const UnsubscribedUserComponent = () => {
         setCouponMessage({ text: data.message, valid: data.valid });
       },
       onError: (err) => {
-        setCouponMessage({ text: err.message, valid: false });
+        setCouponMessage({
+          text: sanitizeUserFacingMessage(
+            err.message,
+            ERROR_MESSAGES.coupon.applyFailed
+          ),
+          valid: false,
+        });
       },
     });
   };
@@ -102,7 +110,13 @@ const UnsubscribedUserComponent = () => {
         setCouponMessage(null);
       },
       onError: (err) => {
-        setCouponMessage({ text: err.message, valid: false });
+        setCouponMessage({
+          text: sanitizeUserFacingMessage(
+            err.message,
+            ERROR_MESSAGES.coupon.applyFailed
+          ),
+          valid: false,
+        });
       },
     });
   };
