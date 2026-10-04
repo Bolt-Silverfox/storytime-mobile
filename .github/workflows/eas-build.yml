@@ -57,12 +57,14 @@ jobs:
               echo "::error::Auto-submit is only supported for the 'production' profile. The '$PROFILE' profile uses internal distribution (APK / ad hoc) and cannot be submitted to the stores."
               exit 1
             fi
-            # eas.json defines submit.production.ios only; Android has no submit
-            # profile/credentials configured, so a non-interactive Android
-            # submission would fail. Reject it until submit.production.android is
-            # configured.
+            # eas.json now pins submit.production.android (track and release
+            # status), but it deliberately references no service-account key
+            # file, so the Google Service Account key has to already be stored
+            # in EAS project credentials. Without it a non-interactive submit
+            # fails late, after the build has been paid for. Keep this dispatch
+            # path blocked until that key is confirmed present.
             if [ "$PLATFORM" = "android" ] || [ "$PLATFORM" = "all" ]; then
-              echo "::error::Auto-submit for Android is not configured. eas.json defines submit.production.ios only; add submit.production.android (with a Google Service Account key) before enabling Android auto-submit."
+              echo "::error::Auto-submit for Android is blocked. eas.json pins submit.production.android but references no service-account key, so a Google Service Account key must be stored in EAS project credentials; confirm it is there, then remove this guard."
               exit 1
             fi
           fi
