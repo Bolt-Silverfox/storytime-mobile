@@ -122,9 +122,86 @@ const GENERIC = "Something went wrong. Please try again.";
 const OFFLINE =
   "You appear to be offline. Check your connection and try again.";
 
-const OFFLINE_PATTERN = /network request failed|network error|timeout|offline/i;
+/**
+ * Transport failures only — the cases where the request never reached a
+ * server, so "check your connection" is actually the right instruction.
+ *
+ * The strings here are the ones this app can actually produce. The global
+ * `fetch` on native is expo/fetch (`expo/src/winter/runtime.native.ts`
+ * installs it unless `EXPO_PUBLIC_USE_RN_FETCH` is "1" or "true", which
+ * nothing in this repo sets; `utils/utils.tsx` has a separate note about the
+ * same substitution), and its `FetchError`
+ * prefixes the native description with "fetch failed: "
+ * (`expo/src/winter/fetch/FetchErrors.ts`). That prefix is what actually
+ * catches a transport failure today; the NSURLError/OkHttp phrasings below are
+ * defensive, for native modules that report a description without going
+ * through expo/fetch. Only "Network request failed" and "Network request timed
+ * out" come from React Native's own fetch polyfill (whatwg-fetch), which is in
+ * play if expo/fetch is ever disabled — and note it discards the native
+ * description, so those two fixed strings are all it can ever produce.
+ *
+ * A bare /timeout/ used to be here and was wrong: an HTTP 504 carries the body
+ * "Gateway Timeout", and the server timing out upstream is not the user's
+ * connection. Telling a parent to check their wifi for our outage sends them
+ * off to fix something that is not broken. A bare /timed out/ would be wrong
+ * for the same reason ("Coupon lookup timed out after 30s in CouponService" is
+ * ours), so only connection-scoped phrasings are matched, plus a message that
+ * is nothing but the word "timeout" — a socket timeout, never something a
+ * human wrote for a parent.
+ *
+ * This pattern is checked BEFORE `INTERNAL_MARKERS` and before the allowlist,
+ * in both entry points, so whatever it matches is shown to the user as a
+ * connection problem with no further filtering. That is why it has to stay
+ * narrow and phrase-shaped. Deliberately NOT here:
+ * - a bare /network error/ — apiFetch's copy for an unmapped status is
+ *   "An unexpected network error occurred", which is ours, standing in for a
+ *   server response rather than describing the device;
+ * - `ECONNREFUSED`/`ETIMEDOUT`-style errnos and "failed to connect to X" —
+ *   those read the same whether it was the phone or the SERVER that could not
+ *   reach a host ("Failed to connect to Redis ... ECONNREFUSED"), and raw
+ *   backend failure text does reach `sanitizeUserFacingMessage` through a
+ *   job's `error` field;
+ * - a bare /\boffline\b/ — a sentence can mention offline reading without
+ *   being about connectivity.
+ *
+ * Known imprecisions, accepted. A client-side abort is reported as offline
+ * (`AuthContext`'s AbortController timeouts: expo/fetch reports a signal that
+ * was already aborted as "fetch failed: The operation was aborted.", and a
+ * mid-flight cancellation as the native description, both behind the same
+ * prefix). A request we gave up on is close enough to a connection problem
+ * from the user's point of view.
+ *
+ * In the other direction, "fetch failed" is also Node's own transport error
+ * text, and the backend forwards a failed job's raw `error`/`failedReason` to
+ * the client — so an upstream failure the SERVER hit could be told to a parent
+ * as their connection problem. No current route appears to: the Gemini path
+ * replaces the string with copy of its own before anything can forward it.
+ * That containment is partly incidental, though: the ElevenLabs client can
+ * produce the same string and rethrows it raw, held back only by a generic
+ * 500. Keeping client detection working is worth the residual risk, but the
+ * remedy for a future leak belongs at the source rather than in an
+ * ever-narrower pattern here.
+ */
+const OFFLINE_PATTERN =
+  /fetch failed|network request (?:failed|timed out)|connection appears to be offline|network connection was lost|unable to resolve host|no address associated with hostname|specified hostname could not be found|could not connect to the server|the request timed out|(?:connect|read|socket|handshake) timed out|network is unreachable|no internet connection|^timeout$/i;
 
+/**
+ * Offline classification is by message, and an `ApiError` is raised only after
+ * `apiFetch` has an HTTP response in hand (or, in two cases, as fixed
+ * client-side copy: "Session expired" and the `transientAuth`
+ * "Authentication temporary failure, try again"). None of those messages is a
+ * description of the device's transport, so none should be read as a verdict
+ * on the user's connection — which is what `/timeout/` matching a 504's
+ * "Gateway Timeout" body amounted to.
+ *
+ * The cost of the exclusion: losing connectivity during a token refresh yields
+ * the `transientAuth` 401 and therefore 401 copy ("Try signing in again")
+ * rather than offline copy. That is pre-existing — the fixed message never
+ * matched the pattern either — but it is the one case where an `ApiError`
+ * really does stand in for a transport failure.
+ */
 const isOfflineError = (err: unknown): boolean => {
+  if (err instanceof ApiError) return false;
   const message = err instanceof Error ? err.message : String(err ?? "");
   return OFFLINE_PATTERN.test(message);
 };
@@ -168,10 +245,18 @@ export const getUserFacingError = (err: unknown): string => {
  * a raw backend message.
  */
 export const sanitizeUserFacingMessage = (
-  message?: string,
+  // `unknown` rather than `string`: several callers pass a field taken
+  // straight off a JSON body (GenerationProgressScreen sanitises the polled
+  // job's `error`, useBatchStoryAudio the batch poll's, AuthContext the
+  // auth responses' `message`), so the static type is a promise the backend
+  // makes, not one it keeps. An
+  // object-valued `error` used to reach `.trim()` and throw mid-render, taking
+  // the screen down in the one situation — a failed job — where the user most
+  // needs to be told something.
+  message?: unknown,
   fallback: string = GENERIC
 ): string => {
-  const trimmed = message?.trim();
+  const trimmed = typeof message === "string" ? message.trim() : undefined;
   if (!trimmed) return fallback;
   if (OFFLINE_PATTERN.test(trimmed)) {
     return OFFLINE;

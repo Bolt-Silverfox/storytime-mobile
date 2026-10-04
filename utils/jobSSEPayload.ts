@@ -15,7 +15,17 @@
  * listener was registered under.
  */
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  !!value && typeof value === "object";
+  !!value && typeof value === "object" && !Array.isArray(value);
+
+/**
+ * Payload fields the UI renders or sanitises as text. The consuming hooks type
+ * them as strings, but the values come off the wire, so a backend sending an
+ * object or a number here would reach a `.trim()` or a `<Text>` child and
+ * either throw mid-render or display "[object Object]" — on a failed job,
+ * which is when the user most needs to be told something. Anything that is not
+ * a string is dropped so the consumer's own fallback copy is used.
+ */
+const TEXT_FIELDS = ["error", "progressMessage"] as const;
 
 export const parseJobSSEPayload = <T>(
   data: string | null | undefined,
@@ -46,7 +56,17 @@ export const parseJobSSEPayload = <T>(
   const type =
     inner.type ?? (isRecord(outer) ? outer.type : undefined) ?? eventName;
 
-  return { ...inner, ...(type === undefined ? {} : { type }) } as T;
+  const fields: Record<string, unknown> = { ...inner };
+  for (const field of TEXT_FIELDS) {
+    if (field in fields && typeof fields[field] !== "string") {
+      delete fields[field];
+    }
+  }
+
+  return {
+    ...fields,
+    ...(type === undefined ? {} : { type }),
+  } as T;
 };
 
 export default parseJobSSEPayload;
