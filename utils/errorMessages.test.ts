@@ -116,9 +116,69 @@ describe("sanitizeUserFacingMessage", () => {
   });
 
   it("reports offline errors as offline, ahead of any fallback", () => {
-    expect(sanitizeUserFacingMessage("Network request failed", "nope")).toBe(
-      OFFLINE
-    );
+    // expo/fetch (the global fetch since SDK 56) prefixes the native
+    // description with "fetch failed: ", so that is the shape this app sees
+    // today. The bare forms below are the same NSURLError/OkHttp descriptions
+    // unprefixed — a native module reporting one directly, rather than
+    // anything React Native's own fetch polyfill produces (it discards the
+    // description and rejects with one of its two fixed messages).
+    for (const transport of [
+      "Network request failed",
+      "Network request timed out",
+      "fetch failed: The Internet connection appears to be offline.",
+      'fetch failed: Unable to resolve host "api.storytimeapp.me"',
+      "The request timed out.",
+      "connect timed out",
+      "Read timed out",
+      "The network connection was lost.",
+      "timeout",
+    ]) {
+      expect(sanitizeUserFacingMessage(transport, "nope")).toBe(OFFLINE);
+    }
+  });
+
+  it("does not treat a server timeout string as an offline device", () => {
+    // Status is gone by the time a message reaches here, so the wording has to
+    // carry it: a gateway/upstream timeout is ours, not the user's connection,
+    // and neither is a backend operation that timed out internally. The two
+    // "Timeout" strings matched the earlier bare /timeout/, "network error
+    // occurred" the earlier bare /network error/, and the moderation line the
+    // earlier bare /offline/. The other two are guards against fixing this by
+    // matching /timed out/ or "failed to connect to" instead — neither matched
+    // before either.
+    for (const serverSide of [
+      "Gateway Timeout",
+      "Upstream request timeout",
+      "Coupon lookup timed out after 30s",
+      "An unexpected network error occurred. Please try again.",
+      // A host the SERVER could not reach, and a sentence that merely says the
+      // word. Neither is the parent's connection.
+      "Failed to connect to Redis at redis://10.0.0.1:6379 (ECONNREFUSED)",
+      "Story is offline for moderation",
+    ]) {
+      expect(sanitizeUserFacingMessage(serverSide, "Try again")).toBe(
+        "Try again"
+      );
+    }
+  });
+
+  it("falls back instead of throwing when the value is not a string", () => {
+    // Polled job bodies reach this function straight from response.json(), so
+    // the `string` type is the backend's promise, not a guarantee. An object
+    // here used to throw inside .trim() during render.
+    // `null` and `undefined` already returned the fallback via `?.trim()`;
+    // the object, array, number and boolean cases are the ones that threw.
+    for (const notAString of [
+      { code: 500, detail: "boom" },
+      ["boom"],
+      42,
+      true,
+      null,
+    ]) {
+      expect(sanitizeUserFacingMessage(notAString, "Try again")).toBe(
+        "Try again"
+      );
+    }
   });
 });
 
@@ -173,9 +233,33 @@ describe("getUserFacingError", () => {
     expect(getUserFacingError(new ApiError("weird", 0))).toBe(GENERIC);
   });
 
-  it("detects offline before anything else", () => {
+  it("detects offline for transport failures", () => {
+    // A transport failure never carries a status: expo/fetch rejects with a
+    // FetchError ("fetch failed: ..."), XHR paths with RN's own TypeError.
+    expect(
+      getUserFacingError(
+        new Error(
+          "fetch failed: The Internet connection appears to be offline."
+        )
+      )
+    ).toBe(OFFLINE);
+    expect(getUserFacingError(new TypeError("Network request failed"))).toBe(
+      OFFLINE
+    );
+  });
+
+  it("does not blame the device for a server-side timeout", () => {
+    // An ApiError always came from an HTTP response, so it is a server fault
+    // however its body is worded. Telling the parent to check their connection
+    // would send them to fix something that is not broken.
+    expect(getUserFacingError(new ApiError("Gateway Timeout", 504))).toBe(
+      "Something went wrong on our end. Please try again shortly."
+    );
+    expect(getUserFacingError(new ApiError("Request timeout", 408))).toBe(
+      "That didn't work. Please check your details and try again."
+    );
     expect(
       getUserFacingError(new ApiError("Network request failed", 500))
-    ).toBe(OFFLINE);
+    ).toBe("Something went wrong on our end. Please try again shortly.");
   });
 });

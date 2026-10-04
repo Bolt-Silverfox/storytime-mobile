@@ -26,6 +26,7 @@ import StoryContentContainer from "./StoryContentContainer";
 import SafeAreaWrapper from "./UI/SafeAreaWrapper";
 import SelectReadingVoiceModal from "./modals/SelectReadingVoiceModal";
 import StoryLimitModal from "./modals/StoryLimitModal";
+import { useScreenTransitionTracking } from "../hooks/useModalPresentationGate";
 import InStoryOptionsModal from "./modals/storyModals/InStoryOptionsModal";
 import useGetStoryQuota from "../hooks/tanstack/queryHooks/useGetStoryQuota";
 import useBatchStoryAudio from "../hooks/tanstack/queryHooks/useBatchStoryAudio";
@@ -50,6 +51,13 @@ const StoryComponent = ({
   page?: number;
 }) => {
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
+  // Start tracking screen transitions here, at the screen, not in the modals.
+  // The reader's modals mount late — the quota reminder only after an
+  // AsyncStorage read resolves — by which point the push animation has already
+  // emitted transitionStart, so a listener registered inside the modal sees an
+  // idle screen and presents into the middle of the transition. That is the
+  // invisible, touch-swallowing native window this gate exists to prevent.
+  useScreenTransitionTracking(navigator);
   const [isVoiceModalOpen, setIsVoiceModalOpen] = useState(false);
   const [isOptionsModalOpen, setIsOptionsModalOpen] = useState(false);
   const [activeParagraph, setActiveParagraph] = useState(() =>
