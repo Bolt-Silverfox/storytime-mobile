@@ -3,6 +3,7 @@ import { Alert } from "react-native";
 import { QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { AuthProvider } from "../../../types";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 import auth from "../../../utils/auth";
 
 export const useLinkGoogle = ({
@@ -23,7 +24,10 @@ export const useLinkGoogle = ({
       onSuccess?.();
     },
     onError: (err) => {
-      Alert.alert("Error", err.message || "Failed to link Google account.");
+      Alert.alert(
+        "Error",
+        sanitizeUserFacingMessage(err.message, "Failed to link Google account.")
+      );
     },
   });
 };
@@ -46,7 +50,10 @@ export const useLinkApple = ({
       onSuccess?.();
     },
     onError: (err) => {
-      Alert.alert("Error", err.message || "Failed to link Apple account.");
+      Alert.alert(
+        "Error",
+        sanitizeUserFacingMessage(err.message, "Failed to link Apple account.")
+      );
     },
   });
 };
@@ -69,7 +76,10 @@ export const useUnlinkProvider = ({
       onSuccess?.();
     },
     onError: (err) => {
-      Alert.alert("Error", err.message || "Failed to unlink account.");
+      Alert.alert(
+        "Error",
+        sanitizeUserFacingMessage(err.message, "Failed to unlink account.")
+      );
     },
   });
 };

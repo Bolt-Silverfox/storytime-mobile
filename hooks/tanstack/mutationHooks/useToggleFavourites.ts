@@ -13,6 +13,7 @@ import {
   QueryResponse,
 } from "../../../types";
 import { getErrorMessage } from "../../../utils/utils";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import useGetUserProfile from "../queryHooks/useGetUserProfile";
 
 type FavouritesCache = InfiniteData<CursorPaginatedData<FavouriteStory>>;
@@ -67,7 +68,10 @@ const useToggleFavourites = ({
       if (context?.previousData) {
         queryClient.setQueryData(queryKey, context.previousData);
       }
-      Alert.alert(getErrorMessage(err), ERROR_MESSAGES.favourites.toggleFailed);
+      Alert.alert(
+        ERROR_MESSAGES.favourites.toggleFailed,
+        getUserFacingError(err)
+      );
     },
   });
 };

@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 export type FeedbackPayload = {
   fullname: string;
@@ -30,7 +31,10 @@ const useSubmitFeedback = (options?: {
       options?.onSuccess?.();
     },
     onError: (err: Error) => {
-      const message = err.message ?? "Something went wrong";
+      const message = sanitizeUserFacingMessage(
+        err.message,
+        "Something went wrong"
+      );
       if (options?.onError) {
         options.onError(message);
       } else {

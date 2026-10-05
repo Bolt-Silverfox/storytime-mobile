@@ -4,6 +4,7 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse } from "../../../types";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 const useRemoveStoryFromLibrary = () => {
   const { user } = useAuth();
@@ -30,7 +31,12 @@ const useRemoveStoryFromLibrary = () => {
       });
     },
     onError: (error: Error) => {
-      Alert.alert(error.message || "Failed to remove story from library");
+      Alert.alert(
+        sanitizeUserFacingMessage(
+          error.message,
+          "Failed to remove story from library"
+        )
+      );
     },
   });
 };

@@ -2,8 +2,8 @@ import { ErrorCode, useIAP } from "expo-iap";
 import { useEffect, useState } from "react";
 import { SUBSCRIPTION_IDS } from "../../constants";
 import { SubscriptionPlan } from "../../types";
-import { getErrorMessage } from "../../utils/utils";
 import { iapLogger } from "../../utils/logger";
+import { getUserFacingError } from "../../utils/errorMessages";
 
 /**
  * IAP hook for unauthenticated users.
@@ -31,7 +31,7 @@ const useUnauthSubscribeIAP = (
         onPurchaseComplete?.();
       } catch (err) {
         iapLogger.error("Failed to finish transaction", err);
-        setErrorMessage(getErrorMessage(err));
+        setErrorMessage(getUserFacingError(err));
       }
     },
     onPurchaseError: (error) => {
@@ -76,7 +76,7 @@ const useUnauthSubscribeIAP = (
         // Store product queries fail transiently (network/store-side) and the
         // user already sees the message; warn-level = breadcrumb, not a Sentry error.
         iapLogger.warn("Failed to fetch products", err);
-        setErrorMessage(getErrorMessage(err));
+        setErrorMessage(getUserFacingError(err));
       } finally {
         setIsLoading(false);
       }
@@ -111,7 +111,7 @@ const useUnauthSubscribeIAP = (
         type: "subs",
       });
     } catch (err) {
-      setErrorMessage(getErrorMessage(err));
+      setErrorMessage(getUserFacingError(err));
     }
   };
 

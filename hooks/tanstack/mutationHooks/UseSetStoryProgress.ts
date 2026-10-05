@@ -5,6 +5,7 @@ import apiFetch from "../../../apiFetch";
 import { BASE_URL, QUERY_KEYS } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse } from "../../../types";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 const useSetStoryProgress = ({
   storyId,
@@ -56,19 +57,10 @@ const useSetStoryProgress = ({
       // the per-page-turn popup spam.
       if (hasAlertedRef.current) return;
       hasAlertedRef.current = true;
-      const crypticPatterns = [
-        "Cannot read prop",
-        "undefined is not",
-        "TypeError",
-        "NetworkError",
-        "SyntaxError",
-        "Unexpected token",
-      ];
-      const isFriendly =
-        err.message && !crypticPatterns.some((p) => err.message.includes(p));
-      const message = isFriendly
-        ? err.message
-        : "Something went wrong saving your progress. Your reading is not affected.";
+      const message = sanitizeUserFacingMessage(
+        err.message,
+        "Something went wrong saving your progress. Your reading is not affected."
+      );
       Alert.alert("Story Progress", message);
     },
     onSuccess: () => {

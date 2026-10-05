@@ -2,6 +2,7 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import useModalPresentationGate from "../../hooks/useModalPresentationGate";
 import {
   Image,
   Modal,
@@ -47,6 +48,8 @@ const StoryLimitModal = ({
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
 
   const isDismissible = mode === "reminder";
+
+  const canPresent = useModalPresentationGate(visible, navigator);
 
   const handleCancel = () => {
     if (isDismissible && onClose) {
@@ -138,16 +141,19 @@ const StoryLimitModal = ({
 
   return (
     <Modal
-      visible={visible}
+      visible={visible && canPresent}
       transparent
       animationType="slide"
       onRequestClose={handleCancel}
     >
-      <Pressable
-        onPress={isDismissible ? handleCancel : undefined}
-        style={modalStyles.overlay}
-      >
-        <Pressable style={modalStyles.sheet}>
+      <View style={modalStyles.overlay}>
+        <Pressable
+          onPress={isDismissible ? handleCancel : undefined}
+          style={StyleSheet.absoluteFill}
+          accessibilityRole={isDismissible ? "button" : undefined}
+          accessibilityLabel={isDismissible ? "Close" : undefined}
+        />
+        <View style={modalStyles.sheet}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={modalStyles.scrollContent}
@@ -283,8 +289,8 @@ const StoryLimitModal = ({
               </Pressable>
             </View>
           </ScrollView>
-        </Pressable>
-      </Pressable>
+        </View>
+      </View>
     </Modal>
   );
 };

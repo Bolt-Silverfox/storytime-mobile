@@ -5,6 +5,7 @@ import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
 import { QueryResponse } from "../../../types";
 import { NotificationPreferences } from "../queryHooks/useGetNotificationPreferences";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 const useUpdateNotificationPreferences = () => {
   const queryClient = useQueryClient();
@@ -59,7 +60,10 @@ const useUpdateNotificationPreferences = () => {
         "Error",
         is429
           ? "Too many changes, please wait a moment."
-          : (err.message ?? "Unexpected error, try again later")
+          : sanitizeUserFacingMessage(
+              err.message,
+              "Unexpected error, try again later"
+            )
       );
     },
   });

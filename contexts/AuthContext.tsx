@@ -42,6 +42,10 @@ import {
   IOS_CLIENT_ID,
   WEB_CLIENT_ID,
 } from "../constants";
+import {
+  getUserFacingError,
+  sanitizeUserFacingMessage,
+} from "../utils/errorMessages";
 import * as Application from "expo-application";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { Alert, Platform } from "react-native";
@@ -626,6 +630,11 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     password,
     setErrorCb,
   }) => {
+    // Clear any previous failure up front. Clearing only after the request
+    // meant a corrected address still sat under the old "Invalid Email",
+    // making a valid form look rejected.
+    setErrorCb("");
+
     if (!emailRegex.test(email)) {
       setErrorCb("Invalid Email");
       return;
@@ -640,7 +649,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     >(() => auth.login(email, password));
     setErrorCb("");
     if (!loginData.success) {
-      setErrorCb(loginData.message);
+      setErrorCb(sanitizeUserFacingMessage(loginData.message));
       return;
     }
     await exitGuestMode();
@@ -670,7 +679,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }>
     >(() => auth.signup({ email, password, fullName, role: "parent" }));
     if (!signupData.success) {
-      setErrorCb(signupData.message);
+      setErrorCb(sanitizeUserFacingMessage(signupData.message));
       return;
     }
     await secureTokenStorage.setTokens(
@@ -698,7 +707,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.verifyEmail(token)
     );
     if (!verifyEmailData.success) {
-      setErrorCb(verifyEmailData.message);
+      setErrorCb(sanitizeUserFacingMessage(verifyEmailData.message));
       return;
     }
     onSuccess();
@@ -715,7 +724,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
         auth.resendVerificationEmail(email)
       );
       if (!resendData.success) {
-        setErrorCb(resendData.message);
+        setErrorCb(sanitizeUserFacingMessage(resendData.message));
         return resendData;
       }
       return resendData;
@@ -735,7 +744,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.requestPasswordReset(email)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -756,7 +765,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.vaildateResetToken(email, token)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -774,7 +783,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.resetpassword(email, token, newPassword)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -838,9 +847,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       await processOAuthResponse(response);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unexpected error, try again";
-      Alert.alert(message);
+      Alert.alert(getUserFacingError(error));
     } finally {
       setIsLoading(false);
     }
@@ -917,9 +924,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
       await processOAuthResponse(response);
     } catch (error) {
-      const message =
-        error instanceof Error ? error.message : "Unexpected error, try again";
-      Alert.alert(message);
+      Alert.alert(getUserFacingError(error));
     } finally {
       setIsLoading(false);
     }
@@ -935,7 +940,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.setInAppPin(pin)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -951,7 +956,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.verifyInAppPin(pin)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -969,7 +974,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.udpateInAppPin({ oldPin, newPin, confirmNewPin })
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -984,7 +989,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.requestPinReset()
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1000,7 +1005,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.validatePinResetOtp(otp)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1018,7 +1023,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.resetInAppPin({ otp, newPin, confirmNewPin })
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1035,7 +1040,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.changePassword(oldPassword, newPassword)
     );
     if (!requestData.success) {
-      setErrorCb(requestData.message);
+      setErrorCb(sanitizeUserFacingMessage(requestData.message));
       return;
     }
     onSuccess();
@@ -1047,7 +1052,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       auth.deleteAccount()
     );
     if (!request.success) {
-      setErrorCb(request.message);
+      setErrorCb(sanitizeUserFacingMessage(request.message));
       return;
     }
     await Promise.all([

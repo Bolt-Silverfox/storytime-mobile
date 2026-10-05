@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import querySubscription from "../hooks/tanstack/queryHooks/querySubscriptionStatus";
 import useAuth from "../contexts/AuthContext";
 import ErrorComponent from "./ErrorComponent";
+import { getUserFacingError } from "../utils/errorMessages";
 import ParentalGateModal from "./modals/ParentalGateModal";
 import useParentalGate from "../hooks/others/useParentalGate";
 import { BUNDLE_IDENTIFIER } from "../constants";
@@ -31,7 +32,9 @@ const SubscriptionDetails = () => {
   );
 
   if (error)
-    return <ErrorComponent message={error.message} refetch={refetch} />;
+    return (
+      <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
+    );
   if (isPending)
     return (
       <View className="flex flex-1">

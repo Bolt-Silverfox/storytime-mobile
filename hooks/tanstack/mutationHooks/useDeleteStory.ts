@@ -2,6 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { BASE_URL } from "../../../constants";
 import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import { QueryResponse } from "../../../types";
 
 const useDeleteStory = ({
@@ -27,7 +28,7 @@ const useDeleteStory = ({
       onSuccess?.();
     },
     onError: (err) => {
-      Alert.alert(err.message);
+      Alert.alert(getUserFacingError(err));
     },
   });
 };

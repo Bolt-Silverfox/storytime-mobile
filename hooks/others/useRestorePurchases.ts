@@ -3,10 +3,10 @@ import { Platform } from "react-native";
 import apiFetch from "../../apiFetch";
 import { BASE_URL, BUNDLE_IDENTIFIER, QUERY_KEYS } from "../../constants";
 import { QueryResponse } from "../../types";
-import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../contexts/AuthContext";
 import { iapLogger } from "../../utils/logger";
+import { getUserFacingError } from "../../utils/errorMessages";
 
 const useRestorePurchases = (onRestored?: () => void) => {
   const [isRestoring, setIsRestoring] = useState(false);
@@ -101,7 +101,7 @@ const useRestorePurchases = (onRestored?: () => void) => {
       }
     } catch (err) {
       iapLogger.error("Restore purchases failed", err);
-      setError(getErrorMessage(err));
+      setError(getUserFacingError(err));
     } finally {
       restoreInFlightRef.current = false;
       setIsRestoring(false);

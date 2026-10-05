@@ -15,6 +15,8 @@ import {
   useRedeemCoupon,
   useValidateCoupon,
 } from "../../../hooks/tanstack/mutationHooks/useCoupon";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
+import { ERROR_MESSAGES } from "../../../constants/ui";
 
 const RedeemCouponScreen = () => {
   const navigation = useNavigation();
@@ -39,7 +41,13 @@ const RedeemCouponScreen = () => {
     validateMutation.mutate(couponCode.trim(), {
       onSuccess: (data) => setValidationResult(data),
       onError: (err) =>
-        setValidationResult({ valid: false, message: err.message }),
+        setValidationResult({
+          valid: false,
+          message: sanitizeUserFacingMessage(
+            err.message,
+            ERROR_MESSAGES.coupon.applyFailed
+          ),
+        }),
     });
   };
 
@@ -52,7 +60,13 @@ const RedeemCouponScreen = () => {
         setValidationResult(null);
       },
       onError: (err) =>
-        setValidationResult({ valid: false, message: err.message }),
+        setValidationResult({
+          valid: false,
+          message: sanitizeUserFacingMessage(
+            err.message,
+            ERROR_MESSAGES.coupon.applyFailed
+          ),
+        }),
     });
   };
 

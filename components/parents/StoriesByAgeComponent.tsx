@@ -10,6 +10,7 @@ import AgeSelectionComponent from "../UI/AgeSelectionComponent";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 import useAuth from "../../contexts/AuthContext";
 import ErrorComponent from "../ErrorComponent";
+import { getUserFacingError } from "../../utils/errorMessages";
 
 const StoriesByAgeComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -30,7 +31,7 @@ const StoriesByAgeComponent = () => {
   if (error) {
     return (
       <View className="flex-1 items-center justify-center bg-bgLight px-4">
-        <ErrorComponent message={error.message} refetch={refetch} />
+        <ErrorComponent message={getUserFacingError(error)} refetch={refetch} />
       </View>
     );
   }

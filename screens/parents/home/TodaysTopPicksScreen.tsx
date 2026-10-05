@@ -11,6 +11,7 @@ import { CustomImageBackground } from "../../../components/UI/CustomImage";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import StoryCarouselSkeleton from "../../../components/skeletons/StoryCarouselSkeleton";
 import ErrorComponent from "../../../components/ErrorComponent";
+import { getUserFacingError } from "../../../utils/errorMessages";
 import {
   AdaptiveFlashList,
   adaptiveColumnItemStyle,
@@ -81,7 +82,10 @@ const TodaysTopPicksScreen = () => {
         {isPending ? (
           <StoryCarouselSkeleton variant="vertical" />
         ) : error && !stories ? (
-          <ErrorComponent message={error.message} refetch={refetch} />
+          <ErrorComponent
+            message={getUserFacingError(error)}
+            refetch={refetch}
+          />
         ) : !stories?.length ? (
           <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
             <Text className="font-[abeezee] text-xl text-black">

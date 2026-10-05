@@ -3,18 +3,9 @@ import { Alert } from "react-native";
 import apiFetch from "../../../apiFetch";
 import { BASE_URL } from "../../../constants";
 import useAuth from "../../../contexts/AuthContext";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 const GENERIC_VOICE_ERROR = "Something went wrong. Please try again.";
-
-const CRYPTIC_PATTERNS = [
-  "request failed",
-  "cannot read prop",
-  "undefined is not",
-  "typeerror",
-  "networkerror",
-  "syntaxerror",
-  "unexpected token",
-];
 
 const useSetPreferredVoice = () => {
   const queryClient = useQueryClient();
@@ -53,12 +44,9 @@ const useSetPreferredVoice = () => {
     },
     onError: (err: Error) => {
       queryClient.invalidateQueries({ queryKey: ["voiceAccess"] });
-      const msgLower = (err.message || "").toLowerCase();
-      const isFriendly =
-        msgLower && !CRYPTIC_PATTERNS.some((p) => msgLower.includes(p));
       Alert.alert(
         "Voice Selection",
-        isFriendly ? err.message : GENERIC_VOICE_ERROR
+        sanitizeUserFacingMessage(err.message, GENERIC_VOICE_ERROR)
       );
     },
   });

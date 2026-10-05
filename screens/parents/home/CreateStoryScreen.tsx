@@ -18,6 +18,7 @@ import useToast from "../../../contexts/ToastContext";
 import useGenerateStoryAsync from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAsync";
 import { StoryNavigatorProp } from "../../../Navigation/StoryNavigator";
 import { GenerateStoryInput } from "../../../types";
+import { sanitizeUserFacingMessage } from "../../../utils/errorMessages";
 
 /** Split a comma/newline separated field into a trimmed, de-duped list. */
 const parseList = (value: string): string[] =>
@@ -98,10 +99,14 @@ const CreateStoryScreen = () => {
         });
       },
       onError: (err) => {
+        // useGenerateStoryAsync collapses the ApiError to a plain Error, so the
+        // status is already gone; keep the screen's own copy as the fallback
+        // rather than letting it degrade to the module-level generic string.
         setError(
-          err instanceof Error
-            ? err.message
-            : "We couldn't start your story. Please try again."
+          sanitizeUserFacingMessage(
+            err instanceof Error ? err.message : undefined,
+            "We couldn't start your story. Please try again."
+          )
         );
       },
     });

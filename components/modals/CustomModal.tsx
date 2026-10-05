@@ -6,6 +6,7 @@ import {
   Pressable,
   View,
 } from "react-native";
+import useModalPresentationGate from "../../hooks/useModalPresentationGate";
 import ErrorComponent from "../ErrorComponent";
 
 export type CustomModalProps = {
@@ -28,9 +29,11 @@ const CustomModal = ({
   error,
   maxHeight = 0.7,
 }: CustomModalProps) => {
+  const canPresent = useModalPresentationGate(isOpen);
+
   return (
     <Modal
-      visible={isOpen}
+      visible={isOpen && canPresent}
       transparent
       animationType="slide"
       onRequestClose={onClose}

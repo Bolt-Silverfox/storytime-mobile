@@ -3,6 +3,7 @@ import EventSource from "react-native-sse";
 import { BASE_URL } from "../constants";
 import { secureTokenStorage } from "../utils/secureTokenStorage";
 import { audioLogger } from "../utils/logger";
+import { parseJobSSEPayload } from "../utils/jobSSEPayload";
 
 /** Named SSE events emitted by the backend (NestJS sets `type` as the event name). */
 type JobEventName = "progress" | "completed" | "failed" | "heartbeat";
@@ -35,6 +36,17 @@ export type UseStoryAudioBatchSSEResult = {
   error?: string;
   /** True once the stream errors, so callers can fall back to polling. */
   sseFailed: boolean;
+  /**
+   * The batch job every other field above describes.
+   *
+   * This is STATE, not the `batchJobId` argument, and the difference is the whole
+   * point: the reset below happens in an effect, so during the render in which
+   * the caller changes `batchJobId` the fields above still describe the PREVIOUS
+   * job. A consumer that acts on them in that render applies one batch's status
+   * to another. Compare this against the id you passed and ignore the rest when
+   * they disagree.
+   */
+  jobId: string | null;
 };
 
 /**
@@ -57,20 +69,30 @@ const useStoryAudioBatchSSE = (
   const [failedCount, setFailedCount] = useState<number | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [sseFailed, setSseFailed] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
 
   const cancelledRef = useRef(false);
 
   useEffect(() => {
-    if (!batchJobId) return;
-
-    cancelledRef.current = false;
-    // Reset per-batch state so a new batchJobId starts clean.
+    // Reset per-batch state BEFORE the null guard. The caller clears
+    // `batchJobId` the moment a batch reaches terminal, so resetting after the
+    // guard would leave `status === "completed"` hanging around with no batch
+    // in flight — and the next batch would then be judged terminal the instant
+    // it arrived, deriving "every paragraph failed" before a single event had
+    // been received.
     setCompletedParagraphs([]);
     setStatus("connecting");
     setTotalParagraphs(undefined);
     setFailedCount(undefined);
     setError(undefined);
     setSseFailed(false);
+    // Set alongside the reset, so `jobId` and the fields it describes always
+    // change together.
+    setJobId(batchJobId);
+
+    if (!batchJobId) return;
+
+    cancelledRef.current = false;
 
     let es: EventSource<JobEventName> | null = null;
 
@@ -92,14 +114,12 @@ const useStoryAudioBatchSSE = (
         }
       );
 
-      const handlePayload = (data: string | null | undefined) => {
-        if (!data) return;
-        let payload: VoiceJobPayload;
-        try {
-          payload = JSON.parse(data) as VoiceJobPayload;
-        } catch {
-          return;
-        }
+      const handlePayload = (
+        data: string | null | undefined,
+        eventName?: JobEventName
+      ) => {
+        const payload = parseJobSSEPayload<VoiceJobPayload>(data, eventName);
+        if (!payload) return;
 
         if (payload.type === "heartbeat") return;
 
@@ -138,7 +158,7 @@ const useStoryAudioBatchSSE = (
       ];
       namedEvents.forEach((name) => {
         es?.addEventListener(name, (event) => {
-          handlePayload((event as { data?: string | null }).data);
+          handlePayload((event as { data?: string | null }).data, name);
         });
       });
       // Fallback for a server that emits unnamed events.
@@ -172,6 +192,7 @@ const useStoryAudioBatchSSE = (
     failedCount,
     error,
     sseFailed,
+    jobId,
   };
 };
 

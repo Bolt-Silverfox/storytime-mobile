@@ -6,6 +6,7 @@ import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCa
 import HomepageStoriesContainer from "../HomepageStoriesContainer";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
 import ErrorComponent from "../ErrorComponent";
+import { getUserFacingError } from "../../utils/errorMessages";
 
 const FunAndAdventuresComponent = () => {
   const navigator = useNavigation<ParntHomeNavigatorProp>();
@@ -32,7 +33,11 @@ const FunAndAdventuresComponent = () => {
         hasData={!!categories}
       >
         <ErrorComponent
-          message={categoriesError?.message || "Failed to load categories"}
+          message={
+            categoriesError
+              ? getUserFacingError(categoriesError)
+              : "Failed to load categories"
+          }
           refetch={refetchCategories}
         />
       </HomeScreenCarouselComponent>

@@ -12,6 +12,7 @@ import { getErrorMessage } from "../../utils/utils";
 import { useQueryClient } from "@tanstack/react-query";
 import useAuth from "../../contexts/AuthContext";
 import { iapLogger } from "../../utils/logger";
+import { getUserFacingError } from "../../utils/errorMessages";
 
 const useSubscribeIAP = (
   selectedPlan: SubscriptionPlan,
@@ -79,7 +80,7 @@ const useSubscribeIAP = (
         onSubscribed?.();
       } catch (err) {
         iapLogger.error("Verification failed, NOT finishing transaction", err);
-        setErrorMessage(getErrorMessage(err));
+        setErrorMessage(getUserFacingError(err));
       }
     },
     onPurchaseError: (error) => {
@@ -121,7 +122,7 @@ const useSubscribeIAP = (
         // Store product queries fail transiently (network/store-side) and the
         // user already sees the message; warn-level = breadcrumb, not a Sentry error.
         iapLogger.warn("Failed to fetch products from google play store", err);
-        setErrorMessage(getErrorMessage(err));
+        setErrorMessage(getUserFacingError(err));
       } finally {
         setIsLoading(false);
       }
@@ -178,7 +179,7 @@ const useSubscribeIAP = (
         type: "subs",
       });
     } catch (err) {
-      setErrorMessage(getErrorMessage(err));
+      setErrorMessage(getUserFacingError(err));
     } finally {
       setIsLoading(false);
     }
