@@ -62,6 +62,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   }, [mergedParagraphs]);
 
   const prevVoiceRef = useRef<string | null>(voiceId);
+  // Which voice the in-flight batch belongs to. `batchJobId` alone cannot answer
+  // that: clearing it on a voice change is a STATE update, so for the rest of
+  // that render the SSE hook still reports the previous batch's status.
+  const batchVoiceRef = useRef<string | null>(voiceId);
   const lastInitializedBatchIdRef = useRef<string | null>(null);
   const lastDataUpdatedAtRef = useRef<number>(0);
 
@@ -73,6 +77,16 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       setMergedParagraphs(null);
       setFailedParagraphs([]);
       setBatchError(null);
+      // SYNCHRONOUSLY, not via the [mergedParagraphs] sync effect below. That
+      // effect runs after the re-render, and `syncToCache` changes identity with
+      // `voiceId`, so the status effect re-runs FIRST — reading this ref while it
+      // still held the previous voice's paragraphs, merging them, and writing
+      // them straight back. The reset then looked complete while the old audio
+      // was still in the ref, and a failed index for the NEW voice that matched
+      // one of those positions was filtered out of `effectiveFailedParagraphs`,
+      // hiding the failure and the Retry banner.
+      mergedParagraphsRef.current = null;
+      batchVoiceRef.current = voiceId;
       lastInitializedBatchIdRef.current = null;
       lastDataUpdatedAtRef.current = 0;
     }
@@ -109,6 +123,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         setMergedParagraphs(batchQuery.data.paragraphs);
         setBatchJobId(newJobId);
         lastInitializedBatchIdRef.current = newJobId;
+        batchVoiceRef.current = voiceId;
         // Rehydrate or clear failed paragraphs and batch error from cache
         const cached = batchQuery.data as CachedBatchData;
         setFailedParagraphs(
@@ -117,7 +132,11 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         setBatchError(cached._batchError ?? null);
       }
     }
-  }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs]);
+    // `voiceId` is a dependency because the effect records it on the ref above.
+    // Re-running on a voice change is harmless and in fact wanted: the
+    // dataUpdatedAt gate still applies, and the voice reset sets
+    // lastDataUpdatedAtRef to 0 so the new voice's response seeds exactly once.
+  }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs, voiceId]);
 
   // Phase 2 (primary): stream completed paragraphs over SSE instead of polling.
   const sse = useStoryAudioBatchSSE(batchJobId);
@@ -245,6 +264,10 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
   useEffect(() => {
     if (!statusData) return;
+    // Reject status belonging to a previous voice's batch. On a voice change the
+    // SSE hook keeps reporting the old batch for the remainder of the render, and
+    // acting on it here is what let one batch's audio leak into another's state.
+    if (batchVoiceRef.current !== voiceId) return;
 
     const merged = mergeParagraphs(statusData);
     const isTerminal =
@@ -297,6 +320,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     usingSSE,
     mergeParagraphs,
     syncToCache,
+    voiceId,
     batchQuery.data?.totalParagraphs,
   ]);
 
