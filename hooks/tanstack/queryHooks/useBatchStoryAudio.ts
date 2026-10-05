@@ -73,6 +73,15 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
       setMergedParagraphs(null);
       setFailedParagraphs([]);
       setBatchError(null);
+      // SYNCHRONOUSLY, not via the [mergedParagraphs] sync effect below. That
+      // effect runs after the re-render, and `syncToCache` changes identity with
+      // `voiceId`, so the status effect re-runs FIRST — reading this ref while it
+      // still held the previous voice's paragraphs, merging them, and writing
+      // them straight back. The reset then looked complete while the old audio
+      // was still in the ref, and a failed index for the NEW voice that matched
+      // one of those positions was filtered out of `effectiveFailedParagraphs`,
+      // hiding the failure and the Retry banner.
+      mergedParagraphsRef.current = null;
       lastInitializedBatchIdRef.current = null;
       lastDataUpdatedAtRef.current = 0;
     }
@@ -117,7 +126,11 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
         setBatchError(cached._batchError ?? null);
       }
     }
-  }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs]);
+    // `voiceId` is a dependency because the effect records it on the ref above.
+    // Re-running on a voice change is harmless and in fact wanted: the
+    // dataUpdatedAt gate still applies, and the voice reset sets
+    // lastDataUpdatedAtRef to 0 so the new voice's response seeds exactly once.
+  }, [batchQuery.data, batchQuery.dataUpdatedAt, mergedParagraphs, voiceId]);
 
   // Phase 2 (primary): stream completed paragraphs over SSE instead of polling.
   const sse = useStoryAudioBatchSSE(batchJobId);
@@ -143,33 +156,43 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
   // Normalize whichever source is live into the BatchStatusResponse shape the
   // merge effect already understands. SSE `failedParagraphs` indices are
   // reconciled in the effect at terminal (the stream reports only a count).
-  const statusData: BatchStatusResponse | null = useMemo(() => {
-    if (usingSSE) {
-      const mapped: BatchStatusResponse["status"] =
-        sse.status === "completed"
-          ? "completed"
-          : sse.status === "failed"
-            ? "failed"
-            : "processing";
-      return {
-        status: mapped,
-        completedParagraphs: sse.completedParagraphs,
-        failedParagraphs: [],
-        totalQueued:
-          sse.totalParagraphs ?? batchQuery.data?.totalParagraphs ?? 0,
-        error: sse.error,
-      };
-    }
-    return pollingQuery.data ?? null;
-  }, [
-    usingSSE,
-    sse.status,
-    sse.completedParagraphs,
-    sse.totalParagraphs,
-    sse.error,
-    pollingQuery.data,
-    batchQuery.data?.totalParagraphs,
-  ]);
+  // `jobId` rides along so the effect below can reject status from another batch.
+  const statusData: (BatchStatusResponse & { jobId: string | null }) | null =
+    useMemo(() => {
+      if (usingSSE) {
+        const mapped: BatchStatusResponse["status"] =
+          sse.status === "completed"
+            ? "completed"
+            : sse.status === "failed"
+              ? "failed"
+              : "processing";
+        return {
+          status: mapped,
+          completedParagraphs: sse.completedParagraphs,
+          failedParagraphs: [],
+          totalQueued:
+            sse.totalParagraphs ?? batchQuery.data?.totalParagraphs ?? 0,
+          error: sse.error,
+          // From the hook's STATE, not from `batchJobId`: the two differ in exactly
+          // the render where the batch changes, which is the case that matters.
+          jobId: sse.jobId,
+        };
+      }
+      // The polling query is keyed on `batchJobId`, so its data belongs to it.
+      return pollingQuery.data
+        ? { ...pollingQuery.data, jobId: batchJobId }
+        : null;
+    }, [
+      usingSSE,
+      sse.status,
+      sse.completedParagraphs,
+      sse.totalParagraphs,
+      sse.error,
+      sse.jobId,
+      pollingQuery.data,
+      batchJobId,
+      batchQuery.data?.totalParagraphs,
+    ]);
 
   // Merge newly completed paragraphs into the list.
   // Returns the merged result synchronously so callers can pass it to syncToCache.
@@ -245,6 +268,16 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
 
   useEffect(() => {
     if (!statusData) return;
+    // REJECT STATUS FROM ANOTHER JOB. Keyed on the job, not the voice: an earlier
+    // version of this gate compared a voice ref that the voice-change effect had
+    // already advanced to the new voice, so it passed in precisely the window it
+    // was meant to close. The job is the thing `statusData` actually belongs to.
+    //
+    // This also covers the ordering the voice gate could not: the seeding effect
+    // is registered before this one, so in a single commit it can adopt the new
+    // voice's cached batch and set `batchJobId` before this effect runs, while
+    // `sse` still describes the old job.
+    if (statusData.jobId !== batchJobId) return;
 
     const merged = mergeParagraphs(statusData);
     const isTerminal =
@@ -297,6 +330,7 @@ const useBatchStoryAudio = (storyId: string, voiceId: string | null) => {
     usingSSE,
     mergeParagraphs,
     syncToCache,
+    batchJobId,
     batchQuery.data?.totalParagraphs,
   ]);
 

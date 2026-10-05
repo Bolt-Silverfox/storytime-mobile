@@ -36,6 +36,17 @@ export type UseStoryAudioBatchSSEResult = {
   error?: string;
   /** True once the stream errors, so callers can fall back to polling. */
   sseFailed: boolean;
+  /**
+   * The batch job every other field above describes.
+   *
+   * This is STATE, not the `batchJobId` argument, and the difference is the whole
+   * point: the reset below happens in an effect, so during the render in which
+   * the caller changes `batchJobId` the fields above still describe the PREVIOUS
+   * job. A consumer that acts on them in that render applies one batch's status
+   * to another. Compare this against the id you passed and ignore the rest when
+   * they disagree.
+   */
+  jobId: string | null;
 };
 
 /**
@@ -58,6 +69,7 @@ const useStoryAudioBatchSSE = (
   const [failedCount, setFailedCount] = useState<number | undefined>();
   const [error, setError] = useState<string | undefined>();
   const [sseFailed, setSseFailed] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
 
   const cancelledRef = useRef(false);
 
@@ -74,6 +86,9 @@ const useStoryAudioBatchSSE = (
     setFailedCount(undefined);
     setError(undefined);
     setSseFailed(false);
+    // Set alongside the reset, so `jobId` and the fields it describes always
+    // change together.
+    setJobId(batchJobId);
 
     if (!batchJobId) return;
 
@@ -177,6 +192,7 @@ const useStoryAudioBatchSSE = (
     failedCount,
     error,
     sseFailed,
+    jobId,
   };
 };
 
