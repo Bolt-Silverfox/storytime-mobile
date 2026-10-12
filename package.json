@@ -80,7 +80,7 @@
     "@react-native/jest-preset": "^0.86.0",
     "@testing-library/react-native": "^14.0.1",
     "@types/jest": "29.5.14",
-    "@types/node": "^22.10.0",
+    "@types/node": "^24.10.0",
     "@types/react": "~19.2.3",
     "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.64.0",
@@ -106,5 +106,8 @@
   "overrides": {
     "react-test-renderer": "19.1.0"
   },
-  "private": true
+  "private": true,
+  "engines": {
+    "node": ">=24.0.0"
+  }
 }
