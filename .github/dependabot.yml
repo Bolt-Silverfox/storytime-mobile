@@ -12,6 +12,68 @@ updates:
         update-types:
           - 'minor'
           - 'patch'
+    # Expo picks the version of every SDK-managed package; they move together
+    # with the SDK via `npx expo install --fix`, not independently. This app is
+    # on SDK 56, so a lone bump to a 58.x package desynchronises it from the
+    # installed SDK and breaks the build. Majors here are therefore suppressed;
+    # patch/minor within the current SDK line still come through.
+    #
+    # Deliberately NOT listed, because they are versioned independently of the
+    # SDK and their majors are real: @expo/vector-icons (15.x), expo-doctor
+    # (1.x), expo-iap (3.x).
+    ignore:
+      - dependency-name: 'expo'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-application'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-asset'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-audio'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-blur'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-build-properties'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-checkbox'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-clipboard'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-constants'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-crypto'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-dev-client'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-device'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-font'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-image-manipulator'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-image-picker'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-keep-awake'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-linear-gradient'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-linking'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-notifications'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-secure-store'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-splash-screen'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-status-bar'
+        update-types: ['version-update:semver-major']
+      - dependency-name: 'expo-updates'
+        update-types: ['version-update:semver-major']
+      # react-native's version is chosen by the Expo SDK too, and on 0.x a
+      # minor is a breaking change, so both are suppressed here.
+      - dependency-name: 'react-native'
+        update-types:
+          - 'version-update:semver-major'
+          - 'version-update:semver-minor'
 
   - package-ecosystem: 'github-actions'
     directory: '/'
