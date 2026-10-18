@@ -82,7 +82,6 @@
     "@types/jest": "30.0.0",
     "@types/node": "^24.10.0",
     "@types/react": "~19.2.3",
-    "@types/uuid": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^8.71.2",
     "@typescript-eslint/parser": "^8.71.2",
     "babel-preset-expo": "~56.0.0",
