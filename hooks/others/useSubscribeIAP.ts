@@ -152,7 +152,7 @@ const useSubscribeIAP = (
       return response;
     } catch (err) {
       iapLogger.error("purchase verification failed", err);
-      throw new Error(getErrorMessage(err));
+      throw new Error(getErrorMessage(err), { cause: err });
     }
   };
 

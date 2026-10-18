@@ -81,7 +81,7 @@ const deleteFromFavourites = async (storyId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
-    throw new Error(getErrorMessage(err));
+    throw new Error(getErrorMessage(err), { cause: err });
   }
 };
 
@@ -95,7 +95,7 @@ const addToFavourites = async (storyId: string) => {
     if (!response.success) throw new Error(response.message);
     return response;
   } catch (err) {
-    throw new Error(getErrorMessage(err));
+    throw new Error(getErrorMessage(err), { cause: err });
   }
 };
 

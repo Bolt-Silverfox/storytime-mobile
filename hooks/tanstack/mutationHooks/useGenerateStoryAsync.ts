@@ -21,7 +21,7 @@ const useGenerateStoryAsync = () => {
         method: "POST",
         body: JSON.stringify(input),
       }).catch((err) => {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       });
       const data: GenerateStoryJobResponse = await response.json();
       // Require an affirmative queue ack: a jobId AND queued === true. A missing

@@ -38,7 +38,7 @@ const useGetStoryProgress = (storyId: string) => {
       } catch (err) {
         const message =
           err instanceof Error ? err.message : "unexpected error, try again";
-        throw new Error(message);
+        throw new Error(message, { cause: err });
       }
     },
     select: (data) => data?.data,

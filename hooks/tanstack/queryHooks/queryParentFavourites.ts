@@ -56,6 +56,6 @@ const fetchFavourites = async (
 
     return response.data;
   } catch (err) {
-    throw new Error(getErrorMessage(err));
+    throw new Error(getErrorMessage(err), { cause: err });
   }
 };
