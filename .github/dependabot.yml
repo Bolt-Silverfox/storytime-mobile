@@ -8,6 +8,22 @@ updates:
     labels:
       - 'dependencies'
     groups:
+      # Must come before minor-and-patch: Dependabot uses the first matching
+      # group, so without this a minor firebase bump would be swept into the
+      # generic group and could still land on its own.
+      #
+      # Every @react-native-firebase package hard-pins the app package to an
+      # exact matching version (crashlytics@26.4.0 peers
+      # "@react-native-firebase/app": "26.4.0"), so they have to move together.
+      # #403 raised crashlytics alone and left dev-v1.3.0 failing its own peer
+      # check with ELSPROBLEMS until #422 realigned the three.
+      react-native-firebase:
+        patterns:
+          - '@react-native-firebase/*'
+        update-types:
+          - 'major'
+          - 'minor'
+          - 'patch'
       minor-and-patch:
         update-types:
           - 'minor'
@@ -41,6 +57,10 @@ updates:
       - dependency-name: 'expo'
         update-types:
           - 'version-update:semver-major'
+      # Not in bundledNativeModules, but SDK-locked all the same:
+      # babel-preset-expo@58 peer-requires expo-widgets ^58.0.17, i.e. SDK 58
+      # tooling, while this app is on SDK 56. Same class as jest-expo (#410).
+      - dependency-name: 'babel-preset-expo'
       - dependency-name: '@expo/vector-icons'
       - dependency-name: '@react-native-async-storage/async-storage'
       - dependency-name: '@react-native-community/netinfo'
