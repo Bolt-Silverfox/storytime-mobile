@@ -57,6 +57,10 @@ updates:
       - dependency-name: 'expo'
         update-types:
           - 'version-update:semver-major'
+      # Not in bundledNativeModules, but SDK-locked all the same:
+      # babel-preset-expo@58 peer-requires expo-widgets ^58.0.17, i.e. SDK 58
+      # tooling, while this app is on SDK 56. Same class as jest-expo (#410).
+      - dependency-name: 'babel-preset-expo'
       - dependency-name: '@expo/vector-icons'
       - dependency-name: '@react-native-async-storage/async-storage'
       - dependency-name: '@react-native-community/netinfo'
