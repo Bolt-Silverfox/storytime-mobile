@@ -99,7 +99,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             </Text>
             <Text
               style={styles.descriptionText}
-              className="mb-8 mt-4 text-center text-[18px] text-text"
+              className="text-text mt-4 mb-8 text-center text-[18px]"
             >
               {item.description}
             </Text>
@@ -129,7 +129,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             <View className="mt-4 flex-row justify-center">
               <Text
                 style={styles.descriptionText}
-                className="text-sm text-text"
+                className="text-text text-sm"
               >
                 If you already have an account{" "}
               </Text>
@@ -138,7 +138,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               >
                 <Text
                   style={styles.descriptionText}
-                  className="text-sm text-primary underline"
+                  className="text-primary text-sm underline"
                 >
                   Log in
                 </Text>

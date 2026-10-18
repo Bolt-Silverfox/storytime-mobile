@@ -52,7 +52,7 @@ const SendResetTokenScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bgLight">
+      <View className="bg-bgLight flex-1">
         <PageTitle title="Send reset token" goBack={() => navigator.goBack()} />
         <View className="mx-[17] mt-10 max-w-screen-md md:mx-auto md:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
           {error && <ErrorMessageDisplay errorMessage={error} />}

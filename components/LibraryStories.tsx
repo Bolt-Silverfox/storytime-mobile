@@ -95,7 +95,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
         isFetchingNextPage ? (
           <View style={styles.footer}>
             <ActivityIndicator size="small" />
-            <Text className="mt-2 font-[abeezee] text-sm text-text">
+            <Text className="text-text mt-2 font-[abeezee] text-sm">
               Loading more stories...
             </Text>
           </View>

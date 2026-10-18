@@ -101,7 +101,7 @@ const RedeemCouponScreen = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
-              className="mt-4 w-full rounded-full bg-primary py-4"
+              className="bg-primary mt-4 w-full rounded-full py-4"
               activeOpacity={0.8}
             >
               <Text className="text-center font-[abeezee] text-base text-white">
@@ -130,7 +130,7 @@ const RedeemCouponScreen = () => {
                 placeholder="e.g. SUMMER25"
                 autoCapitalize="characters"
                 autoCorrect={false}
-                className="rounded-2xl border border-border-light bg-white px-4 py-3 font-[abeezee] text-base tracking-widest"
+                className="border-border-light rounded-2xl border bg-white px-4 py-3 font-[abeezee] text-base tracking-widest"
               />
             </View>
 
@@ -160,7 +160,7 @@ const RedeemCouponScreen = () => {
                   validateMutation.isPending ||
                   redeemMutation.isPending
                 }
-                className="w-full rounded-full bg-primary py-4"
+                className="bg-primary w-full rounded-full py-4"
                 activeOpacity={0.8}
               >
                 {validateMutation.isPending ? (
@@ -178,7 +178,7 @@ const RedeemCouponScreen = () => {
               <TouchableOpacity
                 onPress={handleRedeem}
                 disabled={redeemMutation.isPending}
-                className="w-full rounded-full bg-primary py-4"
+                className="bg-primary w-full rounded-full py-4"
                 activeOpacity={0.8}
               >
                 {redeemMutation.isPending ? (

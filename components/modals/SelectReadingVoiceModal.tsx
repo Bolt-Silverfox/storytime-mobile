@@ -73,7 +73,7 @@ const SelectReadingVoiceModal = ({
   return (
     <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
       <View className="flex flex-1 flex-col gap-y-6">
-        <View className="flex flex-row items-center justify-between border-b border-b-border-lighter pb-6">
+        <View className="border-b-border-lighter flex flex-row items-center justify-between border-b pb-6">
           <Text className="font-[abeezee] text-base text-black">
             Try new voice
           </Text>
@@ -87,8 +87,8 @@ const SelectReadingVoiceModal = ({
           </Pressable>
         </View>
         {showSaveButton && (
-          <View className="rounded-2xl bg-blue/10 p-4">
-            <Text className="font-[abeezee] text-sm leading-5 text-text">
+          <View className="bg-blue/10 rounded-2xl p-4">
+            <Text className="text-text font-[abeezee] text-sm leading-5">
               Choose a voice to enable audio for your stories. This will become
               your voice selection.
             </Text>
@@ -99,9 +99,9 @@ const SelectReadingVoiceModal = ({
           contentContainerClassName="pb-6"
           showsVerticalScrollIndicator={false}
         >
-          <View className="flex flex-row items-center justify-between rounded-2xl border border-border-lighter p-4">
+          <View className="border-border-lighter flex flex-row items-center justify-between rounded-2xl border p-4">
             <View className="flex flex-col gap-y-1">
-              <Text className="font-[abeezee] text-base text-text">
+              <Text className="text-text font-[abeezee] text-base">
                 Selected Story Voice
               </Text>
               <Text className="font-[quilka] text-2xl text-black">
@@ -120,7 +120,7 @@ const SelectReadingVoiceModal = ({
           </View>
           {voicesLoading ? (
             <View className="flex items-center justify-center py-8">
-              <Text className="font-[abeezee] text-text">
+              <Text className="text-text font-[abeezee]">
                 Loading voices...
               </Text>
             </View>

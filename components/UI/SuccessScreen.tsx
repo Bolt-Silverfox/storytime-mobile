@@ -16,7 +16,7 @@ const SuccessScreen = ({
 }: PropTypes) => {
   if (!visible) return null;
   return (
-    <View className="absolute inset-0 flex flex-col items-center justify-center gap-y-6 bg-bgLight p-5">
+    <View className="bg-bgLight absolute inset-0 flex flex-col items-center justify-center gap-y-6 p-5">
       <Image
         source={require("../../assets/icons/successful-reset-illustration.png")}
       />
@@ -24,7 +24,7 @@ const SuccessScreen = ({
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="mb-4 text-center font-[abeezee] text-base text-text">
+        <Text className="text-text mb-4 text-center font-[abeezee] text-base">
           {secondaryMessage}
         </Text>
       )}

@@ -39,7 +39,7 @@ const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
           <Text className="text-center font-[quilka] text-2xl text-black">
             Exit story?
           </Text>
-          <Text className="text-center font-[abeezee] text-base text-text">
+          <Text className="text-text text-center font-[abeezee] text-base">
             You are about to exit this story, are you sure?
           </Text>
         </View>

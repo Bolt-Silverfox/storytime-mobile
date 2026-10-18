@@ -22,7 +22,7 @@ const StoryCategoriesList = () => {
           <Text className="font-[abeezee] text-[18px] text-black">
             All categories
           </Text>
-          <Text className="font-[abeezee] text-sm text-text">
+          <Text className="text-text font-[abeezee] text-sm">
             Gain access to all our stories
           </Text>
         </View>

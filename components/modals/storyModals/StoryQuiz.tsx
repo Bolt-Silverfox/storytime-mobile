@@ -118,11 +118,11 @@ const StoryQuiz = ({
                   className={`flex h-6 w-6 items-center justify-center rounded-full border-2 p-[1px] ${isSelected ? "border-yellow" : "border-gray-300"}`}
                 >
                   {isSelected && (
-                    <View className="h-full w-full rounded-full bg-yellow" />
+                    <View className="bg-yellow h-full w-full rounded-full" />
                   )}
                 </View>
                 <View className="flex w-full flex-row items-center gap-x-3">
-                  <Text className="flex-1 font-[abeezee] text-base capitalize text-text">
+                  <Text className="text-text flex-1 font-[abeezee] text-base capitalize">
                     {option}
                   </Text>
                 </View>

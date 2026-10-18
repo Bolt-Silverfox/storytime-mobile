@@ -18,7 +18,7 @@ export default function FaQScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bg-light">
+      <View className="bg-bg-light flex-1">
         <PageTitle goBack={() => navigator.goBack()} title="FAQs" />
         <ScrollView contentContainerStyle={faqStyles.scrollContent}>
           <View className="mt-9 items-center">
@@ -31,12 +31,12 @@ export default function FaQScreen() {
           </View>
           <View
             style={styles.menuList}
-            className="rounded-[20px] border border-border-lighter bg-white px-[16]"
+            className="border-border-lighter rounded-[20px] border bg-white px-[16]"
           >
             {FAQ.map((faq, i) => (
               <View
                 key={faq.id}
-                className={`flex flex-col gap-y-2 border-b border-b-border-light ${
+                className={`border-b-border-light flex flex-col gap-y-2 border-b ${
                   i === FAQ.length - 1 ? "border-b-0" : ""
                 }`}
               >
@@ -56,7 +56,7 @@ export default function FaQScreen() {
                   />
                 </Pressable>
                 {currentlyOpenQuestion === faq.id && (
-                  <Text className="mb-4 ml-4 font-[abeezee] text-[18px] text-text">
+                  <Text className="text-text mb-4 ml-4 font-[abeezee] text-[18px]">
                     {faq.a}
                   </Text>
                 )}

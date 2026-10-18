@@ -61,7 +61,7 @@ const Avatar: React.FC<AvatarProps> = ({
       )}
       {edit && (
         <View
-          className="absolute bottom-0 right-0 rounded-full bg-white p-2"
+          className="absolute right-0 bottom-0 rounded-full bg-white p-2"
           style={styles.editIcon}
         >
           <FontAwesome5 name="edit" size={15} color="black" />

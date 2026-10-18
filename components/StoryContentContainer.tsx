@@ -286,7 +286,7 @@ const StoryContentContainer = ({
             isAudioError ||
             initialError) &&
             !isStillGenerating && (
-              <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
+              <View className="mx-4 mt-2 mb-3 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
                 <View className="flex-1 flex-row items-center gap-x-2">
                   <Feather name="alert-circle" size={16} color="#dc2626" />
                   <Text className="flex-1 font-[abeezee] text-sm text-red-700">
@@ -345,7 +345,7 @@ const StoryContentContainer = ({
                   e.stopPropagation();
                   handleManualNavigation("next");
                 }}
-                className="flex size-12 items-center justify-center rounded-full bg-blue"
+                className="bg-blue flex size-12 items-center justify-center rounded-full"
               >
                 <Icon name="SkipForward" color="white" />
               </Pressable>
@@ -356,7 +356,7 @@ const StoryContentContainer = ({
                   setCurrentlyDisplayed("endOfStoryMessage");
                   reportCompletion();
                 }}
-                className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
+                className="bg-blue flex h-12 items-center justify-center rounded-full px-6"
               >
                 <Text className="font-[abeezee] text-sm text-white">
                   Finish story

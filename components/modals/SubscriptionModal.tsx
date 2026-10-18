@@ -68,7 +68,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
             <Text className="text-center font-[quilka] text-2xl text-black">
               Unlock Magical Adventure
             </Text>
-            <Text className="text-center font-[abeezee] text-sm text-text">
+            <Text className="text-text text-center font-[abeezee] text-sm">
               Select a plan that best suits you
             </Text>
           </View>
@@ -91,7 +91,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         <View
           aria-labelledby="subscription plans"
-          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="border-y-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           <Text className="font-[quilka] text-[18px] text-black">
             What you'll enjoy
@@ -118,13 +118,13 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         <View
           aria-labelledby="subscription disclaimer"
-          className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="bg-yellow mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           <Image
             className="size-6"
             source={require("../../assets/icons/caution.png")}
           />
-          <Text className="flex-1 text-wrap font-[abeezee] text-xs">
+          <Text className="flex-1 font-[abeezee] text-xs text-wrap">
             Your plan will automatically renew unless you cancel your
             subscription.
           </Text>
@@ -152,12 +152,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
           />
           <View className="flex-row justify-center gap-x-4">
             <Pressable onPress={navigateToTerms}>
-              <Text className="font-[abeezee] text-xs text-primary underline">
+              <Text className="text-primary font-[abeezee] text-xs underline">
                 Terms of Service
               </Text>
             </Pressable>
             <Pressable onPress={navigateToPrivacy}>
-              <Text className="font-[abeezee] text-xs text-primary underline">
+              <Text className="text-primary font-[abeezee] text-xs underline">
                 Privacy Policy
               </Text>
             </Pressable>

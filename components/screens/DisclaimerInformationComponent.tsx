@@ -14,7 +14,7 @@ const DisclaimerInformationComponent = ({
 }) => {
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bgLight">
+      <View className="bg-bgLight flex-1">
         <PageTitle title={pageTitle} goBack={goBack} />
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -36,7 +36,7 @@ const DisclaimerInformationComponent = ({
                   return (
                     <Text
                       key={`paragraph-${paragraphIndex}-${itemIndex}`}
-                      className="mt-3 font-[abeezee] text-base text-text"
+                      className="text-text mt-3 font-[abeezee] text-base"
                     >
                       {p}
                     </Text>
@@ -44,7 +44,7 @@ const DisclaimerInformationComponent = ({
                 return (
                   <Text
                     key={`paragraph-${paragraphIndex}-${itemIndex}`}
-                    className={`ml-2 font-[abeezee] text-base text-text ${p.index === 1 && "mt-3"}`}
+                    className={`text-text ml-2 font-[abeezee] text-base ${p.index === 1 && "mt-3"}`}
                   >
                     {p.index}. {p.text}
                   </Text>

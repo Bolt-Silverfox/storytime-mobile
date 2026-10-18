@@ -37,12 +37,12 @@ const InStoryOptionsModal = ({
             onPress={() => handleVoiceModal(true)}
             accessibilityRole="button"
             accessibilityLabel="Change voice"
-            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-border-light"
+            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
           >
-            <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-border-lighter">
+            <View className="border-border-lighter flex size-11 flex-col items-center justify-center rounded-xl border">
               <MaterialIcons name="multitrack-audio" size={24} color="black" />
             </View>
-            <Text className="font-[abeezee] text-xs text-text">
+            <Text className="text-text font-[abeezee] text-xs">
               Change voice
             </Text>
           </Pressable>
@@ -56,23 +56,23 @@ const InStoryOptionsModal = ({
             onPress={() => setIsStoryModeModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Story Mode"
-            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-border-light"
+            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
           >
-            <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-border-lighter">
+            <View className="border-border-lighter flex size-11 flex-col items-center justify-center rounded-xl border">
               <Icon name="ListMusic" />
             </View>
-            <Text className="font-[abeezee] text-xs text-text">Story Mode</Text>
+            <Text className="text-text font-[abeezee] text-xs">Story Mode</Text>
           </Pressable>
           <Pressable
             onPress={() => setIsExitModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Exit Story"
-            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-border-light"
+            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
           >
             <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-[#FFC8C8] bg-[#FFE0E0]">
               <Icon name="LogOut" color="#EC0707" />
             </View>
-            <Text className="font-[abeezee] text-xs text-text">Exit Story</Text>
+            <Text className="text-text font-[abeezee] text-xs">Exit Story</Text>
           </Pressable>
         </View>
       </View>

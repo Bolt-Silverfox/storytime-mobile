@@ -114,7 +114,7 @@ const ShareStoryModal = ({
         </Pressable>
 
         {/* Divider */}
-        <View className="h-px bg-border-lighter" />
+        <View className="bg-border-lighter h-px" />
 
         {/* Social media icons */}
         <View className="flex-row items-start gap-x-3">

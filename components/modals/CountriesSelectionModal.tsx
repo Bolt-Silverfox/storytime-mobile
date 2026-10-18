@@ -67,7 +67,7 @@ const CountriesSelectionModal = ({
       ) : (
         <Text className="mt-5 text-center font-[abeezee] text-sm">
           No results found for{" "}
-          <Text className="font-[quilka] text-xl text-primary">
+          <Text className="text-primary font-[quilka] text-xl">
             {searchValue}
           </Text>
         </Text>

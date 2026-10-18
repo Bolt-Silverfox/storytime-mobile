@@ -80,7 +80,7 @@ export default function SuggestionsScreen() {
         title="Suggestions & Feedback"
       />
       <View className="flex-1 bg-[#FFFCFBFB]">
-        <View className="mb-8 mt-9 items-center">
+        <View className="mt-9 mb-8 items-center">
           <Text
             style={[defaultStyles.defaultText, suggestStyles.subtitle]}
             className="max-w-[311px] text-center"
