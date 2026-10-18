@@ -24,7 +24,7 @@ const storyJobResultQuery = (jobId: string, enabled: boolean) =>
     queryFn: async (): Promise<{ storyId: string | null }> => {
       const url = `${BASE_URL}/stories/generate/jobs/${jobId}/result`;
       const request = await apiFetch(url, { method: "GET" }).catch((err) => {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       });
       const raw: unknown = await request.json();
       return { storyId: extractStoryId(raw) };

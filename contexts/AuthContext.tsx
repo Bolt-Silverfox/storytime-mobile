@@ -817,7 +817,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         googleResponse = await GoogleSignin.signIn();
       } catch (_) {
-        throw new Error("Authentication unsuccessful, try again");
+        throw new Error("Authentication unsuccessful, try again", { cause: _ });
       }
       // google-signin v13+ returns a discriminated union instead of throwing
       // on cancel, so the non-success case has to be handled explicitly --

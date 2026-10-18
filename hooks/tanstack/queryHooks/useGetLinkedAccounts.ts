@@ -17,7 +17,7 @@ const useGetLinkedAccounts = () => {
         if (!result.success) throw new Error(result.message);
         return result;
       } catch (err) {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       }
     },
     enabled: !!user,

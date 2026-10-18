@@ -27,6 +27,6 @@ const getLearningExpectations = async () => {
   } catch (err: unknown) {
     const message =
       err instanceof Error ? err.message : "Unexpected error, try again";
-    throw new Error(message);
+    throw new Error(message, { cause: err });
   }
 };

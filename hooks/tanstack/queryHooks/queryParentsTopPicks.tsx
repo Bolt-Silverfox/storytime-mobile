@@ -17,7 +17,7 @@ const queryParentsTopPicks = ({ limit = 10 }: { limit?: number }) => {
         if (!response.success) throw new Error(response.message);
         return response;
       } catch (err: unknown) {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       }
     },
     staleTime: Infinity,

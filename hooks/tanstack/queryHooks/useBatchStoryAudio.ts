@@ -364,7 +364,7 @@ const fetchBatchAudio = async (storyId: string, voiceId: string) => {
       throw err;
     }
     audioLogger.error(`fetchBatchAudio error:`, err);
-    throw new Error(getErrorMessage(err));
+    throw new Error(getErrorMessage(err), { cause: err });
   }
 };
 

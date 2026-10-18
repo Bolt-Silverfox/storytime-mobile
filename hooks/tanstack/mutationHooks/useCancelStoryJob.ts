@@ -16,7 +16,7 @@ const useCancelStoryJob = () => {
       const response = await apiFetch(url, {
         method: "DELETE",
       }).catch((err) => {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       });
       const data: CancelStoryJobResponse = await response.json();
       return data;

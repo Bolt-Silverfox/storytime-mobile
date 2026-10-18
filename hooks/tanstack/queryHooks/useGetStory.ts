@@ -86,7 +86,7 @@ const useGetStory = (
         if (err instanceof ApiError) {
           throw err;
         }
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       }
     },
     staleTime: Infinity,

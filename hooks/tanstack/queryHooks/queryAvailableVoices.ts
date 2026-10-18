@@ -15,7 +15,7 @@ const queryAvailableVoices = queryOptions({
       if (!response.success) throw new Error(response.message);
       return response;
     } catch (err) {
-      throw new Error(getErrorMessage(err));
+      throw new Error(getErrorMessage(err), { cause: err });
     }
   },
   staleTime: 5 * 60 * 1000, // 5 minutes — matches backend cache TTL

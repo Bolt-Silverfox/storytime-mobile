@@ -22,7 +22,7 @@ const useGetUserProfile = () => {
         if (!userProfile.success) throw new Error(userProfile.message);
         return userProfile;
       } catch (err) {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       }
     },
     refetchOnMount: false,
