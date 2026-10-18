@@ -1,5 +1,8 @@
 import { useNavigation } from "@react-navigation/native";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from "@react-native-google-signin/google-signin";
 import {
   appleAuth,
   appleAuthAndroid,
@@ -56,7 +59,12 @@ export default function LinkedAccountsScreen() {
         return;
       }
       const googleResponse = await GoogleSignin.signIn();
-      const { idToken } = googleResponse;
+      // v13+ returns {type:'cancelled'} rather than throwing, so a cancelled
+      // sign-in no longer reaches the catch below.
+      if (!isSuccessResponse(googleResponse)) {
+        return;
+      }
+      const { idToken } = googleResponse.data;
       if (!idToken) {
         Alert.alert("Error", "No ID token received from Google.");
         return;
