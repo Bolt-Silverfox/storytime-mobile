@@ -94,7 +94,7 @@
     "jest": "^30.5.2",
     "jest-expo": "^56.0.5",
     "prettier": "^3.9.10",
-    "typescript": "~5.9.2"
+    "typescript": "~7.0.2"
   },
   "expo": {
     "install": {
