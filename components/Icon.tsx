@@ -1,4 +1,6 @@
-import { icons } from "lucide-react-native";
+// lucide-react-native v1 dropped the `icons` map from the package root;
+// the icon components now live behind the ./icons subpath export.
+import * as icons from "lucide-react-native/icons";
 
 export type IconName = keyof typeof icons;
 

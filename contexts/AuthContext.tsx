@@ -43,7 +43,10 @@ import {
   WEB_CLIENT_ID,
 } from "../constants";
 import * as Application from "expo-application";
-import { GoogleSignin } from "@react-native-google-signin/google-signin";
+import {
+  GoogleSignin,
+  isSuccessResponse,
+} from "@react-native-google-signin/google-signin";
 import { Alert, Platform } from "react-native";
 import {
   appleAuth,
@@ -816,7 +819,13 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       } catch (_) {
         throw new Error("Authentication unsuccessful, try again", { cause: _ });
       }
-      const { idToken } = googleResponse;
+      // google-signin v13+ returns a discriminated union instead of throwing
+      // on cancel, so the non-success case has to be handled explicitly --
+      // previously a cancel threw and was caught above.
+      if (!isSuccessResponse(googleResponse)) {
+        throw new Error("Authentication unsuccessful, try again");
+      }
+      const { idToken } = googleResponse.data;
       if (!idToken) {
         throw new Error("No identity token returned");
       }
