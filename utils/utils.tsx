@@ -127,13 +127,13 @@ const uploadUserAvatar = async (imageUri: string, userId: string) => {
     return response;
   } catch (err: unknown) {
     if (err instanceof ApiError && err.status === 401) {
-      throw new Error("Your session has expired. Please log in again.");
+      throw new Error("Your session has expired. Please log in again.", { cause: err });
     }
     if (err instanceof ApiError) {
-      throw new Error("Unable to upload avatar. Please try again later.");
+      throw new Error("Unable to upload avatar. Please try again later.", { cause: err });
     }
     if (err instanceof Error) throw err;
-    throw new Error("Something went wrong. Please try again.");
+    throw new Error("Something went wrong. Please try again.", { cause: err });
   }
 };
 

@@ -16,7 +16,7 @@ const queryStoryQuota = (isGuest: boolean) =>
       const request = await apiFetch(url, {
         method: "GET",
       }).catch((err) => {
-        throw new Error(getErrorMessage(err));
+        throw new Error(getErrorMessage(err), { cause: err });
       });
       const response: QueryResponse<StoryQuota> = await request.json();
       if (!response.success) throw new Error(response.message);

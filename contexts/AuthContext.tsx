@@ -814,7 +814,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
       try {
         googleResponse = await GoogleSignin.signIn();
       } catch (_) {
-        throw new Error("Authentication unsuccessful, try again");
+        throw new Error("Authentication unsuccessful, try again", { cause: _ });
       }
       const { idToken } = googleResponse;
       if (!idToken) {
