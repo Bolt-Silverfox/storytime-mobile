@@ -22,7 +22,7 @@ const CustomEmptyState = ({
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="font-[abeezee] text-sm text-text">
+        <Text className="text-text font-[abeezee] text-sm">
           {secondaryMessage}
         </Text>
       )}

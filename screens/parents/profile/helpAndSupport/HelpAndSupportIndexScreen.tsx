@@ -27,7 +27,7 @@ export default function HelpAndSupportIndexScreen() {
         <ScrollView contentContainerStyle={helpStyles.scrollContent}>
           <View
             style={styles.menuList}
-            className="rounded-[20px] border border-border-lighter px-[16] pt-7"
+            className="border-border-lighter rounded-[20px] border px-[16] pt-7"
           >
             <MenuItem
               icon={

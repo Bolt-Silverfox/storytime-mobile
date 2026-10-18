@@ -28,7 +28,7 @@ const HomepageStoriesContainer = ({
   if (error && (!stories || stories.length === 0)) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
-        <Text className="text-center font-[abeezee] text-text">
+        <Text className="text-text text-center font-[abeezee]">
           Failed to load stories. Please try again.
         </Text>
       </View>
@@ -41,7 +41,7 @@ const HomepageStoriesContainer = ({
         <Text className="mb-2 text-center font-[quilka] text-2xl text-black">
           No stories found
         </Text>
-        <Text className="text-center font-[abeezee] text-text">
+        <Text className="text-text text-center font-[abeezee]">
           Try a different category
         </Text>
       </View>
@@ -49,7 +49,7 @@ const HomepageStoriesContainer = ({
   }
 
   return (
-    <View className="flex flex-col gap-y-4 border-b border-b-border-light pb-8">
+    <View className="border-b-border-light flex flex-col gap-y-4 border-b pb-8">
       <View className="mx-auto flex w-full max-w-screen-md flex-row items-center justify-between lg:max-w-screen-lg xl:max-w-screen-xl">
         <Text className="font-[abeezee] text-base leading-5 text-black">
           {title}

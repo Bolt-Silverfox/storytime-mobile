@@ -20,35 +20,35 @@ const CustomSplashScreen = () => {
           className="flex-1"
         >
           <Image
-            className="absolute left-5 top-10"
+            className="absolute top-10 left-5"
             source={require("../assets/fairy.png")}
           />
           <Image
-            className="absolute left-32 top-56"
+            className="absolute top-56 left-32"
             source={require("../assets/star-large.png")}
           />
           <Image
-            className="absolute right-32 top-48"
+            className="absolute top-48 right-32"
             source={require("../assets/star-small.png")}
           />
           <Image
-            className="absolute right-32 top-28"
+            className="absolute top-28 right-32"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="absolute right-24 top-40"
+            className="absolute top-40 right-24"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="absolute left-40 top-20"
+            className="absolute top-20 left-40"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="absolute left-20 top-40"
+            className="absolute top-40 left-20"
             source={require("../assets/star-extra-small.png")}
           />
           <Image
-            className="absolute right-5 top-32"
+            className="absolute top-32 right-5"
             source={require("../assets/bird.png")}
           />
           <View className="absolute bottom-10 w-full px-10">

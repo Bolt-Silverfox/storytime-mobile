@@ -49,7 +49,7 @@ const DefaultVoiceScreen = () => {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 bg-white">
-        <View className="flex-row items-center justify-between border-b border-b-border-lighter px-4 pb-4 pt-4">
+        <View className="border-b-border-lighter flex-row items-center justify-between border-b px-4 pt-4 pb-4">
           <Pressable
             onPress={() => navigation.goBack()}
             accessibilityLabel="Go back"
@@ -67,9 +67,9 @@ const DefaultVoiceScreen = () => {
           contentContainerStyle={screenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View className="mx-4 mt-6 flex-row items-center justify-between rounded-2xl border border-border-lighter p-4">
+          <View className="border-border-lighter mx-4 mt-6 flex-row items-center justify-between rounded-2xl border p-4">
             <View className="flex-col gap-y-1">
-              <Text className="font-[abeezee] text-base text-text">
+              <Text className="text-text font-[abeezee] text-base">
                 Selected Story Voice
               </Text>
               <Text className="font-[quilka] text-2xl text-black">
@@ -92,7 +92,7 @@ const DefaultVoiceScreen = () => {
           />
           <Pressable
             onPress={handleSave}
-            className="mx-4 mt-2 items-center rounded-full bg-primary px-2 py-3"
+            className="bg-primary mx-4 mt-2 items-center rounded-full px-2 py-3"
             accessibilityLabel="Save voice selection"
             accessibilityRole="button"
           >

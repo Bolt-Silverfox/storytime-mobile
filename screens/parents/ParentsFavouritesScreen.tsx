@@ -115,8 +115,8 @@ const ParentsFavouritesScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bgLight">
-        <View className="flex flex-row items-center justify-between border-b border-b-border-lighter bg-white px-4 pb-5 pt-2">
+      <View className="bg-bgLight flex-1">
+        <View className="border-b-border-lighter flex flex-row items-center justify-between border-b bg-white px-4 pt-2 pb-5">
           <Text className="flex-1 font-[abeezee] text-xl text-black">
             Favourites
           </Text>
@@ -156,7 +156,7 @@ const ParentsFavouritesScreen = () => {
                     key={age.key}
                     onPress={() => setSelectedAge(age.key)}
                     className={`h-10 items-center justify-center rounded-full px-6 ${
-                      active ? "bg-blue" : "border border-border bg-white"
+                      active ? "bg-blue" : "border-border border bg-white"
                     }`}
                   >
                     <Text
@@ -210,7 +210,7 @@ const ParentsFavouritesScreen = () => {
             isFetchingNextPage ? (
               <View style={styles.footer}>
                 <ActivityIndicator size="small" />
-                <Text className="mt-2 font-[abeezee] text-sm text-text">
+                <Text className="text-text mt-2 font-[abeezee] text-sm">
                   Loading more favourites...
                 </Text>
               </View>

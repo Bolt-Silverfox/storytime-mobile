@@ -54,7 +54,7 @@ const LibraryStoryItem = ({
           },
         })
       }
-      className="flex flex-col rounded-xl border border-border-light bg-white p-1"
+      className="border-border-light flex flex-col rounded-xl border bg-white p-1"
     >
       <Image
         source={{ uri: story.coverImageUrl }}
@@ -70,7 +70,7 @@ const LibraryStoryItem = ({
           </View>
           <View className="flex flex-1 flex-row items-center gap-x-2">
             <Icon name="Clock" size={12} color="#616161" />
-            <Text className="font-[abeezee] text-xs text-text">
+            <Text className="text-text font-[abeezee] text-xs">
               {storyDuration > 0 ? storyDuration : "<1"}
               {storyDuration > 1 ? " mins" : " min"}
             </Text>
@@ -79,7 +79,7 @@ const LibraryStoryItem = ({
         <Text className="my-1.5 font-[abeezee] text-base text-black">
           {story.title}
         </Text>
-        <Text className="mb-4 font-[abeezee] text-xs text-text">
+        <Text className="text-text mb-4 font-[abeezee] text-xs">
           {story.ageMin} - {story.ageMax} years
         </Text>
         <View className="flex-row items-center gap-6">

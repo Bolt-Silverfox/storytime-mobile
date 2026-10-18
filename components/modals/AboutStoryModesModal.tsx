@@ -22,20 +22,20 @@ const AboutStoryModesModal = ({
             <Icon name="SquareX" />
           </Pressable>
         </View>
-        <Text className="font-[abeezee] text-sm text-text">
+        <Text className="text-text font-[abeezee] text-sm">
           Here's a breakdown of the difference between the two preferred story
           modes.
         </Text>
         <View className="flex flex-col gap-y-8">
           <View className="flex flex-row gap-x-3">
-            <Pressable className="flex size-14 items-center justify-center rounded-full border border-border-lighter">
+            <Pressable className="border-border-lighter flex size-14 items-center justify-center rounded-full border">
               <Icon name="BookOpenText" />
             </Pressable>
             <View className="flex flex-1 flex-col gap-y-1">
               <Text className="font-[abeezee] text-base text-black">
                 Plain Story Mode
               </Text>
-              <Text className="text-wrap font-[abeezee] text-sm text-text">
+              <Text className="text-text font-[abeezee] text-sm text-wrap">
                 Sit back and enjoy the story. In this mode, you can read along
                 or listen as the story is narrated from start to finish—perfect
                 for relaxed reading, bedtime, or quiet time.
@@ -43,14 +43,14 @@ const AboutStoryModesModal = ({
             </View>
           </View>
           <View className="flex flex-row gap-x-3">
-            <Pressable className="flex size-14 items-center justify-center rounded-full border border-border-lighter">
+            <Pressable className="border-border-lighter flex size-14 items-center justify-center rounded-full border">
               <Icon name="Gamepad2" />
             </Pressable>
             <View className="flex flex-1 flex-col gap-y-1">
               <Text className="font-[abeezee] text-base text-black">
                 Interactive Story Mode
               </Text>
-              <Text className="text-wrap font-[abeezee] text-sm text-text">
+              <Text className="text-text font-[abeezee] text-sm text-wrap">
                 Turn storytelling into a fun learning experience. After the
                 story is read, you'll be asked simple, engaging questions to
                 test understanding, spark curiosity, and encourage critical
@@ -59,13 +59,13 @@ const AboutStoryModesModal = ({
             </View>
           </View>
         </View>
-        <View className="mt-4 flex flex-row items-center gap-x-3 rounded-2xl bg-yellow p-4">
+        <View className="bg-yellow mt-4 flex flex-row items-center gap-x-3 rounded-2xl p-4">
           <Pressable className="flex size-14 items-center justify-center rounded-full bg-[#F8D62B]">
             <Icon name="CircleAlert" />
           </Pressable>
           <View className="flex flex-1 flex-col gap-y-1">
             <Text className="font-[abeezee] text-sm text-black">Tips</Text>
-            <Text className="text-wrap font-[abeezee] text-sm text-black">
+            <Text className="font-[abeezee] text-sm text-wrap text-black">
               Plain mode is great for calm listening, while Interactive mode
               helps boost comprehension and engagement.
             </Text>

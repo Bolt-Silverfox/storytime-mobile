@@ -138,7 +138,7 @@ const UnsubscribedUserComponent = () => {
             subscriptions={subscriptions}
           />
 
-          <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-border-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl">
+          <View className="border-y-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl">
             <Text className="font-[quilka] text-[18px] text-black">
               What you'll enjoy
             </Text>
@@ -163,18 +163,18 @@ const UnsubscribedUserComponent = () => {
             with the voice type you choose.
           </Text>
 
-          <View className="mx-auto flex w-full max-w-screen-md gap-y-2 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
+          <View className="bg-yellow mx-auto flex w-full max-w-screen-md gap-y-2 rounded-2xl px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
             <View className="flex-row gap-x-4">
               <Image
                 className="size-6"
                 source={require("../../assets/icons/caution.png")}
               />
-              <Text className="flex-1 text-wrap font-[abeezee] text-xs">
+              <Text className="flex-1 font-[abeezee] text-xs text-wrap">
                 Subscription automatically renews unless canceled at least 24
                 hours before the end of the current period.
               </Text>
             </View>
-            <Text className="font-[abeezee] text-[10px] leading-4 text-text">
+            <Text className="text-text font-[abeezee] text-[10px] leading-4">
               {Platform.OS === "ios"
                 ? "Payment will be charged to your Apple ID account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions by going to your Account Settings on the App Store after purchase."
                 : "Payment will be charged to your Google Play account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
@@ -189,7 +189,7 @@ const UnsubscribedUserComponent = () => {
                 </Text>
               </View>
             ) : (
-              <View className="rounded-2xl border border-border-light px-4 py-3">
+              <View className="border-border-light rounded-2xl border px-4 py-3">
                 <TouchableOpacity
                   onPress={() => setCouponExpanded((v) => !v)}
                   className="flex-row items-center justify-between"
@@ -198,7 +198,7 @@ const UnsubscribedUserComponent = () => {
                   <Text className="font-[abeezee] text-sm text-gray-600">
                     Have a coupon code?
                   </Text>
-                  <Text className="font-[abeezee] text-sm text-primary">
+                  <Text className="text-primary font-[abeezee] text-sm">
                     {couponExpanded ? "Hide ▲" : "Show ▼"}
                   </Text>
                 </TouchableOpacity>
@@ -215,7 +215,7 @@ const UnsubscribedUserComponent = () => {
                         placeholder="Enter coupon code"
                         autoCapitalize="characters"
                         autoCorrect={false}
-                        className="flex-1 rounded-xl border border-border-light px-3 py-2 font-[abeezee] text-sm"
+                        className="border-border-light flex-1 rounded-xl border px-3 py-2 font-[abeezee] text-sm"
                       />
                       <TouchableOpacity
                         onPress={handleValidate}
@@ -287,7 +287,7 @@ const UnsubscribedUserComponent = () => {
             {isRestoring ? (
               <ActivityIndicator size="small" color="#866EFF" />
             ) : (
-              <Text className="font-[abeezee] text-sm text-primary">
+              <Text className="text-primary font-[abeezee] text-sm">
                 Restore Purchases
               </Text>
             )}
@@ -304,12 +304,12 @@ const UnsubscribedUserComponent = () => {
 
           <View className="flex-row justify-center gap-x-4 py-2">
             <Pressable onPress={navigateToTerms}>
-              <Text className="font-[abeezee] text-xs text-primary underline">
+              <Text className="text-primary font-[abeezee] text-xs underline">
                 Terms of Service
               </Text>
             </Pressable>
             <Pressable onPress={navigateToPrivacy}>
-              <Text className="font-[abeezee] text-xs text-primary underline">
+              <Text className="text-primary font-[abeezee] text-xs underline">
                 Privacy Policy
               </Text>
             </Pressable>

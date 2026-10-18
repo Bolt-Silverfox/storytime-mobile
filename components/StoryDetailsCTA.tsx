@@ -32,7 +32,7 @@ const StoryDetailsCTA = ({ story, onShare }: PropTypes) => {
     <View className="flex flex-row gap-x-3 px-4">
       <Pressable
         onPress={onShare}
-        className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
+        className="border-border-light flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border"
       >
         <Icon name="Share2" />
         <Text className="font-[abeezee] text-base text-black">Share</Text>
@@ -40,7 +40,7 @@ const StoryDetailsCTA = ({ story, onShare }: PropTypes) => {
       {!isGuest && (
         <Pressable
           onPress={() => onToggle()}
-          className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-border-light"
+          className="border-border-light flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border"
         >
           {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />

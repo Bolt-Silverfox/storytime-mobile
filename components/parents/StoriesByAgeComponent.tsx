@@ -21,7 +21,7 @@ const StoriesByAgeComponent = () => {
 
   if (isPending) {
     return (
-      <View className="flex-1 items-center justify-center bg-bgLight px-4">
+      <View className="bg-bgLight flex-1 items-center justify-center px-4">
         <ActivityIndicator size="large" color="#866EFF" />
       </View>
     );
@@ -29,7 +29,7 @@ const StoriesByAgeComponent = () => {
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-bgLight px-4">
+      <View className="bg-bgLight flex-1 items-center justify-center px-4">
         <ErrorComponent message={error.message} refetch={refetch} />
       </View>
     );
@@ -46,7 +46,7 @@ const StoriesByAgeComponent = () => {
           <Text className="mb-4 text-center font-[quilka] text-2xl text-black">
             {isGuest ? "No stories available" : "No stories found"}
           </Text>
-          <Text className="mb-6 text-center font-[abeezee] text-text">
+          <Text className="text-text mb-6 text-center font-[abeezee]">
             {isGuest
               ? "Sign up to access our full library"
               : "Try a different age group"}
@@ -56,7 +56,7 @@ const StoriesByAgeComponent = () => {
               onPress={() =>
                 navigator.navigate("storiesByAge", { ageGroup: selectedGroup })
               }
-              className="mx-auto h-10 items-center justify-center rounded-full border border-border-light bg-white px-5"
+              className="border-border-light mx-auto h-10 items-center justify-center rounded-full border bg-white px-5"
             >
               <Text className="font-[abeezee] text-base text-black">
                 {selectedGroup === "All"
@@ -77,7 +77,7 @@ const StoriesByAgeComponent = () => {
       refetch={refetch}
       hasData={!!data}
     >
-      <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-6 border-b border-b-border-light py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+      <View className="border-b-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-6 border-b py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
         <AgeSelectionComponent
           selectedGroupProp={selectedGroup}
           setSelectedCallback={setSelectedGroup}
@@ -87,7 +87,7 @@ const StoriesByAgeComponent = () => {
           onPress={() =>
             navigator.navigate("storiesByAge", { ageGroup: selectedGroup })
           }
-          className="mx-auto flex h-10 items-center justify-center rounded-full border border-border-light bg-white px-5"
+          className="border-border-light mx-auto flex h-10 items-center justify-center rounded-full border bg-white px-5"
         >
           <Text className="font-[abeezee] text-base text-black">
             {selectedGroup === "All"

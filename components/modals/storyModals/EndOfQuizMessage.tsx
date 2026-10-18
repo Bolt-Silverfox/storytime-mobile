@@ -48,12 +48,12 @@ const EndOfQuizMessage = ({
       <Text className="text-center font-[quilka] text-xl">
         Congratulations on successfully completing a story
       </Text>
-      <Text className="text-center font-[abeezee] text-base text-text">
+      <Text className="text-text text-center font-[abeezee] text-base">
         You have walked through the eye of the needle and successfully completed
         "{storyTitle}" and answered the questions.
       </Text>
-      <View className="border-y border-y-border-light py-5">
-        <View className="flex flex-col gap-y-4 rounded-3xl bg-blue p-5">
+      <View className="border-y-border-light border-y py-5">
+        <View className="bg-blue flex flex-col gap-y-4 rounded-3xl p-5">
           <Text className="font-[abeezee] text-base text-white">
             Your test result
           </Text>

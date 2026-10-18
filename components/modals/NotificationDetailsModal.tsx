@@ -29,16 +29,16 @@ const NotificationDetailsModal = ({
         <Text className="text-center font-[quilka] text-[18px]">
           {notification.title}
         </Text>
-        <Text className="my-10 font-[abeezee] text-base text-text">
+        <Text className="text-text my-10 font-[abeezee] text-base">
           {notification.body}
         </Text>
-        <Text className="mb-4 font-[abeezee] text-xs text-text">
+        <Text className="text-text mb-4 font-[abeezee] text-xs">
           {getRelativeTime(notification.createdAt)}
         </Text>
 
         <Text
           onPress={closeModal}
-          className="mx-5 max-w-screen-md rounded-full border border-border py-2 text-center font-[abeezee] text-base text-text sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="border-border text-text mx-5 max-w-screen-md rounded-full border py-2 text-center font-[abeezee] text-base sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           Close
         </Text>

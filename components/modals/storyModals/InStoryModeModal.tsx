@@ -37,7 +37,7 @@ const InStoryModeModal = ({
   return (
     <CustomModal isOpen={isOpen} onClose={handleClose}>
       <View className="flex flex-col gap-y-6 bg-white">
-        <View className="flex flex-row items-center justify-between border-b border-b-border-light pb-6">
+        <View className="border-b-border-light flex flex-row items-center justify-between border-b pb-6">
           <Text className="font-[abeezee] text-base">Change story mode</Text>
           <Pressable
             onPress={handleClose}
@@ -48,12 +48,12 @@ const InStoryModeModal = ({
             <Icon name="SquareX" />
           </Pressable>
         </View>
-        <View className="flex flex-col gap-y-6 border-b border-b-border-light pb-6">
+        <View className="border-b-border-light flex flex-col gap-y-6 border-b pb-6">
           <Pressable
             onPress={() => setPendingMode("plain")}
             className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
               pendingMode === "plain"
-                ? "border-[#EC400740] bg-primary"
+                ? "bg-primary border-[#EC400740]"
                 : "border-border-light bg-white"
             }`}
           >
@@ -77,7 +77,7 @@ const InStoryModeModal = ({
               onPress={() => setPendingMode("interactive")}
               className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
                 pendingMode === "interactive"
-                  ? "border-[#EC400740] bg-primary"
+                  ? "bg-primary border-[#EC400740]"
                   : "border-border-light bg-white"
               }`}
             >

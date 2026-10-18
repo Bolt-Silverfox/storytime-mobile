@@ -52,7 +52,7 @@ const TodaysTopPicksScreen = () => {
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="flex flex-1 bg-bgLight">
+      <View className="bg-bgLight flex flex-1">
         <CustomImageBackground
           source={{
             uri: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__4_1_wx1rwq.jpg",
@@ -69,7 +69,7 @@ const TodaysTopPicksScreen = () => {
             <Icon name="ChevronLeft" color="white" />
           </Pressable>
           <View className="flex flex-col gap-y-1.5">
-            <Text className="font-[quilka] text-3xl capitalize text-white">
+            <Text className="font-[quilka] text-3xl text-white capitalize">
               Top picks from us
             </Text>
             <Text className="font-[abeezee] text-base text-white">
@@ -83,7 +83,7 @@ const TodaysTopPicksScreen = () => {
         ) : error && !stories ? (
           <ErrorComponent message={error.message} refetch={refetch} />
         ) : !stories?.length ? (
-          <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
+          <View className="bg-bgLight flex flex-1 flex-col items-center justify-center gap-y-3 px-5">
             <Text className="font-[abeezee] text-xl text-black">
               No top picks from us yet
             </Text>

@@ -464,7 +464,7 @@ const StoryComponent = ({
                       });
                     }
                   }}
-                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                  className="bg-blue flex size-12 flex-col items-center justify-center rounded-full"
                 >
                   <FontAwesome6 name="house" size={20} color="white" />
                 </Pressable>
@@ -473,7 +473,7 @@ const StoryComponent = ({
                     e.stopPropagation();
                     setIsOptionsModalOpen(true);
                   }}
-                  className="flex size-12 flex-col items-center justify-center rounded-full bg-blue"
+                  className="bg-blue flex size-12 flex-col items-center justify-center rounded-full"
                 >
                   <FontAwesome6 name="ellipsis" size={20} color="white" />
                 </Pressable>

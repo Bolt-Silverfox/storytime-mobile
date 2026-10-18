@@ -100,7 +100,7 @@ const GroupedStoriesStoryCarousel = ({
   if (!stories.length) {
     const isFilterDefault = selectedAgeGroup === "All";
     return (
-      <View className="flex flex-1 flex-col items-center justify-center gap-y-3 bg-bgLight px-5">
+      <View className="bg-bgLight flex flex-1 flex-col items-center justify-center gap-y-3 px-5">
         <Text className="font-[abeezee] text-xl text-black">
           No stories in this category yet
         </Text>
@@ -149,7 +149,7 @@ const GroupedStoriesStoryCarousel = ({
               size="small"
               accessibilityLabel="Loading more stories"
             />
-            <Text className="mt-2 text-center font-[abeezee] text-sm text-text">
+            <Text className="text-text mt-2 text-center font-[abeezee] text-sm">
               Loading more stories...
             </Text>
           </View>

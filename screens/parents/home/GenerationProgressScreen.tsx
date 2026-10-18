@@ -126,7 +126,7 @@ const GenerationProgressScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 items-center justify-center gap-y-8 bg-bgLight px-6">
+      <View className="bg-bgLight flex-1 items-center justify-center gap-y-8 px-6">
         {failed ? (
           <>
             <View className="size-20 items-center justify-center rounded-full bg-red-100">
@@ -136,7 +136,7 @@ const GenerationProgressScreen = () => {
               <Text className="text-center font-[quilka] text-2xl text-black">
                 Story creation failed
               </Text>
-              <Text className="text-center font-[abeezee] text-base text-text">
+              <Text className="text-text text-center font-[abeezee] text-base">
                 {errorMessage}
               </Text>
             </View>
@@ -155,7 +155,7 @@ const GenerationProgressScreen = () => {
               <Text className="text-center font-[quilka] text-2xl text-black">
                 Creating your story…
               </Text>
-              <Text className="text-center font-[abeezee] text-base text-text">
+              <Text className="text-text text-center font-[abeezee] text-base">
                 {progressMessage ??
                   "Our AI is busy writing something magical. This can take a little while."}
               </Text>
@@ -163,31 +163,31 @@ const GenerationProgressScreen = () => {
 
             {/* Progress bar */}
             <View className="w-full gap-y-2">
-              <View className="h-3 w-full overflow-hidden rounded-full bg-primary-light">
+              <View className="bg-primary-light h-3 w-full overflow-hidden rounded-full">
                 <View
-                  className="h-3 rounded-full bg-primary"
+                  className="bg-primary h-3 rounded-full"
                   style={{ width: `${progress}%` }}
                 />
               </View>
               <View className="flex-row items-center justify-between">
-                <Text className="font-[abeezee] text-xs text-text">
+                <Text className="text-text font-[abeezee] text-xs">
                   Progress
                 </Text>
-                <Text className="font-[abeezee] text-xs text-text">
+                <Text className="text-text font-[abeezee] text-xs">
                   {progress}%
                 </Text>
               </View>
             </View>
 
             {typeof estimatedWaitTime === "number" && estimatedWaitTime > 0 && (
-              <Text className="text-center font-[abeezee] text-xs text-text">
+              <Text className="text-text text-center font-[abeezee] text-xs">
                 Estimated wait: about {Math.ceil(estimatedWaitTime / 1000)}s
               </Text>
             )}
 
             <View className="w-full">
               {isCancelling ? (
-                <View className="mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full border border-border">
+                <View className="border-border mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full border">
                   <ActivityIndicator color="#212121" />
                 </View>
               ) : (

@@ -31,7 +31,7 @@ const ParentsHomeScreenHeader = () => {
   return (
     <View
       aria-labelledby="user avatar container"
-      className="sticky top-0 flex flex-row items-center gap-2 border-b border-b-border-lighter bg-white pb-2"
+      className="border-b-border-lighter sticky top-0 flex flex-row items-center gap-2 border-b bg-white pb-2"
     >
       <View>
         <Avatar
@@ -77,11 +77,11 @@ const ParentsHomeScreenHeader = () => {
             onPress={() =>
               navigator.navigate("notification", { screen: "index" })
             }
-            className="relative flex size-11 items-center justify-center rounded-full border border-border-lighter bg-white"
+            className="border-border-lighter relative flex size-11 items-center justify-center rounded-full border bg-white"
           >
             <Icon name="Bell" />
             {hasUnread && (
-              <View className="absolute right-2.5 top-2.5 size-2.5 rounded-full border border-white bg-primary" />
+              <View className="bg-primary absolute top-2.5 right-2.5 size-2.5 rounded-full border border-white" />
             )}
           </Pressable>
         )}

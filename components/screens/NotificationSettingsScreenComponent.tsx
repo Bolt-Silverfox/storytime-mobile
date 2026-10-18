@@ -56,7 +56,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
   if (isLoading) {
     return (
       <SafeAreaWrapper variant="solid">
-        <View className="flex flex-1 bg-bgLight">
+        <View className="bg-bgLight flex flex-1">
           <PageTitle title="Notification Settings" goBack={goBack} />
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator size="large" color="#4807EC" />
@@ -69,7 +69,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
   if (isError) {
     return (
       <SafeAreaWrapper variant="solid">
-        <View className="flex flex-1 bg-bgLight">
+        <View className="bg-bgLight flex flex-1">
           <PageTitle title="Notification Settings" goBack={goBack} />
           <View className="flex-1 items-center justify-center px-4">
             <Text className="mb-4 text-center font-[abeezee] text-base text-black">
@@ -89,7 +89,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1 bg-bgLight">
+      <View className="bg-bgLight flex flex-1">
         <PageTitle title="Notification Settings" goBack={goBack} />
         <View className="mx-auto w-full max-w-screen-md flex-1 lg:max-w-screen-lg xl:max-w-screen-xl">
           <ScrollView
@@ -98,10 +98,10 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
           >
             {SECTIONS.map((section) => (
               <View key={section.title} className="flex flex-col gap-y-4">
-                <Text className="font-[abeezee] text-xl capitalize text-black">
+                <Text className="font-[abeezee] text-xl text-black capitalize">
                   {section.title}
                 </Text>
-                <View className="flex flex-col rounded-[20px] border border-border-lighter bg-white p-4">
+                <View className="border-border-lighter flex flex-col rounded-[20px] border bg-white p-4">
                   {section.items.map((item, index) => {
                     const isEnabled =
                       preferences?.[item.category]?.push ?? true;
@@ -109,7 +109,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
                     return (
                       <View
                         key={item.category}
-                        className={`flex flex-row items-center justify-between ${!isLast ? "border-b border-b-border-light" : ""}`}
+                        className={`flex flex-row items-center justify-between ${!isLast ? "border-b-border-light border-b" : ""}`}
                       >
                         <Text className="font-[abeezee] text-base text-black">
                           {item.label}

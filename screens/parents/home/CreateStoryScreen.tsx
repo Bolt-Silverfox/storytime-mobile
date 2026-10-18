@@ -119,7 +119,7 @@ const CreateStoryScreen = () => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
-          <View className="mb-6 mt-2 flex-row items-center gap-x-3">
+          <View className="mt-2 mb-6 flex-row items-center gap-x-3">
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               activeOpacity={0.7}
@@ -150,7 +150,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="font-[abeezee] text-xs text-text">
+              <Text className="text-text font-[abeezee] text-xs">
                 Separate multiple themes with commas.
               </Text>
             </View>
@@ -165,7 +165,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="font-[abeezee] text-xs text-text">
+              <Text className="text-text font-[abeezee] text-xs">
                 Separate multiple categories with commas.
               </Text>
             </View>
@@ -242,7 +242,7 @@ const CreateStoryScreen = () => {
 
           <View className="mt-8 flex-row">
             {isPending ? (
-              <View className="mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full bg-primary">
+              <View className="bg-primary mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full">
                 <ActivityIndicator color="white" />
               </View>
             ) : (

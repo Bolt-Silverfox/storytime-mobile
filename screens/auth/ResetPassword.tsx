@@ -17,7 +17,7 @@ const ResetPasswordScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1 bg-bgLight">
+      <View className="bg-bgLight flex flex-1">
         <PageTitle goBack={() => navigator.goBack()} title="" />
         <View style={defaultStyles.screen}>
           <View style={styles.textContainer}>

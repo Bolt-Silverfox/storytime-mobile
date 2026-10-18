@@ -31,7 +31,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex flex-1 bg-bg-light">
+      <View className="bg-bg-light flex flex-1">
         <PageTitle title="" goBack={() => navigator.goBack()} />
         <ScrollView
           className=""
@@ -89,7 +89,7 @@ const LoginScreen = () => {
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
                 accessibilityLabel="Sign in with Google"
                 accessibilityRole="button"
                 accessibilityHint="Opens Google sign-in flow"
@@ -99,7 +99,7 @@ const LoginScreen = () => {
               {Platform.OS === "ios" && (
                 <Pressable
                   onPress={() => handleAppleAuth("login")}
-                  className="flex size-16 items-center justify-center rounded-full border border-border-lighter bg-white"
+                  className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
                   accessibilityLabel="Sign in with Apple"
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-in flow"

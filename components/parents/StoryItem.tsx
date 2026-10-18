@@ -109,7 +109,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   return (
     <Pressable
       onPress={navigate}
-      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-border-light bg-white p-1`}
+      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} border-border-light gap-y-1.5 rounded-2xl border bg-white p-1`}
     >
       <View className={`relative w-full rounded-2xl`}>
         <CustomImage
@@ -120,7 +120,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         <Pressable
           disabled={isPending}
           onPress={handleFavoritePress}
-          className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
+          className="absolute top-2 right-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
           {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />
@@ -132,7 +132,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           <View className="flex flex-1 flex-row items-center">
             <Icon name="Dot" color={categoryColour} />
             <Text
-              className="flex-1 text-wrap font-[abeezee] text-xs capitalize"
+              className="flex-1 font-[abeezee] text-xs text-wrap capitalize"
               style={{
                 color: categoryColour,
               }}
@@ -142,17 +142,17 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           </View>
           <View className="flex flex-row items-center gap-x-1">
             <Icon size={12} name="Clock" color="#616161" />
-            <Text className="font-[abeezee] text-xs capitalize text-text">
+            <Text className="text-text font-[abeezee] text-xs capitalize">
               {duration > 0 ? duration : "<1"}
               {duration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>
-        <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-black">
+        <Text className="w-full px-0.5 font-[abeezee] text-base leading-5 text-wrap text-black">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">
-          <Text className="font-[abeezee] text-xs text-text">
+          <Text className="text-text font-[abeezee] text-xs">
             {ageMin} - {ageMax} years
           </Text>
           {story.readStatus === "done" && (

@@ -133,7 +133,7 @@ const AvailableVoices = ({
     <>
       {voicesLoading && (
         <View className="flex items-center justify-center py-8">
-          <Text className="font-[abeezee] text-text">Loading voices...</Text>
+          <Text className="text-text font-[abeezee]">Loading voices...</Text>
         </View>
       )}
       {voicesError && (
@@ -179,7 +179,7 @@ const AvailableVoices = ({
               </Text>
             </View>
           )}
-          <View className="flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t border-t-border-lighter py-6">
+          <View className="border-t-border-lighter flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t py-6">
             {data.map((voice) => {
               const isSelected = isVoiceSelected(voice);
               const isPreviewing = voice.id === previewingId;
@@ -205,10 +205,10 @@ const AvailableVoices = ({
                   style={isSelected ? voiceStyles.selectedShadow : undefined}
                   className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
                     !allowed
-                      ? "border border-border-light opacity-40"
+                      ? "border-border-light border opacity-40"
                       : isSelected
-                        ? "border border-primary"
-                        : "border border-border-light"
+                        ? "border-primary border"
+                        : "border-border-light border"
                   }`}
                 >
                   <Image
@@ -217,7 +217,7 @@ const AvailableVoices = ({
                   />
                   {(isFreeUserLocked || isGuestDefaultLocked) && (
                     <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
-                      <Text className="font-[abeezee] text-[8px] text-primary">
+                      <Text className="text-primary font-[abeezee] text-[8px]">
                         Default
                       </Text>
                     </View>
@@ -263,7 +263,7 @@ const AvailableVoices = ({
                         if (voiceAccessLoading) return;
                         handlePreview(voice.previewUrl, voice.id);
                       }}
-                      className="mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border border-border-lighter bg-white px-4 py-2"
+                      className="border-border-lighter mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border bg-white px-4 py-2"
                     >
                       <Icon name="Volume2" size={18} color="black" />
                       <Text className="font-[abeezee] text-sm text-black">

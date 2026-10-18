@@ -75,7 +75,7 @@ const ResetPasswordScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-bgLight">
+      <View className="bg-bgLight flex-1">
         <PageTitle
           title="Reset your password"
           goBack={() => navigator.goBack()}
