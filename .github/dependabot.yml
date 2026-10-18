@@ -27,6 +27,13 @@ updates:
     # internals, so 0.88 against RN 0.85.3 fails with
     # "Could not locate module react-native/asset-registry".
     ignore:
+      # TypeScript majors are a codebase migration, not a bump: TS 6 turns on
+      # stricter defaults (TS2564 definite assignment, TS18046 unknown errors)
+      # and the same bump produced 767 errors on storytime_be (#629 there,
+      # #417 here). Schedule it in slices instead of re-raising it weekly.
+      - dependency-name: 'typescript'
+        update-types:
+          - 'version-update:semver-major'
       # `expo` itself is not in bundledNativeModules -- it IS the SDK -- so the
       # generated list below misses it. Only majors are ignored here: an SDK
       # major (56 -> 57) must be done as a whole via `npx expo install --fix`,
