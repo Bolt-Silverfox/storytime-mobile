@@ -27,6 +27,13 @@ updates:
     # internals, so 0.88 against RN 0.85.3 fails with
     # "Could not locate module react-native/asset-registry".
     ignore:
+      # `expo` itself is not in bundledNativeModules -- it IS the SDK -- so the
+      # generated list below misses it. Only majors are ignored here: an SDK
+      # major (56 -> 57) must be done as a whole via `npx expo install --fix`,
+      # while patches within SDK 56 are fine and still come through.
+      - dependency-name: 'expo'
+        update-types:
+          - 'version-update:semver-major'
       - dependency-name: '@expo/vector-icons'
       - dependency-name: '@react-native-async-storage/async-storage'
       - dependency-name: '@react-native-community/netinfo'
