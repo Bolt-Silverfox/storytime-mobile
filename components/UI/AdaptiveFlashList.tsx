@@ -31,7 +31,7 @@ export function AdaptiveFlashList<T>(props: FlashListProps<T>) {
     <FlashList
       key={numColumns}
       numColumns={numColumns}
-      style={[styles.listContainer, { backgroundColor: tokens.surface }]}
+      style={{ ...styles.listContainer, backgroundColor: tokens.surface }}
       contentContainerStyle={styles.contentContainer}
       {...props}
     />
