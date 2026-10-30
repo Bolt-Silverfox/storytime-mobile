@@ -19,7 +19,7 @@ export default function FaQScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-background-soft flex-1">
+      <View className="flex-1 bg-background-soft">
         <PageTitle goBack={() => navigator.goBack()} title="FAQs" />
         <ScrollView contentContainerStyle={faqStyles.scrollContent}>
           <View className="mt-9 items-center">
@@ -32,12 +32,12 @@ export default function FaQScreen() {
           </View>
           <View
             style={styles.menuList}
-            className="border-line-soft bg-surface rounded-[20px] border px-[16]"
+            className="rounded-[20px] border border-line-soft bg-surface px-[16]"
           >
             {FAQ.map((faq, i) => (
               <View
                 key={faq.id}
-                className={`border-b-line-light flex flex-col gap-y-2 border-b ${
+                className={`flex flex-col gap-y-2 border-b border-b-line-light ${
                   i === FAQ.length - 1 ? "border-b-0" : ""
                 }`}
               >
@@ -45,7 +45,7 @@ export default function FaQScreen() {
                   onPress={() => toggleOpenQuestion(faq.id)}
                   className="flex flex-row items-center justify-between gap-x-3 py-6"
                 >
-                  <Text className="text-fg flex-1 font-[abeezee] text-[18px]">
+                  <Text className="flex-1 font-[abeezee] text-[18px] text-fg">
                     {faq.q}
                   </Text>
                   <Icon
@@ -57,7 +57,7 @@ export default function FaQScreen() {
                   />
                 </Pressable>
                 {currentlyOpenQuestion === faq.id && (
-                  <Text className="text-body mb-4 ml-4 font-[abeezee] text-[18px]">
+                  <Text className="mb-4 ml-4 font-[abeezee] text-[18px] text-body">
                     {faq.a}
                   </Text>
                 )}

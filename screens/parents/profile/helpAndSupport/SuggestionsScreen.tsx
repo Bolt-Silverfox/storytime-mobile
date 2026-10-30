@@ -81,8 +81,8 @@ export default function SuggestionsScreen() {
         goBack={() => navigator.goBack()}
         title="Suggestions & Feedback"
       />
-      <View className="bg-background-soft flex-1">
-        <View className="mt-9 mb-8 items-center">
+      <View className="flex-1 bg-background-soft">
+        <View className="mb-8 mt-9 items-center">
           <Text
             style={[defaultStyles.defaultText, suggestStyles.subtitle]}
             className="max-w-[311px] text-center"
@@ -91,11 +91,11 @@ export default function SuggestionsScreen() {
             experience
           </Text>
         </View>
-        <View className="bg-surface mx-4 gap-6 rounded-[20px] border-[0.5px] border-[#E0E0E0] p-4">
+        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-[#E0E0E0] bg-surface p-4">
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Full name:</Text>
             <TextInput
-              className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.fullName ? "border-red-600" : "border-line"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.fullName ? "border-red-600" : "border-line"}`}
               placeholder="Enter full name"
               placeholderTextColor={errors.fullName ? "red" : tokens.textBody}
               onChangeText={setFullName}
@@ -111,7 +111,7 @@ export default function SuggestionsScreen() {
             <TextInput
               onChangeText={setEmail}
               value={email}
-              className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.email ? "border-red-600" : "border-line"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.email ? "border-red-600" : "border-line"}`}
               placeholder="Enter email address"
               placeholderTextColor={errors.email ? "red" : tokens.textBody}
             />
@@ -125,7 +125,7 @@ export default function SuggestionsScreen() {
               style={suggestStyles.textArea}
               onChangeText={setMessage}
               value={message}
-              className={`text-fg relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base ${errors.message ? "border-red-600" : "border-line"}`}
+              className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-fg ${errors.message ? "border-red-600" : "border-line"}`}
               placeholder="Enter message"
               placeholderTextColor={errors.message ? "red" : tokens.textBody}
               multiline

@@ -1,3 +1,4 @@
+import { useTheme } from "../theme/ThemeContext";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type RadioButton = {
@@ -12,14 +13,19 @@ export const RadioButton = ({
   label,
   selected,
   onSelect,
-}: RadioButton) => (
-  <Pressable style={styles.radioContainer} onPress={() => onSelect(value)}>
-    <View style={styles.radioCircle}>
-      {selected === value && <View style={styles.selectedRb} />}
-    </View>
-    <Text style={styles.radioText}>{label}</Text>
-  </Pressable>
-);
+}: RadioButton) => {
+  const { tokens } = useTheme();
+  return (
+    <Pressable style={styles.radioContainer} onPress={() => onSelect(value)}>
+      <View style={styles.radioCircle}>
+        {selected === value && <View style={styles.selectedRb} />}
+      </View>
+      <Text style={[styles.radioText, { color: tokens.textStrong }]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   radioContainer: {

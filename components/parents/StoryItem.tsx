@@ -13,6 +13,7 @@ import { Story } from "../../types";
 import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
 import CustomImage from "../UI/CustomImage";
+import { useTheme } from "../../theme/ThemeContext";
 
 type Proptypes = {
   story: Story;
@@ -26,6 +27,7 @@ const readStatusStyles = {
 } as const;
 
 const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
+  const { tokens } = useTheme();
   const {
     id,
     title,
@@ -109,7 +111,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   return (
     <Pressable
       onPress={navigate}
-      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} border-line-light bg-surface gap-y-1.5 rounded-2xl border p-1`}
+      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-line-light bg-surface p-1`}
     >
       <View className={`relative w-full rounded-2xl`}>
         <CustomImage
@@ -120,7 +122,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         <Pressable
           disabled={isPending}
           onPress={handleFavoritePress}
-          className="absolute top-2 right-2 flex size-11 items-center justify-center rounded-full bg-black/40"
+          className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
           {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />
@@ -132,7 +134,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           <View className="flex flex-1 flex-row items-center">
             <Icon name="Dot" color={categoryColour} />
             <Text
-              className="flex-1 font-[abeezee] text-xs text-wrap capitalize"
+              className="flex-1 text-wrap font-[abeezee] text-xs capitalize"
               style={{
                 color: categoryColour,
               }}
@@ -141,18 +143,18 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
             </Text>
           </View>
           <View className="flex flex-row items-center gap-x-1">
-            <Icon size={12} name="Clock" color="#616161" />
-            <Text className="text-body font-[abeezee] text-xs capitalize">
+            <Icon size={12} name="Clock" color={tokens.textBody} />
+            <Text className="font-[abeezee] text-xs capitalize text-body">
               {duration > 0 ? duration : "<1"}
               {duration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>
-        <Text className="text-fg w-full px-0.5 font-[abeezee] text-base leading-5 text-wrap">
+        <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-fg">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">
-          <Text className="text-body font-[abeezee] text-xs">
+          <Text className="font-[abeezee] text-xs text-body">
             {ageMin} - {ageMax} years
           </Text>
           {story.readStatus === "done" && (

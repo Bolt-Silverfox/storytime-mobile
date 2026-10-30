@@ -52,7 +52,7 @@ const LanguageSelectionModal = ({
             key={item.code}
             className="px-3 py-4"
           >
-            <Text className="text-fg font-[abeezee] capitalize">
+            <Text className="font-[abeezee] capitalize text-fg">
               {item.name}
             </Text>
           </Pressable>

@@ -286,7 +286,7 @@ const StoryContentContainer = ({
             isAudioError ||
             initialError) &&
             !isStillGenerating && (
-              <View className="mx-4 mt-2 mb-3 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
+              <View className="mx-4 mb-3 mt-2 flex-row items-center justify-between rounded-xl bg-red-50 px-4 py-3">
                 <View className="flex-1 flex-row items-center gap-x-2">
                   <Feather name="alert-circle" size={16} color="#dc2626" />
                   <Text className="flex-1 font-[abeezee] text-sm text-red-700">
@@ -313,8 +313,8 @@ const StoryContentContainer = ({
         </View>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="bg-reader-paper overflow-hidden rounded-lg px-4 py-8">
-          <Text className="text-reader-paper-text font-[quilka] text-xl">
+        <View className="overflow-hidden rounded-lg bg-reader-paper px-4 py-8">
+          <Text className="font-[quilka] text-xl text-reader-paper-text">
             {paragraphs[activeParagraph]}
           </Text>
         </View>
@@ -345,7 +345,7 @@ const StoryContentContainer = ({
                   e.stopPropagation();
                   handleManualNavigation("next");
                 }}
-                className="bg-blue flex size-12 items-center justify-center rounded-full"
+                className="flex size-12 items-center justify-center rounded-full bg-blue"
               >
                 <Icon name="SkipForward" color="white" />
               </Pressable>
@@ -356,7 +356,7 @@ const StoryContentContainer = ({
                   setCurrentlyDisplayed("endOfStoryMessage");
                   reportCompletion();
                 }}
-                className="bg-blue flex h-12 items-center justify-center rounded-full px-6"
+                className="flex h-12 items-center justify-center rounded-full bg-blue px-6"
               >
                 <Text className="font-[abeezee] text-sm text-white">
                   Finish story
@@ -364,7 +364,7 @@ const StoryContentContainer = ({
               </Pressable>
             )}
           </View>
-          <View className="bg-surface rounded-2xl p-4">
+          <View className="rounded-2xl bg-surface p-4">
             <ProgressBar
               backgroundColor="#4807EC"
               currentStep={activeParagraph + 1}

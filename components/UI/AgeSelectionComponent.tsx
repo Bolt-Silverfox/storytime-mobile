@@ -32,7 +32,7 @@ const AgeSelectionComponent = ({
           <Pressable
             key={age}
             onPress={() => handleSelectAgeGroup(age)}
-            className={`flex h-10 w-[126px] flex-row items-center justify-center rounded-full ${isSelected ? "bg-blue" : "bg-surface border"}`}
+            className={`flex h-10 w-[126px] flex-row items-center justify-center rounded-full ${isSelected ? "bg-blue" : "border bg-surface"}`}
           >
             <Text
               className={`font-[abeezee] text-base ${isSelected ? "text-white" : "text-body"}`}

@@ -70,7 +70,7 @@ const NotificationsScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-background-soft flex flex-1">
+      <View className="flex flex-1 bg-background-soft">
         <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -82,7 +82,7 @@ const NotificationsScreen = () => {
             <Text
               onPress={() => setActiveLabel(notification)}
               key={notification}
-              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border-line text-body border"}`}
+              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border border-line text-body"}`}
             >
               {notification}
             </Text>
@@ -99,10 +99,10 @@ const NotificationsScreen = () => {
               <View className="flex flex-col gap-y-6">
                 {grouped.map((group) => (
                   <View className="flex flex-col gap-y-2.5" key={group.label}>
-                    <Text className="text-fg font-[abeezee] text-[18px]">
+                    <Text className="font-[abeezee] text-[18px] text-fg">
                       {group.label}
                     </Text>
-                    <View className="border-line-soft bg-surface flex flex-col gap-y-6 rounded-xl border p-5">
+                    <View className="flex flex-col gap-y-6 rounded-xl border border-line-soft bg-surface p-5">
                       {group.notifications.map((noti) => (
                         <Pressable
                           onPress={() => handleNotificationPress(noti)}
@@ -114,11 +114,11 @@ const NotificationsScreen = () => {
                           )}
                           <View className="flex flex-1 flex-col gap-y-1.5">
                             <Text
-                              className={`w-full font-[abeezee] text-base leading-6 text-wrap ${noti.isRead ? "text-body" : "text-fg"}`}
+                              className={`w-full text-wrap font-[abeezee] text-base leading-6 ${noti.isRead ? "text-body" : "text-fg"}`}
                             >
                               {noti.title}
                             </Text>
-                            <Text className="text-body font-[abeezee] text-xs leading-6">
+                            <Text className="font-[abeezee] text-xs leading-6 text-body">
                               {getRelativeTime(noti.createdAt)}
                             </Text>
                           </View>

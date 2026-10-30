@@ -11,6 +11,7 @@ import {
   ViewStyle,
 } from "react-native";
 import useGetUserProfile from "../hooks/tanstack/queryHooks/useGetUserProfile";
+import { useTheme } from "../theme/ThemeContext";
 
 export type AvatarProps = {
   size?: number;
@@ -26,6 +27,7 @@ const Avatar: React.FC<AvatarProps> = ({
   onPress,
   style,
 }) => {
+  const { tokens } = useTheme();
   const { data } = useGetUserProfile();
   const uri = data?.avatar?.url;
 
@@ -61,10 +63,10 @@ const Avatar: React.FC<AvatarProps> = ({
       )}
       {edit && (
         <View
-          className="bg-surface absolute right-0 bottom-0 rounded-full p-2"
+          className="absolute bottom-0 right-0 rounded-full bg-surface p-2"
           style={styles.editIcon}
         >
-          <FontAwesome5 name="edit" size={15} color="black" />
+          <FontAwesome5 name="edit" size={15} color={tokens.textStrong} />
         </View>
       )}
     </Pressable>

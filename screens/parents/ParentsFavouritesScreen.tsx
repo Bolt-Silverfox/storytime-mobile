@@ -20,6 +20,7 @@ import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import useQueryParentsFavourites from "../../hooks/tanstack/queryHooks/queryParentFavourites";
 import useRefreshControl from "../../hooks/others/useRefreshControl";
 import { AgeGroupType, FavouriteStory } from "../../types";
+import { useTheme } from "../../theme/ThemeContext";
 
 const favouriteKeyExtractor = (item: FavouriteStory) => item.id;
 
@@ -37,6 +38,7 @@ const AGE_FILTERS: readonly AgeRangeFilter[] = [
 ] as const;
 
 const ParentsFavouritesScreen = () => {
+  const { tokens } = useTheme();
   const {
     data,
     isPending,
@@ -115,9 +117,9 @@ const ParentsFavouritesScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-background-soft flex-1">
-        <View className="border-b-line-soft bg-surface flex flex-row items-center justify-between border-b px-4 pt-2 pb-5">
-          <Text className="text-fg flex-1 font-[abeezee] text-xl">
+      <View className="flex-1 bg-background-soft">
+        <View className="flex flex-row items-center justify-between border-b border-b-line-soft bg-surface px-4 pb-5 pt-2">
+          <Text className="flex-1 font-[abeezee] text-xl text-fg">
             Favourites
           </Text>
           <View className="flex flex-row items-center gap-x-5">
@@ -156,7 +158,7 @@ const ParentsFavouritesScreen = () => {
                     key={age.key}
                     onPress={() => setSelectedAge(age.key)}
                     className={`h-10 items-center justify-center rounded-full px-6 ${
-                      active ? "bg-blue" : "border-line bg-surface border"
+                      active ? "bg-blue" : "border border-line bg-surface"
                     }`}
                   >
                     <Text
@@ -180,14 +182,14 @@ const ParentsFavouritesScreen = () => {
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder="Search favourites..."
-                placeholderTextColor="#666"
-                className="text-fg flex-1 font-[abeezee] text-base"
+                placeholderTextColor={tokens.textMuted}
+                className="flex-1 font-[abeezee] text-base text-fg"
                 returnKeyType="search"
               />
 
               {searchQuery.length > 0 && (
                 <Pressable onPress={() => setSearchQuery("")}>
-                  <Text className="text-fg px-2 text-lg">✕</Text>
+                  <Text className="px-2 text-lg text-fg">✕</Text>
                 </Pressable>
               )}
             </View>
@@ -209,8 +211,8 @@ const ParentsFavouritesScreen = () => {
           ListFooterComponent={
             isFetchingNextPage ? (
               <View style={styles.footer}>
-                <ActivityIndicator size="small" />
-                <Text className="text-body mt-2 font-[abeezee] text-sm">
+                <ActivityIndicator size="small" color={tokens.textStrong} />
+                <Text className="mt-2 font-[abeezee] text-sm text-body">
                   Loading more favourites...
                 </Text>
               </View>

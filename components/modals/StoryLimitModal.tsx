@@ -202,7 +202,7 @@ const StoryLimitModal = ({
               <Text
                 style={[
                   modalStyles.errorText,
-                   
+
                   { color: isUserCancelled ? tokens.textBody : tokens.danger },
                 ]}
               >

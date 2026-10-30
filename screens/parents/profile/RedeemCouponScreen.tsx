@@ -15,8 +15,10 @@ import {
   useRedeemCoupon,
   useValidateCoupon,
 } from "../../../hooks/tanstack/mutationHooks/useCoupon";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const RedeemCouponScreen = () => {
+  const { tokens } = useTheme();
   const navigation = useNavigation();
   const [couponCode, setCouponCode] = useState("");
   const [validationResult, setValidationResult] = useState<{
@@ -69,9 +71,9 @@ const RedeemCouponScreen = () => {
             onPress={() => navigation.goBack()}
             activeOpacity={0.7}
           >
-            <Feather name="arrow-left" size={22} color="#1a1a1a" />
+            <Feather name="arrow-left" size={22} color={tokens.textStrong} />
           </TouchableOpacity>
-          <Text className="text-fg font-[quilka] text-2xl">Redeem Coupon</Text>
+          <Text className="font-[quilka] text-2xl text-fg">Redeem Coupon</Text>
         </View>
 
         {redeemResult ? (
@@ -83,7 +85,7 @@ const RedeemCouponScreen = () => {
             <Text className="text-center font-[quilka] text-2xl text-green-700">
               Premium Unlocked!
             </Text>
-            <Text className="text-body text-center font-[abeezee] text-base">
+            <Text className="text-center font-[abeezee] text-base text-body">
               {redeemResult.message}
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
@@ -99,7 +101,7 @@ const RedeemCouponScreen = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
-              className="bg-primary mt-4 w-full rounded-full py-4"
+              className="mt-4 w-full rounded-full bg-primary py-4"
               activeOpacity={0.8}
             >
               <Text className="text-center font-[abeezee] text-base text-white">
@@ -110,13 +112,13 @@ const RedeemCouponScreen = () => {
         ) : (
           /* Input state */
           <View className="flex-col gap-y-6">
-            <Text className="text-body font-[abeezee] text-base">
+            <Text className="font-[abeezee] text-base text-body">
               Enter your coupon code below to unlock free premium access.
             </Text>
 
             {/* Code input */}
             <View className="flex-col gap-y-3">
-              <Text className="text-muted font-[abeezee] text-sm font-medium">
+              <Text className="font-[abeezee] text-sm font-medium text-muted">
                 Coupon Code
               </Text>
               <TextInput
@@ -128,7 +130,7 @@ const RedeemCouponScreen = () => {
                 placeholder="e.g. SUMMER25"
                 autoCapitalize="characters"
                 autoCorrect={false}
-                className="text-fg border-line-light bg-surface rounded-2xl border px-4 py-3 font-[abeezee] text-base tracking-widest"
+                className="rounded-2xl border border-line-light bg-surface px-4 py-3 font-[abeezee] text-base tracking-widest text-fg"
               />
             </View>
 
@@ -158,7 +160,7 @@ const RedeemCouponScreen = () => {
                   validateMutation.isPending ||
                   redeemMutation.isPending
                 }
-                className="bg-primary w-full rounded-full py-4"
+                className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
               >
                 {validateMutation.isPending ? (
@@ -176,7 +178,7 @@ const RedeemCouponScreen = () => {
               <TouchableOpacity
                 onPress={handleRedeem}
                 disabled={redeemMutation.isPending}
-                className="bg-primary w-full rounded-full py-4"
+                className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
               >
                 {redeemMutation.isPending ? (

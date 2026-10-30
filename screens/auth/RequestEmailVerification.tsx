@@ -52,7 +52,7 @@ const RequestEmailVerification = () => {
             <View style={styles.formItem}>
               <Text style={defaultStyles.label}>Email:</Text>
               <TextInput
-                className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-line"}`}
+                className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${error ? "border-red-600" : "border-line"}`}
                 placeholderTextColor={error ? "red" : tokens.textBody}
                 placeholder="Enter your email"
                 onChangeText={setEmail}

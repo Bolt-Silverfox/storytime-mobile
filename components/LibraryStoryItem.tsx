@@ -10,6 +10,7 @@ import {
 } from "../utils/utils";
 import Icon from "./Icon";
 import ProgressBar from "./parents/ProgressBar";
+import { useTheme } from "../theme/ThemeContext";
 
 const LibraryStoryItem = ({
   story,
@@ -23,6 +24,7 @@ const LibraryStoryItem = ({
     } | null>
   >;
 }) => {
+  const { tokens } = useTheme();
   const navigator = useNavigation<ProtectedRoutesNavigationProp>();
   const paragraphs = splitByWordCountPreservingSentences(
     story.textContent,
@@ -54,7 +56,7 @@ const LibraryStoryItem = ({
           },
         })
       }
-      className="border-line-light bg-surface flex flex-col rounded-xl border p-1"
+      className="flex flex-col rounded-xl border border-line-light bg-surface p-1"
     >
       <Image
         source={{ uri: story.coverImageUrl }}
@@ -69,17 +71,17 @@ const LibraryStoryItem = ({
             </Text>
           </View>
           <View className="flex flex-1 flex-row items-center gap-x-2">
-            <Icon name="Clock" size={12} color="#616161" />
-            <Text className="text-body font-[abeezee] text-xs">
+            <Icon name="Clock" size={12} color={tokens.textBody} />
+            <Text className="font-[abeezee] text-xs text-body">
               {storyDuration > 0 ? storyDuration : "<1"}
               {storyDuration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>
-        <Text className="text-fg my-1.5 font-[abeezee] text-base">
+        <Text className="my-1.5 font-[abeezee] text-base text-fg">
           {story.title}
         </Text>
-        <Text className="text-body mb-4 font-[abeezee] text-xs">
+        <Text className="mb-4 font-[abeezee] text-xs text-body">
           {story.ageMin} - {story.ageMax} years
         </Text>
         <View className="flex-row items-center gap-6">

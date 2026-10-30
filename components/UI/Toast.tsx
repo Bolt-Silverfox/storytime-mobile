@@ -73,10 +73,10 @@ const Toast = ({ toast, index, onDismiss }: ToastProps) => {
           },
         ]}
       >
-        <View className="border-line-soft bg-surface w-full rounded-lg border px-5 py-3 shadow-lg">
+        <View className="w-full rounded-lg border border-line-soft bg-surface px-5 py-3 shadow-lg">
           <Text
             numberOfLines={1}
-            className="text-fg text-center font-[abeezee] text-sm"
+            className="text-center font-[abeezee] text-sm text-fg"
           >
             {toast.message}
           </Text>

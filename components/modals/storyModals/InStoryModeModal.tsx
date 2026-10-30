@@ -36,9 +36,9 @@ const InStoryModeModal = ({
 
   return (
     <CustomModal isOpen={isOpen} onClose={handleClose}>
-      <View className="bg-surface flex flex-col gap-y-6">
-        <View className="border-b-line-light flex flex-row items-center justify-between border-b pb-6">
-          <Text className="text-fg font-[abeezee] text-base">
+      <View className="flex flex-col gap-y-6 bg-surface">
+        <View className="flex flex-row items-center justify-between border-b border-b-line-light pb-6">
+          <Text className="font-[abeezee] text-base text-fg">
             Change story mode
           </Text>
           <Pressable
@@ -50,12 +50,12 @@ const InStoryModeModal = ({
             <Icon name="SquareX" />
           </Pressable>
         </View>
-        <View className="border-b-line-light flex flex-col gap-y-6 border-b pb-6">
+        <View className="flex flex-col gap-y-6 border-b border-b-line-light pb-6">
           <Pressable
             onPress={() => setPendingMode("plain")}
             className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
               pendingMode === "plain"
-                ? "bg-primary border-[#EC400740]"
+                ? "border-[#EC400740] bg-primary"
                 : "border-line-light bg-surface"
             }`}
           >
@@ -79,7 +79,7 @@ const InStoryModeModal = ({
               onPress={() => setPendingMode("interactive")}
               className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
                 pendingMode === "interactive"
-                  ? "bg-primary border-[#EC400740]"
+                  ? "border-[#EC400740] bg-primary"
                   : "border-line-light bg-surface"
               }`}
             >

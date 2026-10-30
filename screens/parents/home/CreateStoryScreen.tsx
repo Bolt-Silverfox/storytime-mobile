@@ -18,6 +18,7 @@ import useToast from "../../../contexts/ToastContext";
 import useGenerateStoryAsync from "../../../hooks/tanstack/mutationHooks/useGenerateStoryAsync";
 import { StoryNavigatorProp } from "../../../Navigation/StoryNavigator";
 import { GenerateStoryInput } from "../../../types";
+import { useTheme } from "../../../theme/ThemeContext";
 
 /** Split a comma/newline separated field into a trimmed, de-duped list. */
 const parseList = (value: string): string[] =>
@@ -45,6 +46,7 @@ const inputClass =
 const labelClass = "font-[abeezee] text-sm font-medium text-muted";
 
 const CreateStoryScreen = () => {
+  const { tokens } = useTheme();
   const navigation = useNavigation<StoryNavigatorProp>();
   const { isGuest } = useAuth();
   const { notify } = useToast();
@@ -119,7 +121,7 @@ const CreateStoryScreen = () => {
           keyboardShouldPersistTaps="handled"
         >
           {/* Header */}
-          <View className="mt-2 mb-6 flex-row items-center gap-x-3">
+          <View className="mb-6 mt-2 flex-row items-center gap-x-3">
             <TouchableOpacity
               onPress={() => navigation.goBack()}
               activeOpacity={0.7}
@@ -127,14 +129,14 @@ const CreateStoryScreen = () => {
               accessibilityLabel="Go back"
               hitSlop={12}
             >
-              <Feather name="arrow-left" size={22} color="#1a1a1a" />
+              <Feather name="arrow-left" size={22} color={tokens.textStrong} />
             </TouchableOpacity>
-            <Text className="text-fg font-[quilka] text-2xl">
+            <Text className="font-[quilka] text-2xl text-fg">
               Create a Story
             </Text>
           </View>
 
-          <Text className="text-body mb-6 font-[abeezee] text-base">
+          <Text className="mb-6 font-[abeezee] text-base text-body">
             Tell us what kind of story you'd like and our AI will write a fresh
             one just for you.
           </Text>
@@ -150,7 +152,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="text-body font-[abeezee] text-xs">
+              <Text className="font-[abeezee] text-xs text-body">
                 Separate multiple themes with commas.
               </Text>
             </View>
@@ -165,7 +167,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="text-body font-[abeezee] text-xs">
+              <Text className="font-[abeezee] text-xs text-body">
                 Separate multiple categories with commas.
               </Text>
             </View>
@@ -242,7 +244,7 @@ const CreateStoryScreen = () => {
 
           <View className="mt-8 flex-row">
             {isPending ? (
-              <View className="bg-primary mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full">
+              <View className="mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full bg-primary">
                 <ActivityIndicator color="white" />
               </View>
             ) : (

@@ -9,8 +9,10 @@ import AvailableVoices from "../../../components/AvailableVoices";
 import Icon from "../../../components/Icon";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const DefaultVoiceScreen = () => {
+  const { tokens } = useTheme();
   const navigation = useNavigation();
   const { isGuest, user } = useAuth();
   const isGuestReader = isGuest || !user;
@@ -48,16 +50,16 @@ const DefaultVoiceScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-surface flex-1">
-        <View className="border-b-line-soft flex-row items-center justify-between border-b px-4 pt-4 pb-4">
+      <View className="flex-1 bg-surface">
+        <View className="flex-row items-center justify-between border-b border-b-line-soft px-4 pb-4 pt-4">
           <Pressable
             onPress={() => navigation.goBack()}
             accessibilityLabel="Go back"
             accessibilityRole="button"
           >
-            <Icon name="ArrowLeft" size={24} color="black" />
+            <Icon name="ArrowLeft" size={24} color={tokens.textStrong} />
           </Pressable>
-          <Text className="text-fg font-[abeezee] text-base">
+          <Text className="font-[abeezee] text-base text-fg">
             Voice Selection
           </Text>
           <View className="w-6" />
@@ -67,12 +69,12 @@ const DefaultVoiceScreen = () => {
           contentContainerStyle={screenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View className="border-line-soft mx-4 mt-6 flex-row items-center justify-between rounded-2xl border p-4">
+          <View className="mx-4 mt-6 flex-row items-center justify-between rounded-2xl border border-line-soft p-4">
             <View className="flex-col gap-y-1">
-              <Text className="text-body font-[abeezee] text-base">
+              <Text className="font-[abeezee] text-base text-body">
                 Selected Story Voice
               </Text>
-              <Text className="text-fg font-[quilka] text-2xl">
+              <Text className="font-[quilka] text-2xl text-fg">
                 {selectedVoiceDisplay?.displayName ??
                   selectedVoiceDisplay?.name ??
                   (!selectedVoice
@@ -92,7 +94,7 @@ const DefaultVoiceScreen = () => {
           />
           <Pressable
             onPress={handleSave}
-            className="bg-primary mx-4 mt-2 items-center rounded-full px-2 py-3"
+            className="mx-4 mt-2 items-center rounded-full bg-primary px-2 py-3"
             accessibilityLabel="Save voice selection"
             accessibilityRole="button"
           >

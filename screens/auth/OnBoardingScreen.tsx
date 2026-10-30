@@ -106,7 +106,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
         </View>
       )}
       <View className="flex-1 justify-end">
-        <View className="bg-surface mx-auto mb-10 w-[95%] rounded-[32px] px-7 py-8">
+        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-surface px-7 py-8">
           <Pagination data={item} />
           <View>
             <Text style={styles.titleText} className="text-center text-[28px]">
@@ -114,7 +114,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             </Text>
             <Text
               style={styles.descriptionText}
-              className="text-body mt-4 mb-8 text-center text-[18px]"
+              className="mb-8 mt-4 text-center text-[18px] text-body"
             >
               {item.description}
             </Text>
@@ -144,7 +144,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             <View className="mt-4 flex-row justify-center">
               <Text
                 style={styles.descriptionText}
-                className="text-body text-sm"
+                className="text-sm text-body"
               >
                 If you already have an account{" "}
               </Text>
@@ -153,7 +153,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               >
                 <Text
                   style={styles.descriptionText}
-                  className="text-brand-text text-sm underline"
+                  className="text-sm text-brand-text underline"
                 >
                   Log in
                 </Text>

@@ -73,8 +73,8 @@ const SelectReadingVoiceModal = ({
   return (
     <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
       <View className="flex flex-1 flex-col gap-y-6">
-        <View className="border-b-line-soft flex flex-row items-center justify-between border-b pb-6">
-          <Text className="text-fg font-[abeezee] text-base">
+        <View className="flex flex-row items-center justify-between border-b border-b-line-soft pb-6">
+          <Text className="font-[abeezee] text-base text-fg">
             Try new voice
           </Text>
           <Pressable
@@ -87,8 +87,8 @@ const SelectReadingVoiceModal = ({
           </Pressable>
         </View>
         {showSaveButton && (
-          <View className="bg-blue/10 rounded-2xl p-4">
-            <Text className="text-body font-[abeezee] text-sm leading-5">
+          <View className="rounded-2xl bg-blue/10 p-4">
+            <Text className="font-[abeezee] text-sm leading-5 text-body">
               Choose a voice to enable audio for your stories. This will become
               your voice selection.
             </Text>
@@ -99,12 +99,12 @@ const SelectReadingVoiceModal = ({
           contentContainerClassName="pb-6"
           showsVerticalScrollIndicator={false}
         >
-          <View className="border-line-soft flex flex-row items-center justify-between rounded-2xl border p-4">
+          <View className="flex flex-row items-center justify-between rounded-2xl border border-line-soft p-4">
             <View className="flex flex-col gap-y-1">
-              <Text className="text-body font-[abeezee] text-base">
+              <Text className="font-[abeezee] text-base text-body">
                 Selected Story Voice
               </Text>
-              <Text className="text-fg font-[quilka] text-2xl">
+              <Text className="font-[quilka] text-2xl text-fg">
                 {displayedSelectedVoice?.displayName ??
                   displayedSelectedVoice?.name ??
                   (isGuestReader
@@ -120,7 +120,7 @@ const SelectReadingVoiceModal = ({
           </View>
           {voicesLoading ? (
             <View className="flex items-center justify-center py-8">
-              <Text className="text-body font-[abeezee]">
+              <Text className="font-[abeezee] text-body">
                 Loading voices...
               </Text>
             </View>

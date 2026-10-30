@@ -44,8 +44,8 @@ const ProgressBar = ({
       </View>
 
       <View className="flex flex-row items-center justify-between">
-        <Text className="text-body font-[abeezee] text-xs">{label}:</Text>
-        <Text className="text-body font-[abeezee] text-xs">
+        <Text className="font-[abeezee] text-xs text-body">{label}:</Text>
+        <Text className="font-[abeezee] text-xs text-body">
           {currentStep} / {totalSteps}
         </Text>
       </View>

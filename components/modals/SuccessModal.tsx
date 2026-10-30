@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import React from "react";
 import {
   Modal,
@@ -8,6 +9,8 @@ import {
   Dimensions,
   StyleSheet,
 } from "react-native";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type Props = {
   visible: boolean;
@@ -17,6 +20,8 @@ type Props = {
 const { width: screenWidth } = Dimensions.get("window");
 
 export default function SuccessModal({ visible, onClose }: Props) {
+  const { tokens } = useTheme();
+  const successStyles = useMemo(() => makeSuccessStyles(tokens), [tokens]);
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={successStyles.overlay}>
@@ -38,40 +43,42 @@ export default function SuccessModal({ visible, onClose }: Props) {
   );
 }
 
-const successStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "flex-end",
-  },
-  content: {
-    backgroundColor: "white",
-    padding: 24,
-    alignItems: "center",
-    borderTopLeftRadius: 36,
-    borderTopRightRadius: 36,
-  },
-  image: {
-    alignSelf: "center",
-  },
-  title: {
-    fontSize: 24,
-    fontFamily: "quilka",
-    textAlign: "center",
-    marginVertical: 16,
-  },
-  button: {
-    backgroundColor: "transparent",
-    borderColor: "rgba(0,0,0,0.2)",
-    borderWidth: 1,
-    width: "100%",
-    paddingVertical: 16,
-    borderRadius: 50,
-    marginTop: 16,
-  },
-  buttonText: {
-    textAlign: "center",
-    color: "black",
-    fontFamily: "abeezee",
-  },
-});
+const makeSuccessStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(0,0,0,0.4)",
+      justifyContent: "flex-end",
+    },
+    content: {
+      backgroundColor: tokens.surface,
+      padding: 24,
+      alignItems: "center",
+      borderTopLeftRadius: 36,
+      borderTopRightRadius: 36,
+    },
+    image: {
+      alignSelf: "center",
+    },
+    title: {
+      fontSize: 24,
+      fontFamily: "quilka",
+      color: tokens.textStrong,
+      textAlign: "center",
+      marginVertical: 16,
+    },
+    button: {
+      backgroundColor: "transparent",
+      borderColor: tokens.border,
+      borderWidth: 1,
+      width: "100%",
+      paddingVertical: 16,
+      borderRadius: 50,
+      marginTop: 16,
+    },
+    buttonText: {
+      textAlign: "center",
+      color: tokens.textStrong,
+      fontFamily: "abeezee",
+    },
+  });

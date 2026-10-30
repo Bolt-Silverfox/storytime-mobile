@@ -37,7 +37,7 @@ const FavouriteStoryItem = ({
   return (
     <Pressable
       onPress={onNavigate}
-      className="border-line-soft bg-surface flex flex-row gap-x-2 rounded-3xl border p-2"
+      className="flex flex-row gap-x-2 rounded-3xl border border-line-soft bg-surface p-2"
     >
       <Image
         source={{ uri: story.coverImageUrl }}
@@ -46,11 +46,11 @@ const FavouriteStoryItem = ({
         className="rounded-3xl"
       />
       <View className="flex flex-1 flex-col gap-y-2">
-        <Text className="text-fg font-[abeezee] text-lg">{story.title}</Text>
-        <Text className="text-body font-[abeezee] text-sm">
+        <Text className="font-[abeezee] text-lg text-fg">{story.title}</Text>
+        <Text className="font-[abeezee] text-sm text-body">
           {story.description}
         </Text>
-        <Text className="text-body font-[abeezee] text-sm">
+        <Text className="font-[abeezee] text-sm text-body">
           {story.ageRange} years
         </Text>
         <Pressable

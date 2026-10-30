@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -10,8 +11,12 @@ import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import UploadAvatarModal from "../../../components/modals/UploadAvatarModal";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
 import { useDefaultStyles } from "../../../styles";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 export default function EditParentImage() {
+  const { tokens } = useTheme();
+  const editStyles = useMemo(() => makeEditStyles(tokens), [tokens]);
   const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [image, setImage] = useState<string | undefined>(undefined);
@@ -21,7 +26,7 @@ export default function EditParentImage() {
   });
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-background-soft flex-1">
+      <View className="flex-1 bg-background-soft">
         <PageTitle title="Edit Image" goBack={() => navigator.goBack()} />
 
         <View className="flex-1">
@@ -37,7 +42,7 @@ export default function EditParentImage() {
                 />
                 <Pressable
                   onPress={() => setIsModalOpen(true)}
-                  className="border-line-light bg-surface absolute right-6 bottom-0 flex size-12 items-center justify-center rounded-full border"
+                  className="absolute bottom-0 right-6 flex size-12 items-center justify-center rounded-full border border-line-light bg-surface"
                 >
                   <FontAwesome5 name="edit" size={15} color="black" />
                 </Pressable>
@@ -108,14 +113,15 @@ export default function EditParentImage() {
   );
 }
 
-const editStyles = StyleSheet.create({
-  uploadText: {
-    fontSize: 14,
-  },
-  whiteText: {
-    color: "white",
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeEditStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    uploadText: {
+      fontSize: 14,
+    },
+    whiteText: {
+      color: "white",
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });

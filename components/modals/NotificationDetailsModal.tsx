@@ -26,19 +26,19 @@ const NotificationDetailsModal = ({
         <View className="mb-4 items-center">
           {getNotificationIcon(mapCategoryToIconType(notification.category))}
         </View>
-        <Text className="text-center font-[quilka] text-[18px]">
+        <Text className="text-center font-[quilka] text-[18px] text-fg">
           {notification.title}
         </Text>
-        <Text className="text-body my-10 font-[abeezee] text-base">
+        <Text className="my-10 font-[abeezee] text-base text-body">
           {notification.body}
         </Text>
-        <Text className="text-body mb-4 font-[abeezee] text-xs">
+        <Text className="mb-4 font-[abeezee] text-xs text-body">
           {getRelativeTime(notification.createdAt)}
         </Text>
 
         <Text
           onPress={closeModal}
-          className="border-line text-body mx-5 max-w-screen-md rounded-full border py-2 text-center font-[abeezee] text-base sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="mx-5 max-w-screen-md rounded-full border border-line py-2 text-center font-[abeezee] text-base text-body sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           Close
         </Text>

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   View,
   Text,
@@ -15,6 +16,7 @@ import z from "zod";
 import PageTitle from "../../../components/PageTitle";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const feedBack = z.object({
   message: z.string().min(1, "feedback should not be empty"),
@@ -26,6 +28,7 @@ type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 export default function DeleteAccount() {
   const defaultStyles = useDefaultStyles();
   const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [deleteCheckList, setDeleteAccountCheckList] =
     useState<DeleteAcountChecklist[]>(deleteReasons);
@@ -103,7 +106,7 @@ export default function DeleteAccount() {
                 placeholder="Please let us know about your experience and how to improve"
                 onChangeText={setMessage}
                 value={message}
-                className={`text-fg relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base ${errors.message ? "border-red-600" : "border-line"}`}
+                className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-fg ${errors.message ? "border-red-600" : "border-line"}`}
                 placeholderTextColor={errors.message ? "red" : tokens.textBody}
                 multiline
               />
@@ -183,29 +186,30 @@ const deleteReasons: DeleteAcountChecklist[] = [
   },
 ];
 
-const styles = StyleSheet.create({
-  formItem: {
-    gap: 4,
-  },
-  headingFontSize: {
-    fontSize: 20,
-  },
-  textFontSize: {
-    fontSize: 16,
-  },
-  textColor: {
-    color: "#333333",
-    fontSize: 16,
-  },
-  textArea: {
-    height: 150,
-    maxHeight: 140,
-    textAlignVertical: "top",
-  },
-  whiteText: {
-    color: "white",
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    formItem: {
+      gap: 4,
+    },
+    headingFontSize: {
+      fontSize: 20,
+    },
+    textFontSize: {
+      fontSize: 16,
+    },
+    textColor: {
+      color: tokens.textStrong,
+      fontSize: 16,
+    },
+    textArea: {
+      height: 150,
+      maxHeight: 140,
+      textAlignVertical: "top",
+    },
+    whiteText: {
+      color: "white",
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });

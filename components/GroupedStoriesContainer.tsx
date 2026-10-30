@@ -32,7 +32,7 @@ const GroupedStoriesContainer = ({
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="bg-background-soft flex flex-1">
+      <View className="flex flex-1 bg-background-soft">
         <CustomImageBackground
           source={
             imageSource ?? {
@@ -51,7 +51,7 @@ const GroupedStoriesContainer = ({
             <Icon name="ChevronLeft" color="white" />
           </Pressable>
           <View className="flex flex-col gap-y-1.5">
-            <Text className="font-[quilka] text-3xl text-white capitalize">
+            <Text className="font-[quilka] text-3xl capitalize text-white">
               {title}
             </Text>
             <Text className="font-[abeezee] text-base text-white">

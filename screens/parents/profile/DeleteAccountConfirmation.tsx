@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   View,
   Text,
@@ -17,6 +18,7 @@ import ErrorMessageDisplay from "../../../components/ErrorMessageDisplay";
 import LoadingOverlay from "../../../components/LoadingOverlay";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const feedBack = z.object({
   email: z.email("Invalid email, try again"),
@@ -28,6 +30,7 @@ type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 export default function DeleteAccount() {
   const defaultStyles = useDefaultStyles();
   const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState<Errors>({});
@@ -74,7 +77,7 @@ export default function DeleteAccount() {
               onChangeText={setEmail}
               value={email}
               placeholder="Enter email address"
-              className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.email ? "border-red-600" : "border-line"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.email ? "border-red-600" : "border-line"}`}
               placeholderTextColor={errors.email ? "red" : tokens.textBody}
             />
             {errors.email && (
@@ -115,17 +118,18 @@ export default function DeleteAccount() {
   );
 }
 
-const styles = StyleSheet.create({
-  formItem: {
-    gap: 4,
-  },
-  textFontSize: {
-    fontSize: 16,
-  },
-  whiteText: {
-    color: "white",
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    formItem: {
+      gap: 4,
+    },
+    textFontSize: {
+      fontSize: 16,
+    },
+    whiteText: {
+      color: "white",
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });
