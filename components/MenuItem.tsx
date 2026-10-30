@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import CustomText from "./CustomText";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
-import defaultStyles from "../styles";
+import { useDefaultStyles } from "../styles";
 
 type PropTypes = {
   label: string;
@@ -29,6 +29,7 @@ const MenuItem: FC<PropTypes> = ({
   description,
   isLastItem = false,
 }) => {
+  const defaultStyles = useDefaultStyles();
   const [isOpen, setIsOpen] = useState(false);
 
   if (description) {

@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
@@ -21,7 +22,6 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import colours from "../../../colours";
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
@@ -33,8 +33,12 @@ import useRateUs from "../../../contexts/RateUsContext";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const ProfileScreen: FC = () => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const { user, isLoading, logout } = useAuth();
   const { rateNow } = useRateUs();
   const { data: profile } = useGetUserProfile();
@@ -211,32 +215,33 @@ const ProfileScreen: FC = () => {
 
 export default ProfileScreen;
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
-  scrollContent: { paddingBottom: 10 },
-  header: {
-    width: "100%",
-    height: 192,
-    position: "relative",
-    overflow: "visible",
-  },
-  nameContainer: { alignItems: "center", marginTop: 30 },
-  imageBackground: {
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  avatar: {
-    bottom: -60,
-    alignSelf: "center",
-  },
-  profileName: {
-    fontFamily: "quilka",
-    textAlign: "center",
-    color: colours.black,
-  },
-  profileEmail: {
-    color: "#6B7280",
-    textAlign: "center",
-    marginTop: 4,
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
+    scrollContent: { paddingBottom: 10 },
+    header: {
+      width: "100%",
+      height: 192,
+      position: "relative",
+      overflow: "visible",
+    },
+    nameContainer: { alignItems: "center", marginTop: 30 },
+    imageBackground: {
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    avatar: {
+      bottom: -60,
+      alignSelf: "center",
+    },
+    profileName: {
+      fontFamily: "quilka",
+      textAlign: "center",
+      color: tokens.textStrong,
+    },
+    profileEmail: {
+      color: "#6B7280",
+      textAlign: "center",
+      marginTop: 4,
+    },
+  });

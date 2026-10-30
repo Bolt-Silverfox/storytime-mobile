@@ -9,9 +9,10 @@ import PageTitle from "../../../components/PageTitle";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import UploadAvatarModal from "../../../components/modals/UploadAvatarModal";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
-import defaultStyles from "../../../styles";
+import { useDefaultStyles } from "../../../styles";
 
 export default function EditParentImage() {
+  const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [image, setImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);

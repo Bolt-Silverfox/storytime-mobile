@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   Image,
@@ -8,17 +9,24 @@ import {
   Text,
   View,
 } from "react-native";
-import colours from "../../colours";
 import SignupForm from "../../components/SignupForm";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import useAuth from "../../contexts/AuthContext";
 import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 const SignupScreen = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
@@ -72,7 +80,7 @@ const SignupScreen = () => {
               <Text
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 onPress={() => (navigator as any).navigate("login")}
-                style={{ ...defaultStyles.defaultText, color: colours.link }}
+                style={{ ...defaultStyles.defaultText, color: tokens.link }}
               >
                 Log in
               </Text>
@@ -109,32 +117,36 @@ const SignupScreen = () => {
 
 export default SignupScreen;
 
-const styles = StyleSheet.create({
-  text: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-  },
-  textContainer: {
-    gap: 8,
-  },
-  footer: {
-    paddingTop: 48,
-    paddingBottom: 36,
-    backgroundColor: colours["bg-light"],
-    paddingHorizontal: 16,
-    display: "flex",
-    gap: 6,
-  },
-  footerText: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-    fontSize: 14,
-  },
-  footerLinkText: {
-    ...defaultStyles.linkText,
-    fontSize: 14,
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    text: {
+      ...defaultStyles.defaultText,
+      textAlign: "center",
+    },
+    textContainer: {
+      gap: 8,
+    },
+    footer: {
+      paddingTop: 48,
+      paddingBottom: 36,
+      backgroundColor: tokens.background,
+      paddingHorizontal: 16,
+      display: "flex",
+      gap: 6,
+    },
+    footerText: {
+      ...defaultStyles.defaultText,
+      textAlign: "center",
+      width: "100%",
+      maxWidth: 600,
+      alignSelf: "center",
+      fontSize: 14,
+    },
+    footerLinkText: {
+      ...defaultStyles.linkText,
+      fontSize: 14,
+    },
+  });

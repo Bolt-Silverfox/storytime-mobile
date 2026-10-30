@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   View,
   Text,
@@ -10,13 +11,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import useAuth from "../../contexts/AuthContext";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type SlideItems = {
   id: string;
@@ -27,6 +30,12 @@ type SlideItems = {
 };
 
 export default function OnBoardingScreen() {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const [_currentindex, _setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<SlideItems> | null>(null);
   const { width } = useWindowDimensions();
@@ -71,6 +80,12 @@ export default function OnBoardingScreen() {
 }
 
 function OnboardingItem({ item }: { item: SlideItems }) {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const navigate = useNavigation<RootNavigatorProp>();
   const { enterGuestMode } = useAuth();
   const [isImageLoading, setIsImageLoading] = useState(false);
@@ -152,6 +167,12 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 }
 
 function Pagination({ data }: { data: SlideItems }) {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   return (
     <View className="mb-6 flex-row justify-center gap-[6px]">
       {data.dot.map((item, i) => {
@@ -170,34 +191,38 @@ function Pagination({ data }: { data: SlideItems }) {
   );
 }
 
-const styles = StyleSheet.create({
-  flexOne: {
-    flex: 1,
-  },
-  titleText: {
-    fontFamily: "quilka",
-  },
-  descriptionText: {
-    fontFamily: "abeezee",
-  },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    color: "white",
-  },
-  textDark: {
-    ...defaultStyles.defaultText,
-    color: "#212121",
-  },
-  buttonWhite: {
-    ...defaultStyles.button,
-    backgroundColor: "white",
-  },
-  paginationDot: {
-    backgroundColor: "#EC2907",
-    borderRadius: 5,
-    height: 5,
-  },
-  paginationDotInactive: {
-    backgroundColor: "#00000033",
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    flexOne: {
+      flex: 1,
+    },
+    titleText: {
+      fontFamily: "quilka",
+    },
+    descriptionText: {
+      fontFamily: "abeezee",
+    },
+    textWhite: {
+      ...defaultStyles.defaultText,
+      color: "white",
+    },
+    textDark: {
+      ...defaultStyles.defaultText,
+      color: "#212121",
+    },
+    buttonWhite: {
+      ...defaultStyles.button,
+      backgroundColor: "white",
+    },
+    paginationDot: {
+      backgroundColor: "#EC2907",
+      borderRadius: 5,
+      height: 5,
+    },
+    paginationDotInactive: {
+      backgroundColor: "#00000033",
+    },
+  });

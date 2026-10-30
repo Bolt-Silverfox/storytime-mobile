@@ -1,8 +1,8 @@
 import { Dispatch, SetStateAction, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import colours from "../colours";
-import defaultStyles from "../styles";
+import { useDefaultStyles } from "../styles";
 import Icon from "./Icon";
+import { useTheme } from "../theme/ThemeContext";
 
 type Props = {
   setPassword: Dispatch<SetStateAction<string>>;
@@ -19,6 +19,8 @@ const PasswordInput = ({
   placeholder,
   errorMessage,
 }: Props) => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const [showPassword, setShowPassword] = useState(false);
   return (
     <View style={styles.formItemRelative}>
@@ -28,7 +30,7 @@ const PasswordInput = ({
         value={password}
         onChangeText={setPassword}
         secureTextEntry={!showPassword}
-        placeholderTextColor={errorMessage ? "red" : colours.text}
+        placeholderTextColor={errorMessage ? "red" : tokens.textBody}
         className={`text-fg relative h-[50px] rounded-full border px-4 font-[abeezee] text-base ${errorMessage ? "border-red-600" : "border-line"}`}
       />
       {errorMessage && (
@@ -39,7 +41,7 @@ const PasswordInput = ({
           onPress={() => setShowPassword(true)}
           style={styles.eyeImage}
         >
-          <Icon name="Eye" color={colours.text} />
+          <Icon name="Eye" color={tokens.textBody} />
         </Pressable>
       )}
       {showPassword && (
@@ -47,7 +49,7 @@ const PasswordInput = ({
           onPress={() => setShowPassword(false)}
           style={styles.eyeImage}
         >
-          <Icon name="EyeOff" color={colours.text} />
+          <Icon name="EyeOff" color={tokens.textBody} />
         </Pressable>
       )}
     </View>

@@ -7,11 +7,12 @@ import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import ParentalGateModal from "../../../../components/modals/ParentalGateModal";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../../styles";
+import { useDefaultStyles } from "../../../../styles";
 import PageTitle from "../../../../components/PageTitle";
 import useParentalGate from "../../../../hooks/others/useParentalGate";
 
 export default function ContactUsScreen() {
+  const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const gate = useParentalGate();
 

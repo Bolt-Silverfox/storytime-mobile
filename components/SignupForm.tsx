@@ -2,21 +2,23 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
-import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
-import defaultStyles from "../styles";
+import { useDefaultStyles } from "../styles";
 import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
 import CustomButton from "./UI/CustomButton";
+import { useTheme } from "../theme/ThemeContext";
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
 
 // cleanup with reducer later
 const SignupForm = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
   const [fullName, setFullName] = useState("");
@@ -69,7 +71,7 @@ const SignupForm = () => {
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
             className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.fullName ? "border-red-600" : "border-line"}`}
-            placeholderTextColor={errors.fullName ? "red" : colours.text}
+            placeholderTextColor={errors.fullName ? "red" : tokens.textBody}
             placeholder="Enter your name"
             onChangeText={setFullName}
             value={fullName}
@@ -85,7 +87,7 @@ const SignupForm = () => {
             onChangeText={setEmail}
             value={email}
             className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.email ? "border-red-600" : "border-line"}`}
-            placeholderTextColor={errors.email ? "red" : colours.text}
+            placeholderTextColor={errors.email ? "red" : tokens.textBody}
           />
           {errors.email && (
             <Text className="text-sm text-red-600">{errors.email}</Text>

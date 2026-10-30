@@ -9,8 +9,8 @@ import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
-import defaultStyles from "../../../styles";
-import colours from "../../../colours";
+import { useDefaultStyles } from "../../../styles";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const sendTokenSchema = z.object({
   email: z.email({ error: "Email is required" }),
@@ -20,6 +20,8 @@ type ResetPassword = z.infer<typeof sendTokenSchema>;
 type Errors = Partial<Record<keyof ResetPassword, string>>;
 
 const SendResetTokenScreen = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { isLoading, user, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState(user?.email ?? "");
@@ -62,7 +64,7 @@ const SendResetTokenScreen = () => {
               className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error || errors.email ? "border-red-600" : "border-line"}`}
               placeholder="Enter your email"
               placeholderTextColor={
-                error || errors.email ? "red" : colours.text
+                error || errors.email ? "red" : tokens.textBody
               }
               onChangeText={setEmail}
               value={email}

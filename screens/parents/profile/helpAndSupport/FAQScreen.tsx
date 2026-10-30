@@ -6,9 +6,10 @@ import Icon from "../../../../components/Icon";
 import PageTitle from "../../../../components/PageTitle";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import { FAQ } from "../../../../constants/constants";
-import defaultStyles from "../../../../styles";
+import { useDefaultStyles } from "../../../../styles";
 
 export default function FaQScreen() {
+  const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [currentlyOpenQuestion, setCurrentlyOpenQuestion] = useState(-1);
 

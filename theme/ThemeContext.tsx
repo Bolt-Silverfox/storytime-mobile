@@ -7,15 +7,7 @@ import {
   useMemo,
   useState,
 } from "react";
-import {
-  Appearance,
-  ImageStyle,
-  StyleSheet,
-  TextStyle,
-  View,
-  ViewStyle,
-  useColorScheme,
-} from "react-native";
+import { Appearance, View, useColorScheme } from "react-native";
 import { vars } from "nativewind";
 import {
   ThemePreference,
@@ -113,17 +105,3 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useTheme = () => useContext(ThemeContext);
-
-type NamedStyles = Record<string, ViewStyle | TextStyle | ImageStyle>;
-
-/** Theme-aware StyleSheet: `const styles = useThemedStyles((t) => ({ ... }))`. */
-export function useThemedStyles<T extends NamedStyles>(
-  factory: (tokens: Tokens, isDark: boolean) => T
-): T {
-  const { tokens, isDark } = useTheme();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  return useMemo(
-    () => StyleSheet.create(factory(tokens, isDark)),
-    [tokens, isDark]
-  );
-}

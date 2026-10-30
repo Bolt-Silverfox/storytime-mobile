@@ -9,12 +9,12 @@ import {
 import React, { useState } from "react";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { useNavigation } from "@react-navigation/native";
-import defaultStyles from "../../../styles";
+import { useDefaultStyles } from "../../../styles";
 import { Checkbox } from "expo-checkbox";
 import z from "zod";
-import colours from "../../../colours";
 import PageTitle from "../../../components/PageTitle";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const feedBack = z.object({
   message: z.string().min(1, "feedback should not be empty"),
@@ -24,6 +24,8 @@ type FeedBackSchema = z.infer<typeof feedBack>;
 type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
 export default function DeleteAccount() {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [deleteCheckList, setDeleteAccountCheckList] =
     useState<DeleteAcountChecklist[]>(deleteReasons);
@@ -102,7 +104,7 @@ export default function DeleteAccount() {
                 onChangeText={setMessage}
                 value={message}
                 className={`text-fg relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base ${errors.message ? "border-red-600" : "border-line"}`}
-                placeholderTextColor={errors.message ? "red" : colours.text}
+                placeholderTextColor={errors.message ? "red" : tokens.textBody}
                 multiline
               />
               {errors.message && (
