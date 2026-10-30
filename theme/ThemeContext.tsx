@@ -14,6 +14,7 @@ import {
   loadThemePreference,
   saveThemePreference,
 } from "./themeStorage";
+import { tokensToCssVars } from "./cssVars";
 import { darkTokens, lightTokens, Tokens } from "./tokens";
 
 type Scheme = "light" | "dark";
@@ -27,13 +28,7 @@ type ThemeContextValue = {
   statusBarStyle: "light" | "dark";
 };
 
-const kebab = (s: string) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
-
-/** CSS variables consumed by the semantic tailwind colours (see tailwind.config.js). */
-export const tokensToCssVars = (tokens: Tokens): Record<string, string> =>
-  Object.fromEntries(
-    Object.entries(tokens).map(([k, v]) => [`--color-${kebab(k)}`, v])
-  );
+export { tokensToCssVars };
 
 const ThemeContext = createContext<ThemeContextValue>({
   preference: "system",

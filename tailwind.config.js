@@ -1,4 +1,8 @@
 /** @type {import('tailwindcss').Config} */
+// Theme colours are rgb channel variables set by theme/ThemeContext.tsx (see theme/cssVars.ts)
+// so opacity modifiers (text-link/40) work.
+const v = (name) => `rgb(var(--c-${name}) / <alpha-value>)`;
+
 module.exports = {
   content: [
     "./App.tsx",
@@ -15,26 +19,26 @@ module.exports = {
         text: "#616161",
         // Semantic, theme-aware colours: values come from CSS variables set by
         // theme/ThemeContext.tsx (single source of truth: theme/tokens.ts).
-        link: "var(--color-link)",
-        background: "var(--color-background)",
-        "background-soft": "var(--color-background-soft)",
-        surface: "var(--color-surface)",
-        "surface-cream": "var(--color-surface-cream)",
-        tint: "var(--color-tint)",
-        fg: "var(--color-text-strong)",
-        body: "var(--color-text-body)",
-        muted: "var(--color-text-muted)",
-        line: "var(--color-border)",
-        "line-light": "var(--color-border-light)",
-        "line-soft": "var(--color-border-soft)",
-        "brand-text": "var(--color-brand-text)",
-        "purple-text": "var(--color-purple)",
-        "reader-highlight": "var(--color-reader-highlight)",
-        "reader-highlight-text": "var(--color-reader-highlight-text)",
-        "reader-panel": "var(--color-reader-panel)",
-        "reader-panel-border": "var(--color-reader-panel-border)",
-        "reader-paper": "var(--color-reader-paper)",
-        "reader-paper-text": "var(--color-reader-paper-text)",
+        link: v("link"),
+        background: v("background"),
+        "background-soft": v("background-soft"),
+        surface: v("surface"),
+        "surface-cream": v("surface-cream"),
+        tint: v("tint"),
+        fg: v("text-strong"),
+        body: v("text-body"),
+        muted: v("text-muted"),
+        line: v("border"),
+        "line-light": v("border-light"),
+        "line-soft": v("border-soft"),
+        "brand-text": v("brand-text"),
+        "purple-text": v("purple"),
+        "reader-highlight": v("reader-highlight"),
+        "reader-highlight-text": v("reader-highlight-text"),
+        "reader-panel": v("reader-panel"),
+        "reader-panel-border": v("reader-panel-border"),
+        "reader-paper": v("reader-paper"),
+        "reader-paper-text": v("reader-paper-text"),
         // Fixed (non-themed) dark text for use on fixed light surfaces (yellow banners, etc.)
         ink: "#212121",
         "ink-body": "#616161",
