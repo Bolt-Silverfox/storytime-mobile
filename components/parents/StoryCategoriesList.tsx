@@ -6,6 +6,8 @@ import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCa
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { getCategoryColourIndex } from "../../utils/utils";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import { useTheme } from "../../theme/ThemeContext";
+import { readableOnTint } from "../../theme/contrast";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data, isPending } = useQuery(queryStoryCategories());
@@ -62,6 +64,10 @@ const Item = ({
       getCategoryColourIndex(id, storyCategoriesColours.length)
     ];
   const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { tokens, isDark } = useTheme();
+  const textColour = isDark
+    ? readableOnTint(colour, tokens.background)
+    : colour;
 
   return (
     <Pressable
@@ -79,7 +85,7 @@ const Item = ({
       <Text
         key={category}
         style={{
-          color: colour,
+          color: textColour,
         }}
         className="rounded-lg font-[abeezee] text-sm"
       >

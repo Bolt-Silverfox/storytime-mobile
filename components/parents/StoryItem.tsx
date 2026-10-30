@@ -14,6 +14,7 @@ import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
 import CustomImage from "../UI/CustomImage";
 import { useTheme } from "../../theme/ThemeContext";
+import { readableOnTint } from "../../theme/contrast";
 
 type Proptypes = {
   story: Story;
@@ -27,7 +28,7 @@ const readStatusStyles = {
 } as const;
 
 const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const {
     id,
     title,
@@ -104,6 +105,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     storyCategoriesColours[
       getCategoryColourIndex(id, storyCategoriesColours.length)
     ];
+  const categoryTextColour = isDark
+    ? readableOnTint(categoryColour, tokens.surface)
+    : categoryColour;
   const categoryName = categories?.[0]?.name ?? "Uncategorized";
   const categoryLabel =
     categoryName.length > 15 ? `${categoryName.slice(0, 14)}...` : categoryName;
@@ -132,11 +136,11 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         </Pressable>
         <View className="flex flex-row items-center justify-between gap-x-2 px-0.5">
           <View className="flex flex-1 flex-row items-center">
-            <Icon name="Dot" color={categoryColour} />
+            <Icon name="Dot" color={categoryTextColour} />
             <Text
               className="flex-1 text-wrap font-[abeezee] text-xs capitalize"
               style={{
-                color: categoryColour,
+                color: categoryTextColour,
               }}
             >
               {categoryLabel}

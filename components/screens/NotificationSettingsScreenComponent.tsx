@@ -76,7 +76,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
               Failed to load notification preferences.
             </Text>
             <Text
-              className="font-[abeezee] text-base text-[#4807EC]"
+              className="font-[abeezee] text-base text-link"
               onPress={() => refetch()}
             >
               Tap to retry

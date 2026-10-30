@@ -56,7 +56,7 @@ const HomepageStoriesContainer = ({
         </Text>
         <Text
           onPress={onViewAll}
-          className="font-[abeezee] text-base leading-5 text-[#0731EC]"
+          className="font-[abeezee] text-base leading-5 text-link"
         >
           View all
         </Text>
