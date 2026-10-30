@@ -202,7 +202,7 @@ const StoryLimitModal = ({
               <Text
                 style={[
                   modalStyles.errorText,
-                  // eslint-disable-next-line react-native/no-inline-styles
+                   
                   { color: isUserCancelled ? tokens.textBody : tokens.danger },
                 ]}
               >
