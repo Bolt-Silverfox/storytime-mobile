@@ -1,7 +1,7 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { useNavigation } from "@react-navigation/native";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Image,
   Modal,
@@ -23,6 +23,8 @@ import useParentalGate from "../../hooks/others/useParentalGate";
 import { StoryQuota, SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import ParentalGateModal from "./ParentalGateModal";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type PropTypes = {
   visible: boolean;
@@ -39,6 +41,8 @@ const StoryLimitModal = ({
   mode = "blocking",
   onClose,
 }: PropTypes) => {
+  const { tokens } = useTheme();
+  const modalStyles = useMemo(() => makeModalStyles(tokens), [tokens]);
   const navigator = useNavigation<
     ProtectedRoutesNavigationProp | GuestNavigatorProp
   >();
@@ -199,7 +203,7 @@ const StoryLimitModal = ({
                 style={[
                   modalStyles.errorText,
                   // eslint-disable-next-line react-native/no-inline-styles
-                  { color: isUserCancelled ? "#616161" : "#B71C1C" },
+                  { color: isUserCancelled ? tokens.textBody : tokens.danger },
                 ]}
               >
                 {errorMessage}
@@ -289,154 +293,155 @@ const StoryLimitModal = ({
   );
 };
 
-const modalStyles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(33, 33, 33, 0.6)",
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 16,
-    paddingTop: 32,
-    paddingBottom: 32,
-    maxHeight: "90%",
-  },
-  scrollContent: {
-    alignItems: "center",
-    gap: 20,
-  },
-  iconCircle: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 2.5,
-    borderColor: "#F96B3C",
-    backgroundColor: "white",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontFamily: "quilka",
-    fontSize: 24,
-    fontWeight: "700",
-    color: "#212121",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    color: "#616161",
-    textAlign: "center",
-    paddingHorizontal: 8,
-  },
-  divider: {
-    height: 0.5,
-    backgroundColor: "#E0E0E0",
-    width: "100%",
-  },
-  fullWidthGap16: {
-    width: "100%",
-    gap: 16,
-  },
-  benefitsTitle: {
-    fontFamily: "quilka",
-    fontSize: 18,
-    fontWeight: "700",
-    color: "#212121",
-  },
-  gap12: {
-    gap: 12,
-  },
-  benefitRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  tickIcon: {
-    width: 17,
-    height: 14,
-  },
-  benefitText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "#212121",
-    flex: 1,
-  },
-  summaryText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "#212121",
-  },
-  errorText: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    textAlign: "center",
-  },
-  fullWidthGap12: {
-    width: "100%",
-    gap: 12,
-  },
-  subscribeButton: {
-    borderRadius: 99,
-    height: 46,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  subscribeButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "white",
-    fontWeight: "600",
-  },
-  cancelButton: {
-    borderWidth: 0.5,
-    borderColor: "#212121",
-    borderRadius: 99,
-    height: 46,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  cancelButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "#212121",
-  },
-  disclosureBox: {
-    width: "100%",
-    backgroundColor: "#FFF9C4",
-    borderRadius: 16,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  disclosureText: {
-    fontFamily: "abeezee",
-    fontSize: 10,
-    lineHeight: 16,
-    color: "#616161",
-  },
-  legalLinks: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 16,
-  },
-  legalLinkText: {
-    fontFamily: "abeezee",
-    fontSize: 12,
-    color: "#866EFF",
-    textDecorationLine: "underline",
-  },
-  restoreButton: {
-    alignItems: "center",
-    paddingVertical: 8,
-  },
-  restoreLinkText: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    color: "#866EFF",
-  },
-});
+const makeModalStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(33, 33, 33, 0.6)",
+      justifyContent: "flex-end",
+    },
+    sheet: {
+      backgroundColor: tokens.surface,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      paddingHorizontal: 16,
+      paddingTop: 32,
+      paddingBottom: 32,
+      maxHeight: "90%",
+    },
+    scrollContent: {
+      alignItems: "center",
+      gap: 20,
+    },
+    iconCircle: {
+      width: 100,
+      height: 100,
+      borderRadius: 50,
+      borderWidth: 2.5,
+      borderColor: "#F96B3C",
+      backgroundColor: tokens.surface,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      fontFamily: "quilka",
+      fontSize: 24,
+      fontWeight: "700",
+      color: tokens.textStrong,
+      textAlign: "center",
+    },
+    subtitle: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      color: tokens.textBody,
+      textAlign: "center",
+      paddingHorizontal: 8,
+    },
+    divider: {
+      height: 0.5,
+      backgroundColor: tokens.borderLight,
+      width: "100%",
+    },
+    fullWidthGap16: {
+      width: "100%",
+      gap: 16,
+    },
+    benefitsTitle: {
+      fontFamily: "quilka",
+      fontSize: 18,
+      fontWeight: "700",
+      color: tokens.textStrong,
+    },
+    gap12: {
+      gap: 12,
+    },
+    benefitRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 6,
+    },
+    tickIcon: {
+      width: 17,
+      height: 14,
+    },
+    benefitText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: tokens.textStrong,
+      flex: 1,
+    },
+    summaryText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: tokens.textStrong,
+    },
+    errorText: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      textAlign: "center",
+    },
+    fullWidthGap12: {
+      width: "100%",
+      gap: 12,
+    },
+    subscribeButton: {
+      borderRadius: 99,
+      height: 46,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    subscribeButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: "white",
+      fontWeight: "600",
+    },
+    cancelButton: {
+      borderWidth: 0.5,
+      borderColor: tokens.textStrong,
+      borderRadius: 99,
+      height: 46,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    cancelButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: tokens.textStrong,
+    },
+    disclosureBox: {
+      width: "100%",
+      backgroundColor: "#FFF9C4",
+      borderRadius: 16,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+    },
+    disclosureText: {
+      fontFamily: "abeezee",
+      fontSize: 10,
+      lineHeight: 16,
+      color: "#616161",
+    },
+    legalLinks: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 16,
+    },
+    legalLinkText: {
+      fontFamily: "abeezee",
+      fontSize: 12,
+      color: tokens.purple,
+      textDecorationLine: "underline",
+    },
+    restoreButton: {
+      alignItems: "center",
+      paddingVertical: 8,
+    },
+    restoreLinkText: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      color: tokens.purple,
+    },
+  });
 
 export default StoryLimitModal;

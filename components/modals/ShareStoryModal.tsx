@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -13,6 +14,8 @@ import { shareContent } from "../../utils/utils";
 import useToast from "../../contexts/ToastContext";
 import Icon from "../Icon";
 import CustomModal, { CustomModalProps } from "./CustomModal";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type ShareStoryModalProps = Omit<CustomModalProps, "children"> & {
   storyId: string;
@@ -33,6 +36,8 @@ const ShareStoryModal = ({
   storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const shareUrl = makeStoryUniversalLink(storyId, storyTitle);
   const { notify } = useToast();
 
@@ -102,7 +107,7 @@ const ShareStoryModal = ({
           accessibilityRole="button"
         >
           <Text
-            className="text-fg flex-1 font-[abeezee] text-base"
+            className="text-ink flex-1 font-[abeezee] text-base"
             numberOfLines={2}
             ellipsizeMode="middle"
           >
@@ -133,25 +138,26 @@ const ShareStoryModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  urlBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 18,
-    padding: 16,
-    borderRadius: 18,
-    borderWidth: 0.5,
-    borderStyle: "dashed",
-    borderColor: "#FDE260",
-    backgroundColor: "#FFF8D7",
-  },
-  socialButton: {
-    padding: 16,
-    borderRadius: 45,
-    borderWidth: 0.5,
-    borderColor: "#E0E0E0",
-    backgroundColor: "white",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    urlBox: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 18,
+      padding: 16,
+      borderRadius: 18,
+      borderWidth: 0.5,
+      borderStyle: "dashed",
+      borderColor: "#FDE260",
+      backgroundColor: "#FFF8D7",
+    },
+    socialButton: {
+      padding: 16,
+      borderRadius: 45,
+      borderWidth: 0.5,
+      borderColor: tokens.borderLight,
+      backgroundColor: tokens.surface,
+    },
+  });
 
 export default ShareStoryModal;
