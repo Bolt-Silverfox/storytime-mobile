@@ -8,7 +8,7 @@ const CustomSplashScreen = () => {
           className="self-center"
           source={require("../assets/icons/logo-complete.png")}
         />
-        <Text className="text-center font-[abeezee] text-base text-[#646577]">
+        <Text className="text-muted text-center font-[abeezee] text-base">
           Discover beautifully told stories, crafted just for you.
         </Text>
       </View>

@@ -172,7 +172,12 @@ export default Sentry.wrap(function App() {
     }
   }, [loaded, error]);
 
-  if (!loaded || error) return <CustomSplashScreen />;
+  if (!loaded || error)
+    return (
+      <ThemeProvider>
+        <CustomSplashScreen />
+      </ThemeProvider>
+    );
 
   return (
     <ThemeProvider>

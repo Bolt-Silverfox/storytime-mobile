@@ -1,6 +1,7 @@
 import React, { Component, ErrorInfo, ReactNode } from "react";
 import { View, Text, Pressable, StyleSheet } from "react-native";
 import log from "../utils/logger";
+import { useTheme } from "../theme/ThemeContext";
 
 interface Props {
   children: ReactNode;
@@ -11,6 +12,25 @@ interface State {
   hasError: boolean;
   error?: Error;
 }
+
+const ErrorFallback = ({ onRetry }: { onRetry: () => void }) => {
+  const { tokens } = useTheme();
+  return (
+    <View
+      style={[styles.container, { backgroundColor: tokens.backgroundSoft }]}
+    >
+      <Text style={[styles.title, { color: tokens.textStrong }]}>
+        Oops! Something went wrong
+      </Text>
+      <Text style={[styles.message, { color: tokens.textBody }]}>
+        We&apos;re sorry for the inconvenience. Please try again.
+      </Text>
+      <Pressable style={styles.button} onPress={onRetry}>
+        <Text style={styles.buttonText}>Try Again</Text>
+      </Pressable>
+    </View>
+  );
+};
 
 class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false };
@@ -34,17 +54,7 @@ class ErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       return (
-        this.props.fallback || (
-          <View style={styles.container}>
-            <Text style={styles.title}>Oops! Something went wrong</Text>
-            <Text style={styles.message}>
-              We&apos;re sorry for the inconvenience. Please try again.
-            </Text>
-            <Pressable style={styles.button} onPress={this.handleRetry}>
-              <Text style={styles.buttonText}>Try Again</Text>
-            </Pressable>
-          </View>
-        )
+        this.props.fallback || <ErrorFallback onRetry={this.handleRetry} />
       );
     }
     return this.props.children;
@@ -57,20 +67,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-    backgroundColor: "#FFFCFBFB",
   },
   title: {
     fontSize: 20,
     fontFamily: "quilka",
     marginBottom: 12,
-    color: "#333",
   },
   message: {
     fontSize: 16,
     fontFamily: "abeezee",
     textAlign: "center",
     marginBottom: 24,
-    color: "#666",
   },
   button: {
     backgroundColor: "#EC4007",
