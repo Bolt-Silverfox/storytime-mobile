@@ -123,7 +123,7 @@ const makeStyles = (tokens: Tokens) =>
     card: {
       width: "100%",
       maxWidth: 360,
-      backgroundColor: "#fff",
+      backgroundColor: tokens.surface,
       borderRadius: 24,
       padding: 24,
       gap: 12,
@@ -137,7 +137,7 @@ const makeStyles = (tokens: Tokens) =>
     subtitle: {
       fontFamily: "abeezee",
       fontSize: 14,
-      color: "#666",
+      color: tokens.textBody,
       textAlign: "center",
     },
     question: {
@@ -152,7 +152,8 @@ const makeStyles = (tokens: Tokens) =>
       fontSize: 18,
       textAlign: "center",
       borderWidth: 1,
-      borderColor: "#ddd",
+      borderColor: tokens.border,
+      color: tokens.textStrong,
       borderRadius: 12,
       paddingVertical: 12,
       paddingHorizontal: 16,
@@ -187,7 +188,7 @@ const makeStyles = (tokens: Tokens) =>
     cancelText: {
       fontFamily: "abeezee",
       fontSize: 15,
-      color: "#666",
+      color: tokens.textBody,
     },
     submitText: {
       fontFamily: "abeezee",

@@ -1,6 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { StyleSheet } from "react-native";
 import useAdaptiveColumns from "../../hooks/others/useAdaptiveColumns";
+import { useTheme } from "../../theme/ThemeContext";
 
 type FlashListProps<T> = React.ComponentProps<typeof FlashList<T>>;
 
@@ -24,12 +25,13 @@ type FlashListProps<T> = React.ComponentProps<typeof FlashList<T>>;
  */
 export function AdaptiveFlashList<T>(props: FlashListProps<T>) {
   const numColumns = useAdaptiveColumns();
+  const { tokens } = useTheme();
 
   return (
     <FlashList
       key={numColumns}
       numColumns={numColumns}
-      style={styles.listContainer}
+      style={[styles.listContainer, { backgroundColor: tokens.surface }]}
       contentContainerStyle={styles.contentContainer}
       {...props}
     />
@@ -42,7 +44,6 @@ const styles = StyleSheet.create({
     flex: 1,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
-    backgroundColor: "white", // Default white; override via style prop if needed
     paddingTop: 10,
   },
   contentContainer: {
