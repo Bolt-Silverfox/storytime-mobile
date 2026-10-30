@@ -229,7 +229,7 @@ const StoryAudioPlayer = ({
           />
         </View>
         <Text
-          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : "text-fg"}`}
+          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : isBusy || !audioUrl ? "text-ink" : "text-fg"}`}
         >
           {isLoading
             ? VOICE_LABELS.loading

@@ -313,8 +313,8 @@ const StoryContentContainer = ({
         </View>
       )}
       {currentlyDisplayed === "story" && (
-        <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8">
-          <Text className="text-fg font-[quilka] text-xl">
+        <View className="bg-reader-paper overflow-hidden rounded-lg px-4 py-8">
+          <Text className="text-reader-paper-text font-[quilka] text-xl">
             {paragraphs[activeParagraph]}
           </Text>
         </View>
