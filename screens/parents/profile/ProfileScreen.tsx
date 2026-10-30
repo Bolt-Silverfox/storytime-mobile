@@ -61,7 +61,9 @@ const ProfileScreen: FC = () => {
             style={styles.header}
             imageStyle={styles.imageBackground}
           >
-            <Text className="mx-4 mt-10 font-[abeezee] text-xl">Profile</Text>
+            <Text className="text-fg mx-4 mt-10 font-[abeezee] text-xl">
+              Profile
+            </Text>
             <Avatar
               onPress={() => {
                 navigator.navigate("editParentImage");
@@ -93,7 +95,7 @@ const ProfileScreen: FC = () => {
             </CustomText>
           </View>
 
-          <View className="border-border-lighter mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+          <View className="border-line-soft bg-surface mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
             <MenuItem
               icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
               label="Notification Settings"

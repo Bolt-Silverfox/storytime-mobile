@@ -70,7 +70,7 @@ export default function ChangePasswordScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1">
+      <View className="bg-background-soft flex-1">
         <PageTitle
           title="Reset your password"
           goBack={() => navigator.goBack()}

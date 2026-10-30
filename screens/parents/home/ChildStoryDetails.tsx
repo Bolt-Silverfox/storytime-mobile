@@ -77,8 +77,8 @@ const ChildStoryDetails = () => {
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="bg-bgLight relative flex flex-1 pb-5">
-        <ScrollView contentContainerClassName="pb-10 bg-bgLight flex-col">
+      <View className="bg-background-soft relative flex flex-1 pb-5">
+        <ScrollView contentContainerClassName="pb-10 bg-background-soft flex-col">
           <ImageBackground
             source={{ uri: coverImageUrl }}
             resizeMode="cover"
@@ -120,24 +120,24 @@ const ChildStoryDetails = () => {
               </View>
             </View>
           </ImageBackground>
-          <View className="-mt-4 flex flex-col rounded-t-3xl bg-white px-4 py-6">
-            <View className="border-b-border-light flex flex-col gap-y-3 border-b pb-6">
+          <View className="bg-surface -mt-4 flex flex-col rounded-t-3xl px-4 py-6">
+            <View className="border-b-line-light flex flex-col gap-y-3 border-b pb-6">
               <Text
                 accessibilityLabel="story title"
-                className="font-[quilka] text-3xl text-black"
+                className="text-fg font-[quilka] text-3xl"
               >
                 {title}{" "}
               </Text>
               <Text
                 accessibilityLabel="story description"
-                className="text-text font-[abeezee] text-base"
+                className="text-body font-[abeezee] text-base"
               >
                 {description}
               </Text>
             </View>
-            <View className="border-border-light flex flex-col gap-y-6 border-b py-6">
+            <View className="border-line-light flex flex-col gap-y-6 border-b py-6">
               <View className="flex flex-row items-center justify-between">
-                <Text className="font-[abeezee] text-sm text-black">
+                <Text className="text-fg font-[abeezee] text-sm">
                   Select preferred story mode
                 </Text>
                 <Pressable
@@ -158,19 +158,19 @@ const ChildStoryDetails = () => {
                   className={`flex-1 rounded-lg border p-3 ${
                     selectedMode === "plain"
                       ? "border-primary/20 bg-primary"
-                      : "border-border-light bg-white/60"
+                      : "border-line-light bg-white/60"
                   }`}
                 >
                   <Text
                     className={`font-[quilka] text-sm ${
-                      selectedMode === "plain" ? "text-white" : "text-black"
+                      selectedMode === "plain" ? "text-white" : "text-fg"
                     }`}
                   >
                     Plain story mode
                   </Text>
                   <Text
                     className={`font-[abeezee] text-sm text-wrap ${
-                      selectedMode === "plain" ? "text-[#FED0C1]" : "text-text"
+                      selectedMode === "plain" ? "text-[#FED0C1]" : "text-body"
                     }`}
                   >
                     Enjoy storytelling without stress.
@@ -187,14 +187,14 @@ const ChildStoryDetails = () => {
                     className={`flex-1 rounded-lg border p-3 ${
                       selectedMode === "interactive"
                         ? "border-primary/20 bg-primary"
-                        : "border-border-light bg-white/60"
+                        : "border-line-light bg-white/60"
                     }`}
                   >
                     <Text
                       className={`font-[quilka] text-sm ${
                         selectedMode === "interactive"
                           ? "text-white"
-                          : "text-black"
+                          : "text-fg"
                       }`}
                     >
                       Interactive story mode
@@ -203,7 +203,7 @@ const ChildStoryDetails = () => {
                       className={`font-[abeezee] text-sm text-wrap ${
                         selectedMode === "interactive"
                           ? "text-[#FED0C1]"
-                          : "text-text"
+                          : "text-body"
                       }`}
                     >
                       Listen, enjoy and answer questions to the stories.
@@ -228,12 +228,12 @@ const ChildStoryDetails = () => {
             }}
           />
         </ScrollView>
-        <View className="border-t-border-light bg-bgLight border-t px-4">
+        <View className="border-t-line-light bg-background-soft border-t px-4">
           {isGuest && guestStoryAccess && !hasReachedLimit && (
             <GuestQuotaBanner remaining={guestStoryAccess.remaining} />
           )}
           {!isGuest && !isPremium && quota && !hasReachedLimit && (
-            <Text className="text-text py-2 text-center font-[abeezee] text-xs">
+            <Text className="text-body py-2 text-center font-[abeezee] text-xs">
               {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
               remaining
             </Text>

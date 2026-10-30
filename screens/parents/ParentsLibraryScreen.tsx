@@ -14,8 +14,8 @@ const ParentsLibraryScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1 flex-col gap-y-8">
-        <View className="border-b-border-lighter flex flex-row border-b bg-white px-4 pt-2 pb-5">
+      <View className="bg-background-soft flex-1 flex-col gap-y-8">
+        <View className="border-b-line-soft bg-surface flex flex-row border-b px-4 pt-2 pb-5">
           <Text className="flex-1 font-[abeezee] text-[18px]">Library</Text>
         </View>
         <View className="mx-4 flex flex-row items-center justify-between gap-x-2">
@@ -23,10 +23,10 @@ const ParentsLibraryScreen = () => {
             <Pressable
               key={filter}
               onPress={() => setStoryFilter(filter)}
-              className={`${filter === storyFilter ? "bg-blue" : "border bg-white"} flex h-10 flex-1 items-center justify-center rounded-full`}
+              className={`${filter === storyFilter ? "bg-blue" : "bg-surface border"} flex h-10 flex-1 items-center justify-center rounded-full`}
             >
               <Text
-                className={`font-[abeezee] text-base capitalize ${filter === storyFilter ? "text-white" : "text-text"}`}
+                className={`font-[abeezee] text-base capitalize ${filter === storyFilter ? "text-white" : "text-body"}`}
               >
                 {filter}
               </Text>

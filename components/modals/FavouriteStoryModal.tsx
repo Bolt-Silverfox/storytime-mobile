@@ -19,9 +19,9 @@ const FavouriteStoriesModal = ({
   });
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
-      <Text className="text-text text-center font-[abeezee] text-base">
+      <Text className="text-body text-center font-[abeezee] text-base">
         Are you sure you want to remove{" "}
-        <Text className="font-[quilka] text-lg text-black">{story.title}</Text>{" "}
+        <Text className="text-fg font-[quilka] text-lg">{story.title}</Text>{" "}
         from favourites?
       </Text>
       <View className="flex flex-col items-center gap-y-3">

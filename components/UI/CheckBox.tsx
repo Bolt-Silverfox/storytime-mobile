@@ -10,7 +10,7 @@ const CheckBox = ({ onPress, isSelected }: PropTypes) => {
   return (
     <Pressable
       onPress={onPress}
-      className={`flex size-8 flex-col items-center justify-center rounded-lg ${isSelected ? "bg-blue" : "border-border-light border bg-white"}`}
+      className={`flex size-8 flex-col items-center justify-center rounded-lg ${isSelected ? "bg-blue" : "border-line-light bg-surface border"}`}
     >
       <Icon name="Check" color="white" size={20} />
     </Pressable>

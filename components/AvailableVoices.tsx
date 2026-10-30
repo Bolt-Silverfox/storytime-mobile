@@ -133,7 +133,7 @@ const AvailableVoices = ({
     <>
       {voicesLoading && (
         <View className="flex items-center justify-center py-8">
-          <Text className="text-text font-[abeezee]">Loading voices...</Text>
+          <Text className="text-body font-[abeezee]">Loading voices...</Text>
         </View>
       )}
       {voicesError && (
@@ -149,7 +149,7 @@ const AvailableVoices = ({
           {!voiceAccessLoading && isGuest && (
             <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
               <Icon name="TriangleAlert" size={20} color="#212121" />
-              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+              <Text className="text-ink flex-1 font-[abeezee] text-xs">
                 Sign up to unlock more voices and choose your favorite!
               </Text>
             </View>
@@ -157,7 +157,7 @@ const AvailableVoices = ({
           {!voiceAccessLoading && !isPremium && !lockedVoiceId && !isGuest && (
             <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
               <Icon name="TriangleAlert" size={20} color="#212121" />
-              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+              <Text className="text-ink flex-1 font-[abeezee] text-xs">
                 {
                   "Selecting a voice sets it as your default. To change it later, you'll need to subscribe."
                 }
@@ -167,7 +167,7 @@ const AvailableVoices = ({
           {!voiceAccessLoading && !isPremium && lockedVoiceId && !isGuest && (
             <View className="mx-2 mb-4 flex-row items-center gap-x-4 rounded-2xl bg-[#ECC607] p-4">
               <Icon name="TriangleAlert" size={20} color="#212121" />
-              <Text className="flex-1 font-[abeezee] text-xs text-[#212121]">
+              <Text className="text-ink flex-1 font-[abeezee] text-xs">
                 Upgrade to premium to unlock all voices.
               </Text>
             </View>
@@ -179,7 +179,7 @@ const AvailableVoices = ({
               </Text>
             </View>
           )}
-          <View className="border-t-border-lighter flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t py-6">
+          <View className="border-t-line-soft flex flex-row flex-wrap justify-center gap-x-4 gap-y-6 border-t py-6">
             {data.map((voice) => {
               const isSelected = isVoiceSelected(voice);
               const isPreviewing = voice.id === previewingId;
@@ -205,10 +205,10 @@ const AvailableVoices = ({
                   style={isSelected ? voiceStyles.selectedShadow : undefined}
                   className={`flex w-[47.5%] flex-col rounded-3xl px-4 py-6 ${
                     !allowed
-                      ? "border-border-light border opacity-40"
+                      ? "border-line-light border opacity-40"
                       : isSelected
                         ? "border-primary border"
-                        : "border-border-light border"
+                        : "border-line-light border"
                   }`}
                 >
                   <Image
@@ -217,7 +217,7 @@ const AvailableVoices = ({
                   />
                   {(isFreeUserLocked || isGuestDefaultLocked) && (
                     <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
-                      <Text className="text-primary font-[abeezee] text-[8px]">
+                      <Text className="text-brand-text font-[abeezee] text-[8px]">
                         Default
                       </Text>
                     </View>
@@ -254,7 +254,7 @@ const AvailableVoices = ({
                     !isPremiumStoryLocked &&
                     !(isVoiceLocked && !allowed) &&
                     !(isGuest && !allowed) && <View className="mt-2 h-6" />}
-                  <Text className="mt-3 self-center font-[abeezee] text-2xl text-black">
+                  <Text className="text-fg mt-3 self-center font-[abeezee] text-2xl">
                     {voice.displayName ?? voice.name}
                   </Text>
                   {isSelected ? (
@@ -263,10 +263,10 @@ const AvailableVoices = ({
                         if (voiceAccessLoading) return;
                         handlePreview(voice.previewUrl, voice.id);
                       }}
-                      className="border-border-lighter mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border bg-white px-4 py-2"
+                      className="border-line-soft bg-surface mt-3 flex-row items-center justify-center gap-x-1 self-center rounded-2xl border px-4 py-2"
                     >
                       <Icon name="Volume2" size={18} color="black" />
-                      <Text className="font-[abeezee] text-sm text-black">
+                      <Text className="text-fg font-[abeezee] text-sm">
                         Listen
                       </Text>
                     </Pressable>
@@ -289,7 +289,7 @@ const AvailableVoices = ({
                           }
                           handlePreview(voice.previewUrl, voice.id);
                         }}
-                        className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-border"}`}
+                        className={`flex h-8 w-14 flex-row items-center justify-center rounded-full border ${isPreviewing ? "border-primary bg-primary/10" : "border-line"}`}
                       >
                         <Icon
                           name="Volume2"

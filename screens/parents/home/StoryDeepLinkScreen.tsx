@@ -54,7 +54,7 @@ const StoryDeepLinkScreen = () => {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="flex-1 items-center justify-center">
-        <Text className="text-text font-[abeezee] text-base">
+        <Text className="text-body font-[abeezee] text-base">
           Loading story...
         </Text>
       </View>

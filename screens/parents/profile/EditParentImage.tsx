@@ -20,7 +20,7 @@ export default function EditParentImage() {
   });
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bg-light flex-1">
+      <View className="bg-background-soft flex-1">
         <PageTitle title="Edit Image" goBack={() => navigator.goBack()} />
 
         <View className="flex-1">
@@ -36,7 +36,7 @@ export default function EditParentImage() {
                 />
                 <Pressable
                   onPress={() => setIsModalOpen(true)}
-                  className="border-border-light absolute right-6 bottom-0 flex size-12 items-center justify-center rounded-full border bg-white"
+                  className="border-line-light bg-surface absolute right-6 bottom-0 flex size-12 items-center justify-center rounded-full border"
                 >
                   <FontAwesome5 name="edit" size={15} color="black" />
                 </Pressable>

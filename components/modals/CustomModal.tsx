@@ -39,7 +39,7 @@ const CustomModal = ({
 
       <View
         style={{ maxHeight: Dimensions.get("window").height * maxHeight }}
-        className="absolute bottom-0 w-full flex-1 overflow-hidden rounded-t-3xl bg-white p-6 px-4 pb-12"
+        className="bg-surface absolute bottom-0 w-full flex-1 overflow-hidden rounded-t-3xl p-6 px-4 pb-12"
       >
         {isPending ? (
           <View className="flex flex-1 items-center justify-center">

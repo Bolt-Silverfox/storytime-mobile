@@ -29,7 +29,7 @@ const CustomButton = ({
         onPress={onPress}
         className="flex h-[46px] w-full flex-row items-center justify-center rounded-full border"
       >
-        <Text className="text-center font-[abeezee] text-base text-black">
+        <Text className="text-fg text-center font-[abeezee] text-base">
           {text}
         </Text>
       </Pressable>

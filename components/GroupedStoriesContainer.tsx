@@ -32,7 +32,7 @@ const GroupedStoriesContainer = ({
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="bg-bgLight flex flex-1">
+      <View className="bg-background-soft flex flex-1">
         <CustomImageBackground
           source={
             imageSource ?? {

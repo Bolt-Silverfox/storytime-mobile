@@ -70,7 +70,7 @@ const NotificationsScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex flex-1">
+      <View className="bg-background-soft flex flex-1">
         <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -82,7 +82,7 @@ const NotificationsScreen = () => {
             <Text
               onPress={() => setActiveLabel(notification)}
               key={notification}
-              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border-border text-text border"}`}
+              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border-line text-body border"}`}
             >
               {notification}
             </Text>
@@ -99,14 +99,14 @@ const NotificationsScreen = () => {
               <View className="flex flex-col gap-y-6">
                 {grouped.map((group) => (
                   <View className="flex flex-col gap-y-2.5" key={group.label}>
-                    <Text className="font-[abeezee] text-[18px] text-black">
+                    <Text className="text-fg font-[abeezee] text-[18px]">
                       {group.label}
                     </Text>
-                    <View className="border-border-lighter flex flex-col gap-y-6 rounded-xl border bg-white p-5">
+                    <View className="border-line-soft bg-surface flex flex-col gap-y-6 rounded-xl border p-5">
                       {group.notifications.map((noti) => (
                         <Pressable
                           onPress={() => handleNotificationPress(noti)}
-                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-white" : "bg-purple-light/30"}`}
+                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-surface" : "bg-purple-light/30"}`}
                           key={noti.id}
                         >
                           {getNotificationIcon(
@@ -114,11 +114,11 @@ const NotificationsScreen = () => {
                           )}
                           <View className="flex flex-1 flex-col gap-y-1.5">
                             <Text
-                              className={`w-full font-[abeezee] text-base leading-6 text-wrap ${noti.isRead ? "text-text" : "text-black"}`}
+                              className={`w-full font-[abeezee] text-base leading-6 text-wrap ${noti.isRead ? "text-body" : "text-fg"}`}
                             >
                               {noti.title}
                             </Text>
-                            <Text className="text-text font-[abeezee] text-xs leading-6">
+                            <Text className="text-body font-[abeezee] text-xs leading-6">
                               {getRelativeTime(noti.createdAt)}
                             </Text>
                           </View>

@@ -48,8 +48,8 @@ const DefaultVoiceScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-white">
-        <View className="border-b-border-lighter flex-row items-center justify-between border-b px-4 pt-4 pb-4">
+      <View className="bg-surface flex-1">
+        <View className="border-b-line-soft flex-row items-center justify-between border-b px-4 pt-4 pb-4">
           <Pressable
             onPress={() => navigation.goBack()}
             accessibilityLabel="Go back"
@@ -57,7 +57,7 @@ const DefaultVoiceScreen = () => {
           >
             <Icon name="ArrowLeft" size={24} color="black" />
           </Pressable>
-          <Text className="font-[abeezee] text-base text-black">
+          <Text className="text-fg font-[abeezee] text-base">
             Voice Selection
           </Text>
           <View className="w-6" />
@@ -67,12 +67,12 @@ const DefaultVoiceScreen = () => {
           contentContainerStyle={screenStyles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
-          <View className="border-border-lighter mx-4 mt-6 flex-row items-center justify-between rounded-2xl border p-4">
+          <View className="border-line-soft mx-4 mt-6 flex-row items-center justify-between rounded-2xl border p-4">
             <View className="flex-col gap-y-1">
-              <Text className="text-text font-[abeezee] text-base">
+              <Text className="text-body font-[abeezee] text-base">
                 Selected Story Voice
               </Text>
-              <Text className="font-[quilka] text-2xl text-black">
+              <Text className="text-fg font-[quilka] text-2xl">
                 {selectedVoiceDisplay?.displayName ??
                   selectedVoiceDisplay?.name ??
                   (!selectedVoice

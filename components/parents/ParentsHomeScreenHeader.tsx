@@ -31,7 +31,7 @@ const ParentsHomeScreenHeader = () => {
   return (
     <View
       aria-labelledby="user avatar container"
-      className="border-b-border-lighter sticky top-0 flex flex-row items-center gap-2 border-b bg-white pb-2"
+      className="border-b-line-soft bg-surface sticky top-0 flex flex-row items-center gap-2 border-b pb-2"
     >
       <View>
         <Avatar
@@ -48,7 +48,7 @@ const ParentsHomeScreenHeader = () => {
         />
       </View>
       <View className="flex min-w-0 flex-1 flex-col gap-y-1.5">
-        <Text numberOfLines={1} className="font-[abeezee] text-base">
+        <Text numberOfLines={1} className="text-fg font-[abeezee] text-base">
           {isGuest ? "Guest" : (data?.name ?? "")}
         </Text>
         <Text className="font-[abeezee] text-[12px] text-[#616161]">
@@ -77,7 +77,7 @@ const ParentsHomeScreenHeader = () => {
             onPress={() =>
               navigator.navigate("notification", { screen: "index" })
             }
-            className="border-border-lighter relative flex size-11 items-center justify-center rounded-full border bg-white"
+            className="border-line-soft bg-surface relative flex size-11 items-center justify-center rounded-full border"
           >
             <Icon name="Bell" />
             {hasUnread && (

@@ -30,16 +30,16 @@ const ExitStoryModal = ({ isOpen, onClose }: ExitModalProps) => {
 
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
-      <View className="flex flex-col gap-y-6 bg-white">
+      <View className="bg-surface flex flex-col gap-y-6">
         <Image
           source={require("../../../assets/exit-story.png")}
           className="size-40 self-center"
         />
         <View className="flex flex-col gap-y-3">
-          <Text className="text-center font-[quilka] text-2xl text-black">
+          <Text className="text-fg text-center font-[quilka] text-2xl">
             Exit story?
           </Text>
-          <Text className="text-text text-center font-[abeezee] text-base">
+          <Text className="text-body text-center font-[abeezee] text-base">
             You are about to exit this story, are you sure?
           </Text>
         </View>

@@ -90,9 +90,7 @@ const ShareStoryModal = ({
       <View className="flex flex-col gap-y-6">
         {/* Header */}
         <View className="flex flex-row items-center justify-between">
-          <Text className="font-[abeezee] text-base text-black">
-            Share link
-          </Text>
+          <Text className="text-fg font-[abeezee] text-base">Share link</Text>
           <Icon name="SquareX" onPress={onClose} />
         </View>
 
@@ -104,7 +102,7 @@ const ShareStoryModal = ({
           accessibilityRole="button"
         >
           <Text
-            className="flex-1 font-[abeezee] text-base text-black"
+            className="text-fg flex-1 font-[abeezee] text-base"
             numberOfLines={2}
             ellipsizeMode="middle"
           >
@@ -114,7 +112,7 @@ const ShareStoryModal = ({
         </Pressable>
 
         {/* Divider */}
-        <View className="bg-border-lighter h-px" />
+        <View className="bg-line-soft h-px" />
 
         {/* Social media icons */}
         <View className="flex-row items-start gap-x-3">

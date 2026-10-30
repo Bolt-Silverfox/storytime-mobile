@@ -95,7 +95,7 @@ const ConfirmResetPasswordTokenScreen = () => {
         <View style={defaultStyles.screen}>
           <View style={styles.textContainer}>
             {successMessage.length > 0 && (
-              <Text className="text-primary text-center font-[abeezee] text-xl uppercase">
+              <Text className="text-brand-text text-center font-[abeezee] text-xl uppercase">
                 {successMessage}
               </Text>
             )}

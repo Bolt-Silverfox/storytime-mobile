@@ -13,7 +13,7 @@ const GuestQuotaBanner = ({ remaining }: GuestQuotaBannerProps) => {
     <View className="py-2">
       <Text
         className={`text-center font-[abeezee] text-xs ${
-          isLast ? "text-red-500" : "text-text"
+          isLast ? "text-red-500" : "text-body"
         }`}
       >
         {isLast ? "Last free story!" : `${remaining} free stories remaining`}

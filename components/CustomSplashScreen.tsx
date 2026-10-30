@@ -2,7 +2,7 @@ import { Image, ImageBackground, Text, View } from "react-native";
 
 const CustomSplashScreen = () => {
   return (
-    <View className="flex flex-1 bg-white pt-[100px]">
+    <View className="bg-surface flex flex-1 pt-[100px]">
       <View className="flex flex-col gap-y-6 px-10">
         <Image
           className="self-center"
@@ -53,8 +53,8 @@ const CustomSplashScreen = () => {
           />
           <View className="absolute bottom-10 w-full px-10">
             <Text className="text-center font-[quilka] text-xl text-[#F1D7C9]">
-              Used by over <Text className="text-2xl">10,000+</Text> readers
-              around the world!
+              Used by over <Text className="text-fg text-2xl">10,000+</Text>{" "}
+              readers around the world!
             </Text>
           </View>
         </ImageBackground>

@@ -72,7 +72,7 @@ export default function DeleteAccount() {
               onChangeText={setEmail}
               value={email}
               placeholder="Enter email address"
-              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
+              className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.email ? "border-red-600" : "border-line"}`}
               placeholderTextColor={errors.email ? "red" : colours.text}
             />
             {errors.email && (

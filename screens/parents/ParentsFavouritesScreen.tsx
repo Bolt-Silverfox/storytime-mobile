@@ -115,9 +115,9 @@ const ParentsFavouritesScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1">
-        <View className="border-b-border-lighter flex flex-row items-center justify-between border-b bg-white px-4 pt-2 pb-5">
-          <Text className="flex-1 font-[abeezee] text-xl text-black">
+      <View className="bg-background-soft flex-1">
+        <View className="border-b-line-soft bg-surface flex flex-row items-center justify-between border-b px-4 pt-2 pb-5">
+          <Text className="text-fg flex-1 font-[abeezee] text-xl">
             Favourites
           </Text>
           <View className="flex flex-row items-center gap-x-5">
@@ -156,12 +156,12 @@ const ParentsFavouritesScreen = () => {
                     key={age.key}
                     onPress={() => setSelectedAge(age.key)}
                     className={`h-10 items-center justify-center rounded-full px-6 ${
-                      active ? "bg-blue" : "border-border border bg-white"
+                      active ? "bg-blue" : "border-line bg-surface border"
                     }`}
                   >
                     <Text
                       className={`font-[abeezee] text-base ${
-                        active ? "text-white" : "text-text"
+                        active ? "text-white" : "text-body"
                       }`}
                     >
                       {age.label}
@@ -181,13 +181,13 @@ const ParentsFavouritesScreen = () => {
                 onChangeText={setSearchQuery}
                 placeholder="Search favourites..."
                 placeholderTextColor="#666"
-                className="flex-1 font-[abeezee] text-base"
+                className="text-fg flex-1 font-[abeezee] text-base"
                 returnKeyType="search"
               />
 
               {searchQuery.length > 0 && (
                 <Pressable onPress={() => setSearchQuery("")}>
-                  <Text className="px-2 text-lg">✕</Text>
+                  <Text className="text-fg px-2 text-lg">✕</Text>
                 </Pressable>
               )}
             </View>
@@ -210,7 +210,7 @@ const ParentsFavouritesScreen = () => {
             isFetchingNextPage ? (
               <View style={styles.footer}>
                 <ActivityIndicator size="small" />
-                <Text className="text-text mt-2 font-[abeezee] text-sm">
+                <Text className="text-body mt-2 font-[abeezee] text-sm">
                   Loading more favourites...
                 </Text>
               </View>

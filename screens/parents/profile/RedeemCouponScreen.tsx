@@ -71,9 +71,7 @@ const RedeemCouponScreen = () => {
           >
             <Feather name="arrow-left" size={22} color="#1a1a1a" />
           </TouchableOpacity>
-          <Text className="font-[quilka] text-2xl text-black">
-            Redeem Coupon
-          </Text>
+          <Text className="text-fg font-[quilka] text-2xl">Redeem Coupon</Text>
         </View>
 
         {redeemResult ? (
@@ -85,7 +83,7 @@ const RedeemCouponScreen = () => {
             <Text className="text-center font-[quilka] text-2xl text-green-700">
               Premium Unlocked!
             </Text>
-            <Text className="text-center font-[abeezee] text-base text-gray-600">
+            <Text className="text-body text-center font-[abeezee] text-base">
               {redeemResult.message}
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
@@ -112,13 +110,13 @@ const RedeemCouponScreen = () => {
         ) : (
           /* Input state */
           <View className="flex-col gap-y-6">
-            <Text className="font-[abeezee] text-base text-gray-600">
+            <Text className="text-body font-[abeezee] text-base">
               Enter your coupon code below to unlock free premium access.
             </Text>
 
             {/* Code input */}
             <View className="flex-col gap-y-3">
-              <Text className="font-[abeezee] text-sm font-medium text-gray-500">
+              <Text className="text-muted font-[abeezee] text-sm font-medium">
                 Coupon Code
               </Text>
               <TextInput
@@ -130,7 +128,7 @@ const RedeemCouponScreen = () => {
                 placeholder="e.g. SUMMER25"
                 autoCapitalize="characters"
                 autoCorrect={false}
-                className="border-border-light rounded-2xl border bg-white px-4 py-3 font-[abeezee] text-base tracking-widest"
+                className="text-fg border-line-light bg-surface rounded-2xl border px-4 py-3 font-[abeezee] text-base tracking-widest"
               />
             </View>
 

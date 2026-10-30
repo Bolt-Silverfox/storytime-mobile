@@ -40,13 +40,13 @@ const EndOfStoryMessage = ({
 
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
+    <View className="bg-surface flex flex-col gap-y-5 rounded-3xl p-4">
       <Image
         source={require("../../../assets/images/congratulations_image.png")}
         className="size-[105px]"
         alt="Congratulations emoji"
       />
-      <Text className="font-[quilka] text-xl">
+      <Text className="text-fg font-[quilka] text-xl">
         Congratulations! You have successfully completed "{storyTitle}".
       </Text>
       <View className="flex flex-col gap-y-3">

@@ -23,7 +23,7 @@ const SignupScreen = () => {
   const { isLoading, handleGoogleAuth, handleAppleAuth } = useAuth();
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bg-light flex flex-1">
+      <View className="bg-background-soft flex flex-1">
         <PageTitle title="" goBack={() => navigator.goBack()} />
         <ScrollView
           showsVerticalScrollIndicator={false}
@@ -38,7 +38,7 @@ const SignupScreen = () => {
             <SignupForm />
             <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
               <View className="flex-1 border-b border-black" />
-              <Text className="text-center font-[abeezee]">
+              <Text className="text-fg text-center font-[abeezee]">
                 Or sign up with
               </Text>
               <View className="flex-1 border-b border-black" />
@@ -46,7 +46,7 @@ const SignupScreen = () => {
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                className="border-line-soft bg-surface flex size-16 items-center justify-center rounded-full border"
                 accessibilityLabel="Sign up with Google"
                 accessibilityRole="button"
                 accessibilityHint="Opens Google sign-up flow"
@@ -56,7 +56,7 @@ const SignupScreen = () => {
               {Platform.OS === "ios" && (
                 <Pressable
                   onPress={() => handleAppleAuth("signup")}
-                  className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                  className="border-line-soft bg-surface flex size-16 items-center justify-center rounded-full border"
                   accessibilityLabel="Sign up with Apple"
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-up flow"

@@ -31,7 +31,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bg-light flex flex-1">
+      <View className="bg-background-soft flex flex-1">
         <PageTitle title="" goBack={() => navigator.goBack()} />
         <ScrollView
           className=""
@@ -47,7 +47,7 @@ const LoginScreen = () => {
               <View style={styles.formItem}>
                 <Text style={defaultStyles.label}>Email:</Text>
                 <TextInput
-                  className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
+                  className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-line"}`}
                   placeholder="Enter your email"
                   placeholderTextColor={error ? "red" : colours.text}
                   onChangeText={setEmail}
@@ -83,13 +83,15 @@ const LoginScreen = () => {
             />
             <View className="flex flex-row items-center gap-x-4">
               <View className="flex-1 border-b border-black" />
-              <Text className="text-center font-[abeezee]">Or log in with</Text>
+              <Text className="text-fg text-center font-[abeezee]">
+                Or log in with
+              </Text>
               <View className="flex-1 border-b border-black" />
             </View>
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                className="border-line-soft bg-surface flex size-16 items-center justify-center rounded-full border"
                 accessibilityLabel="Sign in with Google"
                 accessibilityRole="button"
                 accessibilityHint="Opens Google sign-in flow"
@@ -99,7 +101,7 @@ const LoginScreen = () => {
               {Platform.OS === "ios" && (
                 <Pressable
                   onPress={() => handleAppleAuth("login")}
-                  className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                  className="border-line-soft bg-surface flex size-16 items-center justify-center rounded-full border"
                   accessibilityLabel="Sign in with Apple"
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-in flow"

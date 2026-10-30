@@ -19,10 +19,10 @@ const StoryCategoriesList = () => {
     >
       <View className="flex flex-col gap-y-4 pb-5">
         <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5 lg:max-w-screen-lg xl:max-w-screen-xl">
-          <Text className="font-[abeezee] text-[18px] text-black">
+          <Text className="text-fg font-[abeezee] text-[18px]">
             All categories
           </Text>
-          <Text className="text-text font-[abeezee] text-sm">
+          <Text className="text-body font-[abeezee] text-sm">
             Gain access to all our stories
           </Text>
         </View>

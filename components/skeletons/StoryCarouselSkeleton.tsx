@@ -10,7 +10,7 @@ const StoryCarouselSkeleton = ({ variant }: PropTypes) => {
     return (
       <View className="flex">
         <ScrollView
-          className="-mt-4 rounded-t-3xl bg-white pt-5"
+          className="bg-surface -mt-4 rounded-t-3xl pt-5"
           contentContainerClassName="flex-col px-4 pb-5"
           showsVerticalScrollIndicator={false}
         >

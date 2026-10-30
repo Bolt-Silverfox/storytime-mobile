@@ -39,20 +39,20 @@ const EndOfQuizMessage = ({
 
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
+    <View className="bg-surface flex flex-col gap-y-5 rounded-3xl p-4">
       <Image
         source={require("../../../assets/images/medal_emoji.png")}
         className="size-[105px] self-center"
         alt="Congratulations emoji"
       />
-      <Text className="text-center font-[quilka] text-xl">
+      <Text className="text-fg text-center font-[quilka] text-xl">
         Congratulations on successfully completing a story
       </Text>
-      <Text className="text-text text-center font-[abeezee] text-base">
+      <Text className="text-body text-center font-[abeezee] text-base">
         You have walked through the eye of the needle and successfully completed
         "{storyTitle}" and answered the questions.
       </Text>
-      <View className="border-y-border-light border-y py-5">
+      <View className="border-y-line-light border-y py-5">
         <View className="bg-blue flex flex-col gap-y-4 rounded-3xl p-5">
           <Text className="font-[abeezee] text-base text-white">
             Your test result
@@ -67,7 +67,7 @@ const EndOfQuizMessage = ({
                   {idx + 1}
                 </Text>
                 <Pressable
-                  className={`flex size-10 items-center justify-center rounded-full ${result ? "bg-white" : "bg-red-600"}`}
+                  className={`flex size-10 items-center justify-center rounded-full ${result ? "bg-surface" : "bg-red-600"}`}
                 >
                   <Icon
                     name={result ? "Check" : "X"}

@@ -205,7 +205,7 @@ const StoryAudioPlayer = ({
         e.stopPropagation();
         playAudio();
       }}
-      className={`${isBusy || !audioUrl ? "bg-white/50" : "bg-white"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
+      className={`${isBusy || !audioUrl ? "bg-white/50" : "bg-surface"} flex h-20 flex-row items-center justify-between rounded-full px-2`}
       accessibilityHint={
         isLoading
           ? "Audio is loading"
@@ -229,7 +229,7 @@ const StoryAudioPlayer = ({
           />
         </View>
         <Text
-          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : "text-black"}`}
+          className={`font-[quilka] text-xl ${isFailed ? "text-red-600" : "text-fg"}`}
         >
           {isLoading
             ? VOICE_LABELS.loading

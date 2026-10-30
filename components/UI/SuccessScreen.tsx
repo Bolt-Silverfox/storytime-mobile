@@ -16,15 +16,15 @@ const SuccessScreen = ({
 }: PropTypes) => {
   if (!visible) return null;
   return (
-    <View className="bg-bgLight absolute inset-0 flex flex-col items-center justify-center gap-y-6 p-5">
+    <View className="bg-background-soft absolute inset-0 flex flex-col items-center justify-center gap-y-6 p-5">
       <Image
         source={require("../../assets/icons/successful-reset-illustration.png")}
       />
-      <Text className="mt-4 text-center font-[quilka] text-[28px] text-black">
+      <Text className="text-fg mt-4 text-center font-[quilka] text-[28px]">
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="text-text mb-4 text-center font-[abeezee] text-base">
+        <Text className="text-body mb-4 text-center font-[abeezee] text-base">
           {secondaryMessage}
         </Text>
       )}

@@ -11,7 +11,7 @@ const SubscribedUserComponent = () => {
   return (
     <View className="flex flex-1 flex-col">
       <View className="flex flex-1 flex-col items-center justify-center">
-        <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
+        <Pressable className="bg-surface flex size-[100px] items-center justify-center rounded-full">
           <FontAwesome5 name="crown" size={50} color="#866EFF" />
         </Pressable>
         <Text className="mt-4 px-4 text-center font-[quilka] text-2xl text-white">

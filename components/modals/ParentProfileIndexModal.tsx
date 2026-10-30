@@ -40,11 +40,11 @@ const ParentProfileModal = ({
         className="flex-1 bg-black/40"
       />
 
-      <View className="absolute bottom-0 w-full rounded-t-3xl bg-white p-6 px-3 pb-12">
+      <View className="bg-surface absolute bottom-0 w-full rounded-t-3xl p-6 px-3 pb-12">
         <View className="mx-auto mb-[28px] h-[6px] w-[68px] rounded-[32px] bg-[#C5C5C5]" />
 
         <View className="mt-5 flex flex-col gap-y-3">
-          <Text className="mb-4 px-5 text-center font-[quilka] text-2xl">
+          <Text className="text-fg mb-4 px-5 text-center font-[quilka] text-2xl">
             {modalData?.prompt}
           </Text>
           <Text className="mb-4 px-5 text-center font-[abeezee] text-lg text-[#616161]">

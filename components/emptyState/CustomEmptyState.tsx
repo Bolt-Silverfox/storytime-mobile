@@ -18,11 +18,11 @@ const CustomEmptyState = ({
   return (
     <View className="flex flex-1 items-center justify-center gap-y-4">
       {url && <Image source={url} className="h-[156px] w-[156px]" />}
-      <Text className="text-center font-[abeezee] text-xl text-black">
+      <Text className="text-fg text-center font-[abeezee] text-xl">
         {message}
       </Text>
       {secondaryMessage && (
-        <Text className="text-text font-[abeezee] text-sm">
+        <Text className="text-body font-[abeezee] text-sm">
           {secondaryMessage}
         </Text>
       )}

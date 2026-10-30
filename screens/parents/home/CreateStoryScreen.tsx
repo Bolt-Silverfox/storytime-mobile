@@ -41,8 +41,8 @@ const parseAge = (value: string): number | undefined => {
 };
 
 const inputClass =
-  "rounded-2xl border border-border-light bg-white px-4 py-3 font-[abeezee] text-base text-black";
-const labelClass = "font-[abeezee] text-sm font-medium text-gray-500";
+  "rounded-2xl border border-line-light bg-surface px-4 py-3 font-[abeezee] text-base text-fg";
+const labelClass = "font-[abeezee] text-sm font-medium text-muted";
 
 const CreateStoryScreen = () => {
   const navigation = useNavigation<StoryNavigatorProp>();
@@ -129,12 +129,12 @@ const CreateStoryScreen = () => {
             >
               <Feather name="arrow-left" size={22} color="#1a1a1a" />
             </TouchableOpacity>
-            <Text className="font-[quilka] text-2xl text-black">
+            <Text className="text-fg font-[quilka] text-2xl">
               Create a Story
             </Text>
           </View>
 
-          <Text className="mb-6 font-[abeezee] text-base text-gray-600">
+          <Text className="text-body mb-6 font-[abeezee] text-base">
             Tell us what kind of story you'd like and our AI will write a fresh
             one just for you.
           </Text>
@@ -150,7 +150,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="text-text font-[abeezee] text-xs">
+              <Text className="text-body font-[abeezee] text-xs">
                 Separate multiple themes with commas.
               </Text>
             </View>
@@ -165,7 +165,7 @@ const CreateStoryScreen = () => {
                 autoCapitalize="none"
                 className={inputClass}
               />
-              <Text className="text-text font-[abeezee] text-xs">
+              <Text className="text-body font-[abeezee] text-xs">
                 Separate multiple categories with commas.
               </Text>
             </View>

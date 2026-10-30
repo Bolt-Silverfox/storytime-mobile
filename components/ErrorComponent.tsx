@@ -8,8 +8,8 @@ const ErrorComponent = ({
   refetch: () => void;
 }) => {
   return (
-    <View className="bg-bg-light my-4 flex w-full flex-col items-center justify-center gap-y-4 rounded-2xl px-6 py-10">
-      <Text className="text-primary text-center font-[quilka] text-lg">
+    <View className="bg-background-soft my-4 flex w-full flex-col items-center justify-center gap-y-4 rounded-2xl px-6 py-10">
+      <Text className="text-brand-text text-center font-[quilka] text-lg">
         {message ?? "An unexpected error occurred!"}
       </Text>
       <TouchableOpacity

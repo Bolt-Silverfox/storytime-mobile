@@ -87,10 +87,10 @@ const StoryQuiz = ({
   if (!currentQuestion) return null;
 
   return (
-    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
+    <View className="bg-surface flex flex-col gap-y-5 rounded-3xl p-4">
       <View className="flex flex-row items-center justify-between">
-        <Text className="font-[abeezee] text-base text-black">Question</Text>
-        <Text className="font-[quilka] text-xl text-black">
+        <Text className="text-fg font-[abeezee] text-base">Question</Text>
+        <Text className="text-fg font-[quilka] text-xl">
           {activeTab + 1} / {questions.length}
         </Text>
       </View>
@@ -99,7 +99,7 @@ const StoryQuiz = ({
         className="size-[105px]"
         alt="Grinning face emoji"
       />
-      <Text className="font-[quilka] text-xl text-black">
+      <Text className="text-fg font-[quilka] text-xl">
         {activeTab + 1}. {currentQuestion.question}
       </Text>
       <View className="flex flex-col gap-y-4">
@@ -122,7 +122,7 @@ const StoryQuiz = ({
                   )}
                 </View>
                 <View className="flex w-full flex-row items-center gap-x-3">
-                  <Text className="text-text flex-1 font-[abeezee] text-base capitalize">
+                  <Text className="text-body flex-1 font-[abeezee] text-base capitalize">
                     {option}
                   </Text>
                 </View>

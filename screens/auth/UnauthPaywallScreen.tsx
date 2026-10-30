@@ -65,14 +65,14 @@ const UnauthPaywallScreen = () => {
   if (purchaseComplete) {
     return (
       <SafeAreaWrapper variant="solid">
-        <View className="flex-1 items-center justify-center bg-white px-6">
+        <View className="bg-surface flex-1 items-center justify-center px-6">
           <View className="mb-6 size-20 items-center justify-center rounded-full bg-green-100">
             <FontAwesome5 name="check" size={36} color="#16a34a" />
           </View>
-          <Text className="mb-2 text-center font-[quilka] text-2xl text-black">
+          <Text className="text-fg mb-2 text-center font-[quilka] text-2xl">
             Purchase Successful!
           </Text>
-          <Text className="text-text mb-8 text-center font-[abeezee] text-base">
+          <Text className="text-body mb-8 text-center font-[abeezee] text-base">
             Create an account to access your subscription across all your
             devices.
           </Text>
@@ -85,11 +85,9 @@ const UnauthPaywallScreen = () => {
             <Pressable
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onPress={() => (navigation as any).navigate("login")}
-              className="border-border-light items-center rounded-full border py-3"
+              className="border-line-light items-center rounded-full border py-3"
             >
-              <Text className="font-[abeezee] text-base text-black">
-                Log In
-              </Text>
+              <Text className="text-fg font-[abeezee] text-base">Log In</Text>
             </Pressable>
           </View>
         </View>
@@ -114,7 +112,7 @@ const UnauthPaywallScreen = () => {
           contentContainerStyle={styles.scrollContent}
         >
           <View className="flex flex-col items-center justify-center">
-            <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
+            <Pressable className="bg-surface flex size-[100px] items-center justify-center rounded-full">
               <FontAwesome5 name="crown" size={50} color="#866EFF" />
             </Pressable>
             <Text className="mt-4 font-[quilka] text-2xl text-white">
@@ -126,7 +124,7 @@ const UnauthPaywallScreen = () => {
           </View>
           <View>
             <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-white/60" />
-            <View className="flex flex-1 flex-col gap-y-10 rounded-t-[32px] bg-white px-4 py-5">
+            <View className="bg-surface flex flex-1 flex-col gap-y-10 rounded-t-[32px] px-4 py-5">
               {errorMessage && (
                 <Text className="text-center font-[abeezee] text-xl text-red-700">
                   {errorMessage}
@@ -140,8 +138,8 @@ const UnauthPaywallScreen = () => {
                 subscriptions={subscriptions}
               />
 
-              <View className="border-y-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl">
-                <Text className="font-[quilka] text-[18px] text-black">
+              <View className="border-y-line-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl">
+                <Text className="text-fg font-[quilka] text-[18px]">
                   What you'll enjoy
                 </Text>
                 <View className="flex flex-col gap-y-5">
@@ -154,7 +152,7 @@ const UnauthPaywallScreen = () => {
                         source={require("../../assets/icons/tick.png")}
                         className="h-[14px] w-[17px]"
                       />
-                      <Text className="font-[abeezee] text-base">
+                      <Text className="text-fg font-[abeezee] text-base">
                         {benefit}
                       </Text>
                     </View>
@@ -162,7 +160,7 @@ const UnauthPaywallScreen = () => {
                 </View>
               </View>
 
-              <Text className="-mt-5 font-[abeezee] text-base text-black">
+              <Text className="text-fg -mt-5 font-[abeezee] text-base">
                 You won't just listen, you'll have an unlimited learning
                 experience, with the voice type you choose.
               </Text>
@@ -173,12 +171,12 @@ const UnauthPaywallScreen = () => {
                     className="size-6"
                     source={require("../../assets/icons/caution.png")}
                   />
-                  <Text className="flex-1 font-[abeezee] text-xs text-wrap">
+                  <Text className="text-ink flex-1 font-[abeezee] text-xs text-wrap">
                     Subscription automatically renews unless canceled at least
                     24 hours before the end of the current period.
                   </Text>
                 </View>
-                <Text className="text-text font-[abeezee] text-[10px] leading-4">
+                <Text className="text-ink-body font-[abeezee] text-[10px] leading-4">
                   {Platform.OS === "ios"
                     ? "Payment will be charged to your Apple ID account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions by going to your Account Settings on the App Store after purchase."
                     : "Payment will be charged to your Google Play account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
@@ -201,7 +199,7 @@ const UnauthPaywallScreen = () => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("termsOfService")}
                 >
-                  <Text className="text-primary font-[abeezee] text-xs underline">
+                  <Text className="text-brand-text font-[abeezee] text-xs underline">
                     Terms of Service
                   </Text>
                 </Pressable>
@@ -209,7 +207,7 @@ const UnauthPaywallScreen = () => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("privacyScreen")}
                 >
-                  <Text className="text-primary font-[abeezee] text-xs underline">
+                  <Text className="text-brand-text font-[abeezee] text-xs underline">
                     Privacy Policy
                   </Text>
                 </Pressable>
@@ -225,13 +223,13 @@ const UnauthPaywallScreen = () => {
                 {isRestoring ? (
                   <ActivityIndicator size="small" color="#866EFF" />
                 ) : (
-                  <Text className="text-primary font-[abeezee] text-sm">
+                  <Text className="text-brand-text font-[abeezee] text-sm">
                     Restore Purchases
                   </Text>
                 )}
               </Pressable>
               {restoreMessage ? (
-                <Text className="text-text text-center font-[abeezee] text-xs">
+                <Text className="text-body text-center font-[abeezee] text-xs">
                   {restoreMessage}
                 </Text>
               ) : null}

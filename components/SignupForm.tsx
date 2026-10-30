@@ -68,7 +68,7 @@ const SignupForm = () => {
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
-            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
+            className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.fullName ? "border-red-600" : "border-line"}`}
             placeholderTextColor={errors.fullName ? "red" : colours.text}
             placeholder="Enter your name"
             onChangeText={setFullName}
@@ -84,7 +84,7 @@ const SignupForm = () => {
             placeholder="Enter your email address"
             onChangeText={setEmail}
             value={email}
-            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
+            className={`text-fg relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${errors.email ? "border-red-600" : "border-line"}`}
             placeholderTextColor={errors.email ? "red" : colours.text}
           />
           {errors.email && (

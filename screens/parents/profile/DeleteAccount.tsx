@@ -101,7 +101,7 @@ export default function DeleteAccount() {
                 placeholder="Please let us know about your experience and how to improve"
                 onChangeText={setMessage}
                 value={message}
-                className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+                className={`text-fg relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base ${errors.message ? "border-red-600" : "border-line"}`}
                 placeholderTextColor={errors.message ? "red" : colours.text}
                 multiline
               />

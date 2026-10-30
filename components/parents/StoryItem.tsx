@@ -109,7 +109,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   return (
     <Pressable
       onPress={navigate}
-      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} border-border-light gap-y-1.5 rounded-2xl border bg-white p-1`}
+      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} border-line-light bg-surface gap-y-1.5 rounded-2xl border p-1`}
     >
       <View className={`relative w-full rounded-2xl`}>
         <CustomImage
@@ -142,17 +142,17 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
           </View>
           <View className="flex flex-row items-center gap-x-1">
             <Icon size={12} name="Clock" color="#616161" />
-            <Text className="text-text font-[abeezee] text-xs capitalize">
+            <Text className="text-body font-[abeezee] text-xs capitalize">
               {duration > 0 ? duration : "<1"}
               {duration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>
-        <Text className="w-full px-0.5 font-[abeezee] text-base leading-5 text-wrap text-black">
+        <Text className="text-fg w-full px-0.5 font-[abeezee] text-base leading-5 text-wrap">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">
-          <Text className="text-text font-[abeezee] text-xs">
+          <Text className="text-body font-[abeezee] text-xs">
             {ageMin} - {ageMax} years
           </Text>
           {story.readStatus === "done" && (

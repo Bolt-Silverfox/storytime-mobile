@@ -68,7 +68,7 @@ const InputNewPassword = () => {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="mx-5 flex max-w-screen-md flex-col sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
-        <Text className="my-10 text-center font-[quilka] text-2xl">
+        <Text className="text-fg my-10 text-center font-[quilka] text-2xl">
           Input your New Password
         </Text>
         <View style={styles.form}>

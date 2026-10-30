@@ -52,7 +52,7 @@ const TodaysTopPicksScreen = () => {
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="bg-bgLight flex flex-1">
+      <View className="bg-background-soft flex flex-1">
         <CustomImageBackground
           source={{
             uri: "https://res.cloudinary.com/billmal/image/upload/v1769762827/storytime/assets/generate_an_children_story_book_image_for_the_theme__Mystery_problem_solving__4_1_wx1rwq.jpg",
@@ -83,8 +83,8 @@ const TodaysTopPicksScreen = () => {
         ) : error && !stories ? (
           <ErrorComponent message={error.message} refetch={refetch} />
         ) : !stories?.length ? (
-          <View className="bg-bgLight flex flex-1 flex-col items-center justify-center gap-y-3 px-5">
-            <Text className="font-[abeezee] text-xl text-black">
+          <View className="bg-background-soft flex flex-1 flex-col items-center justify-center gap-y-3 px-5">
+            <Text className="text-fg font-[abeezee] text-xl">
               No top picks from us yet
             </Text>
             <CustomButton

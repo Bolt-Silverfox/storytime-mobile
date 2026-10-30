@@ -314,7 +314,7 @@ const StoryContentContainer = ({
       )}
       {currentlyDisplayed === "story" && (
         <View className="overflow-hidden rounded-lg bg-[#FDF5D3] px-4 py-8">
-          <Text className="font-[quilka] text-xl text-black">
+          <Text className="text-fg font-[quilka] text-xl">
             {paragraphs[activeParagraph]}
           </Text>
         </View>
@@ -364,7 +364,7 @@ const StoryContentContainer = ({
               </Pressable>
             )}
           </View>
-          <View className="rounded-2xl bg-white p-4">
+          <View className="bg-surface rounded-2xl p-4">
             <ProgressBar
               backgroundColor="#4807EC"
               currentStep={activeParagraph + 1}

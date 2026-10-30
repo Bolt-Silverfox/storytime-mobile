@@ -21,7 +21,7 @@ export default function ContactUsScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-[#FFFCFBFB]">
+      <View className="bg-background-soft flex-1">
         <PageTitle goBack={() => navigator.goBack()} title="Contact us" />
         <View className="my-8 items-center">
           <Text
@@ -32,7 +32,7 @@ export default function ContactUsScreen() {
           </Text>
         </View>
         <View className="mx-4 gap-4">
-          <View className="flex-row items-center gap-3 rounded-[20px] border-[0.5px] border-[#EAE8E8] bg-white px-[16] py-[34]">
+          <View className="bg-surface flex-row items-center gap-3 rounded-[20px] border-[0.5px] border-[#EAE8E8] px-[16] py-[34]">
             <View className="flex size-[72px] items-center justify-center rounded-full bg-[#EEE7FF]">
               <Ionicons name="mail-outline" size={40} color="#4807EC" />
             </View>
