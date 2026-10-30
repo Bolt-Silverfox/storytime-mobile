@@ -25,6 +25,7 @@ import {
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import ThemePreferenceRow from "../../../components/ThemePreferenceRow";
 import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
@@ -171,12 +172,14 @@ const ProfileScreen: FC = () => {
                 />
               }
               label="Delete Account"
-              textColor="#DC2626"
+              textColor={tokens.danger}
               isTablet={isTablet}
               onPress={() => setOpenModal("delete")}
               isLastItem
             />
           </View>
+
+          <ThemePreferenceRow />
 
           {showRateCard && (
             <View className="mx-auto mt-5 w-[90%] max-w-screen-md gap-4 rounded-2xl bg-[#4807EC] px-6 py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
@@ -217,7 +220,11 @@ export default ProfileScreen;
 
 const makeStyles = (tokens: Tokens) =>
   StyleSheet.create({
-    container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
+    container: {
+      flex: 1,
+      backgroundColor: tokens.backgroundSoft,
+      paddingTop: 0,
+    },
     scrollContent: { paddingBottom: 10 },
     header: {
       width: "100%",
@@ -240,7 +247,7 @@ const makeStyles = (tokens: Tokens) =>
       color: tokens.textStrong,
     },
     profileEmail: {
-      color: "#6B7280",
+      color: tokens.textSubtle,
       textAlign: "center",
       marginTop: 4,
     },

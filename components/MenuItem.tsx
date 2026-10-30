@@ -1,4 +1,4 @@
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useMemo, useState } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -9,6 +9,8 @@ import {
 import CustomText from "./CustomText";
 import { ChevronDown, ChevronRight } from "lucide-react-native";
 import { useDefaultStyles } from "../styles";
+import { useTheme } from "../theme/ThemeContext";
+import type { Tokens } from "../theme/tokens";
 
 type PropTypes = {
   label: string;
@@ -23,13 +25,16 @@ type PropTypes = {
 const MenuItem: FC<PropTypes> = ({
   label,
   icon,
-  textColor = "#000",
+  textColor,
   onPress,
   isTablet,
   description,
   isLastItem = false,
 }) => {
   const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
+  const labelColor = textColor ?? tokens.textStrong;
   const [isOpen, setIsOpen] = useState(false);
 
   if (description) {
@@ -48,7 +53,7 @@ const MenuItem: FC<PropTypes> = ({
               style={[
                 styles.menuItemLabel,
                 // eslint-disable-next-line react-native/no-inline-styles
-                { color: textColor, fontSize: isTablet ? 18 : 16 },
+                { color: labelColor, fontSize: isTablet ? 18 : 16 },
               ]}
             >
               {label}
@@ -85,7 +90,7 @@ const MenuItem: FC<PropTypes> = ({
             style={[
               styles.menuItemLabel,
               // eslint-disable-next-line react-native/no-inline-styles
-              { color: textColor, fontSize: isTablet ? 18 : 16 },
+              { color: labelColor, fontSize: isTablet ? 18 : 16 },
             ]}
           >
             {label}
@@ -102,18 +107,22 @@ const MenuItem: FC<PropTypes> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  menuItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingVertical: 16,
-  },
-  menuItemLeft: { flexDirection: "row", alignItems: "center" },
-  menuItemLabel: { fontSize: 16, marginLeft: 12 },
-  menuItemArrow: { fontSize: 20, color: "#FB923C" },
-  defaultBorderBottom: { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
-  noBorderBottom: { borderBottomWidth: 0 },
-  openBorder: { borderBottomWidth: 1, borderBottomColor: "#E5E7EB" },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    menuItem: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingVertical: 16,
+    },
+    menuItemLeft: { flexDirection: "row", alignItems: "center" },
+    menuItemLabel: { fontSize: 16, marginLeft: 12 },
+    menuItemArrow: { fontSize: 20, color: "#FB923C" },
+    defaultBorderBottom: {
+      borderBottomWidth: 1,
+      borderBottomColor: tokens.borderGray,
+    },
+    noBorderBottom: { borderBottomWidth: 0 },
+    openBorder: { borderBottomWidth: 1, borderBottomColor: tokens.borderGray },
+  });
 export default MenuItem;
