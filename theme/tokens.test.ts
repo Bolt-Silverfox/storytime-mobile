@@ -57,7 +57,9 @@ describe("theme tokens", () => {
     ["textStrong", "readerPanel"],
   ];
   it.each(text)("dark %s on %s meets WCAG AA 4.5:1", (fg, bg) => {
-    expect(contrast(darkTokens[fg], darkTokens[bg])).toBeGreaterThanOrEqual(4.5);
+    expect(contrast(darkTokens[fg], darkTokens[bg])).toBeGreaterThanOrEqual(
+      4.5
+    );
   });
 
   const ui: Array<[TokenName, TokenName]> = [

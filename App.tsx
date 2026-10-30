@@ -16,7 +16,7 @@ import { ApiError } from "./apiFetch";
 import { useFonts } from "expo-font";
 import { setAudioModeAsync } from "expo-audio";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { AppState, AppStateStatus, Platform } from "react-native";
 import * as Linking from "expo-linking";
 import CustomSplashScreen from "./components/CustomSplashScreen";
@@ -30,6 +30,8 @@ import RootNavigator, {
 import { ToastProvider } from "./contexts/ToastContext";
 import { RateUsProvider } from "./contexts/RateUsContext";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { ThemeProvider, useTheme } from "./theme/ThemeContext";
+import { buildNavigationTheme } from "./theme/navigationTheme";
 import { validateEnv } from "./utils/env";
 import {
   SHARE_STORY_WEB_LINK_PREFIX,
@@ -120,6 +122,34 @@ const onAppStateChange = (status: AppStateStatus) => {
   }
 };
 
+function ThemedNavigation({
+  navigationRef,
+}: {
+  navigationRef: ReturnType<
+    typeof useNavigationContainerRef<RootNavigatorParamList>
+  >;
+}) {
+  const { tokens, isDark } = useTheme();
+  const navigationTheme = useMemo(
+    () => buildNavigationTheme(tokens, isDark),
+    [tokens, isDark]
+  );
+  return (
+    <NavigationContainer
+      ref={navigationRef}
+      linking={linking}
+      theme={navigationTheme}
+      onReady={() => {
+        reactNavigationIntegration.registerNavigationContainer(navigationRef);
+      }}
+    >
+      <NotificationHandler>
+        <RootNavigator />
+      </NotificationHandler>
+    </NavigationContainer>
+  );
+}
+
 export default Sentry.wrap(function App() {
   const navigationRef = useNavigationContainerRef<RootNavigatorParamList>();
   const [loaded, error] = useFonts({
@@ -145,30 +175,20 @@ export default Sentry.wrap(function App() {
   if (!loaded || error) return <CustomSplashScreen />;
 
   return (
-    <ErrorBoundary>
-      <SafeAreaProvider>
-        <AuthProvider>
-          <ToastProvider>
-            <QueryClientProvider client={queryClient}>
-              <RateUsProvider navigationRef={navigationRef}>
-                <NavigationContainer
-                  ref={navigationRef}
-                  linking={linking}
-                  onReady={() => {
-                    reactNavigationIntegration.registerNavigationContainer(
-                      navigationRef
-                    );
-                  }}
-                >
-                  <NotificationHandler>
-                    <RootNavigator />
-                  </NotificationHandler>
-                </NavigationContainer>
-              </RateUsProvider>
-            </QueryClientProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </SafeAreaProvider>
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ErrorBoundary>
+        <SafeAreaProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <QueryClientProvider client={queryClient}>
+                <RateUsProvider navigationRef={navigationRef}>
+                  <ThemedNavigation navigationRef={navigationRef} />
+                </RateUsProvider>
+              </QueryClientProvider>
+            </ToastProvider>
+          </AuthProvider>
+        </SafeAreaProvider>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 });

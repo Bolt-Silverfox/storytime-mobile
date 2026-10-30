@@ -5,7 +5,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import colours from "../colours";
+import { useTheme } from "../theme/ThemeContext";
 import Icon from "../components/Icon";
 import ParentHomeNavigator, {
   ParentHomeNavigatorParamList,
@@ -24,6 +24,7 @@ const Tab = createBottomTabNavigator<GuestTabParamList>();
 const SignUpPromptPlaceholder = () => null;
 
 const GuestTabNavigator = () => {
+  const { tokens } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -45,10 +46,10 @@ const GuestTabNavigator = () => {
             tabBarIcon: ({ focused }) => (
               <Icon
                 name="House"
-                color={focused ? colours.primary : colours.black}
+                color={focused ? tokens.brandText : tokens.textStrong}
               />
             ),
-            tabBarActiveTintColor: colours.primary,
+            tabBarActiveTintColor: tokens.brandText,
             tabBarLabelStyle: { textTransform: "capitalize" },
           };
         }}
@@ -62,10 +63,10 @@ const GuestTabNavigator = () => {
             <Ionicons
               name="person-add-outline"
               size={24}
-              color={focused ? colours.primary : colours.black}
+              color={focused ? tokens.brandText : tokens.textStrong}
             />
           ),
-          tabBarActiveTintColor: colours.primary,
+          tabBarActiveTintColor: tokens.brandText,
           tabBarLabelStyle: { textTransform: "capitalize" },
         }}
         listeners={({ navigation }) => ({
