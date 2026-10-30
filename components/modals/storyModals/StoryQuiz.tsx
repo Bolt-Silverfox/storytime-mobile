@@ -115,7 +115,7 @@ const StoryQuiz = ({
                 className="flex-row items-center gap-x-5 rounded-2xl px-4 py-1"
               >
                 <View
-                  className={`flex h-6 w-6 items-center justify-center rounded-full border-2 p-[1px] ${isSelected ? "border-yellow" : "border-gray-300"}`}
+                  className={`flex h-6 w-6 items-center justify-center rounded-full border-2 p-[1px] ${isSelected ? "border-yellow" : "border-skeleton"}`}
                 >
                   {isSelected && (
                     <View className="h-full w-full rounded-full bg-yellow" />

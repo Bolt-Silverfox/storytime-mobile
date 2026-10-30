@@ -48,6 +48,8 @@ describe("theme tokens", () => {
     ["textMuted", "surface"],
     ["textSubtle", "background"],
     ["textSubtle", "surface"],
+    ["textFaint", "background"],
+    ["textFaint", "surface"],
     ["brandText", "background"],
     ["brandText", "surface"],
     ["brandText", "tint"],

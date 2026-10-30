@@ -45,7 +45,7 @@ const CustomButton = ({
         borderColor ? { borderColor } : null,
         borderWidth ? { borderWidth } : null,
       ]}
-      className={`mx-5 mt-4 flex h-[46px] w-full items-center justify-center self-center rounded-full sm:mx-auto ${disabled ? "bg-gray-300" : "bg-primary"}`}
+      className={`mx-5 mt-4 flex h-[46px] w-full items-center justify-center self-center rounded-full sm:mx-auto ${disabled ? "bg-skeleton" : "bg-primary"}`}
     >
       <Text
         className="text-center font-[abeezee]"

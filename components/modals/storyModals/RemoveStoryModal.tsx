@@ -51,8 +51,8 @@ const RemoveStoryModal = ({
           </Text>
           <Text className="text-center font-[abeezee] text-base text-body">
             You are about to remove{" "}
-            <Text className="font-[quilka]">{activeStory.title}</Text>{" "}
-            from your library. Are you sure?
+            <Text className="font-[quilka]">{activeStory.title}</Text> from your
+            library. Are you sure?
           </Text>
         </View>
 

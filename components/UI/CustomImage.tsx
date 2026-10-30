@@ -30,7 +30,7 @@ const CustomImage = ({
       className={`relative overflow-hidden rounded-xl ${_className ?? ""}`}
     >
       {isLoading && (
-        <View className="absolute inset-0 z-10 flex items-center justify-center bg-gray-100">
+        <View className="absolute inset-0 z-10 flex items-center justify-center bg-fill-muted">
           <ActivityIndicator size="large" />
         </View>
       )}

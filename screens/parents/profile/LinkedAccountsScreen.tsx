@@ -236,7 +236,7 @@ const makeStyles = (tokens: Tokens) =>
       flex: 1,
       paddingHorizontal: 20,
       paddingTop: 24,
-      backgroundColor: "#FFFCFBFB",
+      backgroundColor: tokens.backgroundSoft,
     },
     loader: {
       marginTop: 40,
@@ -247,7 +247,7 @@ const makeStyles = (tokens: Tokens) =>
       justifyContent: "space-between",
       paddingVertical: 16,
       borderBottomWidth: 1,
-      borderBottomColor: "#E5E7EB",
+      borderBottomColor: tokens.borderGray,
     },
     providerInfo: {
       flex: 1,
@@ -260,13 +260,13 @@ const makeStyles = (tokens: Tokens) =>
     providerEmail: {
       fontSize: 13,
       fontFamily: "abeezee",
-      color: "#6B7280",
+      color: tokens.textSubtle,
       marginTop: 2,
     },
     providerNotLinked: {
       fontSize: 13,
       fontFamily: "abeezee",
-      color: "#9CA3AF",
+      color: tokens.textFaint,
       marginTop: 2,
     },
     actionButton: {
@@ -281,7 +281,7 @@ const makeStyles = (tokens: Tokens) =>
     },
     unlinkButton: {
       backgroundColor: "transparent",
-      borderColor: "#DC2626",
+      borderColor: tokens.danger,
     },
     actionButtonText: {
       fontSize: 14,
@@ -291,6 +291,6 @@ const makeStyles = (tokens: Tokens) =>
       color: "white",
     },
     unlinkButtonText: {
-      color: "#DC2626",
+      color: tokens.danger,
     },
   });

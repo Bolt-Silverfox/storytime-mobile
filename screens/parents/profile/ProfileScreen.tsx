@@ -66,7 +66,7 @@ const ProfileScreen: FC = () => {
             style={styles.header}
             imageStyle={styles.imageBackground}
           >
-            <Text className="mx-4 mt-10 font-[abeezee] text-xl text-fg">
+            <Text className="mx-4 mt-10 font-[abeezee] text-xl text-ink">
               Profile
             </Text>
             <Avatar

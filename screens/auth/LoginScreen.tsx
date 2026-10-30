@@ -89,11 +89,11 @@ const LoginScreen = () => {
               text="Log in"
             />
             <View className="flex flex-row items-center gap-x-4">
-              <View className="flex-1 border-b border-black" />
+              <View className="flex-1 border-b border-fg" />
               <Text className="text-center font-[abeezee] text-fg">
                 Or log in with
               </Text>
-              <View className="flex-1 border-b border-black" />
+              <View className="flex-1 border-b border-fg" />
             </View>
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable

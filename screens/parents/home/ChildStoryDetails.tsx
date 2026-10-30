@@ -158,7 +158,7 @@ const ChildStoryDetails = () => {
                   className={`flex-1 rounded-lg border p-3 ${
                     selectedMode === "plain"
                       ? "border-primary/20 bg-primary"
-                      : "border-line-light bg-white/60"
+                      : "border-line-light bg-surface/60"
                   }`}
                 >
                   <Text
@@ -187,7 +187,7 @@ const ChildStoryDetails = () => {
                     className={`flex-1 rounded-lg border p-3 ${
                       selectedMode === "interactive"
                         ? "border-primary/20 bg-primary"
-                        : "border-line-light bg-white/60"
+                        : "border-line-light bg-surface/60"
                     }`}
                   >
                     <Text

@@ -25,10 +25,12 @@ import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import ParentalGateModal from "../modals/ParentalGateModal";
 import useParentalGate from "../../hooks/others/useParentalGate";
+import { useTheme } from "../../theme/ThemeContext";
 
 const IS_IOS = Platform.OS === "ios";
 
 const UnsubscribedUserComponent = () => {
+  const { tokens } = useTheme();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const navigator = useNavigation<any>();
 
@@ -226,11 +228,14 @@ const UnsubscribedUserComponent = () => {
                           validateMutation.isPending ||
                           redeemMutation.isPending
                         }
-                        className="rounded-xl bg-gray-100 px-3 py-2"
+                        className="rounded-xl bg-fill-muted px-3 py-2"
                         activeOpacity={0.7}
                       >
                         {validateMutation.isPending ? (
-                          <ActivityIndicator size="small" color="#666" />
+                          <ActivityIndicator
+                            size="small"
+                            color={tokens.textBody}
+                          />
                         ) : (
                           <Text className="font-[abeezee] text-sm text-body">
                             Check

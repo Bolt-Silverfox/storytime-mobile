@@ -44,7 +44,7 @@ const SubscriptionOptions = ({
             className={`flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple bg-purple/10" : "border border-line-light"}`}
           >
             <View
-              className={`flex size-6 items-center justify-center rounded-full border-2 ${isSelected ? "border-purple bg-purple" : "border-gray-300"}`}
+              className={`flex size-6 items-center justify-center rounded-full border-2 ${isSelected ? "border-purple bg-purple" : "border-skeleton"}`}
             >
               {isSelected && (
                 <View className="size-2.5 rounded-full bg-surface" />

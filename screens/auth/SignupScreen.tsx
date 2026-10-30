@@ -45,11 +45,11 @@ const SignupScreen = () => {
             </View>
             <SignupForm />
             <View className="flex max-w-screen-sm flex-row items-center gap-x-4 sm:mx-auto">
-              <View className="flex-1 border-b border-black" />
+              <View className="flex-1 border-b border-fg" />
               <Text className="text-center font-[abeezee] text-fg">
                 Or sign up with
               </Text>
-              <View className="flex-1 border-b border-black" />
+              <View className="flex-1 border-b border-fg" />
             </View>
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
