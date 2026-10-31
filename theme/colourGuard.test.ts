@@ -45,9 +45,16 @@ const EXEMPTIONS: Exemption[] = [
   ex(
     "components/AvailableVoices.tsx",
     "text-palette-class",
-    "text-amber-",
+    "text-amber-700",
     "fixed amber banner/pill (stock amber-50) with fixed amber text",
-    4
+    1
+  ),
+  ex(
+    "components/AvailableVoices.tsx",
+    "text-palette-class",
+    "text-amber-600",
+    "fixed amber banner/pill (stock amber-50) with fixed amber text",
+    3
   ),
   ex(
     "components/CustomSplashScreen.tsx",
@@ -87,16 +94,30 @@ const EXEMPTIONS: Exemption[] = [
   ex(
     "components/NotificationPermissionBanner.tsx",
     "text-palette-class",
-    "text-amber-",
+    "text-amber-800",
     "fixed amber banner/pill (stock amber-50) with fixed amber text",
-    2
+    1
+  ),
+  ex(
+    "components/NotificationPermissionBanner.tsx",
+    "text-palette-class",
+    "text-amber-900",
+    "fixed amber banner/pill (stock amber-50) with fixed amber text",
+    1
   ),
   ex(
     "components/NotificationPermissionBanner.tsx",
     "color-prop",
-    'color="#',
+    'color="#d97706"',
     "fixed amber banner/pill (stock amber-50) with fixed amber text",
-    2
+    1
+  ),
+  ex(
+    "components/NotificationPermissionBanner.tsx",
+    "color-prop",
+    'color="#92400e"',
+    "fixed amber banner/pill (stock amber-50) with fixed amber text",
+    1
   ),
   ex(
     "components/StoryAudioPlayer.tsx",
@@ -479,9 +500,51 @@ const EXEMPTIONS: Exemption[] = [
   ex(
     "utils/utils.tsx",
     "color-prop",
-    'color="#',
+    'color="#ECC607"',
     "yellow/cyan accent icons, bright enough on both surfaces",
+    1
+  ),
+  ex(
+    "utils/utils.tsx",
+    "color-prop",
+    'color="#07CAEC"',
+    "yellow/cyan accent icons, bright enough on both surfaces",
+    1
+  ),
+  ex(
+    "components/modals/RateUsModal.tsx",
+    "color-prop",
+    'color={value <= rating ? "#ECC607" : "#D0D0D0"}',
+    "gold star / faint grey empty star, both readable as graphics on both surfaces",
     2
+  ),
+  ex(
+    "components/modals/storyModals/EndOfQuizMessage.tsx",
+    "color-prop",
+    'color={result ? "#4807EC" : "white"}',
+    "icon on the fixed white / fixed red-600 result badge",
+    1
+  ),
+  ex(
+    "screens/auth/ConfirmResetPasswordToken.tsx",
+    "color-prop",
+    'focusColor={isDark ? tokens.link : "blue"}',
+    "dark uses the link token; light keeps the original blue focus ring",
+    1
+  ),
+  ex(
+    "screens/auth/VerifyEmailScreen.tsx",
+    "color-prop",
+    'focusColor={isDark ? tokens.link : "blue"}',
+    "dark uses the link token; light keeps the original blue focus ring",
+    1
+  ),
+  ex(
+    "screens/parents/profile/DeleteAccount.tsx",
+    "color-prop",
+    'color={reason.checked ? "#4630EB" : undefined}',
+    "native checkbox tint, mid-tone blue readable on both surfaces",
+    1
   ),
 ];
 
@@ -526,6 +589,7 @@ describe("applyExemptions", () => {
     rule: "color-prop",
     line,
     text: '<Icon color="#212121" />',
+    match: 'color="#212121"',
   });
   const e: Exemption = {
     file: "a.tsx",
@@ -544,6 +608,19 @@ describe("applyExemptions", () => {
   it("fails when a 4th matching line is added to an exempted file", () => {
     const r = applyExemptions([f(1), f(2), f(3), f(4)], [e]);
     expect(r.mismatched).toHaveLength(1);
+  });
+
+  it("an exemption for one colour does not cover a recoloured icon", () => {
+    const recoloured = { ...f(1), match: 'color="#000000"' };
+    const r = applyExemptions([f(1), f(2), f(3), recoloured], [e]);
+    expect(r.unexempt).toEqual([recoloured]);
+    expect(r.mismatched).toEqual([]);
+  });
+
+  it("a second violation on an exempted line is a separate finding", () => {
+    const second = { ...f(1), match: 'color="#000000"' };
+    const r = applyExemptions([f(1), second, f(2), f(3)], [e]);
+    expect(r.unexempt).toEqual([second]);
   });
 
   it("fails when fewer lines match (stale exemption)", () => {
