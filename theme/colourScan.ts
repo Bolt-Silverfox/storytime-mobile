@@ -174,7 +174,9 @@ function scanInkAssets(src: string): Finding[] {
   for (const m of src.matchAll(INK_REQUIRE)) {
     const idx = m.index ?? 0;
     const open = src.lastIndexOf("<Image", idx);
-    const tag = open < 0 ? "" : src.slice(open, openingTagEnd(src, open));
+    const end = open < 0 ? -1 : openingTagEnd(src, open);
+    // The require must sit inside the Image's own opening tag.
+    const tag = open >= 0 && end > idx ? src.slice(open, end) : "";
     if (/tintColor/.test(tag)) continue;
     out.push({
       line: src.slice(0, idx).split("\n").length,

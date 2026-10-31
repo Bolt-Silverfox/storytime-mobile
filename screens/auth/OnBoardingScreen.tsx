@@ -134,7 +134,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               <Pressable
                 onPress={enterGuestMode}
                 style={styles.buttonWhite}
-                className="border-[0.5px] border-[#4A413F]"
+                className="border-[0.5px]"
               >
                 <Text style={styles.textDark} className="text-center">
                   Continue as a Guest
@@ -221,9 +221,9 @@ const makeStyles = (
     buttonWhite: {
       ...defaultStyles.button,
       backgroundColor: "white",
-      ...(isDark
-        ? { backgroundColor: tokens.surfaceCream, borderColor: tokens.border }
-        : {}),
+      // Single source for the border colour (tokens.border is #4A413F in light).
+      borderColor: tokens.border,
+      ...(isDark ? { backgroundColor: tokens.surfaceCream } : {}),
     },
     paginationDot: {
       backgroundColor: "#EC2907",

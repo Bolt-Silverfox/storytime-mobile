@@ -396,13 +396,6 @@ const EXEMPTIONS: Exemption[] = [
   ),
   ex(
     "screens/auth/OnBoardingScreen.tsx",
-    "border-hex-class",
-    "#4A413F",
-    "fixed white onboarding button",
-    1
-  ),
-  ex(
-    "screens/auth/OnBoardingScreen.tsx",
     "color-style",
     '"#212121"',
     "dark text on fixed white onboarding button",
