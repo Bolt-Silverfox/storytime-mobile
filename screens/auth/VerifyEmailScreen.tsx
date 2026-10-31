@@ -27,7 +27,7 @@ const OTP_DURATION = 60;
 
 const VerifyEmailScreen = () => {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
     () => makeStyles(defaultStyles, tokens),
     [defaultStyles, tokens]
@@ -135,7 +135,7 @@ const VerifyEmailScreen = () => {
                 pinCodeTextStyle: styles.text,
                 focusedPinCodeContainerStyle: styles.boxFocused,
               }}
-              focusColor="blue"
+              focusColor={isDark ? tokens.link : "blue"}
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
             <Pressable disabled={isLoading || countDown > 0}>
