@@ -12,6 +12,7 @@
  *  - colour set by a child component or a prop (color={tokens.x}, style={{ color: tokens.x }})
  *  - defaultStyles / StyleSheet text colours, which spread themed styles
  *  - native defaults: ActivityIndicator/RefreshControl/Switch colours, keyboardAppearance, Lottie art
+ *  - colour props whose value is built outside the prop (const c = "#000"; color={c})
  *  - hooks/, contexts/ and App.tsx are not scanned
  */
 
@@ -297,7 +298,7 @@ const EXEMPTIONS: Exemption[] = [
   ex(
     "components/modals/storyModals/EndOfQuizMessage.tsx",
     "bg-white-class",
-    '"bg-white"',
+    "bg-white",
     "result badge on fixed brand-blue card",
     1
   ),
@@ -515,7 +516,7 @@ const EXEMPTIONS: Exemption[] = [
     "components/modals/RateUsModal.tsx",
     "color-prop",
     'color={value <= rating ? "#ECC607" : "#D0D0D0"}',
-    "gold star / faint grey empty star, both readable as graphics on both surfaces",
+    "pre-existing star colours, light deliberately unchanged (1.66:1 / 1.54:1 on white); gold and grey are visible on dark",
     2
   ),
   ex(
@@ -542,8 +543,8 @@ const EXEMPTIONS: Exemption[] = [
   ex(
     "screens/parents/profile/DeleteAccount.tsx",
     "color-prop",
-    'color={reason.checked ? "#4630EB" : undefined}',
-    "native checkbox tint, mid-tone blue readable on both surfaces",
+    'color={ reason.checked ? isDark ? tokens.blueAccent : "#4630EB" : undefined }',
+    "light-only branch (7.28:1 on white); dark uses tokens.blueAccent (6.92:1)",
     1
   ),
 ];

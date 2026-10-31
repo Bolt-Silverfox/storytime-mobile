@@ -27,7 +27,7 @@ type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
 export default function DeleteAccount() {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [deleteCheckList, setDeleteAccountCheckList] =
@@ -93,7 +93,13 @@ export default function DeleteAccount() {
                 </Text>
                 <Checkbox
                   value={reason.checked}
-                  color={reason.checked ? "#4630EB" : undefined}
+                  color={
+                    reason.checked
+                      ? isDark
+                        ? tokens.blueAccent
+                        : "#4630EB"
+                      : undefined
+                  }
                   pointerEvents="none"
                 />
               </Pressable>
