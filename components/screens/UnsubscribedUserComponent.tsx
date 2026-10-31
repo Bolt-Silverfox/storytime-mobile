@@ -30,7 +30,7 @@ import { useTheme } from "../../theme/ThemeContext";
 const IS_IOS = Platform.OS === "ios";
 
 const UnsubscribedUserComponent = () => {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const navigator = useNavigation<any>();
 
@@ -153,6 +153,9 @@ const UnsubscribedUserComponent = () => {
                   <Image
                     source={require("../../assets/icons/tick.png")}
                     className="h-[14px] w-[17px]"
+                    style={
+                      isDark ? { tintColor: tokens.blueAccent } : undefined
+                    }
                   />
                   <Text className="font-[abeezee] text-base text-fg">
                     {benefit}

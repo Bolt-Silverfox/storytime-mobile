@@ -8,6 +8,7 @@ import { SubscriptionPlan } from "../../types";
 import SubscriptionOptions from "../SubscriptionOptions";
 import CustomButton from "../UI/CustomButton";
 import CustomModal, { CustomModalProps } from "./CustomModal";
+import { useTheme } from "../../theme/ThemeContext";
 import ParentalGateModal from "./ParentalGateModal";
 import useParentalGate from "../../hooks/others/useParentalGate";
 
@@ -16,6 +17,7 @@ type PropTypes = Pick<CustomModalProps, "isOpen" | "onClose"> & {
 };
 
 const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
+  const { tokens, isDark } = useTheme();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const gate = useParentalGate();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -105,6 +107,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
                 <Image
                   source={require("../../assets/icons/tick.png")}
                   className="h-[14px] w-[17px]"
+                  style={isDark ? { tintColor: tokens.blueAccent } : undefined}
                 />
                 <Text className="font-[abeezee] text-base text-fg">
                   {benefit}

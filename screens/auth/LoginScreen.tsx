@@ -25,7 +25,7 @@ import type { Tokens } from "../../theme/tokens";
 
 const LoginScreen = () => {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
     () => makeStyles(defaultStyles, tokens),
     [defaultStyles, tokens]
@@ -115,6 +115,9 @@ const LoginScreen = () => {
                 >
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
+                    style={
+                      isDark ? { tintColor: tokens.textStrong } : undefined
+                    }
                   />
                 </Pressable>
               )}

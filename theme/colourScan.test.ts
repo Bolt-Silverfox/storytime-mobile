@@ -214,6 +214,9 @@ describe("colour scanner", () => {
       const two =
         '<Image source={require("a/tick.png")} />\n<Image source={require("a/b.png")} style={{ tintColor: t }} />';
       expect(rules(two)).toContain("untinted-ink-asset");
+      const reversed =
+        '<Image source={require("a/b.png")} style={{ tintColor: t }} />\n<Image source={require("a/tick.png")} />';
+      expect(rules(reversed)).toContain("untinted-ink-asset");
     });
   });
 

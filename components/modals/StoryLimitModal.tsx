@@ -41,7 +41,7 @@ const StoryLimitModal = ({
   mode = "blocking",
   onClose,
 }: PropTypes) => {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const modalStyles = useMemo(() => makeModalStyles(tokens), [tokens]);
   const navigator = useNavigation<
     ProtectedRoutesNavigationProp | GuestNavigatorProp
@@ -180,7 +180,10 @@ const StoryLimitModal = ({
                   <View key={benefit} style={modalStyles.benefitRow}>
                     <Image
                       source={require("../../assets/icons/tick.png")}
-                      style={modalStyles.tickIcon}
+                      style={[
+                        modalStyles.tickIcon,
+                        isDark && { tintColor: tokens.blueAccent },
+                      ]}
                     />
                     <Text style={modalStyles.benefitText}>{benefit}</Text>
                   </View>

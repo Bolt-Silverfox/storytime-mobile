@@ -20,11 +20,13 @@ import CustomButton from "../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import ParentalGateModal from "../../components/modals/ParentalGateModal";
 import useParentalGate from "../../hooks/others/useParentalGate";
+import { useTheme } from "../../theme/ThemeContext";
 import Icon from "../../components/Icon";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 
 const UnauthPaywallScreen = () => {
+  const { tokens, isDark } = useTheme();
   const navigation = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
@@ -151,6 +153,9 @@ const UnauthPaywallScreen = () => {
                       <Image
                         source={require("../../assets/icons/tick.png")}
                         className="h-[14px] w-[17px]"
+                        style={
+                          isDark ? { tintColor: tokens.blueAccent } : undefined
+                        }
                       />
                       <Text className="font-[abeezee] text-base text-fg">
                         {benefit}

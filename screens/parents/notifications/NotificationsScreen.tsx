@@ -23,7 +23,7 @@ const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
 
 const NotificationsScreen = () => {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
   const [selectedNotification, setSelectedNotification] =
@@ -129,6 +129,11 @@ const NotificationsScreen = () => {
                             <Image
                               className="size-8"
                               source={require("../../../assets/icons/middot.png")}
+                              style={
+                                isDark
+                                  ? { tintColor: tokens.blueAccent }
+                                  : undefined
+                              }
                             />
                           )}
                         </Pressable>
