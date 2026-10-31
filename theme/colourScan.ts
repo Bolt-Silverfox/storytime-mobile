@@ -5,6 +5,9 @@
 
 export type Finding = { line: number; rule: string; text: string };
 
+/** Hex colours that read fine on both light and dark surfaces (brand/white). */
+const SAFE_HEX = new Set(["#ec4007", "#866eff", "#fff", "#ffffff"]);
+
 const HEX = "#[0-9A-Fa-f]{3,8}";
 const FIXED_TEXT_COLOURS =
   "black|red|#000|#000000|#212121|#333|#333333|#616161|#666|#666666|#1a1a1a|#1A1A1A";
@@ -27,7 +30,7 @@ const LINE_RULES: Array<[string, RegExp]> = [
   [
     "color-prop",
     new RegExp(
-      `\\b(color|tintColor|fill|stroke)\\s*=\\s*(\\{\\s*)?["'](${FIXED_TEXT_COLOURS})["']`,
+      `\\b(color|tintColor|fill|stroke|focusColor)\\s*=\\s*(\\{\\s*)?["'](${HEX}|black|red|blue)["']`,
       "i"
     ),
   ],
@@ -40,7 +43,7 @@ const LINE_RULES: Array<[string, RegExp]> = [
   ],
   [
     "light-background-style",
-    /\bbackgroundColor\s*:\s*["'](white|#fff|#ffffff|#fafafa|#f5f5f5|#f3f4f6)["']/i,
+    /\bbackgroundColor\s*:\s*["'](white|#fff|#ffffff|#fafafa|#f5f5f5|#f3f4f6|#fff9c4|#fff8d7|#f3f0ff)["']/i,
   ],
   ["border-color-style", /\bborderColor\s*:\s*["']#[0-9A-Fa-f]{3,8}["']/],
   ["rgb-literal", /["'`]rgba?\(\s*\d/],
@@ -48,10 +51,10 @@ const LINE_RULES: Array<[string, RegExp]> = [
 
 /** Theme-token text classes, which turn light in dark mode. */
 const TOKEN_TEXT =
-  /(^|[\s"'`])text-(fg|body|muted|link|brand-text|purple-text|danger(-strong|-soft)?|success(-strong)?|price|pink)(?![\w-])/;
+  /(^|[\s"'`])text-(fg|body|muted|link|brand-text|purple-text|danger(-strong|-soft)?|success(-strong)?|price|pink|surface|background|reader-highlight-text)(?![\w-])/;
 /** Fixed light backgrounds that do not follow the theme. */
 const FIXED_LIGHT_BG = new RegExp(
-  `bg-(red|green|yellow|amber|orange|rose|lime)-(50|100|200)(?![\\d])|bg-\\[${HEX}\\]|bg-white(?![\\w/-])|bg-yellow(?![\\w-])`
+  `bg-(red|green|yellow|amber|orange|rose|lime)-(50|100|200)(?![\\d])|bg-(blue|purple|pink|gray)-\\d+|bg-yellow-300|bg-(primary-light|purple-light|border-light|border-lighter|bgLight)(?![\\w-])|bg-\\[${HEX}\\]|bg-white(?![\\w/-])|bg-yellow(?![\\w-])`
 );
 
 const STRING_LITERAL = /"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g;
@@ -61,7 +64,10 @@ export function scanSource(src: string): Finding[] {
   const lines = src.split("\n");
   lines.forEach((text, i) => {
     for (const [rule, re] of LINE_RULES) {
-      if (re.test(text)) out.push({ line: i + 1, rule, text: text.trim() });
+      const m = re.exec(text);
+      if (!m) continue;
+      if (rule === "color-prop" && SAFE_HEX.has(m[3].toLowerCase())) continue;
+      out.push({ line: i + 1, rule, text: text.trim() });
     }
   });
   for (const m of src.matchAll(STRING_LITERAL)) {
@@ -120,4 +126,50 @@ function scanDescendants(src: string): Finding[] {
     }
   }
   return out;
+}
+
+/** True if `chunk` (from `<Name` up to a string literal) has no tag-closing `>` at brace depth 0. */
+function insideOpeningTag(chunk: string): boolean {
+  let depth = 0;
+  for (const c of chunk) {
+    if (c === "{") depth += 1;
+    else if (c === "}") depth -= 1;
+    else if (c === ">" && depth === 0) return false;
+  }
+  return true;
+}
+
+export type Exemption = {
+  file: string;
+  rule: string;
+  includes: string;
+  /** Exact number of findings this exemption covers (default 1). */
+  count?: number;
+  reason: string;
+};
+
+type FileFinding = Finding & { file: string };
+
+const covers = (e: Exemption, f: FileFinding) =>
+  e.file === f.file && e.rule === f.rule && f.text.includes(e.includes);
+
+/**
+ * Findings not covered by any exemption, plus exemptions whose number of
+ * covered findings differs from their expected count (more OR fewer).
+ */
+export function applyExemptions(
+  findings: FileFinding[],
+  exemptions: Exemption[]
+) {
+  const unexempt = findings.filter(
+    (f) => !exemptions.some((e) => covers(e, f))
+  );
+  const mismatched = exemptions
+    .map((e) => ({ e, actual: findings.filter((f) => covers(e, f)).length }))
+    .filter(({ e, actual }) => actual !== (e.count ?? 1))
+    .map(
+      ({ e, actual }) =>
+        `${e.file} [${e.rule}] "${e.includes}": expected ${e.count ?? 1}, found ${actual}`
+    );
+  return { unexempt, mismatched };
 }

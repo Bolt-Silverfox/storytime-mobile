@@ -48,6 +48,28 @@ describe("colour scanner", () => {
     else expect(rules(src)).toEqual([]);
   });
 
+  it("flags any non-safe hex colour prop, focusColor and widened shapes", () => {
+    expect(rules('<Spinner color="#4807EC" />')).toContain("color-prop");
+    expect(rules('<Otp focusColor="blue" />')).toContain("color-prop");
+    expect(rules('<Icon color="#EC4007" />')).toEqual([]);
+    expect(rules('backgroundColor: "#FFF9C4"')).toContain(
+      "light-background-style"
+    );
+    expect(
+      rules(
+        '<View className="bg-blue-100"><Text className="text-surface">x</Text></View>'
+      )
+    ).toContain("token-text-inside-fixed-light-bg");
+  });
+
+  it("ignores fixed-bg class strings that are not on an opening tag", () => {
+    expect(
+      rules(
+        '<View className="x"><Text>a</Text></View>;\nconst [c] = useState("bg-red-50");\n<Text className="text-danger">b</Text>'
+      )
+    ).toEqual([]);
+  });
+
   it("does not flag token text outside the fixed-bg element", () => {
     expect(
       rules(
