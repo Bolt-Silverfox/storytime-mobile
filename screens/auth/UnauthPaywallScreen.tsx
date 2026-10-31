@@ -26,7 +26,7 @@ import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
 
 const UnauthPaywallScreen = () => {
-  const { tokens, isDark } = useTheme();
+  const { tokens } = useTheme();
   const navigation = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(null);
   const [purchaseComplete, setPurchaseComplete] = useState(false);
@@ -153,9 +153,7 @@ const UnauthPaywallScreen = () => {
                       <Image
                         source={require("../../assets/icons/tick.png")}
                         className="h-[14px] w-[17px]"
-                        style={
-                          isDark ? { tintColor: tokens.blueAccent } : undefined
-                        }
+                        style={{ tintColor: tokens.blueAccent }}
                       />
                       <Text className="font-[abeezee] text-base text-fg">
                         {benefit}

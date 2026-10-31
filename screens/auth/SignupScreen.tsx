@@ -71,9 +71,9 @@ const SignupScreen = () => {
                 >
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
-                    style={
-                      isDark ? { tintColor: tokens.textStrong } : undefined
-                    }
+                    style={{
+                      tintColor: isDark ? tokens.textStrong : "#000000",
+                    }}
                   />
                 </Pressable>
               )}
