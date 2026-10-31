@@ -62,6 +62,61 @@ describe("colour scanner", () => {
     ).toContain("token-text-inside-fixed-light-bg");
   });
 
+  it("ignores a fixed-bg string in code after a COMPLETE opening tag (repro 1)", () => {
+    const src =
+      '<View style={{}}>\n const [c] = useState("bg-red-50");\n<Text className="text-danger">b</Text></View>';
+    expect(rules(src)).not.toContain("token-text-inside-fixed-light-bg");
+  });
+
+  it("ignores a fixed-bg string inside a .map callback (repro 2)", () => {
+    const src = [
+      "<View>",
+      "  {items.map((i) => {",
+      '    const c = i.ok ? "bg-red-50" : "x";',
+      '    return <Text className="text-danger">{i}</Text>;',
+      "  })}",
+      "</View>",
+    ].join("\n");
+    expect(rules(src)).not.toContain("token-text-inside-fixed-light-bg");
+  });
+
+  it("still flags a fixed bg on a multi-line opening tag", () => {
+    const src =
+      '<View\n  accessibilityLabel="x"\n  className="bg-red-50 p-2"\n>\n<Text className="text-danger">b</Text></View>';
+    expect(rules(src)).toContain("token-text-inside-fixed-light-bg");
+  });
+
+  it("reports every colour on one line, not just the first", () => {
+    const n = (src: string) =>
+      scanSource(src).filter((f) => f.rule === "color-prop").length;
+    expect(n('<Icon color="#fff" /><Icon color="#000" />')).toBe(1);
+    expect(n('<A color="#4807EC" /><B color="#000" />')).toBe(2);
+  });
+
+  it("reports every hit of a line rule, keyed by fragment", () => {
+    const hits = scanSource(
+      '<Text className="text-red-600 text-green-700">x</Text>'
+    ).filter((f) => f.rule === "text-palette-class");
+    expect(hits.map((h) => h.match)).toEqual([
+      "text-red-600",
+      "text-green-700",
+    ]);
+  });
+
+  it("flags unsafe literals inside color={...} ternaries", () => {
+    expect(rules('<Icon color={isDark ? "#fff" : "#4807EC"} />')).toContain(
+      "color-prop"
+    );
+    expect(rules('<Icon color={ok ? "red" : tokens.x} />')).toContain(
+      "color-prop"
+    );
+    expect(rules('<Icon color={isDark ? tokens.link : "blue"} />')).toContain(
+      "color-prop"
+    );
+    expect(rules('<Icon color={isDark ? "#fff" : "#EC4007"} />')).toEqual([]);
+    expect(rules("<Icon color={tokens.textStrong} />")).toEqual([]);
+  });
+
   it("ignores fixed-bg class strings that are not on an opening tag", () => {
     expect(
       rules(

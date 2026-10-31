@@ -3,7 +3,13 @@
  * colourGuard.test.ts. Pure functions so the rules themselves can be tested.
  */
 
-export type Finding = { line: number; rule: string; text: string };
+/** `match` is what exemptions key on: the offending fragment, or the line. */
+export type Finding = {
+  line: number;
+  rule: string;
+  text: string;
+  match: string;
+};
 
 /** Hex colours that read fine on both light and dark surfaces (brand/white). */
 const SAFE_HEX = new Set(["#ec4007", "#866eff", "#fff", "#ffffff"]);
@@ -27,13 +33,6 @@ const LINE_RULES: Array<[string, RegExp]> = [
   ["bg-black-class", /(^|[\s"'`])bg-black(?![\w/-])/],
   ["border-black-class", /(^|[\s"'`])border(-[tblrxy])?-black(?![\w-])/],
   ["bg-white-hex-class", /bg-\[#(f{3}|f{6}|f{8})\]/i],
-  [
-    "color-prop",
-    new RegExp(
-      `\\b(color|tintColor|fill|stroke|focusColor)\\s*=\\s*(\\{\\s*)?["'](${HEX}|black|red|blue)["']`,
-      "i"
-    ),
-  ],
   [
     "color-style",
     new RegExp(
@@ -59,15 +58,43 @@ const FIXED_LIGHT_BG = new RegExp(
 
 const STRING_LITERAL = /"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g;
 
+/**
+ * `color`-like props. The brace form is scanned for every string literal so a
+ * ternary (`color={dark ? "#fff" : "#4807EC"}`) cannot hide a fixed colour.
+ */
+const COLOR_PROP =
+  /\b(?:color|tintColor|fill|stroke|focusColor)\s*=\s*(?:\{([^{}\n]*)\}|("[^"\n]*"|'[^'\n]*'))/gi;
+const FIXED_LITERAL = new RegExp(`["'](${HEX}|black|red|blue)["']`, "gi");
+
 export function scanSource(src: string): Finding[] {
   const out: Finding[] = [];
   const lines = src.split("\n");
   lines.forEach((text, i) => {
     for (const [rule, re] of LINE_RULES) {
-      const m = re.exec(text);
-      if (!m) continue;
-      if (rule === "color-prop" && SAFE_HEX.has(m[3].toLowerCase())) continue;
-      out.push({ line: i + 1, rule, text: text.trim() });
+      const all = new RegExp(re.source, `${re.flags}g`);
+      const hits = [...text.matchAll(all)];
+      for (const hit of hits) {
+        out.push({
+          line: i + 1,
+          rule,
+          text: text.trim(),
+          // Several hits of one rule on a line are told apart by fragment; a
+          // lone hit keeps the whole line so exemptions can quote context.
+          match:
+            hits.length > 1 ? hit[0].replace(/^[\s"'`]+/, "") : text.trim(),
+        });
+      }
+    }
+    for (const prop of text.matchAll(COLOR_PROP)) {
+      for (const lit of (prop[1] ?? prop[2] ?? "").matchAll(FIXED_LITERAL)) {
+        if (SAFE_HEX.has(lit[1].toLowerCase())) continue;
+        out.push({
+          line: i + 1,
+          rule: "color-prop",
+          text: text.trim(),
+          match: prop[0],
+        });
+      }
     }
   });
   for (const m of src.matchAll(STRING_LITERAL)) {
@@ -77,6 +104,7 @@ export function scanSource(src: string): Finding[] {
         line: src.slice(0, m.index).split("\n").length,
         rule: "token-text-on-fixed-light-bg",
         text: lit.trim(),
+        match: lit.trim(),
       });
     }
   }
@@ -100,6 +128,7 @@ function scanDescendants(src: string): Finding[] {
     const open = before.lastIndexOf("<");
     const name = /^<([A-Za-z][\w.]*)/.exec(flat.slice(open))?.[1];
     if (!name || open < 0) continue;
+    if (!insideOpeningTag(flat.slice(open, m.index))) continue;
     const tagRe = new RegExp(`<(/?)${name}(?![\\w.])[^>]*?(/?)>`, "g");
     tagRe.lastIndex = open;
     let depth = 0;
@@ -121,6 +150,7 @@ function scanDescendants(src: string): Finding[] {
           line: flat.slice(0, abs).split("\n").length,
           rule: "token-text-inside-fixed-light-bg",
           text: inner.trim(),
+          match: inner.trim(),
         });
       }
     }
@@ -151,7 +181,7 @@ export type Exemption = {
 type FileFinding = Finding & { file: string };
 
 const covers = (e: Exemption, f: FileFinding) =>
-  e.file === f.file && e.rule === f.rule && f.text.includes(e.includes);
+  e.file === f.file && e.rule === f.rule && f.match.includes(e.includes);
 
 /**
  * Findings not covered by any exemption, plus exemptions whose number of
