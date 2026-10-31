@@ -103,6 +103,38 @@ describe("colour scanner", () => {
     ]);
   });
 
+  it("scans multi-line, nested-brace and template colour props", () => {
+    const multi =
+      '<Icon\n  color={\n    ok\n      ? tokens.link\n      : "#000000"\n  }\n/>';
+    expect(rules(multi)).toContain("color-prop");
+    expect(rules('<Icon color={f({ a: 1 }) ? "#000" : "#111"} />')).toContain(
+      "color-prop"
+    );
+    expect(rules("<Icon color={`#000`} />")).toContain("color-prop");
+    expect(
+      rules("<Icon\n color={ok\n ? tokens.link\n : tokens.x}\n/>")
+    ).toEqual([]);
+  });
+
+  it("reports the line of the multi-line literal", () => {
+    const f = scanSource('<Icon\n  color={\n    ok ? a : "#000000"\n  }\n/>');
+    expect(f.map((x) => x.line)).toEqual([3]);
+  });
+
+  it("match is the exact fragment even for a lone hit", () => {
+    const f = scanSource(
+      '<View className="bg-white p-2" /> // note: text-red-600'
+    );
+    const white = f.find((x) => x.rule === "bg-white-class");
+    expect(white?.match).toBe("bg-white");
+  });
+
+  it("a > inside an attribute string does not end the opening tag", () => {
+    const src =
+      '<View accessibilityLabel="a > b" className="bg-red-50">\n<Text className="text-danger">b</Text></View>';
+    expect(rules(src)).toContain("token-text-inside-fixed-light-bg");
+  });
+
   it("flags unsafe literals inside color={...} ternaries", () => {
     expect(rules('<Icon color={isDark ? "#fff" : "#4807EC"} />')).toContain(
       "color-prop"

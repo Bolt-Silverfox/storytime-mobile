@@ -58,13 +58,71 @@ const FIXED_LIGHT_BG = new RegExp(
 
 const STRING_LITERAL = /"([^"\n]*)"|'([^'\n]*)'|`([^`]*)`/g;
 
+const COLOR_PROP_START =
+  /\b(?:color|tintColor|fill|stroke|focusColor)\s*=\s*/gi;
+const FIXED_LITERAL = new RegExp(`["'\`](${HEX}|black|red|blue)["'\`]`, "gi");
+
+/** End index (exclusive) of the JSX attribute value starting at `start`. */
+function propValueEnd(src: string, start: number): number {
+  const q = src[start];
+  if (q === '"' || q === "'") {
+    const close = src.indexOf(q, start + 1);
+    return close < 0 ? src.length : close + 1;
+  }
+  if (q !== "{") return start;
+  let depth = 0;
+  let quote = "";
+  for (let i = start; i < src.length; i++) {
+    const c = src[i];
+    if (quote) {
+      if (c === "\\") i += 1;
+      else if (c === quote) quote = "";
+    } else if (c === '"' || c === "'" || c === "`") quote = c;
+    else if (c === "{") depth += 1;
+    else if (c === "}" && --depth === 0) return i + 1;
+  }
+  return src.length;
+}
+
 /**
- * `color`-like props. The brace form is scanned for every string literal so a
- * ternary (`color={dark ? "#fff" : "#4807EC"}`) cannot hide a fixed colour.
+ * `color`-like props. The whole value is scanned (balanced braces, any number
+ * of lines, quote and template literals), so a ternary or multi-line prop
+ * cannot hide a fixed colour.
  */
-const COLOR_PROP =
-  /\b(?:color|tintColor|fill|stroke|focusColor)\s*=\s*(?:\{([^{}\n]*)\}|("[^"\n]*"|'[^'\n]*'))/gi;
-const FIXED_LITERAL = new RegExp(`["'](${HEX}|black|red|blue)["']`, "gi");
+function scanColorProps(src: string): Finding[] {
+  const out: Finding[] = [];
+  for (const start of src.matchAll(COLOR_PROP_START)) {
+    const from = start.index + start[0].length;
+    const to = propValueEnd(src, from);
+    const value = src.slice(from, to);
+    const prop = src.slice(start.index, to).replace(/\s+/g, " ");
+    for (const lit of value.matchAll(FIXED_LITERAL)) {
+      if (SAFE_HEX.has(lit[1].toLowerCase())) continue;
+      const line = src.slice(0, from + (lit.index ?? 0)).split("\n").length;
+      out.push({
+        line,
+        rule: "color-prop",
+        text: src.split("\n")[line - 1].trim(),
+        match: prop,
+      });
+    }
+  }
+  return out;
+}
+
+/** The offending fragment: the hit extended over the rest of its token. */
+function fragment(text: string, hit: RegExpMatchArray, rule: string): string {
+  const lead = hit[0].length - hit[0].replace(/^[\s"'`]+/, "").length;
+  const start = (hit.index ?? 0) + lead;
+  let end = (hit.index ?? 0) + hit[0].length;
+  if (rule === "rgb-literal") {
+    const close = text.indexOf(")", end);
+    end = close < 0 ? text.length : close + 1;
+  } else {
+    while (end < text.length && /[\w/%.#[\]-]/.test(text[end])) end += 1;
+  }
+  return text.slice(start, end);
+}
 
 export function scanSource(src: string): Finding[] {
   const out: Finding[] = [];
@@ -78,21 +136,7 @@ export function scanSource(src: string): Finding[] {
           line: i + 1,
           rule,
           text: text.trim(),
-          // Several hits of one rule on a line are told apart by fragment; a
-          // lone hit keeps the whole line so exemptions can quote context.
-          match:
-            hits.length > 1 ? hit[0].replace(/^[\s"'`]+/, "") : text.trim(),
-        });
-      }
-    }
-    for (const prop of text.matchAll(COLOR_PROP)) {
-      for (const lit of (prop[1] ?? prop[2] ?? "").matchAll(FIXED_LITERAL)) {
-        if (SAFE_HEX.has(lit[1].toLowerCase())) continue;
-        out.push({
-          line: i + 1,
-          rule: "color-prop",
-          text: text.trim(),
-          match: prop[0],
+          match: fragment(text, hit, rule),
         });
       }
     }
@@ -108,7 +152,7 @@ export function scanSource(src: string): Finding[] {
       });
     }
   }
-  out.push(...scanDescendants(src));
+  out.push(...scanColorProps(src), ...scanDescendants(src));
   return out;
 }
 
@@ -161,8 +205,12 @@ function scanDescendants(src: string): Finding[] {
 /** True if `chunk` (from `<Name` up to a string literal) has no tag-closing `>` at brace depth 0. */
 function insideOpeningTag(chunk: string): boolean {
   let depth = 0;
+  let quote = "";
   for (const c of chunk) {
-    if (c === "{") depth += 1;
+    if (quote) {
+      if (c === quote) quote = "";
+    } else if (c === '"' || c === "'" || c === "`") quote = c;
+    else if (c === "{") depth += 1;
     else if (c === "}") depth -= 1;
     else if (c === ">" && depth === 0) return false;
   }
