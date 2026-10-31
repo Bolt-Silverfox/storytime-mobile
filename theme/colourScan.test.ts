@@ -274,4 +274,68 @@ describe("colour scanner", () => {
       ).not.toContain("text-style-no-colour");
     });
   });
+
+  describe("tightened rules (review follow-ups)", () => {
+    const entry = (body: string) =>
+      `<Text style={styles.k} className="text-center">x</Text>\nconst s = StyleSheet.create({\n  k: {\n${body}\n  },\n});`;
+
+    it("backgroundColor/borderColor alone do not count as a text colour", () => {
+      expect(
+        rules(entry('    fontFamily: "q",\n    backgroundColor: "red",'))
+      ).toContain("text-style-no-colour");
+      expect(
+        rules(entry('    fontFamily: "q",\n    borderColor: t.border,'))
+      ).toContain("text-style-no-colour");
+      expect(
+        rules(entry('    fontFamily: "q",\n    color: t.textStrong,'))
+      ).not.toContain("text-style-no-colour");
+    });
+
+    it("an empty or colourless conditional spread does not set a colour", () => {
+      expect(
+        rules(entry('    fontFamily: "q",\n    ...(isDark ? {} : {}),'))
+      ).toContain("text-style-no-colour");
+      expect(
+        rules(
+          entry('    fontFamily: "q",\n    ...(isDark ? { opacity: 1 } : {}),')
+        )
+      ).toContain("text-style-no-colour");
+    });
+
+    it("a conditional spread containing a colour, or a spread of a themed style, does", () => {
+      expect(
+        rules(
+          entry(
+            '    fontFamily: "q",\n    ...(isDark ? { color: t.textStrong } : {}),'
+          )
+        )
+      ).not.toContain("text-style-no-colour");
+      expect(
+        rules(entry('    ...defaultStyles.heading,\n    fontFamily: "q",'))
+      ).not.toContain("text-style-no-colour");
+    });
+
+    it("a tintColor on a neighbouring element does not cover the Image", () => {
+      const sibling =
+        '<View>\n<Image source={require("a/tick.png")} />\n<Icon tintColor={t} />\n</View>';
+      expect(rules(sibling)).toContain("untinted-ink-asset");
+      const parent =
+        '<View style={{ tintColor: t }}>\n<Image source={require("a/tick.png")} />\n</View>';
+      expect(rules(parent)).toContain("untinted-ink-asset");
+    });
+
+    it("a non-self-closing Image does not borrow a later element's tintColor", () => {
+      const src =
+        '<Image source={require("a/tick.png")}>\n  <Icon tintColor={t} />\n</Image>';
+      expect(rules(src)).toContain("untinted-ink-asset");
+    });
+
+    it("a tintColor after an arrow/brace in the same Image tag still counts", () => {
+      expect(
+        rules(
+          '<Image source={require("a/tick.png")} onLoad={() => f({ a: 1 })} style={{ tintColor: t }} />'
+        )
+      ).not.toContain("untinted-ink-asset");
+    });
+  });
 });
