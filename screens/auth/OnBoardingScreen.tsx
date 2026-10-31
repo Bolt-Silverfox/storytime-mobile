@@ -212,13 +212,18 @@ const makeStyles = (
       ...defaultStyles.defaultText,
       color: "white",
     },
+    // "Continue as a Guest" stays white in light; dark is an on-theme surface button.
     textDark: {
       ...defaultStyles.defaultText,
       color: "#212121",
+      ...(isDark ? { color: tokens.textStrong } : {}),
     },
     buttonWhite: {
       ...defaultStyles.button,
       backgroundColor: "white",
+      ...(isDark
+        ? { backgroundColor: tokens.surfaceCream, borderColor: tokens.border }
+        : {}),
     },
     paginationDot: {
       backgroundColor: "#EC2907",
@@ -227,5 +232,6 @@ const makeStyles = (
     },
     paginationDotInactive: {
       backgroundColor: "#00000033",
+      ...(isDark ? { backgroundColor: tokens.border } : {}),
     },
   });

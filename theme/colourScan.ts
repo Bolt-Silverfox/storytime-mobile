@@ -174,9 +174,7 @@ function scanInkAssets(src: string): Finding[] {
   for (const m of src.matchAll(INK_REQUIRE)) {
     const idx = m.index ?? 0;
     const open = src.lastIndexOf("<Image", idx);
-    const close = src.indexOf("/>", idx);
-    const tag =
-      open < 0 ? "" : src.slice(open, close < 0 ? src.length : close + 2);
+    const tag = open < 0 ? "" : src.slice(open, openingTagEnd(src, open));
     if (/tintColor/.test(tag)) continue;
     out.push({
       line: src.slice(0, idx).split("\n").length,
@@ -202,10 +200,8 @@ function scanColourlessTextStyles(src: string): Finding[] {
     const cls = [...tag.matchAll(/text-([\w[\]#-]+)/g)].map((x) => x[1]);
     if (cls.some((c) => !SIZE_OR_ALIGN.test(c))) continue;
     const key = m[2];
-    const entry = new RegExp(`^\\s*${key}\\s*:\\s*\\{([^}]*)\\}`, "m").exec(
-      src
-    );
-    if (!entry || /color|\.\.\./i.test(entry[1])) continue;
+    const body = styleEntryBody(src, key);
+    if (body === null || setsTextColour(body)) continue;
     out.push({
       line: src.slice(0, m.index).split("\n").length,
       rule: "text-style-no-colour",
@@ -215,6 +211,48 @@ function scanColourlessTextStyles(src: string): Finding[] {
   }
   return out;
 }
+/** End (exclusive) of the JSX opening tag starting at `open` (brace/quote aware). */
+function openingTagEnd(src: string, open: number): number {
+  let depth = 0;
+  let quote = "";
+  for (let i = open; i < src.length; i++) {
+    const c = src[i];
+    if (quote) {
+      if (c === "\\") i += 1;
+      else if (c === quote) quote = "";
+    } else if (c === '"' || c === "'" || c === "`") quote = c;
+    else if (c === "{") depth += 1;
+    else if (c === "}") depth -= 1;
+    else if (c === "=" && src[i + 1] === ">") i += 1;
+    else if (c === ">" && depth === 0) return i + 1;
+  }
+  return src.length;
+}
+
+/** Balanced `{ ... }` body of the first `key: {` entry, or null. */
+function styleEntryBody(src: string, key: string): string | null {
+  const m = new RegExp(`^\\s*${key}\\s*:\\s*\\{`, "m").exec(src);
+  if (!m) return null;
+  const start = m.index + m[0].length;
+  let depth = 1;
+  for (let i = start; i < src.length; i++) {
+    if (src[i] === "{") depth += 1;
+    else if (src[i] === "}" && --depth === 0) return src.slice(start, i);
+  }
+  return src.slice(start);
+}
+
+/**
+ * True if a style body sets a text colour: a `color:` key (backgroundColor and
+ * borderColor do not count), a conditional spread whose object has a `color:`
+ * key, or a spread of another style object (`...defaultStyles.heading`), which
+ * this file-local scan cannot see into and trusts to be themed.
+ */
+function setsTextColour(body: string): boolean {
+  if (/(^|[\s,{])color\s*:/.test(body)) return true;
+  return /\.\.\.\s*[A-Za-z_$][\w$]*(\.[\w$]+)+/.test(body);
+}
+
 const SIZE_OR_ALIGN =
   /^(center|left|right|justify|base|xs|sm|lg|\d*xl|\[\d+(px)?\]|wrap|nowrap|ellipsis)$/;
 

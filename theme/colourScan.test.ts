@@ -330,6 +330,23 @@ describe("colour scanner", () => {
       expect(rules(src)).toContain("untinted-ink-asset");
     });
 
+    it("a `>` inside braces does not end the Image tag early", () => {
+      expect(
+        rules(
+          '<Image source={require("a/tick.png")} width={a > b ? 1 : 2} style={{ tintColor: t }} />'
+        )
+      ).not.toContain("untinted-ink-asset");
+    });
+
+    it("only a top-level `color:` key counts, and a bare identifier spread does not", () => {
+      expect(rules(entry('    fontFamily: "q",\n    xcolor: 1,'))).toContain(
+        "text-style-no-colour"
+      );
+      expect(rules(entry('    ...base,\n    fontFamily: "q",'))).toContain(
+        "text-style-no-colour"
+      );
+    });
+
     it("a tintColor after an arrow/brace in the same Image tag still counts", () => {
       expect(
         rules(

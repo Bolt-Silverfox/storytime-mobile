@@ -18,7 +18,7 @@ import useAuth from "../../contexts/AuthContext";
 import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import { useTheme } from "../../theme/ThemeContext";
-import type { Tokens } from "../../theme/tokens";
+import { FIXED_INK_BLACK, type Tokens } from "../../theme/tokens";
 
 const SignupScreen = () => {
   const defaultStyles = useDefaultStyles();
@@ -72,7 +72,7 @@ const SignupScreen = () => {
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
                     style={{
-                      tintColor: isDark ? tokens.textStrong : "#000000",
+                      tintColor: isDark ? tokens.textStrong : FIXED_INK_BLACK,
                     }}
                   />
                 </Pressable>
