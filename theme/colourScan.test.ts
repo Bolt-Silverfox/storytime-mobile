@@ -330,6 +330,12 @@ describe("colour scanner", () => {
       expect(rules(src)).toContain("untinted-ink-asset");
     });
 
+    it("a require outside the matched Image tag is not covered by that tag's tintColor", () => {
+      const src =
+        '<Image source={a} style={{ tintColor: t }} />\nconst icon = require("a/tick.png");';
+      expect(rules(src)).toContain("untinted-ink-asset");
+    });
+
     it("a `>` inside braces does not end the Image tag early", () => {
       expect(
         rules(
