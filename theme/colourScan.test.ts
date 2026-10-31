@@ -172,4 +172,103 @@ describe("colour scanner", () => {
       )
     ).toEqual([]);
   });
+
+  describe("fixed-ink PNG icons (vanish on dark)", () => {
+    const img = (extra: string) =>
+      `<Image source={require("../../assets/icons/apple-icon.png")} ${extra} />`;
+
+    it("flags an untinted dark-ink asset", () => {
+      const f = scanSource(img(""));
+      expect(f.map((x) => x.rule)).toContain("untinted-ink-asset");
+      expect(f.find((x) => x.rule === "untinted-ink-asset")?.match).toBe(
+        "apple-icon.png"
+      );
+    });
+
+    it("flags tick.png and middot.png on a multi-line Image", () => {
+      expect(
+        rules(
+          '<Image\n source={require("../a/tick.png")}\n className="h-4"\n/>'
+        )
+      ).toContain("untinted-ink-asset");
+      expect(rules('<Image source={require("x/middot.png")} />')).toContain(
+        "untinted-ink-asset"
+      );
+    });
+
+    it("passes when the Image carries a tintColor (style or prop)", () => {
+      expect(
+        rules(
+          img("style={isDark ? { tintColor: tokens.textStrong } : undefined}")
+        )
+      ).not.toContain("untinted-ink-asset");
+      expect(rules(img("tintColor={tokens.link}"))).not.toContain(
+        "untinted-ink-asset"
+      );
+    });
+
+    it("does not flag other assets, and tint on a neighbouring Image does not leak", () => {
+      expect(
+        rules('<Image source={require("../a/google-icon.png")} />')
+      ).toEqual([]);
+      const two =
+        '<Image source={require("a/tick.png")} />\n<Image source={require("a/b.png")} style={{ tintColor: t }} />';
+      expect(rules(two)).toContain("untinted-ink-asset");
+    });
+  });
+
+  describe("text style with no colour (renders default black)", () => {
+    const src = (tag: string, entry: string) =>
+      `${tag}\nconst s = StyleSheet.create({\n  ${entry}\n});`;
+
+    it("flags <Text style={styles.k}> whose entry sets no colour", () => {
+      const f = scanSource(
+        src(
+          '<Text style={styles.titleText} className="text-center text-[28px]">x</Text>',
+          'titleText: {\n    fontFamily: "quilka",\n  },'
+        )
+      );
+      expect(f.map((x) => x.rule)).toContain("text-style-no-colour");
+    });
+
+    it("passes when the entry has a colour, spreads a themed style, or className supplies a token colour", () => {
+      const tag =
+        '<Text style={styles.titleText} className="text-center">x</Text>';
+      expect(
+        rules(
+          src(
+            tag,
+            'titleText: {\n    fontFamily: "q",\n    color: t.textStrong,\n  },'
+          )
+        )
+      ).not.toContain("text-style-no-colour");
+      expect(
+        rules(
+          src(
+            tag,
+            'titleText: {\n    ...defaultStyles.heading,\n    fontFamily: "q",\n  },'
+          )
+        )
+      ).not.toContain("text-style-no-colour");
+      expect(
+        rules(
+          src(
+            '<Text style={styles.titleText} className="text-fg">x</Text>',
+            'titleText: {\n    fontFamily: "q",\n  },'
+          )
+        )
+      ).not.toContain("text-style-no-colour");
+    });
+
+    it("ignores styles used on non-Text elements", () => {
+      expect(
+        rules(
+          src(
+            "<View style={styles.box}>x</View>",
+            'box: {\n    fontFamily: "q",\n  },'
+          )
+        )
+      ).not.toContain("text-style-no-colour");
+    });
+  });
 });

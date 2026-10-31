@@ -152,9 +152,71 @@ export function scanSource(src: string): Finding[] {
       });
     }
   }
-  out.push(...scanColorProps(src), ...scanDescendants(src));
+  out.push(
+    ...scanColorProps(src),
+    ...scanDescendants(src),
+    ...scanInkAssets(src),
+    ...scanColourlessTextStyles(src)
+  );
   return out;
 }
+
+/** PNGs drawn in a fixed dark ink (black / indigo) that vanish on dark surfaces. */
+const INK_ASSETS = ["apple-icon", "tick", "middot"];
+const INK_REQUIRE = new RegExp(
+  `require\\(\\s*["'][^"']*\\/((?:${INK_ASSETS.join("|")})\\.png)["']\\s*\\)`,
+  "g"
+);
+
+/** An `<Image>` showing a fixed-ink PNG must carry a tintColor (dark variant). */
+function scanInkAssets(src: string): Finding[] {
+  const out: Finding[] = [];
+  for (const m of src.matchAll(INK_REQUIRE)) {
+    const idx = m.index ?? 0;
+    const open = src.lastIndexOf("<Image", idx);
+    const close = src.indexOf("/>", idx);
+    const tag =
+      open < 0 ? "" : src.slice(open, close < 0 ? src.length : close + 2);
+    if (/tintColor/.test(tag)) continue;
+    out.push({
+      line: src.slice(0, idx).split("\n").length,
+      rule: "untinted-ink-asset",
+      text: m[0],
+      match: m[1],
+    });
+  }
+  return out;
+}
+
+/**
+ * `<Text style={styles.k}>` where `k` (a StyleSheet entry in the same file) sets
+ * no colour, spreads nothing, and the tag's className gives no text colour:
+ * the text renders default black, invisible on dark surfaces.
+ */
+function scanColourlessTextStyles(src: string): Finding[] {
+  const out: Finding[] = [];
+  for (const m of src.matchAll(
+    /<Text\b([^>]*?)\bstyle=\{styles\.(\w+)\}([^>]*)>/g
+  )) {
+    const tag = m[1] + m[3];
+    const cls = [...tag.matchAll(/text-([\w[\]#-]+)/g)].map((x) => x[1]);
+    if (cls.some((c) => !SIZE_OR_ALIGN.test(c))) continue;
+    const key = m[2];
+    const entry = new RegExp(`^\\s*${key}\\s*:\\s*\\{([^}]*)\\}`, "m").exec(
+      src
+    );
+    if (!entry || /color|\.\.\./i.test(entry[1])) continue;
+    out.push({
+      line: src.slice(0, m.index).split("\n").length,
+      rule: "text-style-no-colour",
+      text: m[0].replace(/\s+/g, " ").slice(0, 100),
+      match: `styles.${key}`,
+    });
+  }
+  return out;
+}
+const SIZE_OR_ALIGN =
+  /^(center|left|right|justify|base|xs|sm|lg|\d*xl|\[\d+(px)?\]|wrap|nowrap|ellipsis)$/;
 
 /**
  * Token-coloured text anywhere inside the subtree of an element whose
