@@ -4,7 +4,6 @@ import tailwindcss from "tailwindcss";
 import { tokensToCssVars } from "./cssVars";
 import { lightTokens } from "./tokens";
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const config = require("../tailwind.config.js");
 
 const compile = async (classes: string) => {

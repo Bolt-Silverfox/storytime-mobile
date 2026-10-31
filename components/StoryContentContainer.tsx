@@ -29,6 +29,7 @@ import ProgressBar from "./UI/ProgressBar";
 import EndOfQuizMessage from "./modals/storyModals/EndOfQuizMessage";
 import EndOfStoryMessage from "./modals/storyModals/EndOfStoryMessage";
 import StoryQuiz from "./modals/storyModals/StoryQuiz";
+import { useTheme } from "../theme/ThemeContext";
 
 type PropTypes = {
   story: Story;
@@ -76,6 +77,7 @@ const StoryContentContainer = ({
   initialPositionSec,
   onPositionChange,
 }: PropTypes) => {
+  const { tokens, isDark } = useTheme();
   const { isPremium } = useIsPremium();
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentlyDisplayed, setCurrentlyDisplayed] =
@@ -366,7 +368,7 @@ const StoryContentContainer = ({
           </View>
           <View className="rounded-2xl bg-surface p-4">
             <ProgressBar
-              backgroundColor="#4807EC"
+              backgroundColor={isDark ? tokens.link : "#4807EC"}
               currentStep={activeParagraph + 1}
               label="Page"
               totalSteps={paragraphs.length}

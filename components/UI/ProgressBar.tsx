@@ -1,4 +1,5 @@
 import { DimensionValue, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../theme/ThemeContext";
 
 type ProgressBarProps = {
   currentStep: number;
@@ -12,9 +13,10 @@ const ProgressBar = ({
   currentStep,
   totalSteps,
   height = 20,
-  backgroundColor = "#000",
+  backgroundColor,
   label = "Steps",
 }: ProgressBarProps) => {
+  const { tokens, isDark } = useTheme();
   const calculateWidth = (): DimensionValue => {
     const calculatedWidth = (currentStep / totalSteps) * 100;
     return `${calculatedWidth}%`;
@@ -27,6 +29,7 @@ const ProgressBar = ({
           {
             height,
             borderRadius: height / 2,
+            backgroundColor: isDark ? tokens.border : "rgba(0,0,0,0.2)",
           },
         ]}
       >
@@ -36,7 +39,8 @@ const ProgressBar = ({
             {
               height,
               borderRadius: height / 2,
-              backgroundColor,
+              backgroundColor:
+                backgroundColor ?? (isDark ? tokens.textStrong : "#000"),
               width: calculateWidth(),
             },
           ]}
@@ -58,7 +62,6 @@ export default ProgressBar;
 const styles = StyleSheet.create({
   track: {
     width: "100%",
-    backgroundColor: "rgba(0,0,0,0.2)",
     overflow: "hidden",
   },
   progress: {

@@ -32,6 +32,7 @@ module.exports = {
         "line-light": v("border-light"),
         "line-soft": v("border-soft"),
         "brand-text": v("brand-text"),
+        "line-input": v("border-input"),
         "fill-muted": v("fill-muted"),
         "line-gray": v("border-gray"),
         skeleton: v("skeleton"),

@@ -39,6 +39,7 @@ describe("theme tokens", () => {
     ["brandText", "tint"],
     ["danger", "background"],
     ["danger", "surface"],
+    ["errorText", "surface"],
     ["link", "background"],
     ["link", "surface"],
     ["purple", "background"],
@@ -55,6 +56,8 @@ describe("theme tokens", () => {
   const ui: Array<[TokenName, TokenName]> = [
     ["border", "background"],
     ["border", "surface"],
+    ["borderInput", "background"],
+    ["borderInput", "surface"],
     ["readerPanelBorder", "background"],
   ];
   it.each(ui)("dark %s on %s meets 3:1 for UI components", (fg, bg) => {

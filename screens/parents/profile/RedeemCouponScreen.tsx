@@ -130,7 +130,7 @@ const RedeemCouponScreen = () => {
                 placeholder="e.g. SUMMER25"
                 autoCapitalize="characters"
                 autoCorrect={false}
-                className="rounded-2xl border border-line-light bg-surface px-4 py-3 font-[abeezee] text-base tracking-widest text-fg"
+                className="rounded-2xl border border-line-input bg-surface px-4 py-3 font-[abeezee] text-base tracking-widest text-fg"
               />
             </View>
 

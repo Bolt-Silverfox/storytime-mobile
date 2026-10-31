@@ -24,7 +24,7 @@ const ThemePreferenceRow = () => {
             <Pressable
               key={value}
               accessibilityRole="radio"
-              accessibilityState={{ selected }}
+              accessibilityState={{ checked: selected }}
               onPress={() => setPreference(value)}
               className={`h-10 flex-1 items-center justify-center rounded-full border ${selected ? "border-primary bg-primary" : "border-line bg-surface"}`}
             >

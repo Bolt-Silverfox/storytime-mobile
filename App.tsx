@@ -150,6 +150,17 @@ function ThemedNavigation({
   );
 }
 
+/** Hides the native splash only once fonts AND the stored theme preference are ready (avoids a wrong-theme flash). */
+function SplashHider({ fontsDone }: { fontsDone: boolean }) {
+  const { ready } = useTheme();
+  useEffect(() => {
+    if (fontsDone && ready) {
+      SplashScreen.hideAsync();
+    }
+  }, [fontsDone, ready]);
+  return null;
+}
+
 export default Sentry.wrap(function App() {
   const navigationRef = useNavigationContainerRef<RootNavigatorParamList>();
   const [loaded, error] = useFonts({
@@ -166,21 +177,17 @@ export default Sentry.wrap(function App() {
     return () => subscription.remove();
   }, []);
 
-  useEffect(() => {
-    if (loaded || error) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded, error]);
-
   if (!loaded || error)
     return (
       <ThemeProvider>
+        <SplashHider fontsDone={!!(loaded || error)} />
         <CustomSplashScreen />
       </ThemeProvider>
     );
 
   return (
     <ThemeProvider>
+      <SplashHider fontsDone />
       <ErrorBoundary>
         <SafeAreaProvider>
           <AuthProvider>

@@ -36,9 +36,8 @@ export const readableOnTint = (
   min = 4.5
 ): string => {
   const tinted = blend(colour, surface, 0.2);
-  let out = colour;
   for (let t = 0; t <= 1.0001; t += 0.05) {
-    out = blend("#FFFFFF", colour, t);
+    const out = blend("#FFFFFF", colour, t);
     if (contrastRatio(out, tinted) >= min) return out;
   }
   return "#FFFFFF";

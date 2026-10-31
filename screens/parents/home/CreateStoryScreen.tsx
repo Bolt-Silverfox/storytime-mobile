@@ -42,7 +42,7 @@ const parseAge = (value: string): number | undefined => {
 };
 
 const inputClass =
-  "rounded-2xl border border-line-light bg-surface px-4 py-3 font-[abeezee] text-base text-fg";
+  "rounded-2xl border border-line-input bg-surface px-4 py-3 font-[abeezee] text-base text-fg";
 const labelClass = "font-[abeezee] text-sm font-medium text-muted";
 
 const CreateStoryScreen = () => {

@@ -5,6 +5,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import { Appearance, View, useColorScheme } from "react-native";
@@ -21,6 +22,8 @@ type Scheme = "light" | "dark";
 
 type ThemeContextValue = {
   preference: ThemePreference;
+  /** False until the persisted preference has been read from storage. */
+  ready: boolean;
   setPreference: (pref: ThemePreference) => void;
   scheme: Scheme;
   isDark: boolean;
@@ -32,6 +35,7 @@ export { tokensToCssVars };
 
 const ThemeContext = createContext<ThemeContextValue>({
   preference: "system",
+  ready: true,
   setPreference: () => {},
   scheme: "light",
   isDark: false,
@@ -42,11 +46,16 @@ const ThemeContext = createContext<ThemeContextValue>({
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const systemScheme = useColorScheme();
   const [preference, setPreferenceState] = useState<ThemePreference>("system");
+  const [ready, setReady] = useState(false);
+  const userChoseRef = useRef(false);
 
   useEffect(() => {
     let active = true;
     loadThemePreference().then((p) => {
-      if (active) setPreferenceState(p);
+      if (!active) return;
+      // A choice made before the stored value resolved wins over the stored one.
+      if (!userChoseRef.current) setPreferenceState(p);
+      setReady(true);
     });
     return () => {
       active = false;
@@ -61,6 +70,7 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   }, [preference]);
 
   const setPreference = useCallback((pref: ThemePreference) => {
+    userChoseRef.current = true;
     setPreferenceState(pref);
     void saveThemePreference(pref);
   }, []);
@@ -75,13 +85,14 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const value = useMemo<ThemeContextValue>(
     () => ({
       preference,
+      ready,
       setPreference,
       scheme,
       isDark: scheme === "dark",
       tokens: scheme === "dark" ? darkTokens : lightTokens,
       statusBarStyle: scheme === "dark" ? "light" : "dark",
     }),
-    [preference, setPreference, scheme]
+    [preference, ready, setPreference, scheme]
   );
 
   const rootStyle = useMemo(
