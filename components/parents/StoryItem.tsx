@@ -13,6 +13,8 @@ import { Story } from "../../types";
 import { getCategoryColourIndex, secondsToMinutes } from "../../utils/utils";
 import Icon from "../Icon";
 import CustomImage from "../UI/CustomImage";
+import { useTheme } from "../../theme/ThemeContext";
+import { readableOnTint } from "../../theme/contrast";
 
 type Proptypes = {
   story: Story;
@@ -26,6 +28,7 @@ const readStatusStyles = {
 } as const;
 
 const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
+  const { tokens, isDark } = useTheme();
   const {
     id,
     title,
@@ -102,6 +105,9 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
     storyCategoriesColours[
       getCategoryColourIndex(id, storyCategoriesColours.length)
     ];
+  const categoryTextColour = isDark
+    ? readableOnTint(categoryColour, tokens.surface)
+    : categoryColour;
   const categoryName = categories?.[0]?.name ?? "Uncategorized";
   const categoryLabel =
     categoryName.length > 15 ? `${categoryName.slice(0, 14)}...` : categoryName;
@@ -109,7 +115,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
   return (
     <Pressable
       onPress={navigate}
-      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} border-border-light gap-y-1.5 rounded-2xl border bg-white p-1`}
+      className={`flex-col ${isGrouped ? "flex-1" : "w-52 min-w-52"} gap-y-1.5 rounded-2xl border border-line-light bg-surface p-1`}
     >
       <View className={`relative w-full rounded-2xl`}>
         <CustomImage
@@ -120,7 +126,7 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         <Pressable
           disabled={isPending}
           onPress={handleFavoritePress}
-          className="absolute top-2 right-2 flex size-11 items-center justify-center rounded-full bg-black/40"
+          className="absolute right-2 top-2 flex size-11 items-center justify-center rounded-full bg-black/40"
         >
           {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />
@@ -130,29 +136,29 @@ const StoryItem = memo(({ story, isGrouped = false }: Proptypes) => {
         </Pressable>
         <View className="flex flex-row items-center justify-between gap-x-2 px-0.5">
           <View className="flex flex-1 flex-row items-center">
-            <Icon name="Dot" color={categoryColour} />
+            <Icon name="Dot" color={categoryTextColour} />
             <Text
-              className="flex-1 font-[abeezee] text-xs text-wrap capitalize"
+              className="flex-1 text-wrap font-[abeezee] text-xs capitalize"
               style={{
-                color: categoryColour,
+                color: categoryTextColour,
               }}
             >
               {categoryLabel}
             </Text>
           </View>
           <View className="flex flex-row items-center gap-x-1">
-            <Icon size={12} name="Clock" color="#616161" />
-            <Text className="text-text font-[abeezee] text-xs capitalize">
+            <Icon size={12} name="Clock" color={tokens.textBody} />
+            <Text className="font-[abeezee] text-xs capitalize text-body">
               {duration > 0 ? duration : "<1"}
               {duration > 1 ? " mins" : " min"}
             </Text>
           </View>
         </View>
-        <Text className="w-full px-0.5 font-[abeezee] text-base leading-5 text-wrap text-black">
+        <Text className="w-full text-wrap px-0.5 font-[abeezee] text-base leading-5 text-fg">
           {title}
         </Text>
         <View className="flex flex-row items-center justify-between px-1">
-          <Text className="text-text font-[abeezee] text-xs">
+          <Text className="font-[abeezee] text-xs text-body">
             {ageMin} - {ageMax} years
           </Text>
           {story.readStatus === "done" && (

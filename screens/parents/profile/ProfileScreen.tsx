@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import Feather from "@expo/vector-icons/Feather";
 import { useNavigation } from "@react-navigation/native";
@@ -21,10 +22,10 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import colours from "../../../colours";
 import Avatar from "../../../components/Avatar";
 import CustomText from "../../../components/CustomText";
 import LoadingOverlay from "../../../components/LoadingOverlay";
+import ThemePreferenceRow from "../../../components/ThemePreferenceRow";
 import MenuItem from "../../../components/MenuItem";
 import ParentProfileModal from "../../../components/modals/ParentProfileIndexModal";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
@@ -33,8 +34,12 @@ import useRateUs from "../../../contexts/RateUsContext";
 import useGetUserProfile from "../../../hooks/tanstack/queryHooks/useGetUserProfile";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { ProtectedRoutesNavigationProp } from "../../../Navigation/ProtectedNavigator";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const ProfileScreen: FC = () => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const { user, isLoading, logout } = useAuth();
   const { rateNow } = useRateUs();
   const { data: profile } = useGetUserProfile();
@@ -61,7 +66,9 @@ const ProfileScreen: FC = () => {
             style={styles.header}
             imageStyle={styles.imageBackground}
           >
-            <Text className="mx-4 mt-10 font-[abeezee] text-xl">Profile</Text>
+            <Text className="mx-4 mt-10 font-[abeezee] text-xl text-ink">
+              Profile
+            </Text>
             <Avatar
               onPress={() => {
                 navigator.navigate("editParentImage");
@@ -93,7 +100,7 @@ const ProfileScreen: FC = () => {
             </CustomText>
           </View>
 
-          <View className="border-border-lighter mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border bg-white p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
+          <View className="mx-auto mt-7 w-[90%] max-w-screen-md rounded-3xl border border-line-soft bg-surface p-4 pt-4 lg:max-w-screen-lg xl:max-w-screen-xl">
             <MenuItem
               icon={<BellRing size={isTablet ? 20 : 18} color="#EC4007" />}
               label="Notification Settings"
@@ -165,12 +172,14 @@ const ProfileScreen: FC = () => {
                 />
               }
               label="Delete Account"
-              textColor="#DC2626"
+              textColor={tokens.danger}
               isTablet={isTablet}
               onPress={() => setOpenModal("delete")}
               isLastItem
             />
           </View>
+
+          <ThemePreferenceRow />
 
           {showRateCard && (
             <View className="mx-auto mt-5 w-[90%] max-w-screen-md gap-4 rounded-2xl bg-[#4807EC] px-6 py-4 lg:max-w-screen-lg xl:max-w-screen-xl">
@@ -209,32 +218,37 @@ const ProfileScreen: FC = () => {
 
 export default ProfileScreen;
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#FFFCFBFB", paddingTop: 0 },
-  scrollContent: { paddingBottom: 10 },
-  header: {
-    width: "100%",
-    height: 192,
-    position: "relative",
-    overflow: "visible",
-  },
-  nameContainer: { alignItems: "center", marginTop: 30 },
-  imageBackground: {
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  avatar: {
-    bottom: -60,
-    alignSelf: "center",
-  },
-  profileName: {
-    fontFamily: "quilka",
-    textAlign: "center",
-    color: colours.black,
-  },
-  profileEmail: {
-    color: "#6B7280",
-    textAlign: "center",
-    marginTop: 4,
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: tokens.backgroundSoft,
+      paddingTop: 0,
+    },
+    scrollContent: { paddingBottom: 10 },
+    header: {
+      width: "100%",
+      height: 192,
+      position: "relative",
+      overflow: "visible",
+    },
+    nameContainer: { alignItems: "center", marginTop: 30 },
+    imageBackground: {
+      borderBottomLeftRadius: 24,
+      borderBottomRightRadius: 24,
+    },
+    avatar: {
+      bottom: -60,
+      alignSelf: "center",
+    },
+    profileName: {
+      fontFamily: "quilka",
+      textAlign: "center",
+      color: tokens.textStrong,
+    },
+    profileEmail: {
+      color: tokens.textSubtle,
+      textAlign: "center",
+      marginTop: 4,
+    },
+  });

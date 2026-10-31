@@ -2,21 +2,23 @@ import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import { StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
-import colours from "../colours";
 import useAuth from "../contexts/AuthContext";
 import { RootNavigatorProp } from "../Navigation/RootNavigator";
-import defaultStyles from "../styles";
+import { useDefaultStyles } from "../styles";
 import { registerSchema } from "../zodSchemas";
 import ErrorMessageDisplay from "./ErrorMessageDisplay";
 import LoadingOverlay from "./LoadingOverlay";
 import PasswordInput from "./PasswordInput";
 import CustomButton from "./UI/CustomButton";
+import { useTheme } from "../theme/ThemeContext";
 
 type RegisterSchema = z.infer<typeof registerSchema>;
 type Errors = Partial<Record<keyof RegisterSchema, string>>;
 
 // cleanup with reducer later
 const SignupForm = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const [errors, setErrors] = useState<Errors>({});
   const [apiError, setApiError] = useState("");
   const [fullName, setFullName] = useState("");
@@ -68,14 +70,14 @@ const SignupForm = () => {
         <View style={styles.formItem}>
           <Text style={defaultStyles.label}>Full Name</Text>
           <TextInput
-            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
-            placeholderTextColor={errors.fullName ? "red" : colours.text}
+            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.fullName ? "border-red-600" : "border-line"}`}
+            placeholderTextColor={errors.fullName ? "red" : tokens.textBody}
             placeholder="Enter your name"
             onChangeText={setFullName}
             value={fullName}
           />
           {errors.fullName && (
-            <Text className="text-sm text-red-600">{errors.fullName}</Text>
+            <Text className="text-sm text-danger">{errors.fullName}</Text>
           )}
         </View>
         <View style={styles.formItem}>
@@ -84,11 +86,11 @@ const SignupForm = () => {
             placeholder="Enter your email address"
             onChangeText={setEmail}
             value={email}
-            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
-            placeholderTextColor={errors.email ? "red" : colours.text}
+            className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.email ? "border-red-600" : "border-line"}`}
+            placeholderTextColor={errors.email ? "red" : tokens.textBody}
           />
           {errors.email && (
-            <Text className="text-sm text-red-600">{errors.email}</Text>
+            <Text className="text-sm text-danger">{errors.email}</Text>
           )}
         </View>
         <PasswordInput

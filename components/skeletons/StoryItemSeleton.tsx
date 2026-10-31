@@ -5,33 +5,33 @@ import { View } from "react-native";
 const StoryItemSkeleton = ({ isGrouped }: { isGrouped?: boolean }) => {
   return (
     <View
-      // className="flex h-[240px] w-[200px] max-w-52 flex-col gap-y-1.5 rounded-2xl border border-border-light p-1"
-      className={`flex min-h-[230px] flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-52"} border-border-light gap-y-1.5 rounded-2xl border bg-white p-1`}
+      // className="flex h-[240px] w-[200px] max-w-52 flex-col gap-y-1.5 rounded-2xl border border-line-light p-1"
+      className={`flex min-h-[230px] flex-col ${isGrouped ? "max-sm:w-[47.5%]" : "w-52"} gap-y-1.5 rounded-2xl border border-line-light bg-surface p-1`}
     >
       <View className="h-full w-full flex-1 rounded-2xl">
-        <View className="h-[150px] w-full items-center justify-center rounded-xl bg-gray-200">
+        <View className="h-[150px] w-full items-center justify-center rounded-xl bg-line-gray">
           <ActivityIndicator size="large" color="#9CA3AF" />
         </View>
 
         <View className="mt-2 flex flex-row items-center justify-between px-0.5">
           <View className="flex flex-1 flex-row items-center gap-x-2">
-            <View className="h-2 w-2 rounded-full bg-gray-300" />
-            <View className="h-3 w-20 rounded bg-gray-300" />
+            <View className="h-2 w-2 rounded-full bg-skeleton" />
+            <View className="h-3 w-20 rounded bg-skeleton" />
           </View>
 
           <View className="flex flex-row items-center gap-x-1">
-            <View className="h-3 w-3 rounded-full bg-gray-300" />
-            <View className="h-3 w-8 rounded bg-gray-300" />
+            <View className="h-3 w-3 rounded-full bg-skeleton" />
+            <View className="h-3 w-8 rounded bg-skeleton" />
           </View>
         </View>
 
         <View className="mt-2 gap-y-1 px-0.5">
-          <View className="h-4 w-full rounded bg-gray-300" />
-          <View className="h-4 w-3/4 rounded bg-gray-300" />
+          <View className="h-4 w-full rounded bg-skeleton" />
+          <View className="h-4 w-3/4 rounded bg-skeleton" />
         </View>
 
         <View className="mt-1 px-1">
-          <View className="h-3 w-24 rounded bg-gray-300" />
+          <View className="h-3 w-24 rounded bg-skeleton" />
         </View>
       </View>
     </View>

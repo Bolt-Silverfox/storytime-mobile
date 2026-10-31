@@ -28,7 +28,7 @@ const HomepageStoriesContainer = ({
   if (error && (!stories || stories.length === 0)) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
-        <Text className="text-text text-center font-[abeezee]">
+        <Text className="text-center font-[abeezee] text-body">
           Failed to load stories. Please try again.
         </Text>
       </View>
@@ -38,10 +38,10 @@ const HomepageStoriesContainer = ({
   if (stories.length === 0) {
     return (
       <View className="flex flex-1 items-center justify-center py-8">
-        <Text className="mb-2 text-center font-[quilka] text-2xl text-black">
+        <Text className="mb-2 text-center font-[quilka] text-2xl text-fg">
           No stories found
         </Text>
-        <Text className="text-text text-center font-[abeezee]">
+        <Text className="text-center font-[abeezee] text-body">
           Try a different category
         </Text>
       </View>
@@ -49,14 +49,14 @@ const HomepageStoriesContainer = ({
   }
 
   return (
-    <View className="border-b-border-light flex flex-col gap-y-4 border-b pb-8">
+    <View className="flex flex-col gap-y-4 border-b border-b-line-light pb-8">
       <View className="mx-auto flex w-full max-w-screen-md flex-row items-center justify-between lg:max-w-screen-lg xl:max-w-screen-xl">
-        <Text className="font-[abeezee] text-base leading-5 text-black">
+        <Text className="font-[abeezee] text-base leading-5 text-fg">
           {title}
         </Text>
         <Text
           onPress={onViewAll}
-          className="font-[abeezee] text-base leading-5 text-[#0731EC]"
+          className="font-[abeezee] text-base leading-5 text-link"
         >
           View all
         </Text>

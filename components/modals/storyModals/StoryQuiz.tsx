@@ -87,10 +87,10 @@ const StoryQuiz = ({
   if (!currentQuestion) return null;
 
   return (
-    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
+    <View className="flex flex-col gap-y-5 rounded-3xl bg-surface p-4">
       <View className="flex flex-row items-center justify-between">
-        <Text className="font-[abeezee] text-base text-black">Question</Text>
-        <Text className="font-[quilka] text-xl text-black">
+        <Text className="font-[abeezee] text-base text-fg">Question</Text>
+        <Text className="font-[quilka] text-xl text-fg">
           {activeTab + 1} / {questions.length}
         </Text>
       </View>
@@ -99,7 +99,7 @@ const StoryQuiz = ({
         className="size-[105px]"
         alt="Grinning face emoji"
       />
-      <Text className="font-[quilka] text-xl text-black">
+      <Text className="font-[quilka] text-xl text-fg">
         {activeTab + 1}. {currentQuestion.question}
       </Text>
       <View className="flex flex-col gap-y-4">
@@ -115,14 +115,14 @@ const StoryQuiz = ({
                 className="flex-row items-center gap-x-5 rounded-2xl px-4 py-1"
               >
                 <View
-                  className={`flex h-6 w-6 items-center justify-center rounded-full border-2 p-[1px] ${isSelected ? "border-yellow" : "border-gray-300"}`}
+                  className={`flex h-6 w-6 items-center justify-center rounded-full border-2 p-[1px] ${isSelected ? "border-yellow" : "border-skeleton"}`}
                 >
                   {isSelected && (
-                    <View className="bg-yellow h-full w-full rounded-full" />
+                    <View className="h-full w-full rounded-full bg-yellow" />
                   )}
                 </View>
                 <View className="flex w-full flex-row items-center gap-x-3">
-                  <Text className="text-text flex-1 font-[abeezee] text-base capitalize">
+                  <Text className="flex-1 font-[abeezee] text-base capitalize text-body">
                     {option}
                   </Text>
                 </View>

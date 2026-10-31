@@ -6,6 +6,8 @@ import queryStoryCategories from "../../hooks/tanstack/queryHooks/useGetsStoryCa
 import { ParntHomeNavigatorProp } from "../../Navigation/ParentHomeNavigator";
 import { getCategoryColourIndex } from "../../utils/utils";
 import HomeScreenCarouselComponent from "./HomeScreenCarouselComponent";
+import { useTheme } from "../../theme/ThemeContext";
+import { readableOnTint } from "../../theme/contrast";
 
 const StoryCategoriesList = () => {
   const { error, refetch, data, isPending } = useQuery(queryStoryCategories());
@@ -19,10 +21,10 @@ const StoryCategoriesList = () => {
     >
       <View className="flex flex-col gap-y-4 pb-5">
         <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-1.5 lg:max-w-screen-lg xl:max-w-screen-xl">
-          <Text className="font-[abeezee] text-[18px] text-black">
+          <Text className="font-[abeezee] text-[18px] text-fg">
             All categories
           </Text>
-          <Text className="text-text font-[abeezee] text-sm">
+          <Text className="font-[abeezee] text-sm text-body">
             Gain access to all our stories
           </Text>
         </View>
@@ -62,6 +64,10 @@ const Item = ({
       getCategoryColourIndex(id, storyCategoriesColours.length)
     ];
   const navigator = useNavigation<ParntHomeNavigatorProp>();
+  const { tokens, isDark } = useTheme();
+  const textColour = isDark
+    ? readableOnTint(colour, tokens.background)
+    : colour;
 
   return (
     <Pressable
@@ -79,7 +85,7 @@ const Item = ({
       <Text
         key={category}
         style={{
-          color: colour,
+          color: textColour,
         }}
         className="rounded-lg font-[abeezee] text-sm"
       >

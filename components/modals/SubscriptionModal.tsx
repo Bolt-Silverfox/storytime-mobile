@@ -54,21 +54,21 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <ScrollView
-        contentContainerClassName="flex-col gap-y-10 bg-white"
+        contentContainerClassName="flex-col gap-y-10 bg-surface"
         showsVerticalScrollIndicator={false}
       >
         <View
           className="flex flex-col items-center gap-y-6"
           aria-labelledby="Subscription modal header"
         >
-          <View className="flex size-[100px] items-center justify-center rounded-full border-2 border-[#866EFF] bg-white">
+          <View className="flex size-[100px] items-center justify-center rounded-full border-2 border-[#866EFF] bg-surface">
             <FontAwesome5 name="crown" size={50} color="#866EFF" />
           </View>
           <View className="flex flex-col gap-y-2">
-            <Text className="text-center font-[quilka] text-2xl text-black">
+            <Text className="text-center font-[quilka] text-2xl text-fg">
               Unlock Magical Adventure
             </Text>
-            <Text className="text-text text-center font-[abeezee] text-sm">
+            <Text className="text-center font-[abeezee] text-sm text-body">
               Select a plan that best suits you
             </Text>
           </View>
@@ -76,7 +76,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         {errorMessage && (
           <Text
-            className={`text-center font-[abeezee] text-xl ${isUserCancelled ? "text-[#616161]" : "text-red-700"}`}
+            className={`text-center font-[abeezee] text-xl ${isUserCancelled ? "text-body" : "text-danger-strong"}`}
           >
             {errorMessage}
           </Text>
@@ -91,9 +91,9 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         <View
           aria-labelledby="subscription plans"
-          className="border-y-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-line-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
-          <Text className="font-[quilka] text-[18px] text-black">
+          <Text className="font-[quilka] text-[18px] text-fg">
             What you'll enjoy
           </Text>
           <View className="flex flex-col gap-y-5">
@@ -106,25 +106,27 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
                   source={require("../../assets/icons/tick.png")}
                   className="h-[14px] w-[17px]"
                 />
-                <Text className="font-[abeezee] text-base">{benefit}</Text>
+                <Text className="font-[abeezee] text-base text-fg">
+                  {benefit}
+                </Text>
               </View>
             ))}
           </View>
         </View>
-        <Text className="-mt-5 font-[abeezee] text-base text-black">
+        <Text className="-mt-5 font-[abeezee] text-base text-fg">
           You won't just listen, you'll have an unlimited learning experience,
           with the voice type you choose.
         </Text>
 
         <View
           aria-labelledby="subscription disclaimer"
-          className="bg-yellow mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="mx-auto flex w-full max-w-screen-md flex-row gap-x-4 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           <Image
             className="size-6"
             source={require("../../assets/icons/caution.png")}
           />
-          <Text className="flex-1 font-[abeezee] text-xs text-wrap">
+          <Text className="flex-1 text-wrap font-[abeezee] text-xs text-ink">
             Your plan will automatically renew unless you cancel your
             subscription.
           </Text>
@@ -152,12 +154,12 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
           />
           <View className="flex-row justify-center gap-x-4">
             <Pressable onPress={navigateToTerms}>
-              <Text className="text-primary font-[abeezee] text-xs underline">
+              <Text className="font-[abeezee] text-xs text-brand-text underline">
                 Terms of Service
               </Text>
             </Pressable>
             <Pressable onPress={navigateToPrivacy}>
-              <Text className="text-primary font-[abeezee] text-xs underline">
+              <Text className="font-[abeezee] text-xs text-brand-text underline">
                 Privacy Policy
               </Text>
             </Pressable>

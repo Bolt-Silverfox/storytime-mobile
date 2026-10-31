@@ -6,6 +6,7 @@ import {
   mapCategoryToIconType,
   getRelativeTime,
 } from "../../utils/utils";
+import { useTheme } from "../../theme/ThemeContext";
 
 type PropTypes = {
   closeModal: () => void;
@@ -18,27 +19,31 @@ const NotificationDetailsModal = ({
   isOpen,
   notification,
 }: PropTypes) => {
+  const { tokens } = useTheme();
   if (!notification) return null;
 
   return (
     <CustomModal onClose={closeModal} isOpen={isOpen}>
       <View className="flex flex-col px-4 py-8">
         <View className="mb-4 items-center">
-          {getNotificationIcon(mapCategoryToIconType(notification.category))}
+          {getNotificationIcon(
+            mapCategoryToIconType(notification.category),
+            tokens
+          )}
         </View>
-        <Text className="text-center font-[quilka] text-[18px]">
+        <Text className="text-center font-[quilka] text-[18px] text-fg">
           {notification.title}
         </Text>
-        <Text className="text-text my-10 font-[abeezee] text-base">
+        <Text className="my-10 font-[abeezee] text-base text-body">
           {notification.body}
         </Text>
-        <Text className="text-text mb-4 font-[abeezee] text-xs">
+        <Text className="mb-4 font-[abeezee] text-xs text-body">
           {getRelativeTime(notification.createdAt)}
         </Text>
 
         <Text
           onPress={closeModal}
-          className="border-border text-text mx-5 max-w-screen-md rounded-full border py-2 text-center font-[abeezee] text-base sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
+          className="mx-5 max-w-screen-md rounded-full border border-line py-2 text-center font-[abeezee] text-base text-body sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl"
         >
           Close
         </Text>

@@ -22,7 +22,7 @@ const SubscriptionOptions = ({
 
   if (subscriptions.length === 0) {
     return (
-      <Text className="text-text text-center font-[abeezee] text-base">
+      <Text className="text-center font-[abeezee] text-base text-body">
         No subscription plans available. Please try again later.
       </Text>
     );
@@ -41,22 +41,22 @@ const SubscriptionOptions = ({
             accessibilityRole="radio"
             accessibilityState={{ checked: isSelected }}
             accessibilityLabel={`${planName} plan, ${sub.displayPrice}`}
-            className={`flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-purple bg-purple/10 border-2" : "border-border-light border"}`}
+            className={`flex flex-1 flex-col items-center justify-center rounded-[20px] py-10 ${isSelected ? "border-2 border-purple bg-purple/10" : "border border-line-light"}`}
           >
             <View
-              className={`flex size-6 items-center justify-center rounded-full border-2 ${isSelected ? "border-purple bg-purple" : "border-gray-300"}`}
+              className={`flex size-6 items-center justify-center rounded-full border-2 ${isSelected ? "border-purple bg-purple" : "border-skeleton"}`}
             >
               {isSelected && (
-                <View className="size-2.5 rounded-full bg-white" />
+                <View className="size-2.5 rounded-full bg-surface" />
               )}
             </View>
             <Text
-              className={`mt-4 mb-1 font-[quilka] text-lg ${isSelected ? "text-purple" : "text-black"}`}
+              className={`mb-1 mt-4 font-[quilka] text-lg ${isSelected ? "text-purple-text" : "text-fg"}`}
             >
               {sub.displayPrice}
             </Text>
             <Text
-              className={`font-[abeezee] text-sm leading-5 ${isSelected ? "text-purple" : "text-black"}`}
+              className={`font-[abeezee] text-sm leading-5 ${isSelected ? "text-purple-text" : "text-fg"}`}
             >
               {planName} Plan
             </Text>

@@ -106,7 +106,7 @@ const ParentHomeScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1 px-4">
+      <View className="flex-1 bg-background-soft px-4">
         <ParentsHomeScreenHeader />
         <FlatList
           data={SECTIONS}

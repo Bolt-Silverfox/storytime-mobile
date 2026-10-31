@@ -36,9 +36,11 @@ const InStoryModeModal = ({
 
   return (
     <CustomModal isOpen={isOpen} onClose={handleClose}>
-      <View className="flex flex-col gap-y-6 bg-white">
-        <View className="border-b-border-light flex flex-row items-center justify-between border-b pb-6">
-          <Text className="font-[abeezee] text-base">Change story mode</Text>
+      <View className="flex flex-col gap-y-6 bg-surface">
+        <View className="flex flex-row items-center justify-between border-b border-b-line-light pb-6">
+          <Text className="font-[abeezee] text-base text-fg">
+            Change story mode
+          </Text>
           <Pressable
             onPress={handleClose}
             accessibilityRole="button"
@@ -48,25 +50,25 @@ const InStoryModeModal = ({
             <Icon name="SquareX" />
           </Pressable>
         </View>
-        <View className="border-b-border-light flex flex-col gap-y-6 border-b pb-6">
+        <View className="flex flex-col gap-y-6 border-b border-b-line-light pb-6">
           <Pressable
             onPress={() => setPendingMode("plain")}
             className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
               pendingMode === "plain"
-                ? "bg-primary border-[#EC400740]"
-                : "border-border-light bg-white"
+                ? "border-[#EC400740] bg-primary"
+                : "border-line-light bg-surface"
             }`}
           >
             <Text
               className={`font-[quilka] text-xl ${
-                pendingMode === "plain" ? "text-white" : "text-black"
+                pendingMode === "plain" ? "text-white" : "text-fg"
               }`}
             >
               Plain story mode
             </Text>
             <Text
               className={`font-[abeezee] ${
-                pendingMode === "plain" ? "text-[#FED0C1]" : "text-text"
+                pendingMode === "plain" ? "text-[#FED0C1]" : "text-body"
               }`}
             >
               Enjoy storytelling without stress.
@@ -77,20 +79,20 @@ const InStoryModeModal = ({
               onPress={() => setPendingMode("interactive")}
               className={`flex flex-col gap-y-2 rounded-3xl border-2 p-6 ${
                 pendingMode === "interactive"
-                  ? "bg-primary border-[#EC400740]"
-                  : "border-border-light bg-white"
+                  ? "border-[#EC400740] bg-primary"
+                  : "border-line-light bg-surface"
               }`}
             >
               <Text
                 className={`font-[quilka] text-xl ${
-                  pendingMode === "interactive" ? "text-white" : "text-black"
+                  pendingMode === "interactive" ? "text-white" : "text-fg"
                 }`}
               >
                 Interactive story mode
               </Text>
               <Text
                 className={`font-[abeezee] ${
-                  pendingMode === "interactive" ? "text-[#FED0C1]" : "text-text"
+                  pendingMode === "interactive" ? "text-[#FED0C1]" : "text-body"
                 }`}
               >
                 Listen and answer questions to the story.

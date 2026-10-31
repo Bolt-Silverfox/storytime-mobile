@@ -9,8 +9,8 @@ import PageTitle from "../../../components/PageTitle";
 import CustomButton from "../../../components/UI/CustomButton";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import useAuth from "../../../contexts/AuthContext";
-import defaultStyles from "../../../styles";
-import colours from "../../../colours";
+import { useDefaultStyles } from "../../../styles";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const sendTokenSchema = z.object({
   email: z.email({ error: "Email is required" }),
@@ -20,6 +20,8 @@ type ResetPassword = z.infer<typeof sendTokenSchema>;
 type Errors = Partial<Record<keyof ResetPassword, string>>;
 
 const SendResetTokenScreen = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { isLoading, user, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState(user?.email ?? "");
@@ -52,17 +54,17 @@ const SendResetTokenScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1">
+      <View className="flex-1 bg-background-soft">
         <PageTitle title="Send reset token" goBack={() => navigator.goBack()} />
         <View className="mx-[17] mt-10 max-w-screen-md md:mx-auto md:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
           {error && <ErrorMessageDisplay errorMessage={error} />}
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Email:</Text>
             <TextInput
-              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error || errors.email ? "border-red-600" : "border-border"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${error || errors.email ? "border-red-600" : "border-line"}`}
               placeholder="Enter your email"
               placeholderTextColor={
-                error || errors.email ? "red" : colours.text
+                error || errors.email ? "red" : tokens.textBody
               }
               onChangeText={setEmail}
               value={email}

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/native";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import {
   Image,
   Platform,
@@ -10,19 +10,26 @@ import {
   TextInput,
   View,
 } from "react-native";
-import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { GuestNavigatorProp } from "../../Navigation/GuestNavigator";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import CustomButton from "../../components/UI/CustomButton";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 const LoginScreen = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const navigator = useNavigation<RootNavigatorProp | GuestNavigatorProp>();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +38,7 @@ const LoginScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bg-light flex flex-1">
+      <View className="flex flex-1 bg-background-soft">
         <PageTitle title="" goBack={() => navigator.goBack()} />
         <ScrollView
           className=""
@@ -47,9 +54,9 @@ const LoginScreen = () => {
               <View style={styles.formItem}>
                 <Text style={defaultStyles.label}>Email:</Text>
                 <TextInput
-                  className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base ${error ? "border-red-600" : "border-border"}`}
+                  className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${error ? "border-red-600" : "border-line"}`}
                   placeholder="Enter your email"
-                  placeholderTextColor={error ? "red" : colours.text}
+                  placeholderTextColor={error ? "red" : tokens.textBody}
                   onChangeText={setEmail}
                   value={email}
                 />
@@ -82,14 +89,16 @@ const LoginScreen = () => {
               text="Log in"
             />
             <View className="flex flex-row items-center gap-x-4">
-              <View className="flex-1 border-b border-black" />
-              <Text className="text-center font-[abeezee]">Or log in with</Text>
-              <View className="flex-1 border-b border-black" />
+              <View className="flex-1 border-b border-fg" />
+              <Text className="text-center font-[abeezee] text-fg">
+                Or log in with
+              </Text>
+              <View className="flex-1 border-b border-fg" />
             </View>
             <View className="flex flex-row items-center justify-center gap-x-6">
               <Pressable
                 onPress={handleGoogleAuth}
-                className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                className="flex size-16 items-center justify-center rounded-full border border-line-soft bg-surface"
                 accessibilityLabel="Sign in with Google"
                 accessibilityRole="button"
                 accessibilityHint="Opens Google sign-in flow"
@@ -99,7 +108,7 @@ const LoginScreen = () => {
               {Platform.OS === "ios" && (
                 <Pressable
                   onPress={() => handleAppleAuth("login")}
-                  className="border-border-lighter flex size-16 items-center justify-center rounded-full border bg-white"
+                  className="flex size-16 items-center justify-center rounded-full border border-line-soft bg-surface"
                   accessibilityLabel="Sign in with Apple"
                   accessibilityRole="button"
                   accessibilityHint="Opens Apple sign-in flow"
@@ -116,7 +125,7 @@ const LoginScreen = () => {
                 <Text
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigator as any).navigate("signUp")}
-                  style={{ ...defaultStyles.defaultText, color: colours.link }}
+                  style={{ ...defaultStyles.defaultText, color: tokens.link }}
                 >
                   Register
                 </Text>
@@ -128,7 +137,7 @@ const LoginScreen = () => {
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     (navigator as any).navigate("requestEmailVerification")
                   }
-                  style={{ ...defaultStyles.defaultText, color: colours.link }}
+                  style={{ ...defaultStyles.defaultText, color: tokens.link }}
                 >
                   Verify email
                 </Text>
@@ -144,22 +153,26 @@ const LoginScreen = () => {
 
 export default LoginScreen;
 
-const styles = StyleSheet.create({
-  text: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-  },
-  textContainer: {
-    gap: 8,
-  },
-  form: {
-    gap: 20,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-    marginBottom: 26,
-  },
-  formItem: {
-    gap: 4,
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    text: {
+      ...defaultStyles.defaultText,
+      textAlign: "center",
+    },
+    textContainer: {
+      gap: 8,
+    },
+    form: {
+      gap: 20,
+      width: "100%",
+      maxWidth: 600,
+      alignSelf: "center",
+      marginBottom: 26,
+    },
+    formItem: {
+      gap: 4,
+    },
+  });

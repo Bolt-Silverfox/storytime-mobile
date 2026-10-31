@@ -1,17 +1,19 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { z } from "zod";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import LoadingOverlay from "../../components/LoadingOverlay";
 import PasswordInput from "../../components/PasswordInput";
 import useAuth from "../../contexts/AuthContext";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import SuccessScreen from "../../components/UI/SuccessScreen";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import { passwordSchema } from "../../zodSchemas";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 const resetPasswordSchema = z
   .object({
@@ -29,6 +31,12 @@ type Errors = Partial<Record<keyof ResetSchema, string>>;
 type PropRoutes = RouteProp<AuthNavigatorParamList, "inputNewPassword">;
 
 const InputNewPassword = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const navigator = useNavigation<RootNavigatorProp>();
   const route = useRoute<PropRoutes>();
   const [errors, setErrors] = useState<Errors>({});
@@ -68,7 +76,7 @@ const InputNewPassword = () => {
   return (
     <SafeAreaWrapper variant="solid">
       <View className="mx-5 flex max-w-screen-md flex-col sm:mx-auto sm:w-full lg:max-w-screen-lg xl:max-w-screen-xl">
-        <Text className="my-10 text-center font-[quilka] text-2xl">
+        <Text className="my-10 text-center font-[quilka] text-2xl text-fg">
           Input your New Password
         </Text>
         <View style={styles.form}>
@@ -109,19 +117,23 @@ const InputNewPassword = () => {
 
 export default InputNewPassword;
 
-const styles = StyleSheet.create({
-  textWhite: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-    color: "white",
-  },
-  form: {
-    gap: 20,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
-  },
-  buttonMargin: {
-    marginTop: 44,
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    textWhite: {
+      ...defaultStyles.defaultText,
+      textAlign: "center",
+      color: "white",
+    },
+    form: {
+      gap: 20,
+      width: "100%",
+      maxWidth: 600,
+      alignSelf: "center",
+    },
+    buttonMargin: {
+      marginTop: 44,
+    },
+  });

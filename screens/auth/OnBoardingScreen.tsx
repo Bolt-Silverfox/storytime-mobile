@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   View,
   Text,
@@ -10,13 +11,15 @@ import {
   ActivityIndicator,
 } from "react-native";
 import React, { useRef, useState } from "react";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import { useNavigation } from "@react-navigation/native";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import { StatusBar } from "expo-status-bar";
 import { onBoardingSlide } from "../../constants/constants";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import useAuth from "../../contexts/AuthContext";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type SlideItems = {
   id: string;
@@ -27,6 +30,12 @@ type SlideItems = {
 };
 
 export default function OnBoardingScreen() {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const [_currentindex, _setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<SlideItems> | null>(null);
   const { width } = useWindowDimensions();
@@ -71,6 +80,12 @@ export default function OnBoardingScreen() {
 }
 
 function OnboardingItem({ item }: { item: SlideItems }) {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const navigate = useNavigation<RootNavigatorProp>();
   const { enterGuestMode } = useAuth();
   const [isImageLoading, setIsImageLoading] = useState(false);
@@ -91,7 +106,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
         </View>
       )}
       <View className="flex-1 justify-end">
-        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-white px-7 py-8">
+        <View className="mx-auto mb-10 w-[95%] rounded-[32px] bg-surface px-7 py-8">
           <Pagination data={item} />
           <View>
             <Text style={styles.titleText} className="text-center text-[28px]">
@@ -99,7 +114,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             </Text>
             <Text
               style={styles.descriptionText}
-              className="text-text mt-4 mb-8 text-center text-[18px]"
+              className="mb-8 mt-4 text-center text-[18px] text-body"
             >
               {item.description}
             </Text>
@@ -129,7 +144,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
             <View className="mt-4 flex-row justify-center">
               <Text
                 style={styles.descriptionText}
-                className="text-text text-sm"
+                className="text-sm text-body"
               >
                 If you already have an account{" "}
               </Text>
@@ -138,7 +153,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               >
                 <Text
                   style={styles.descriptionText}
-                  className="text-primary text-sm underline"
+                  className="text-sm text-brand-text underline"
                 >
                   Log in
                 </Text>
@@ -152,6 +167,12 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 }
 
 function Pagination({ data }: { data: SlideItems }) {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   return (
     <View className="mb-6 flex-row justify-center gap-[6px]">
       {data.dot.map((item, i) => {
@@ -170,34 +191,38 @@ function Pagination({ data }: { data: SlideItems }) {
   );
 }
 
-const styles = StyleSheet.create({
-  flexOne: {
-    flex: 1,
-  },
-  titleText: {
-    fontFamily: "quilka",
-  },
-  descriptionText: {
-    fontFamily: "abeezee",
-  },
-  textWhite: {
-    ...defaultStyles.defaultText,
-    color: "white",
-  },
-  textDark: {
-    ...defaultStyles.defaultText,
-    color: "#212121",
-  },
-  buttonWhite: {
-    ...defaultStyles.button,
-    backgroundColor: "white",
-  },
-  paginationDot: {
-    backgroundColor: "#EC2907",
-    borderRadius: 5,
-    height: 5,
-  },
-  paginationDotInactive: {
-    backgroundColor: "#00000033",
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    flexOne: {
+      flex: 1,
+    },
+    titleText: {
+      fontFamily: "quilka",
+    },
+    descriptionText: {
+      fontFamily: "abeezee",
+    },
+    textWhite: {
+      ...defaultStyles.defaultText,
+      color: "white",
+    },
+    textDark: {
+      ...defaultStyles.defaultText,
+      color: "#212121",
+    },
+    buttonWhite: {
+      ...defaultStyles.button,
+      backgroundColor: "white",
+    },
+    paginationDot: {
+      backgroundColor: "#EC2907",
+      borderRadius: 5,
+      height: 5,
+    },
+    paginationDotInactive: {
+      backgroundColor: "#00000033",
+    },
+  });

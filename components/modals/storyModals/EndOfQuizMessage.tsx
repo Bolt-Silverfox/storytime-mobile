@@ -39,21 +39,21 @@ const EndOfQuizMessage = ({
 
   if (!isOpen) return null;
   return (
-    <View className="flex flex-col gap-y-5 rounded-3xl bg-white p-4">
+    <View className="flex flex-col gap-y-5 rounded-3xl bg-surface p-4">
       <Image
         source={require("../../../assets/images/medal_emoji.png")}
         className="size-[105px] self-center"
         alt="Congratulations emoji"
       />
-      <Text className="text-center font-[quilka] text-xl">
+      <Text className="text-center font-[quilka] text-xl text-fg">
         Congratulations on successfully completing a story
       </Text>
-      <Text className="text-text text-center font-[abeezee] text-base">
+      <Text className="text-center font-[abeezee] text-base text-body">
         You have walked through the eye of the needle and successfully completed
         "{storyTitle}" and answered the questions.
       </Text>
-      <View className="border-y-border-light border-y py-5">
-        <View className="bg-blue flex flex-col gap-y-4 rounded-3xl p-5">
+      <View className="border-y border-y-line-light py-5">
+        <View className="flex flex-col gap-y-4 rounded-3xl bg-blue p-5">
           <Text className="font-[abeezee] text-base text-white">
             Your test result
           </Text>

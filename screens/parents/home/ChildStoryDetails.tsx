@@ -77,8 +77,8 @@ const ChildStoryDetails = () => {
 
   return (
     <SafeAreaWrapper variant="transparent">
-      <View className="bg-bgLight relative flex flex-1 pb-5">
-        <ScrollView contentContainerClassName="pb-10 bg-bgLight flex-col">
+      <View className="relative flex flex-1 bg-background-soft pb-5">
+        <ScrollView contentContainerClassName="pb-10 bg-background-soft flex-col">
           <ImageBackground
             source={{ uri: coverImageUrl }}
             resizeMode="cover"
@@ -88,16 +88,16 @@ const ChildStoryDetails = () => {
               accessibilityRole="button"
               accessibilityLabel="Go back"
               onPress={() => navigator.goBack()}
-              className="bg-primary absolute top-10 left-4 flex size-10 items-center justify-center rounded-full"
+              className="absolute left-4 top-10 flex size-10 items-center justify-center rounded-full bg-primary"
             >
               <Entypo name="chevron-thin-left" size={24} color="white" />
             </Pressable>
-            <View className="bg-purple flex flex-row justify-around gap-3 rounded-2xl p-5">
+            <View className="flex flex-row justify-around gap-3 rounded-2xl bg-purple p-5">
               <View className="flex flex-col gap-y-2">
                 <Text className="text-center font-[quilka] text-sm text-white">
                   Age range
                 </Text>
-                <Text className="text-purple-light text-center font-[abeezee] text-xs">
+                <Text className="text-center font-[abeezee] text-xs text-purple-light">
                   {ageMin} - {ageMax} Years
                 </Text>
               </View>
@@ -105,7 +105,7 @@ const ChildStoryDetails = () => {
                 <Text className="text-center font-[quilka] text-sm text-white">
                   Duration
                 </Text>
-                <Text className="text-purple-light text-center font-[abeezee] text-xs">
+                <Text className="text-center font-[abeezee] text-xs text-purple-light">
                   {duration > 0 ? duration : "<1"}
                   {duration > 1 ? " mins" : " min"}
                 </Text>
@@ -114,30 +114,30 @@ const ChildStoryDetails = () => {
                 <Text className="text-center font-[quilka] text-sm text-white">
                   Category
                 </Text>
-                <Text className="text-purple-light text-center font-[abeezee] text-xs capitalize">
+                <Text className="text-center font-[abeezee] text-xs capitalize text-purple-light">
                   {categories?.[0]?.name ?? "Uncategorized"}
                 </Text>
               </View>
             </View>
           </ImageBackground>
-          <View className="-mt-4 flex flex-col rounded-t-3xl bg-white px-4 py-6">
-            <View className="border-b-border-light flex flex-col gap-y-3 border-b pb-6">
+          <View className="-mt-4 flex flex-col rounded-t-3xl bg-surface px-4 py-6">
+            <View className="flex flex-col gap-y-3 border-b border-b-line-light pb-6">
               <Text
                 accessibilityLabel="story title"
-                className="font-[quilka] text-3xl text-black"
+                className="font-[quilka] text-3xl text-fg"
               >
                 {title}{" "}
               </Text>
               <Text
                 accessibilityLabel="story description"
-                className="text-text font-[abeezee] text-base"
+                className="font-[abeezee] text-base text-body"
               >
                 {description}
               </Text>
             </View>
-            <View className="border-border-light flex flex-col gap-y-6 border-b py-6">
+            <View className="flex flex-col gap-y-6 border-b border-line-light py-6">
               <View className="flex flex-row items-center justify-between">
-                <Text className="font-[abeezee] text-sm text-black">
+                <Text className="font-[abeezee] text-sm text-fg">
                   Select preferred story mode
                 </Text>
                 <Pressable
@@ -158,19 +158,19 @@ const ChildStoryDetails = () => {
                   className={`flex-1 rounded-lg border p-3 ${
                     selectedMode === "plain"
                       ? "border-primary/20 bg-primary"
-                      : "border-border-light bg-white/60"
+                      : "border-line-light bg-surface/60"
                   }`}
                 >
                   <Text
                     className={`font-[quilka] text-sm ${
-                      selectedMode === "plain" ? "text-white" : "text-black"
+                      selectedMode === "plain" ? "text-white" : "text-fg"
                     }`}
                   >
                     Plain story mode
                   </Text>
                   <Text
-                    className={`font-[abeezee] text-sm text-wrap ${
-                      selectedMode === "plain" ? "text-[#FED0C1]" : "text-text"
+                    className={`text-wrap font-[abeezee] text-sm ${
+                      selectedMode === "plain" ? "text-[#FED0C1]" : "text-body"
                     }`}
                   >
                     Enjoy storytelling without stress.
@@ -187,23 +187,23 @@ const ChildStoryDetails = () => {
                     className={`flex-1 rounded-lg border p-3 ${
                       selectedMode === "interactive"
                         ? "border-primary/20 bg-primary"
-                        : "border-border-light bg-white/60"
+                        : "border-line-light bg-surface/60"
                     }`}
                   >
                     <Text
                       className={`font-[quilka] text-sm ${
                         selectedMode === "interactive"
                           ? "text-white"
-                          : "text-black"
+                          : "text-fg"
                       }`}
                     >
                       Interactive story mode
                     </Text>
                     <Text
-                      className={`font-[abeezee] text-sm text-wrap ${
+                      className={`text-wrap font-[abeezee] text-sm ${
                         selectedMode === "interactive"
                           ? "text-[#FED0C1]"
-                          : "text-text"
+                          : "text-body"
                       }`}
                     >
                       Listen, enjoy and answer questions to the stories.
@@ -228,12 +228,12 @@ const ChildStoryDetails = () => {
             }}
           />
         </ScrollView>
-        <View className="border-t-border-light bg-bgLight border-t px-4">
+        <View className="border-t border-t-line-light bg-background-soft px-4">
           {isGuest && guestStoryAccess && !hasReachedLimit && (
             <GuestQuotaBanner remaining={guestStoryAccess.remaining} />
           )}
           {!isGuest && !isPremium && quota && !hasReachedLimit && (
-            <Text className="text-text py-2 text-center font-[abeezee] text-xs">
+            <Text className="py-2 text-center font-[abeezee] text-xs text-body">
               {quota.remaining} {quota.remaining === 1 ? "story" : "stories"}{" "}
               remaining
             </Text>

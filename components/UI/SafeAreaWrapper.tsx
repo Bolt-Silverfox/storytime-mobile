@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useTheme } from "../../theme/ThemeContext";
 
 type SafeAreaWrapperProps = {
   variant: "solid" | "transparent";
@@ -12,23 +13,25 @@ type SafeAreaWrapperProps = {
 
 const SafeAreaWrapper = ({
   variant,
-  backgroundColor = "white",
-  statusBarStyle = "dark",
+  backgroundColor,
+  statusBarStyle,
   children,
 }: SafeAreaWrapperProps) => {
+  const { tokens, statusBarStyle: themeStatusBar } = useTheme();
+  const bg = backgroundColor ?? tokens.surface;
   const containerStyle = useMemo(
     () => [
       styles.container,
       {
-        backgroundColor: variant === "solid" ? backgroundColor : "transparent",
+        backgroundColor: variant === "solid" ? bg : "transparent",
       },
     ],
-    [variant, backgroundColor]
+    [variant, bg]
   );
 
   return (
     <>
-      <StatusBar style={statusBarStyle} />
+      <StatusBar style={statusBarStyle ?? themeStatusBar} />
       <SafeAreaView
         style={containerStyle}
         edges={

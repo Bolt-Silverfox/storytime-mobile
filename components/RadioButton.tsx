@@ -1,3 +1,4 @@
+import { useTheme } from "../theme/ThemeContext";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type RadioButton = {
@@ -12,14 +13,23 @@ export const RadioButton = ({
   label,
   selected,
   onSelect,
-}: RadioButton) => (
-  <Pressable style={styles.radioContainer} onPress={() => onSelect(value)}>
-    <View style={styles.radioCircle}>
-      {selected === value && <View style={styles.selectedRb} />}
-    </View>
-    <Text style={styles.radioText}>{label}</Text>
-  </Pressable>
-);
+}: RadioButton) => {
+  const { tokens } = useTheme();
+  return (
+    <Pressable style={styles.radioContainer} onPress={() => onSelect(value)}>
+      <View style={[styles.radioCircle, { borderColor: tokens.blueAccent }]}>
+        {selected === value && (
+          <View
+            style={[styles.selectedRb, { backgroundColor: tokens.blueAccent }]}
+          />
+        )}
+      </View>
+      <Text style={[styles.radioText, { color: tokens.textStrong }]}>
+        {label}
+      </Text>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   radioContainer: {
@@ -32,7 +42,6 @@ const styles = StyleSheet.create({
     width: 24,
     borderRadius: 12,
     borderWidth: 2,
-    borderColor: "#4807EC",
     alignItems: "center",
     justifyContent: "center",
     // marginRight: 10,
@@ -41,7 +50,6 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: "#4807EC",
   },
   radioText: {
     fontSize: 16,

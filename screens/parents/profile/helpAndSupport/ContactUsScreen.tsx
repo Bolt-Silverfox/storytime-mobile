@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -7,11 +8,16 @@ import { Linking, Pressable, StyleSheet, Text, View } from "react-native";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import ParentalGateModal from "../../../../components/modals/ParentalGateModal";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../../styles";
+import { useDefaultStyles } from "../../../../styles";
 import PageTitle from "../../../../components/PageTitle";
 import useParentalGate from "../../../../hooks/others/useParentalGate";
+import { useTheme } from "../../../../theme/ThemeContext";
+import type { Tokens } from "../../../../theme/tokens";
 
 export default function ContactUsScreen() {
+  const { tokens } = useTheme();
+  const contactStyles = useMemo(() => makeContactStyles(tokens), [tokens]);
+  const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const gate = useParentalGate();
 
@@ -21,7 +27,7 @@ export default function ContactUsScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-[#FFFCFBFB]">
+      <View className="flex-1 bg-background-soft">
         <PageTitle goBack={() => navigator.goBack()} title="Contact us" />
         <View className="my-8 items-center">
           <Text
@@ -32,7 +38,7 @@ export default function ContactUsScreen() {
           </Text>
         </View>
         <View className="mx-4 gap-4">
-          <View className="flex-row items-center gap-3 rounded-[20px] border-[0.5px] border-[#EAE8E8] bg-white px-[16] py-[34]">
+          <View className="flex-row items-center gap-3 rounded-[20px] border-[0.5px] border-[#EAE8E8] bg-surface px-[16] py-[34]">
             <View className="flex size-[72px] items-center justify-center rounded-full bg-[#EEE7FF]">
               <Ionicons name="mail-outline" size={40} color="#4807EC" />
             </View>
@@ -65,7 +71,11 @@ export default function ContactUsScreen() {
                 )
               }
             >
-              <FontAwesome5 name="facebook-square" size={50} color="black" />
+              <FontAwesome5
+                name="facebook-square"
+                size={50}
+                color={tokens.textStrong}
+              />
             </Pressable>
             <Pressable
               accessibilityRole="link"
@@ -75,16 +85,20 @@ export default function ContactUsScreen() {
                 openURL("https://www.instagram.com/teamstorytimehq/")
               }
             >
-              <FontAwesome6 name="square-instagram" size={50} color="black" />
+              <FontAwesome6
+                name="square-instagram"
+                size={50}
+                color={tokens.textStrong}
+              />
             </Pressable>
             <Pressable
               accessibilityRole="link"
               accessibilityLabel="Storytime on TikTok"
               hitSlop={8}
               onPress={() => openURL("https://www.tiktok.com/@teamstorytimehq")}
-              className="flex size-[51px] flex-col items-center justify-center rounded-full bg-black"
+              className="flex size-[51px] flex-col items-center justify-center rounded-full bg-fg"
             >
-              <FontAwesome6 name="tiktok" size={35} color="white" />
+              <FontAwesome6 name="tiktok" size={35} color={tokens.background} />
             </Pressable>
             <Pressable
               accessibilityRole="link"
@@ -93,9 +107,13 @@ export default function ContactUsScreen() {
               onPress={() =>
                 openURL("https://www.linkedin.com/company/storytimehq/")
               }
-              className="flex size-[51px] flex-col items-center justify-center rounded-full bg-black"
+              className="flex size-[51px] flex-col items-center justify-center rounded-full bg-fg"
             >
-              <FontAwesome5 name="linkedin-in" size={35} color="white" />
+              <FontAwesome5
+                name="linkedin-in"
+                size={35}
+                color={tokens.background}
+              />
             </Pressable>
             <Pressable
               accessibilityRole="link"
@@ -103,7 +121,11 @@ export default function ContactUsScreen() {
               hitSlop={8}
               onPress={() => openURL("https://x.com/storytimehq")}
             >
-              <FontAwesome6 name="x-twitter" size={50} color="black" />
+              <FontAwesome6
+                name="x-twitter"
+                size={50}
+                color={tokens.textStrong}
+              />
             </Pressable>
           </View>
         </View>
@@ -117,11 +139,12 @@ export default function ContactUsScreen() {
   );
 }
 
-const contactStyles = StyleSheet.create({
-  subtitle: {
-    fontSize: 16,
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeContactStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    subtitle: {
+      fontSize: 16,
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });

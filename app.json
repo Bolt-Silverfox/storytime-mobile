@@ -5,7 +5,7 @@
     "version": "1.3.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "scheme": "storytime",
     "ios": {
       "supportsTablet": true,
@@ -73,7 +73,11 @@
         {
           "image": "./assets/splash-icon.png",
           "resizeMode": "contain",
-          "backgroundColor": "#fbf8f7"
+          "backgroundColor": "#fbf8f7",
+          "dark": {
+            "image": "./assets/splash-icon.png",
+            "backgroundColor": "#1A1514"
+          }
         }
       ],
       [

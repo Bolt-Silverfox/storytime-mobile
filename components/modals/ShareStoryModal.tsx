@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import * as Clipboard from "expo-clipboard";
 import {
@@ -13,6 +14,8 @@ import { shareContent } from "../../utils/utils";
 import useToast from "../../contexts/ToastContext";
 import Icon from "../Icon";
 import CustomModal, { CustomModalProps } from "./CustomModal";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type ShareStoryModalProps = Omit<CustomModalProps, "children"> & {
   storyId: string;
@@ -33,6 +36,8 @@ const ShareStoryModal = ({
   storyId,
   storyTitle,
 }: ShareStoryModalProps) => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const shareUrl = makeStoryUniversalLink(storyId, storyTitle);
   const { notify } = useToast();
 
@@ -90,9 +95,7 @@ const ShareStoryModal = ({
       <View className="flex flex-col gap-y-6">
         {/* Header */}
         <View className="flex flex-row items-center justify-between">
-          <Text className="font-[abeezee] text-base text-black">
-            Share link
-          </Text>
+          <Text className="font-[abeezee] text-base text-fg">Share link</Text>
           <Icon name="SquareX" onPress={onClose} />
         </View>
 
@@ -104,7 +107,7 @@ const ShareStoryModal = ({
           accessibilityRole="button"
         >
           <Text
-            className="flex-1 font-[abeezee] text-base text-black"
+            className="flex-1 font-[abeezee] text-base text-ink"
             numberOfLines={2}
             ellipsizeMode="middle"
           >
@@ -114,7 +117,7 @@ const ShareStoryModal = ({
         </Pressable>
 
         {/* Divider */}
-        <View className="bg-border-lighter h-px" />
+        <View className="h-px bg-line-soft" />
 
         {/* Social media icons */}
         <View className="flex-row items-start gap-x-3">
@@ -126,7 +129,13 @@ const ShareStoryModal = ({
               accessibilityLabel={`Share on ${icon.label}`}
               accessibilityRole="button"
             >
-              <FontAwesome6 name={icon.name} size={28} color={icon.color} />
+              <FontAwesome6
+                name={icon.name}
+                size={28}
+                color={
+                  icon.name === "x-twitter" ? tokens.textStrong : icon.color
+                }
+              />
             </Pressable>
           ))}
         </View>
@@ -135,25 +144,26 @@ const ShareStoryModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  urlBox: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 18,
-    padding: 16,
-    borderRadius: 18,
-    borderWidth: 0.5,
-    borderStyle: "dashed",
-    borderColor: "#FDE260",
-    backgroundColor: "#FFF8D7",
-  },
-  socialButton: {
-    padding: 16,
-    borderRadius: 45,
-    borderWidth: 0.5,
-    borderColor: "#E0E0E0",
-    backgroundColor: "white",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    urlBox: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 18,
+      padding: 16,
+      borderRadius: 18,
+      borderWidth: 0.5,
+      borderStyle: "dashed",
+      borderColor: "#FDE260",
+      backgroundColor: "#FFF8D7",
+    },
+    socialButton: {
+      padding: 16,
+      borderRadius: 45,
+      borderWidth: 0.5,
+      borderColor: tokens.borderLight,
+      backgroundColor: tokens.surface,
+    },
+  });
 
 export default ShareStoryModal;

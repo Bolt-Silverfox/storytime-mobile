@@ -22,12 +22,12 @@ export default function HelpAndSupportIndexScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="flex-1 bg-[#FFFCFBFB]">
+      <View className="flex-1 bg-background-soft">
         <PageTitle goBack={() => navigator.goBack()} title="Help & Support" />
         <ScrollView contentContainerStyle={helpStyles.scrollContent}>
           <View
             style={styles.menuList}
-            className="border-border-lighter rounded-[20px] border px-[16] pt-7"
+            className="rounded-[20px] border border-line-soft px-[16] pt-7"
           >
             <MenuItem
               icon={

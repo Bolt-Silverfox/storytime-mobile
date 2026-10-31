@@ -8,7 +8,7 @@ import {
   NavigatorScreenParams,
 } from "@react-navigation/native";
 import { Heart } from "lucide-react-native";
-import colours from "../colours";
+import { useTheme } from "../theme/ThemeContext";
 import Icon from "../components/Icon";
 import ParentsFavouritesScreen from "../screens/parents/ParentsFavouritesScreen";
 import ParentsLibraryScreen from "../screens/parents/ParentsLibraryScreen";
@@ -31,6 +31,7 @@ type ParentsNavigatorProp = BottomTabNavigationProp<ParentsNavigatorParamList>;
 const Tab = createBottomTabNavigator<ParentsNavigatorParamList>();
 
 const ParentsTabNavigator = () => {
+  const { tokens } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={{
@@ -52,10 +53,10 @@ const ParentsTabNavigator = () => {
             tabBarIcon: ({ focused }) => (
               <Icon
                 name="House"
-                color={focused ? colours.primary : colours.black}
+                color={focused ? tokens.brandText : tokens.textStrong}
               />
             ),
-            tabBarActiveTintColor: colours.primary,
+            tabBarActiveTintColor: tokens.brandText,
             tabBarLabelStyle: {
               textTransform: "capitalize",
             },
@@ -76,10 +77,10 @@ const ParentsTabNavigator = () => {
               <Feather
                 name="book"
                 size={24}
-                color={focused ? colours.primary : colours.black}
+                color={focused ? tokens.brandText : tokens.textStrong}
               />
             ),
-            tabBarActiveTintColor: colours.primary,
+            tabBarActiveTintColor: tokens.brandText,
             tabBarLabelStyle: {
               textTransform: "capitalize",
             },
@@ -91,9 +92,9 @@ const ParentsTabNavigator = () => {
         component={ParentsFavouritesScreen}
         options={{
           tabBarIcon: ({ focused }) => (
-            <Heart color={focused ? colours.primary : colours.black} />
+            <Heart color={focused ? tokens.brandText : tokens.textStrong} />
           ),
-          tabBarActiveTintColor: colours.primary,
+          tabBarActiveTintColor: tokens.brandText,
           tabBarLabelStyle: {
             textTransform: "capitalize",
           },
@@ -110,10 +111,10 @@ const ParentsTabNavigator = () => {
               <Ionicons
                 name="person-outline"
                 size={24}
-                color={focused ? colours.primary : colours.black}
+                color={focused ? tokens.brandText : tokens.textStrong}
               />
             ),
-            tabBarActiveTintColor: colours.primary,
+            tabBarActiveTintColor: tokens.brandText,
             tabBarLabelStyle: {
               textTransform: "capitalize",
             },

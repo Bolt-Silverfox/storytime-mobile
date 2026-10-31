@@ -50,6 +50,11 @@ updates:
       - dependency-name: 'typescript'
         update-types:
           - 'version-update:semver-major'
+      # NativeWind 4 only supports Tailwind CSS v3 (metro.config.js throws on
+      # v4 at load time). Tailwind v4 needs NativeWind v5.
+      - dependency-name: 'tailwindcss'
+        update-types:
+          - 'version-update:semver-major'
       # `expo` itself is not in bundledNativeModules -- it IS the SDK -- so the
       # generated list below misses it. Only majors are ignored here: an SDK
       # major (56 -> 57) must be done as a whole via `npx expo install --fix`,

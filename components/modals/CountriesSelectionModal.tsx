@@ -28,7 +28,9 @@ const CountriesSelectionModal = ({
   if (error)
     return (
       <View className="flex flex-col gap-y-3">
-        <Text>{error?.message ?? "Failed to load countries, try again"}</Text>
+        <Text className="text-fg">
+          {error?.message ?? "Failed to load countries, try again"}
+        </Text>
         <CustomButton text="Reload" onPress={refetch} disabled={isPending} />
       </View>
     );
@@ -45,7 +47,7 @@ const CountriesSelectionModal = ({
   return (
     <CustomModal isOpen={isOpen} onClose={onClose}>
       <TextInput
-        className="mt-16 flex h-10 flex-col justify-center rounded-full border"
+        className="mt-16 flex h-10 flex-col justify-center rounded-full border text-fg"
         onChangeText={setSearchValue}
         placeholder="Search country"
       />
@@ -60,14 +62,14 @@ const CountriesSelectionModal = ({
               key={item.name.common}
               className="px-3 py-4"
             >
-              <Text>{item.name.common}</Text>
+              <Text className="text-fg">{item.name.common}</Text>
             </Pressable>
           )}
         />
       ) : (
-        <Text className="mt-5 text-center font-[abeezee] text-sm">
+        <Text className="mt-5 text-center font-[abeezee] text-sm text-fg">
           No results found for{" "}
-          <Text className="text-primary font-[quilka] text-xl">
+          <Text className="font-[quilka] text-xl text-brand-text">
             {searchValue}
           </Text>
         </Text>

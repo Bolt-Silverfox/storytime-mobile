@@ -1,18 +1,20 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import useAuth from "../../contexts/AuthContext";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
-import defaultStyles from "../../styles";
+import { makeDefaultStyles, useDefaultStyles } from "../../styles";
 import { AuthNavigatorParamList } from "../../Navigation/AuthNavigator";
 import PageTitle from "../../components/PageTitle";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { formatTime } from "../../utils/utils";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import CustomButton from "../../components/UI/CustomButton";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type VerifyEmailRouteProp = RouteProp<
   AuthNavigatorParamList,
@@ -23,6 +25,12 @@ const OTP_DURATION = 60;
 const RESET_EXPIRY_KEY = "reset_password_otp_expiry";
 
 const ConfirmResetPasswordTokenScreen = () => {
+  const defaultStyles = useDefaultStyles();
+  const { tokens, isDark } = useTheme();
+  const styles = useMemo(
+    () => makeStyles(defaultStyles, tokens),
+    [defaultStyles, tokens]
+  );
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
   const [error, setError] = useState("");
@@ -95,7 +103,7 @@ const ConfirmResetPasswordTokenScreen = () => {
         <View style={defaultStyles.screen}>
           <View style={styles.textContainer}>
             {successMessage.length > 0 && (
-              <Text className="text-primary text-center font-[abeezee] text-xl uppercase">
+              <Text className="text-center font-[abeezee] text-xl uppercase text-brand-text">
                 {successMessage}
               </Text>
             )}
@@ -117,7 +125,7 @@ const ConfirmResetPasswordTokenScreen = () => {
                 pinCodeTextStyle: styles.text,
                 focusedPinCodeContainerStyle: styles.boxFocused,
               }}
-              focusColor="blue"
+              focusColor={isDark ? tokens.link : "blue"}
             />
             <Text style={styles.countDown}>{formatTime(countDown)}</Text>
             <Pressable disabled={isLoading || countDown > 0}>
@@ -156,34 +164,38 @@ const ConfirmResetPasswordTokenScreen = () => {
 
 export default ConfirmResetPasswordTokenScreen;
 
-const styles = StyleSheet.create({
-  text: {
-    ...defaultStyles.defaultText,
-    textAlign: "center",
-  },
-  textContainer: {
-    gap: 8,
-    marginBottom: 56,
-  },
-  container: {
-    width: "100%",
-    alignItems: "center",
-  },
-  box: {
-    borderWidth: 1,
-    borderColor: "#ccc",
-    width: 47,
-    height: 47,
-    marginHorizontal: 5,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  boxFocused: {
-    borderColor: colours.primary,
-  },
-  countDown: {
-    ...defaultStyles.linkText,
-    textAlign: "right",
-    marginTop: 8,
-  },
-});
+const makeStyles = (
+  defaultStyles: ReturnType<typeof makeDefaultStyles>,
+  tokens: Tokens
+) =>
+  StyleSheet.create({
+    text: {
+      ...defaultStyles.defaultText,
+      textAlign: "center",
+    },
+    textContainer: {
+      gap: 8,
+      marginBottom: 56,
+    },
+    container: {
+      width: "100%",
+      alignItems: "center",
+    },
+    box: {
+      borderWidth: 1,
+      borderColor: "#ccc",
+      width: 47,
+      height: 47,
+      marginHorizontal: 5,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    boxFocused: {
+      borderColor: colours.primary,
+    },
+    countDown: {
+      ...defaultStyles.linkText,
+      textAlign: "right",
+      marginTop: 8,
+    },
+  });

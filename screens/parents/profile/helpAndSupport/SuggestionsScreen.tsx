@@ -2,15 +2,15 @@ import { useNavigation } from "@react-navigation/native";
 import React, { useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { z } from "zod";
-import colours from "../../../../colours";
 import ErrorMessageDisplay from "../../../../components/ErrorMessageDisplay";
 import PageTitle from "../../../../components/PageTitle";
 import SafeAreaWrapper from "../../../../components/UI/SafeAreaWrapper";
 import SuccessScreen from "../../../../components/UI/SuccessScreen";
 import useSubmitFeedback from "../../../../hooks/tanstack/mutationHooks/useSubmitFeedback";
 import { ParentProfileNavigatorProp } from "../../../../Navigation/ParentProfileNavigator";
-import defaultStyles from "../../../../styles";
+import { useDefaultStyles } from "../../../../styles";
 import useAuth from "../../../../contexts/AuthContext";
+import { useTheme } from "../../../../theme/ThemeContext";
 
 const feedBack = z.object({
   fullName: z
@@ -31,6 +31,8 @@ type FeedBackSchema = z.infer<typeof feedBack>;
 type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
 export default function SuggestionsScreen() {
+  const defaultStyles = useDefaultStyles();
+  const { tokens } = useTheme();
   const { user } = useAuth();
   const [fullName, setFullName] = useState(user?.name ?? "");
   const [email, setEmail] = useState(user?.email ?? "");
@@ -79,8 +81,8 @@ export default function SuggestionsScreen() {
         goBack={() => navigator.goBack()}
         title="Suggestions & Feedback"
       />
-      <View className="flex-1 bg-[#FFFCFBFB]">
-        <View className="mt-9 mb-8 items-center">
+      <View className="flex-1 bg-background-soft">
+        <View className="mb-8 mt-9 items-center">
           <Text
             style={[defaultStyles.defaultText, suggestStyles.subtitle]}
             className="max-w-[311px] text-center"
@@ -89,19 +91,19 @@ export default function SuggestionsScreen() {
             experience
           </Text>
         </View>
-        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-[#E0E0E0] bg-white p-4">
+        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-line-light bg-surface p-4">
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Full name:</Text>
             <TextInput
-              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.fullName ? "border-red-600" : "border-border"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.fullName ? "border-red-600" : "border-line"}`}
               placeholder="Enter full name"
-              placeholderTextColor={errors.fullName ? "red" : colours.text}
+              placeholderTextColor={errors.fullName ? "red" : tokens.textBody}
               onChangeText={setFullName}
               value={fullName}
               maxLength={100}
             />
             {errors.fullName && (
-              <Text className="text-sm text-red-600">{errors.fullName}</Text>
+              <Text className="text-sm text-danger">{errors.fullName}</Text>
             )}
           </View>
           <View style={styles.formItem}>
@@ -109,12 +111,12 @@ export default function SuggestionsScreen() {
             <TextInput
               onChangeText={setEmail}
               value={email}
-              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-black ${errors.email ? "border-red-600" : "border-border"}`}
+              className={`relative h-[50px] justify-center rounded-full border px-4 font-[abeezee] text-base text-fg ${errors.email ? "border-red-600" : "border-line"}`}
               placeholder="Enter email address"
-              placeholderTextColor={errors.email ? "red" : colours.text}
+              placeholderTextColor={errors.email ? "red" : tokens.textBody}
             />
             {errors.email && (
-              <Text className="text-sm text-red-600">{errors.email}</Text>
+              <Text className="text-sm text-danger">{errors.email}</Text>
             )}
           </View>
           <View style={styles.formItem}>
@@ -123,14 +125,14 @@ export default function SuggestionsScreen() {
               style={suggestStyles.textArea}
               onChangeText={setMessage}
               value={message}
-              className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
+              className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-fg ${errors.message ? "border-red-600" : "border-line"}`}
               placeholder="Enter message"
-              placeholderTextColor={errors.message ? "red" : colours.text}
+              placeholderTextColor={errors.message ? "red" : tokens.textBody}
               multiline
               maxLength={2000}
             />
             {errors.message && (
-              <Text className="text-sm text-red-600">{errors.message}</Text>
+              <Text className="text-sm text-danger">{errors.message}</Text>
             )}
             {apiError ? <ErrorMessageDisplay errorMessage={apiError} /> : null}
           </View>

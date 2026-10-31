@@ -6,6 +6,7 @@ import Icon from "../../Icon";
 import TopModal from "../TopModal";
 import ExitStoryModal from "./ExitStoryModal";
 import InStoryModeModal from "./InStoryModeModal";
+import { useTheme } from "../../../theme/ThemeContext";
 
 type PropTypes = {
   setIsOptionsModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -23,6 +24,7 @@ const InStoryOptionsModal = ({
   onModeChange,
   hasQuiz,
 }: PropTypes) => {
+  const { tokens } = useTheme();
   const [isStoryModeModalOpen, setIsStoryModeModalOpen] = useState(false);
   const [isExitModalOpen, setIsExitModalOpen] = useState(false);
 
@@ -37,42 +39,46 @@ const InStoryOptionsModal = ({
             onPress={() => handleVoiceModal(true)}
             accessibilityRole="button"
             accessibilityLabel="Change voice"
-            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
+            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-line-light"
           >
-            <View className="border-border-lighter flex size-11 flex-col items-center justify-center rounded-xl border">
-              <MaterialIcons name="multitrack-audio" size={24} color="black" />
+            <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-line-soft">
+              <MaterialIcons
+                name="multitrack-audio"
+                size={24}
+                color={tokens.textStrong}
+              />
             </View>
-            <Text className="text-text font-[abeezee] text-xs">
+            <Text className="font-[abeezee] text-xs text-body">
               Change voice
             </Text>
           </Pressable>
-          {/* <View className="border border-border-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
-            <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-border-lighter">
+          {/* <View className="border border-line-light w-[90px] h-[96px] flex-col gap-y-2 flex justify-center items-center rounded-2xl">
+            <Pressable className="flex size-11 rounded-xl flex-col justify-center items-center border border-line-soft">
               <Icon name="Play" />
             </Pressable>
-            <Text className="text-xs text-text font-[abeezee]">Autoplay</Text>
+            <Text className="text-xs text-body font-[abeezee]">Autoplay</Text>
           </View> */}
           <Pressable
             onPress={() => setIsStoryModeModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Story Mode"
-            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
+            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-line-light"
           >
-            <View className="border-border-lighter flex size-11 flex-col items-center justify-center rounded-xl border">
+            <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-line-soft">
               <Icon name="ListMusic" />
             </View>
-            <Text className="text-text font-[abeezee] text-xs">Story Mode</Text>
+            <Text className="font-[abeezee] text-xs text-body">Story Mode</Text>
           </Pressable>
           <Pressable
             onPress={() => setIsExitModalOpen(true)}
             accessibilityRole="button"
             accessibilityLabel="Exit Story"
-            className="border-border-light flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border"
+            className="flex h-[96px] w-[90px] flex-col items-center justify-center gap-y-2 rounded-2xl border border-line-light"
           >
             <View className="flex size-11 flex-col items-center justify-center rounded-xl border border-[#FFC8C8] bg-[#FFE0E0]">
               <Icon name="LogOut" color="#EC0707" />
             </View>
-            <Text className="text-text font-[abeezee] text-xs">Exit Story</Text>
+            <Text className="font-[abeezee] text-xs text-body">Exit Story</Text>
           </Pressable>
         </View>
       </View>

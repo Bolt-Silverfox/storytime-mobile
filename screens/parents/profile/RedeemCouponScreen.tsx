@@ -15,8 +15,10 @@ import {
   useRedeemCoupon,
   useValidateCoupon,
 } from "../../../hooks/tanstack/mutationHooks/useCoupon";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const RedeemCouponScreen = () => {
+  const { tokens } = useTheme();
   const navigation = useNavigation();
   const [couponCode, setCouponCode] = useState("");
   const [validationResult, setValidationResult] = useState<{
@@ -69,11 +71,9 @@ const RedeemCouponScreen = () => {
             onPress={() => navigation.goBack()}
             activeOpacity={0.7}
           >
-            <Feather name="arrow-left" size={22} color="#1a1a1a" />
+            <Feather name="arrow-left" size={22} color={tokens.textStrong} />
           </TouchableOpacity>
-          <Text className="font-[quilka] text-2xl text-black">
-            Redeem Coupon
-          </Text>
+          <Text className="font-[quilka] text-2xl text-fg">Redeem Coupon</Text>
         </View>
 
         {redeemResult ? (
@@ -82,10 +82,10 @@ const RedeemCouponScreen = () => {
             <View className="size-20 items-center justify-center rounded-full bg-green-100">
               <Feather name="check-circle" size={40} color="#16a34a" />
             </View>
-            <Text className="text-center font-[quilka] text-2xl text-green-700">
+            <Text className="text-center font-[quilka] text-2xl text-success-strong">
               Premium Unlocked!
             </Text>
-            <Text className="text-center font-[abeezee] text-base text-gray-600">
+            <Text className="text-center font-[abeezee] text-base text-body">
               {redeemResult.message}
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
@@ -101,7 +101,7 @@ const RedeemCouponScreen = () => {
             </View>
             <TouchableOpacity
               onPress={() => navigation.goBack()}
-              className="bg-primary mt-4 w-full rounded-full py-4"
+              className="mt-4 w-full rounded-full bg-primary py-4"
               activeOpacity={0.8}
             >
               <Text className="text-center font-[abeezee] text-base text-white">
@@ -112,13 +112,13 @@ const RedeemCouponScreen = () => {
         ) : (
           /* Input state */
           <View className="flex-col gap-y-6">
-            <Text className="font-[abeezee] text-base text-gray-600">
+            <Text className="font-[abeezee] text-base text-body">
               Enter your coupon code below to unlock free premium access.
             </Text>
 
             {/* Code input */}
             <View className="flex-col gap-y-3">
-              <Text className="font-[abeezee] text-sm font-medium text-gray-500">
+              <Text className="font-[abeezee] text-sm font-medium text-muted">
                 Coupon Code
               </Text>
               <TextInput
@@ -130,7 +130,7 @@ const RedeemCouponScreen = () => {
                 placeholder="e.g. SUMMER25"
                 autoCapitalize="characters"
                 autoCorrect={false}
-                className="border-border-light rounded-2xl border bg-white px-4 py-3 font-[abeezee] text-base tracking-widest"
+                className="rounded-2xl border border-line-input bg-surface px-4 py-3 font-[abeezee] text-base tracking-widest text-fg"
               />
             </View>
 
@@ -160,7 +160,7 @@ const RedeemCouponScreen = () => {
                   validateMutation.isPending ||
                   redeemMutation.isPending
                 }
-                className="bg-primary w-full rounded-full py-4"
+                className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
               >
                 {validateMutation.isPending ? (
@@ -178,7 +178,7 @@ const RedeemCouponScreen = () => {
               <TouchableOpacity
                 onPress={handleRedeem}
                 disabled={redeemMutation.isPending}
-                className="bg-primary w-full rounded-full py-4"
+                className="w-full rounded-full bg-primary py-4"
                 activeOpacity={0.8}
               >
                 {redeemMutation.isPending ? (

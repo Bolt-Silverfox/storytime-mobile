@@ -22,13 +22,13 @@ const UploadAvatarModal = ({
       <View className="flex flex-row items-center gap-x-14">
         <Pressable
           onPress={() => gate.guard(launchCamera)}
-          className="border-border-lighter flex size-[60px] items-center justify-center rounded-full border bg-[#FFFCFBFB]"
+          className="flex size-[60px] items-center justify-center rounded-full border border-line-soft bg-background-soft"
         >
           <Icon name="Camera" />
         </Pressable>
         <Pressable
           onPress={() => gate.guard(pickImage)}
-          className="border-border-lighter flex size-[60px] items-center justify-center rounded-full border bg-[#FFFCFBFB]"
+          className="flex size-[60px] items-center justify-center rounded-full border border-line-soft bg-background-soft"
         >
           <Icon name="Folder" />
         </Pressable>

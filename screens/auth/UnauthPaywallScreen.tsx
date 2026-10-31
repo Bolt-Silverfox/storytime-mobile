@@ -65,14 +65,14 @@ const UnauthPaywallScreen = () => {
   if (purchaseComplete) {
     return (
       <SafeAreaWrapper variant="solid">
-        <View className="flex-1 items-center justify-center bg-white px-6">
+        <View className="flex-1 items-center justify-center bg-surface px-6">
           <View className="mb-6 size-20 items-center justify-center rounded-full bg-green-100">
             <FontAwesome5 name="check" size={36} color="#16a34a" />
           </View>
-          <Text className="mb-2 text-center font-[quilka] text-2xl text-black">
+          <Text className="mb-2 text-center font-[quilka] text-2xl text-fg">
             Purchase Successful!
           </Text>
-          <Text className="text-text mb-8 text-center font-[abeezee] text-base">
+          <Text className="mb-8 text-center font-[abeezee] text-base text-body">
             Create an account to access your subscription across all your
             devices.
           </Text>
@@ -85,11 +85,9 @@ const UnauthPaywallScreen = () => {
             <Pressable
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               onPress={() => (navigation as any).navigate("login")}
-              className="border-border-light items-center rounded-full border py-3"
+              className="items-center rounded-full border border-line-light py-3"
             >
-              <Text className="font-[abeezee] text-base text-black">
-                Log In
-              </Text>
+              <Text className="font-[abeezee] text-base text-fg">Log In</Text>
             </Pressable>
           </View>
         </View>
@@ -99,8 +97,8 @@ const UnauthPaywallScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-primary flex-1">
-        <View className="flex-row items-center px-4 pt-4 pb-2">
+      <View className="flex-1 bg-primary">
+        <View className="flex-row items-center px-4 pb-2 pt-4">
           <Pressable
             onPress={() => navigation.goBack()}
             accessibilityLabel="Go back"
@@ -114,7 +112,7 @@ const UnauthPaywallScreen = () => {
           contentContainerStyle={styles.scrollContent}
         >
           <View className="flex flex-col items-center justify-center">
-            <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-white">
+            <Pressable className="flex size-[100px] items-center justify-center rounded-full bg-surface">
               <FontAwesome5 name="crown" size={50} color="#866EFF" />
             </Pressable>
             <Text className="mt-4 font-[quilka] text-2xl text-white">
@@ -125,10 +123,10 @@ const UnauthPaywallScreen = () => {
             </Text>
           </View>
           <View>
-            <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-white/60" />
-            <View className="flex flex-1 flex-col gap-y-10 rounded-t-[32px] bg-white px-4 py-5">
+            <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-surface/60" />
+            <View className="flex flex-1 flex-col gap-y-10 rounded-t-[32px] bg-surface px-4 py-5">
               {errorMessage && (
-                <Text className="text-center font-[abeezee] text-xl text-red-700">
+                <Text className="text-center font-[abeezee] text-xl text-danger-strong">
                   {errorMessage}
                 </Text>
               )}
@@ -140,8 +138,8 @@ const UnauthPaywallScreen = () => {
                 subscriptions={subscriptions}
               />
 
-              <View className="border-y-border-light mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y pt-10 pb-6 lg:max-w-screen-lg xl:max-w-screen-xl">
-                <Text className="font-[quilka] text-[18px] text-black">
+              <View className="mx-auto flex w-full max-w-screen-md flex-col gap-y-4 border-y border-y-line-light pb-6 pt-10 lg:max-w-screen-lg xl:max-w-screen-xl">
+                <Text className="font-[quilka] text-[18px] text-fg">
                   What you'll enjoy
                 </Text>
                 <View className="flex flex-col gap-y-5">
@@ -154,7 +152,7 @@ const UnauthPaywallScreen = () => {
                         source={require("../../assets/icons/tick.png")}
                         className="h-[14px] w-[17px]"
                       />
-                      <Text className="font-[abeezee] text-base">
+                      <Text className="font-[abeezee] text-base text-fg">
                         {benefit}
                       </Text>
                     </View>
@@ -162,23 +160,23 @@ const UnauthPaywallScreen = () => {
                 </View>
               </View>
 
-              <Text className="-mt-5 font-[abeezee] text-base text-black">
+              <Text className="-mt-5 font-[abeezee] text-base text-fg">
                 You won't just listen, you'll have an unlimited learning
                 experience, with the voice type you choose.
               </Text>
 
-              <View className="bg-yellow mx-auto flex w-full max-w-screen-md gap-y-2 rounded-2xl px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
+              <View className="mx-auto flex w-full max-w-screen-md gap-y-2 rounded-2xl bg-yellow px-4 py-5 lg:max-w-screen-lg xl:max-w-screen-xl">
                 <View className="flex-row gap-x-4">
                   <Image
                     className="size-6"
                     source={require("../../assets/icons/caution.png")}
                   />
-                  <Text className="flex-1 font-[abeezee] text-xs text-wrap">
+                  <Text className="flex-1 text-wrap font-[abeezee] text-xs text-ink">
                     Subscription automatically renews unless canceled at least
                     24 hours before the end of the current period.
                   </Text>
                 </View>
-                <Text className="text-text font-[abeezee] text-[10px] leading-4">
+                <Text className="font-[abeezee] text-[10px] leading-4 text-ink-body">
                   {Platform.OS === "ios"
                     ? "Payment will be charged to your Apple ID account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions by going to your Account Settings on the App Store after purchase."
                     : "Payment will be charged to your Google Play account at confirmation of purchase. Your account will be charged for renewal within 24 hours prior to the end of the current period. You can manage and cancel your subscriptions in Google Play Store subscription settings."}
@@ -201,7 +199,7 @@ const UnauthPaywallScreen = () => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("termsOfService")}
                 >
-                  <Text className="text-primary font-[abeezee] text-xs underline">
+                  <Text className="font-[abeezee] text-xs text-brand-text underline">
                     Terms of Service
                   </Text>
                 </Pressable>
@@ -209,7 +207,7 @@ const UnauthPaywallScreen = () => {
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
                   onPress={() => (navigation as any).navigate("privacyScreen")}
                 >
-                  <Text className="text-primary font-[abeezee] text-xs underline">
+                  <Text className="font-[abeezee] text-xs text-brand-text underline">
                     Privacy Policy
                   </Text>
                 </Pressable>
@@ -225,13 +223,13 @@ const UnauthPaywallScreen = () => {
                 {isRestoring ? (
                   <ActivityIndicator size="small" color="#866EFF" />
                 ) : (
-                  <Text className="text-primary font-[abeezee] text-sm">
+                  <Text className="font-[abeezee] text-sm text-brand-text">
                     Restore Purchases
                   </Text>
                 )}
               </Pressable>
               {restoreMessage ? (
-                <Text className="text-text text-center font-[abeezee] text-xs">
+                <Text className="text-center font-[abeezee] text-xs text-body">
                   {restoreMessage}
                 </Text>
               ) : null}

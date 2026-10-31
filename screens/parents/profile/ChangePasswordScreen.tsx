@@ -70,7 +70,7 @@ export default function ChangePasswordScreen() {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1">
+      <View className="flex-1 bg-background-soft">
         <PageTitle
           title="Reset your password"
           goBack={() => navigator.goBack()}
@@ -104,7 +104,7 @@ export default function ChangePasswordScreen() {
             className="mt-5 self-end"
             onPress={() => navigator.navigate("sendResetToken")}
           >
-            <Text className="text-link font-[abeezee]">Forgot Password?</Text>
+            <Text className="font-[abeezee] text-link">Forgot Password?</Text>
           </Pressable>
         </View>
         <View className="mt-10 flex-1 gap-6 px-4">

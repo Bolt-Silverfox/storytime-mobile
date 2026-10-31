@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import {
   View,
   Text,
@@ -9,12 +10,13 @@ import {
 import React, { useState } from "react";
 import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNavigator";
 import { useNavigation } from "@react-navigation/native";
-import defaultStyles from "../../../styles";
+import { useDefaultStyles } from "../../../styles";
 import { Checkbox } from "expo-checkbox";
 import z from "zod";
-import colours from "../../../colours";
 import PageTitle from "../../../components/PageTitle";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const feedBack = z.object({
   message: z.string().min(1, "feedback should not be empty"),
@@ -24,6 +26,9 @@ type FeedBackSchema = z.infer<typeof feedBack>;
 type Errors = Partial<Record<keyof FeedBackSchema, string>>;
 
 export default function DeleteAccount() {
+  const defaultStyles = useDefaultStyles();
+  const { tokens, isDark } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [deleteCheckList, setDeleteAccountCheckList] =
     useState<DeleteAcountChecklist[]>(deleteReasons);
@@ -88,7 +93,13 @@ export default function DeleteAccount() {
                 </Text>
                 <Checkbox
                   value={reason.checked}
-                  color={reason.checked ? "#4630EB" : undefined}
+                  color={
+                    reason.checked
+                      ? isDark
+                        ? tokens.blueAccent
+                        : "#4630EB"
+                      : undefined
+                  }
                   pointerEvents="none"
                 />
               </Pressable>
@@ -101,12 +112,12 @@ export default function DeleteAccount() {
                 placeholder="Please let us know about your experience and how to improve"
                 onChangeText={setMessage}
                 value={message}
-                className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-black ${errors.message ? "border-red-600" : "border-border"}`}
-                placeholderTextColor={errors.message ? "red" : colours.text}
+                className={`relative min-h-[40] justify-center rounded-[20px] border px-4 font-[abeezee] text-base text-fg ${errors.message ? "border-red-600" : "border-line"}`}
+                placeholderTextColor={errors.message ? "red" : tokens.textBody}
                 multiline
               />
               {errors.message && (
-                <Text className="mt-1 text-sm text-red-600">
+                <Text className="mt-1 text-sm text-danger">
                   {errors.message}
                 </Text>
               )}
@@ -130,7 +141,7 @@ export default function DeleteAccount() {
             >
               <Text
                 style={[defaultStyles.defaultText, styles.blackText]}
-                className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                className="mx-auto w-full rounded-[99px] border-[0.5px] border-fg px-2 py-3 text-center"
               >
                 Cancel
               </Text>
@@ -181,29 +192,30 @@ const deleteReasons: DeleteAcountChecklist[] = [
   },
 ];
 
-const styles = StyleSheet.create({
-  formItem: {
-    gap: 4,
-  },
-  headingFontSize: {
-    fontSize: 20,
-  },
-  textFontSize: {
-    fontSize: 16,
-  },
-  textColor: {
-    color: "#333333",
-    fontSize: 16,
-  },
-  textArea: {
-    height: 150,
-    maxHeight: 140,
-    textAlignVertical: "top",
-  },
-  whiteText: {
-    color: "white",
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    formItem: {
+      gap: 4,
+    },
+    headingFontSize: {
+      fontSize: 20,
+    },
+    textFontSize: {
+      fontSize: 16,
+    },
+    textColor: {
+      color: tokens.textStrong,
+      fontSize: 16,
+    },
+    textArea: {
+      height: 150,
+      maxHeight: 140,
+      textAlignVertical: "top",
+    },
+    whiteText: {
+      color: "white",
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });

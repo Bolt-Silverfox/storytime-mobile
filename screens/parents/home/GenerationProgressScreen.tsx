@@ -12,6 +12,7 @@ import {
   StoryNavigatorParamList,
   StoryNavigatorProp,
 } from "../../../Navigation/StoryNavigator";
+import { useTheme } from "../../../theme/ThemeContext";
 
 type RoutePropTypes = RouteProp<StoryNavigatorParamList, "generationProgress">;
 
@@ -19,6 +20,7 @@ const clampProgress = (value: number) =>
   Math.max(0, Math.min(100, Math.round(value)));
 
 const GenerationProgressScreen = () => {
+  const { tokens } = useTheme();
   const navigation = useNavigation<StoryNavigatorProp>();
   const { params } = useRoute<RoutePropTypes>();
   const { jobId, estimatedWaitTime } = params;
@@ -126,17 +128,17 @@ const GenerationProgressScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex-1 items-center justify-center gap-y-8 px-6">
+      <View className="flex-1 items-center justify-center gap-y-8 bg-background-soft px-6">
         {failed ? (
           <>
             <View className="size-20 items-center justify-center rounded-full bg-red-100">
               <Feather name="alert-triangle" size={40} color="#dc2626" />
             </View>
             <View className="gap-y-2">
-              <Text className="text-center font-[quilka] text-2xl text-black">
+              <Text className="text-center font-[quilka] text-2xl text-fg">
                 Story creation failed
               </Text>
-              <Text className="text-text text-center font-[abeezee] text-base">
+              <Text className="text-center font-[abeezee] text-base text-body">
                 {errorMessage}
               </Text>
             </View>
@@ -152,10 +154,10 @@ const GenerationProgressScreen = () => {
           <>
             <ActivityIndicator size="large" color="#EC4007" />
             <View className="gap-y-2">
-              <Text className="text-center font-[quilka] text-2xl text-black">
+              <Text className="text-center font-[quilka] text-2xl text-fg">
                 Creating your story…
               </Text>
-              <Text className="text-text text-center font-[abeezee] text-base">
+              <Text className="text-center font-[abeezee] text-base text-body">
                 {progressMessage ??
                   "Our AI is busy writing something magical. This can take a little while."}
               </Text>
@@ -163,32 +165,32 @@ const GenerationProgressScreen = () => {
 
             {/* Progress bar */}
             <View className="w-full gap-y-2">
-              <View className="bg-primary-light h-3 w-full overflow-hidden rounded-full">
+              <View className="h-3 w-full overflow-hidden rounded-full bg-primary-light">
                 <View
-                  className="bg-primary h-3 rounded-full"
+                  className="h-3 rounded-full bg-primary"
                   style={{ width: `${progress}%` }}
                 />
               </View>
               <View className="flex-row items-center justify-between">
-                <Text className="text-text font-[abeezee] text-xs">
+                <Text className="font-[abeezee] text-xs text-body">
                   Progress
                 </Text>
-                <Text className="text-text font-[abeezee] text-xs">
+                <Text className="font-[abeezee] text-xs text-body">
                   {progress}%
                 </Text>
               </View>
             </View>
 
             {typeof estimatedWaitTime === "number" && estimatedWaitTime > 0 && (
-              <Text className="text-text text-center font-[abeezee] text-xs">
+              <Text className="text-center font-[abeezee] text-xs text-body">
                 Estimated wait: about {Math.ceil(estimatedWaitTime / 1000)}s
               </Text>
             )}
 
             <View className="w-full">
               {isCancelling ? (
-                <View className="border-border mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full border">
-                  <ActivityIndicator color="#212121" />
+                <View className="mx-5 mt-4 h-[46px] w-full flex-row items-center justify-center self-center rounded-full border border-line">
+                  <ActivityIndicator color={tokens.textStrong} />
                 </View>
               ) : (
                 <CustomButton
@@ -199,7 +201,7 @@ const GenerationProgressScreen = () => {
                 />
               )}
               {cancelError && (
-                <Text className="mt-2 text-center font-[abeezee] text-xs text-red-600">
+                <Text className="mt-2 text-center font-[abeezee] text-xs text-danger">
                   {cancelError}
                 </Text>
               )}

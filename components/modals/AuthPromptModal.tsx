@@ -1,8 +1,11 @@
+import { useMemo } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import { RootNavigatorProp } from "../../Navigation/RootNavigator";
 import useAuth from "../../contexts/AuthContext";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type Props = {
   visible: boolean;
@@ -15,6 +18,8 @@ const AuthPromptModal = ({
   onClose,
   message = "Create an account to unlock this feature.",
 }: Props) => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigation = useNavigation<RootNavigatorProp>();
   const { exitGuestMode } = useAuth();
 
@@ -63,76 +68,77 @@ const AuthPromptModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(33, 33, 33, 0.6)",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: 24,
-  },
-  sheet: {
-    backgroundColor: "white",
-    borderRadius: 24,
-    padding: 24,
-    width: "100%",
-    alignItems: "center",
-    gap: 16,
-  },
-  iconCircle: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: "#F3F0FF",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontFamily: "quilka",
-    fontSize: 22,
-    fontWeight: "700",
-    color: "#212121",
-    textAlign: "center",
-  },
-  message: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    color: "#616161",
-    textAlign: "center",
-  },
-  primaryButton: {
-    backgroundColor: "#EC4007",
-    borderRadius: 99,
-    paddingVertical: 12,
-    width: "100%",
-    alignItems: "center",
-  },
-  primaryButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "white",
-  },
-  secondaryButton: {
-    borderWidth: 0.5,
-    borderColor: "#4A413F",
-    borderRadius: 99,
-    paddingVertical: 12,
-    width: "100%",
-    alignItems: "center",
-  },
-  secondaryButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "#212121",
-  },
-  dismissButton: {
-    paddingVertical: 8,
-  },
-  dismissText: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    color: "#616161",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(33, 33, 33, 0.6)",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: 24,
+    },
+    sheet: {
+      backgroundColor: tokens.surface,
+      borderRadius: 24,
+      padding: 24,
+      width: "100%",
+      alignItems: "center",
+      gap: 16,
+    },
+    iconCircle: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      backgroundColor: "#F3F0FF",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    title: {
+      fontFamily: "quilka",
+      fontSize: 22,
+      fontWeight: "700",
+      color: tokens.textStrong,
+      textAlign: "center",
+    },
+    message: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      color: tokens.textBody,
+      textAlign: "center",
+    },
+    primaryButton: {
+      backgroundColor: "#EC4007",
+      borderRadius: 99,
+      paddingVertical: 12,
+      width: "100%",
+      alignItems: "center",
+    },
+    primaryButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: "white",
+    },
+    secondaryButton: {
+      borderWidth: 0.5,
+      borderColor: tokens.border,
+      borderRadius: 99,
+      paddingVertical: 12,
+      width: "100%",
+      alignItems: "center",
+    },
+    secondaryButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: tokens.textStrong,
+    },
+    dismissButton: {
+      paddingVertical: 8,
+    },
+    dismissText: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      color: tokens.textBody,
+    },
+  });
 
 export default AuthPromptModal;

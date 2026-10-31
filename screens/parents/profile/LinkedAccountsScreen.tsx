@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useNavigation } from "@react-navigation/native";
 import {
   GoogleSignin,
@@ -30,6 +31,8 @@ import { ParentProfileNavigatorProp } from "../../../Navigation/ParentProfileNav
 import ParentalGateModal from "../../../components/modals/ParentalGateModal";
 import useParentalGate from "../../../hooks/others/useParentalGate";
 import { AuthProvider, LinkedAccount } from "../../../types";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 const PROVIDERS: { key: AuthProvider; label: string }[] = [
   { key: "email", label: "Email & Password" },
@@ -38,6 +41,8 @@ const PROVIDERS: { key: AuthProvider; label: string }[] = [
 ];
 
 export default function LinkedAccountsScreen() {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const { data: linkedAccounts, isLoading } = useGetLinkedAccounts();
   const linkGoogle = useLinkGoogle();
@@ -225,66 +230,67 @@ export default function LinkedAccountsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 24,
-    backgroundColor: "#FFFCFBFB",
-  },
-  loader: {
-    marginTop: 40,
-  },
-  providerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E7EB",
-  },
-  providerInfo: {
-    flex: 1,
-  },
-  providerLabel: {
-    fontSize: 16,
-    fontFamily: "abeezee",
-    color: colours.black,
-  },
-  providerEmail: {
-    fontSize: 13,
-    fontFamily: "abeezee",
-    color: "#6B7280",
-    marginTop: 2,
-  },
-  providerNotLinked: {
-    fontSize: 13,
-    fontFamily: "abeezee",
-    color: "#9CA3AF",
-    marginTop: 2,
-  },
-  actionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 99,
-    borderWidth: 1,
-  },
-  linkButton: {
-    backgroundColor: "#EC4007",
-    borderColor: "#EC4007",
-  },
-  unlinkButton: {
-    backgroundColor: "transparent",
-    borderColor: "#DC2626",
-  },
-  actionButtonText: {
-    fontSize: 14,
-    fontFamily: "abeezee",
-  },
-  linkButtonText: {
-    color: "white",
-  },
-  unlinkButtonText: {
-    color: "#DC2626",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingTop: 24,
+      backgroundColor: tokens.backgroundSoft,
+    },
+    loader: {
+      marginTop: 40,
+    },
+    providerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: tokens.borderGray,
+    },
+    providerInfo: {
+      flex: 1,
+    },
+    providerLabel: {
+      fontSize: 16,
+      fontFamily: "abeezee",
+      color: tokens.textStrong,
+    },
+    providerEmail: {
+      fontSize: 13,
+      fontFamily: "abeezee",
+      color: tokens.textSubtle,
+      marginTop: 2,
+    },
+    providerNotLinked: {
+      fontSize: 13,
+      fontFamily: "abeezee",
+      color: tokens.textFaint,
+      marginTop: 2,
+    },
+    actionButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 20,
+      borderRadius: 99,
+      borderWidth: 1,
+    },
+    linkButton: {
+      backgroundColor: "#EC4007",
+      borderColor: "#EC4007",
+    },
+    unlinkButton: {
+      backgroundColor: "transparent",
+      borderColor: tokens.danger,
+    },
+    actionButtonText: {
+      fontSize: 14,
+      fontFamily: "abeezee",
+    },
+    linkButtonText: {
+      color: "white",
+    },
+    unlinkButtonText: {
+      color: tokens.danger,
+    },
+  });

@@ -17,11 +17,13 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import CustomEmptyState from "../../../components/emptyState/CustomEmptyState";
 import type { Notification } from "../../../types";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
 
 const NotificationsScreen = () => {
+  const { tokens } = useTheme();
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
   const [selectedNotification, setSelectedNotification] =
@@ -70,7 +72,7 @@ const NotificationsScreen = () => {
 
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bgLight flex flex-1">
+      <View className="flex flex-1 bg-background-soft">
         <PageTitle title="Notifications" goBack={() => navigator.goBack()} />
         <ScrollView
           showsHorizontalScrollIndicator={false}
@@ -82,7 +84,7 @@ const NotificationsScreen = () => {
             <Text
               onPress={() => setActiveLabel(notification)}
               key={notification}
-              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border-border text-text border"}`}
+              className={`w-32 rounded-full py-2 text-center font-[abeezee] text-base capitalize ${notification === activeLabel ? "bg-blue text-white" : "border border-line text-body"}`}
             >
               {notification}
             </Text>
@@ -99,26 +101,27 @@ const NotificationsScreen = () => {
               <View className="flex flex-col gap-y-6">
                 {grouped.map((group) => (
                   <View className="flex flex-col gap-y-2.5" key={group.label}>
-                    <Text className="font-[abeezee] text-[18px] text-black">
+                    <Text className="font-[abeezee] text-[18px] text-fg">
                       {group.label}
                     </Text>
-                    <View className="border-border-lighter flex flex-col gap-y-6 rounded-xl border bg-white p-5">
+                    <View className="flex flex-col gap-y-6 rounded-xl border border-line-soft bg-surface p-5">
                       {group.notifications.map((noti) => (
                         <Pressable
                           onPress={() => handleNotificationPress(noti)}
-                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-white" : "bg-purple-light/30"}`}
+                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-surface" : "bg-unread"}`}
                           key={noti.id}
                         >
                           {getNotificationIcon(
-                            mapCategoryToIconType(noti.category)
+                            mapCategoryToIconType(noti.category),
+                            tokens
                           )}
                           <View className="flex flex-1 flex-col gap-y-1.5">
                             <Text
-                              className={`w-full font-[abeezee] text-base leading-6 text-wrap ${noti.isRead ? "text-text" : "text-black"}`}
+                              className={`w-full text-wrap font-[abeezee] text-base leading-6 ${noti.isRead ? "text-body" : "text-fg"}`}
                             >
                               {noti.title}
                             </Text>
-                            <Text className="text-text font-[abeezee] text-xs leading-6">
+                            <Text className="font-[abeezee] text-xs leading-6 text-body">
                               {getRelativeTime(noti.createdAt)}
                             </Text>
                           </View>

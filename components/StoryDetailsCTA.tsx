@@ -6,12 +6,14 @@ import useQueryParentsFavourites from "../hooks/tanstack/queryHooks/queryParentF
 import { FavouriteStory } from "../types";
 import Icon from "./Icon";
 import useAuth from "../contexts/AuthContext";
+import { useTheme } from "../theme/ThemeContext";
 
 type PropTypes = {
   story: FavouriteStory;
   onShare: () => void;
 };
 const StoryDetailsCTA = ({ story, onShare }: PropTypes) => {
+  const { tokens } = useTheme();
   const { isGuest } = useAuth();
   const { data } = useQueryParentsFavourites();
 
@@ -32,22 +34,22 @@ const StoryDetailsCTA = ({ story, onShare }: PropTypes) => {
     <View className="flex flex-row gap-x-3 px-4">
       <Pressable
         onPress={onShare}
-        className="border-border-light flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border"
+        className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-line-light"
       >
         <Icon name="Share2" />
-        <Text className="font-[abeezee] text-base text-black">Share</Text>
+        <Text className="font-[abeezee] text-base text-fg">Share</Text>
       </Pressable>
       {!isGuest && (
         <Pressable
           onPress={() => onToggle()}
-          className="border-border-light flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border"
+          className="flex h-11 flex-1 flex-row items-center justify-center gap-x-1.5 rounded-full border border-line-light"
         >
           {isLiked ? (
             <FontAwesome name="heart" size={24} color="red" />
           ) : (
-            <FontAwesome name="heart-o" size={24} color="black" />
+            <FontAwesome name="heart-o" size={24} color={tokens.textStrong} />
           )}
-          <Text className="font-[abeezee] text-base text-black">Favourite</Text>
+          <Text className="font-[abeezee] text-base text-fg">Favourite</Text>
         </Pressable>
       )}
     </View>

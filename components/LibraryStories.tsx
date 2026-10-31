@@ -31,7 +31,7 @@ const LoadingComponent = ({ storyFilter }: { storyFilter: string }) => {
   return (
     <View className="flex flex-1 flex-col items-center justify-center gap-y-4">
       <LoadingIcon />
-      <Text className="text-center font-[abeezee] text-xl">
+      <Text className="text-center font-[abeezee] text-xl text-fg">
         Loading {storyFilter} stories
       </Text>
     </View>
@@ -95,7 +95,7 @@ const LibraryStories = ({ storyFilter, setActiveStory }: PropTypes) => {
         isFetchingNextPage ? (
           <View style={styles.footer}>
             <ActivityIndicator size="small" />
-            <Text className="text-text mt-2 font-[abeezee] text-sm">
+            <Text className="mt-2 font-[abeezee] text-sm text-body">
               Loading more stories...
             </Text>
           </View>

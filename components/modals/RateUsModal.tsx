@@ -1,6 +1,8 @@
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
+import { useTheme } from "../../theme/ThemeContext";
+import type { Tokens } from "../../theme/tokens";
 
 type PropTypes = {
   visible: boolean;
@@ -27,6 +29,8 @@ const RateUsModal = ({
   onSendFeedback,
   onDismiss,
 }: PropTypes) => {
+  const { tokens } = useTheme();
+  const styles = useMemo(() => makeStyles(tokens), [tokens]);
   const [rating, setRating] = useState(0);
 
   // Start each open with a fresh, unselected rating.
@@ -108,89 +112,90 @@ const RateUsModal = ({
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: "rgba(33, 33, 33, 0.6)",
-    justifyContent: "flex-end",
-  },
-  sheet: {
-    backgroundColor: "white",
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
-    paddingHorizontal: 16,
-    paddingVertical: 32,
-    alignItems: "center",
-    gap: 24,
-  },
-  header: {
-    alignItems: "center",
-    gap: 12,
-  },
-  emoji: {
-    fontSize: 64,
-    lineHeight: 72,
-  },
-  title: {
-    fontFamily: "quilka",
-    fontSize: 28,
-    color: "#212121",
-    textAlign: "center",
-  },
-  subtitle: {
-    fontFamily: "abeezee",
-    fontSize: 14,
-    lineHeight: 20,
-    color: "#616161",
-    textAlign: "center",
-  },
-  starSection: {
-    width: "100%",
-    gap: 16,
-  },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    width: "100%",
-    backgroundColor: "#E0E0E0",
-  },
-  stars: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-    paddingHorizontal: 8,
-  },
-  actions: {
-    width: "100%",
-    gap: 16,
-  },
-  primaryButton: {
-    backgroundColor: "#EC4007",
-    borderRadius: 99,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  primaryButtonDisabled: {
-    backgroundColor: "#FF8771",
-  },
-  primaryButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "white",
-  },
-  dismissButton: {
-    borderWidth: 0.5,
-    borderColor: "#212121",
-    borderRadius: 99,
-    paddingVertical: 12,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  dismissButtonText: {
-    fontFamily: "abeezee",
-    fontSize: 16,
-    color: "#212121",
-  },
-});
+const makeStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: "rgba(33, 33, 33, 0.6)",
+      justifyContent: "flex-end",
+    },
+    sheet: {
+      backgroundColor: tokens.surface,
+      borderTopLeftRadius: 32,
+      borderTopRightRadius: 32,
+      paddingHorizontal: 16,
+      paddingVertical: 32,
+      alignItems: "center",
+      gap: 24,
+    },
+    header: {
+      alignItems: "center",
+      gap: 12,
+    },
+    emoji: {
+      fontSize: 64,
+      lineHeight: 72,
+    },
+    title: {
+      fontFamily: "quilka",
+      fontSize: 28,
+      color: tokens.textStrong,
+      textAlign: "center",
+    },
+    subtitle: {
+      fontFamily: "abeezee",
+      fontSize: 14,
+      lineHeight: 20,
+      color: tokens.textBody,
+      textAlign: "center",
+    },
+    starSection: {
+      width: "100%",
+      gap: 16,
+    },
+    divider: {
+      height: StyleSheet.hairlineWidth,
+      width: "100%",
+      backgroundColor: tokens.borderLight,
+    },
+    stars: {
+      flexDirection: "row",
+      justifyContent: "space-between",
+      width: "100%",
+      paddingHorizontal: 8,
+    },
+    actions: {
+      width: "100%",
+      gap: 16,
+    },
+    primaryButton: {
+      backgroundColor: "#EC4007",
+      borderRadius: 99,
+      paddingVertical: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    primaryButtonDisabled: {
+      backgroundColor: "#FF8771",
+    },
+    primaryButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: "white",
+    },
+    dismissButton: {
+      borderWidth: 0.5,
+      borderColor: tokens.textStrong,
+      borderRadius: 99,
+      paddingVertical: 12,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    dismissButtonText: {
+      fontFamily: "abeezee",
+      fontSize: 16,
+      color: tokens.textStrong,
+    },
+  });
 
 export default RateUsModal;

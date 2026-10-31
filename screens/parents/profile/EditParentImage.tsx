@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import { useNavigation } from "@react-navigation/native";
@@ -9,9 +10,14 @@ import PageTitle from "../../../components/PageTitle";
 import SafeAreaWrapper from "../../../components/UI/SafeAreaWrapper";
 import UploadAvatarModal from "../../../components/modals/UploadAvatarModal";
 import useUploadCustomAvatar from "../../../hooks/tanstack/mutationHooks/useUploadCustomAvatar";
-import defaultStyles from "../../../styles";
+import { useDefaultStyles } from "../../../styles";
+import { useTheme } from "../../../theme/ThemeContext";
+import type { Tokens } from "../../../theme/tokens";
 
 export default function EditParentImage() {
+  const { tokens } = useTheme();
+  const editStyles = useMemo(() => makeEditStyles(tokens), [tokens]);
+  const defaultStyles = useDefaultStyles();
   const navigator = useNavigation<ParentProfileNavigatorProp>();
   const [image, setImage] = useState<string | undefined>(undefined);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -20,14 +26,14 @@ export default function EditParentImage() {
   });
   return (
     <SafeAreaWrapper variant="solid">
-      <View className="bg-bg-light flex-1">
+      <View className="flex-1 bg-background-soft">
         <PageTitle title="Edit Image" goBack={() => navigator.goBack()} />
 
         <View className="flex-1">
           <Text style={[defaultStyles.defaultText]} className="mx-auto mt-8">
             Add a photo to personalise your profile.
           </Text>
-          <View className="mx-auto mt-16 h-[250px] w-[250px] items-center justify-center gap-11 rounded-full border border-dashed border-[#616161]">
+          <View className="mx-auto mt-16 h-[250px] w-[250px] items-center justify-center gap-11 rounded-full border border-dashed border-body">
             {image ? (
               <View className="relative">
                 <Image
@@ -36,9 +42,13 @@ export default function EditParentImage() {
                 />
                 <Pressable
                   onPress={() => setIsModalOpen(true)}
-                  className="border-border-light absolute right-6 bottom-0 flex size-12 items-center justify-center rounded-full border bg-white"
+                  className="absolute bottom-0 right-6 flex size-12 items-center justify-center rounded-full border border-line-light bg-surface"
                 >
-                  <FontAwesome5 name="edit" size={15} color="black" />
+                  <FontAwesome5
+                    name="edit"
+                    size={15}
+                    color={tokens.textStrong}
+                  />
                 </Pressable>
               </View>
             ) : (
@@ -47,7 +57,7 @@ export default function EditParentImage() {
                   <MaterialCommunityIcons
                     name="image-plus-outline"
                     size={24}
-                    color="#212121"
+                    color={tokens.textStrong}
                   />
                   <Text
                     style={[defaultStyles.defaultText, editStyles.uploadText]}
@@ -58,7 +68,7 @@ export default function EditParentImage() {
 
                 <Pressable onPress={() => setIsModalOpen(true)}>
                   <Text
-                    className="rounded-[31px] border-[0.5px] border-[#616161] p-2"
+                    className="rounded-[31px] border-[0.5px] border-body p-2"
                     style={[defaultStyles.defaultText]}
                   >
                     Upload a file
@@ -88,7 +98,7 @@ export default function EditParentImage() {
               <Pressable onPress={() => setImage("")}>
                 <Text
                   style={[defaultStyles.defaultText, editStyles.blackText]}
-                  className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                  className="mx-auto w-full rounded-[99px] border-[0.5px] border-fg px-2 py-3 text-center"
                 >
                   Cancel
                 </Text>
@@ -107,14 +117,15 @@ export default function EditParentImage() {
   );
 }
 
-const editStyles = StyleSheet.create({
-  uploadText: {
-    fontSize: 14,
-  },
-  whiteText: {
-    color: "white",
-  },
-  blackText: {
-    color: "black",
-  },
-});
+const makeEditStyles = (tokens: Tokens) =>
+  StyleSheet.create({
+    uploadText: {
+      fontSize: 14,
+    },
+    whiteText: {
+      color: "white",
+    },
+    blackText: {
+      color: tokens.textStrong,
+    },
+  });
