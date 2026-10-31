@@ -29,7 +29,7 @@ const AvailableVoices = ({
   /** When true, user is in guest mode and should have limited voice access */
   isGuest?: boolean;
 }) => {
-  const { tokens, isDark } = useTheme();
+  const { tokens } = useTheme();
   const {
     data,
     isLoading: voicesLoading,
@@ -301,9 +301,7 @@ const AvailableVoices = ({
                           name="Volume2"
                           color={
                             isPreviewing
-                              ? isDark
-                                ? tokens.link
-                                : COLORS.blue
+                              ? tokens.blueAccent
                               : !allowed
                                 ? COLORS.skeleton
                                 : tokens.textStrong

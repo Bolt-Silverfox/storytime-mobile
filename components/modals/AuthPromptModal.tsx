@@ -120,7 +120,7 @@ const makeStyles = (tokens: Tokens) =>
     },
     secondaryButton: {
       borderWidth: 0.5,
-      borderColor: "#4A413F",
+      borderColor: tokens.border,
       borderRadius: 99,
       paddingVertical: 12,
       width: "100%",

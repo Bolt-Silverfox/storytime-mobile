@@ -33,7 +33,7 @@ export default function EditParentImage() {
           <Text style={[defaultStyles.defaultText]} className="mx-auto mt-8">
             Add a photo to personalise your profile.
           </Text>
-          <View className="mx-auto mt-16 h-[250px] w-[250px] items-center justify-center gap-11 rounded-full border border-dashed border-[#616161]">
+          <View className="mx-auto mt-16 h-[250px] w-[250px] items-center justify-center gap-11 rounded-full border border-dashed border-body">
             {image ? (
               <View className="relative">
                 <Image
@@ -68,7 +68,7 @@ export default function EditParentImage() {
 
                 <Pressable onPress={() => setIsModalOpen(true)}>
                   <Text
-                    className="rounded-[31px] border-[0.5px] border-[#616161] p-2"
+                    className="rounded-[31px] border-[0.5px] border-body p-2"
                     style={[defaultStyles.defaultText]}
                   >
                     Upload a file

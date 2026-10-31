@@ -49,6 +49,8 @@ describe("theme tokens", () => {
     ["textStrong", "unreadRow"],
     ["purple", "unreadRow"],
     ["errorText", "surface"],
+    ["blueAccent", "background"],
+    ["blueAccent", "surface"],
     ["link", "background"],
     ["link", "surface"],
     ["purple", "background"],

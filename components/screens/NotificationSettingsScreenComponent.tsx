@@ -9,6 +9,7 @@ import PageTitle from "../PageTitle";
 import SafeAreaWrapper from "../UI/SafeAreaWrapper";
 import useGetNotificationPreferences from "../../hooks/tanstack/queryHooks/useGetNotificationPreferences";
 import useUpdateNotificationPreferences from "../../hooks/tanstack/mutationHooks/useUpdateNotificationPreferences";
+import { useTheme } from "../../theme/ThemeContext";
 
 type PropTypes = {
   goBack: () => void;
@@ -45,6 +46,7 @@ const SECTIONS = [
 ] as const;
 
 const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
+  const { tokens } = useTheme();
   const {
     data: preferences,
     isLoading,
@@ -59,7 +61,7 @@ const NotificationSettingsScreenComponent = ({ goBack }: PropTypes) => {
         <View className="flex flex-1 bg-background-soft">
           <PageTitle title="Notification Settings" goBack={goBack} />
           <View className="flex-1 items-center justify-center">
-            <ActivityIndicator size="large" color="#4807EC" />
+            <ActivityIndicator size="large" color={tokens.blueAccent} />
           </View>
         </View>
       </SafeAreaWrapper>

@@ -89,7 +89,7 @@ const RedeemCouponScreen = () => {
               {redeemResult.message}
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
-              <Text className="text-center font-[abeezee] text-sm text-success-strong">
+              <Text className="text-center font-[abeezee] text-sm text-green-700">
                 {(() => {
                   const date = new Date(redeemResult.premiumAccessUntil);
                   const dateStr = Number.isNaN(date.getTime())
@@ -143,9 +143,7 @@ const RedeemCouponScreen = () => {
               >
                 <Text
                   className={`font-[abeezee] text-sm ${
-                    validationResult.valid
-                      ? "text-success-strong"
-                      : "text-danger"
+                    validationResult.valid ? "text-green-700" : "text-red-600"
                   }`}
                 >
                   {validationResult.message}

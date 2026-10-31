@@ -91,7 +91,7 @@ export default function SuggestionsScreen() {
             experience
           </Text>
         </View>
-        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-[#E0E0E0] bg-surface p-4">
+        <View className="mx-4 gap-6 rounded-[20px] border-[0.5px] border-line-light bg-surface p-4">
           <View style={styles.formItem}>
             <Text style={defaultStyles.label}>Full name:</Text>
             <TextInput

@@ -17,6 +17,7 @@ export const legacyLight = {
   brand: "#EC4007", // colours.primary
   brandText: "#EC4007",
   link: "#0731EC", // colours.link
+  blueAccent: "#4807EC", // COLORS.blue
   purple: "#866EFF", // tailwind purple
   readerPaper: "#FDF5D3", // StoryContentContainer bg-[#FDF5D3]
   danger: "#DC2626", // MenuItem delete / parental gate error
