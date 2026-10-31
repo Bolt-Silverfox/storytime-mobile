@@ -81,7 +81,7 @@ export default function DeleteAccount() {
               placeholderTextColor={errors.email ? "red" : tokens.textBody}
             />
             {errors.email && (
-              <Text className="text-sm text-red-600">{errors.email}</Text>
+              <Text className="text-sm text-danger">{errors.email}</Text>
             )}
             {apiError && <ErrorMessageDisplay errorMessage={apiError} />}
           </View>
@@ -106,7 +106,7 @@ export default function DeleteAccount() {
           >
             <Text
               style={[defaultStyles.defaultText, styles.blackText]}
-              className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+              className="mx-auto w-full rounded-[99px] border-[0.5px] border-fg px-2 py-3 text-center"
             >
               Cancel
             </Text>

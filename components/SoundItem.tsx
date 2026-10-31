@@ -13,7 +13,7 @@ const SoundItem = ({
   return (
     <Pressable
       onPress={onPlay}
-      className="rounded-full border border-black/60 px-4 py-2"
+      className="rounded-full border border-fg/60 px-4 py-2"
       disabled={isLoading}
     >
       {isLoading ? (

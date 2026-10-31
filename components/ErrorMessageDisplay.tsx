@@ -9,12 +9,12 @@ const ErrorMessageDisplay = ({
     <View className="">
       {Array.isArray(errorMessage) && errorMessage.length ? (
         errorMessage.map((message) => (
-          <Text key={message} className="text-sm text-red-600">
+          <Text key={message} className="text-sm text-danger">
             {message}
           </Text>
         ))
       ) : (
-        <Text className="text-sm text-red-600">{errorMessage}</Text>
+        <Text className="text-sm text-danger">{errorMessage}</Text>
       )}
     </View>
   );

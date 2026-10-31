@@ -156,7 +156,12 @@ function SplashHider({ fontsDone }: { fontsDone: boolean }) {
   useEffect(() => {
     if (fontsDone && ready) {
       SplashScreen.hideAsync();
+      return;
     }
+    // Safety net: never keep the native splash up if storage never settles.
+    if (!fontsDone) return;
+    const timer = setTimeout(() => SplashScreen.hideAsync(), 3000);
+    return () => clearTimeout(timer);
   }, [fontsDone, ready]);
   return null;
 }

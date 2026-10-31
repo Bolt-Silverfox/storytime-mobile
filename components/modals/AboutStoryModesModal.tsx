@@ -61,7 +61,7 @@ const AboutStoryModesModal = ({
         </View>
         <View className="mt-4 flex flex-row items-center gap-x-3 rounded-2xl bg-yellow p-4">
           <Pressable className="flex size-14 items-center justify-center rounded-full bg-[#F8D62B]">
-            <Icon name="CircleAlert" />
+            <Icon name="CircleAlert" color="#212121" />
           </Pressable>
           <View className="flex flex-1 flex-col gap-y-1">
             <Text className="font-[abeezee] text-sm text-ink">Tips</Text>

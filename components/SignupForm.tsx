@@ -77,7 +77,7 @@ const SignupForm = () => {
             value={fullName}
           />
           {errors.fullName && (
-            <Text className="text-sm text-red-600">{errors.fullName}</Text>
+            <Text className="text-sm text-danger">{errors.fullName}</Text>
           )}
         </View>
         <View style={styles.formItem}>
@@ -90,7 +90,7 @@ const SignupForm = () => {
             placeholderTextColor={errors.email ? "red" : tokens.textBody}
           />
           {errors.email && (
-            <Text className="text-sm text-red-600">{errors.email}</Text>
+            <Text className="text-sm text-danger">{errors.email}</Text>
           )}
         </View>
         <PasswordInput

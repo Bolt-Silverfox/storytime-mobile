@@ -96,3 +96,11 @@ describe("ThemeProvider", () => {
     expect(out(r)).toBe("dark|dark|true");
   });
 });
+
+describe("tokensToCssVars strictness", () => {
+  it("throws on a non-hex token that is not allow-listed", () => {
+    expect(() =>
+      tokensToCssVars({ ...lightTokens, surface: "rgba(0,0,0,1)" })
+    ).toThrow(/surface/);
+  });
+});

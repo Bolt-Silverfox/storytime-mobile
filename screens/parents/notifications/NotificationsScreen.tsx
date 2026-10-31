@@ -17,11 +17,13 @@ import LoadingOverlay from "../../../components/LoadingOverlay";
 import ErrorComponent from "../../../components/ErrorComponent";
 import CustomEmptyState from "../../../components/emptyState/CustomEmptyState";
 import type { Notification } from "../../../types";
+import { useTheme } from "../../../theme/ThemeContext";
 
 const notificationsLabel = ["all", "read", "unread"] as const;
 type NotificationType = (typeof notificationsLabel)[number];
 
 const NotificationsScreen = () => {
+  const { tokens } = useTheme();
   const navigator = useNavigation<ParentsNavigatorProp>();
   const [activeLabel, setActiveLabel] = useState<NotificationType>("all");
   const [selectedNotification, setSelectedNotification] =
@@ -106,11 +108,12 @@ const NotificationsScreen = () => {
                       {group.notifications.map((noti) => (
                         <Pressable
                           onPress={() => handleNotificationPress(noti)}
-                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-surface" : "bg-purple-light/30"}`}
+                          className={`flex-row items-center gap-x-4 rounded-xl p-3 ${noti.isRead ? "bg-surface" : "bg-unread"}`}
                           key={noti.id}
                         >
                           {getNotificationIcon(
-                            mapCategoryToIconType(noti.category)
+                            mapCategoryToIconType(noti.category),
+                            tokens
                           )}
                           <View className="flex flex-1 flex-col gap-y-1.5">
                             <Text

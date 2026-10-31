@@ -152,7 +152,7 @@ const makeStyles = (tokens: Tokens) =>
       fontSize: 18,
       textAlign: "center",
       borderWidth: 1,
-      borderColor: tokens.border,
+      borderColor: tokens.borderInput,
       color: tokens.textStrong,
       borderRadius: 12,
       paddingVertical: 12,

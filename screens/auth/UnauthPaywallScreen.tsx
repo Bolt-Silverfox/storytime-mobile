@@ -123,10 +123,10 @@ const UnauthPaywallScreen = () => {
             </Text>
           </View>
           <View>
-            <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-white/60" />
+            <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-surface/60" />
             <View className="flex flex-1 flex-col gap-y-10 rounded-t-[32px] bg-surface px-4 py-5">
               {errorMessage && (
-                <Text className="text-center font-[abeezee] text-xl text-red-700">
+                <Text className="text-center font-[abeezee] text-xl text-danger-strong">
                   {errorMessage}
                 </Text>
               )}

@@ -3,6 +3,7 @@ import { Alert, Share } from "react-native";
 import Icon from "../components/Icon";
 import apiFetch, { ApiError } from "../apiFetch";
 import { BASE_URL } from "../constants";
+import type { Tokens } from "../theme/tokens";
 import type {
   Notification,
   NotificationCategory,
@@ -42,15 +43,16 @@ const getCategoryColour = (category: string) => {
 };
 
 const getNotificationIcon = (
-  category: "security" | "achievement" | "limit"
+  category: "security" | "achievement" | "limit",
+  tokens: Tokens
 ) => {
   if (category === "security") {
-    return <Icon name="ShieldAlert" color="#866EFF" />;
+    return <Icon name="ShieldAlert" color={tokens.purple} />;
   } else if (category === "achievement") {
     return <Icon name="Star" color="#ECC607" />;
   } else if (category === "limit") {
     return <Icon name="Clock" color="#07CAEC" />;
-  } else return <Icon name="Info" color="#EC4007" />;
+  } else return <Icon name="Info" color={tokens.brandText} />;
 };
 
 const shareContent = async ({

@@ -65,8 +65,8 @@ const LibraryStoryItem = ({
       <View className="p-2">
         <View className="flex flex-row items-center">
           <View className="flex flex-1 flex-row items-center gap-x-px">
-            <Icon name="Dot" color="#EC0794" />
-            <Text className="font-[abeezee] text-xs text-[#EC0794]">
+            <Icon name="Dot" color={tokens.pink} />
+            <Text className="font-[abeezee] text-xs text-pink">
               {story.categories?.[0]?.name ?? "Uncategorized"}
             </Text>
           </View>

@@ -62,7 +62,7 @@ const SelectReadingVoiceModal = ({
     return (
       <CustomModal isOpen={isOpen} onClose={onClose} maxHeight={0.9}>
         <View className="flex flex-1 items-center justify-center">
-          <Text className="font-[abeezee] text-red-600">
+          <Text className="font-[abeezee] text-danger">
             Failed to load voices. Please try again.
           </Text>
         </View>

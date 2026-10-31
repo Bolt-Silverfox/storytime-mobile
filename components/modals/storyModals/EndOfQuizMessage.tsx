@@ -67,7 +67,7 @@ const EndOfQuizMessage = ({
                   {idx + 1}
                 </Text>
                 <Pressable
-                  className={`flex size-10 items-center justify-center rounded-full ${result ? "bg-surface" : "bg-red-600"}`}
+                  className={`flex size-10 items-center justify-center rounded-full ${result ? "bg-white" : "bg-red-600"}`}
                 >
                   <Icon
                     name={result ? "Check" : "X"}

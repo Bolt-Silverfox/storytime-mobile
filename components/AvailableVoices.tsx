@@ -29,7 +29,7 @@ const AvailableVoices = ({
   /** When true, user is in guest mode and should have limited voice access */
   isGuest?: boolean;
 }) => {
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const {
     data,
     isLoading: voicesLoading,
@@ -140,7 +140,7 @@ const AvailableVoices = ({
       )}
       {voicesError && (
         <View className="flex items-center justify-center py-8">
-          <Text className="font-[abeezee] text-red-600">
+          <Text className="font-[abeezee] text-danger">
             Failed to load voices. Please try again.
           </Text>
         </View>
@@ -219,7 +219,7 @@ const AvailableVoices = ({
                   />
                   {(isFreeUserLocked || isGuestDefaultLocked) && (
                     <View className="mt-2 flex h-6 items-center justify-center self-center rounded-full bg-[#FAEFEB] px-5 py-0.5">
-                      <Text className="font-[abeezee] text-[8px] text-brand-text">
+                      <Text className="font-[abeezee] text-[8px] text-primary">
                         Default
                       </Text>
                     </View>
@@ -301,10 +301,12 @@ const AvailableVoices = ({
                           name="Volume2"
                           color={
                             isPreviewing
-                              ? COLORS.blue
+                              ? isDark
+                                ? tokens.link
+                                : COLORS.blue
                               : !allowed
                                 ? COLORS.skeleton
-                                : "black"
+                                : tokens.textStrong
                           }
                         />
                       </Pressable>

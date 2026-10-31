@@ -6,6 +6,7 @@ import {
   mapCategoryToIconType,
   getRelativeTime,
 } from "../../utils/utils";
+import { useTheme } from "../../theme/ThemeContext";
 
 type PropTypes = {
   closeModal: () => void;
@@ -18,13 +19,17 @@ const NotificationDetailsModal = ({
   isOpen,
   notification,
 }: PropTypes) => {
+  const { tokens } = useTheme();
   if (!notification) return null;
 
   return (
     <CustomModal onClose={closeModal} isOpen={isOpen}>
       <View className="flex flex-col px-4 py-8">
         <View className="mb-4 items-center">
-          {getNotificationIcon(mapCategoryToIconType(notification.category))}
+          {getNotificationIcon(
+            mapCategoryToIconType(notification.category),
+            tokens
+          )}
         </View>
         <Text className="text-center font-[quilka] text-[18px] text-fg">
           {notification.title}

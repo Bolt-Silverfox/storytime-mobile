@@ -235,7 +235,7 @@ const CreateStoryScreen = () => {
 
             {error && (
               <View className="rounded-2xl bg-red-50 px-4 py-3">
-                <Text className="font-[abeezee] text-sm text-red-600">
+                <Text className="font-[abeezee] text-sm text-danger">
                   {error}
                 </Text>
               </View>

@@ -111,7 +111,7 @@ export default function DeleteAccount() {
                 multiline
               />
               {errors.message && (
-                <Text className="mt-1 text-sm text-red-600">
+                <Text className="mt-1 text-sm text-danger">
                   {errors.message}
                 </Text>
               )}
@@ -135,7 +135,7 @@ export default function DeleteAccount() {
             >
               <Text
                 style={[defaultStyles.defaultText, styles.blackText]}
-                className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                className="mx-auto w-full rounded-[99px] border-[0.5px] border-fg px-2 py-3 text-center"
               >
                 Cancel
               </Text>

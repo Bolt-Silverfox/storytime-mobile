@@ -129,7 +129,9 @@ const ParentsFavouritesScreen = () => {
                 setActiveFilterOption((a) => (a === "age" ? null : "age"));
                 resetFilters();
               }}
-              color={activeFilterOption === "age" ? "red" : "black"}
+              color={
+                activeFilterOption === "age" ? tokens.danger : tokens.textStrong
+              }
             />
             <Icon
               name={activeFilterOption === "search" ? "X" : "Search"}
@@ -139,7 +141,11 @@ const ParentsFavouritesScreen = () => {
                 );
                 resetFilters();
               }}
-              color={activeFilterOption === "search" ? "red" : "black"}
+              color={
+                activeFilterOption === "search"
+                  ? tokens.danger
+                  : tokens.textStrong
+              }
             />
           </View>
         </View>

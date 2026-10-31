@@ -47,7 +47,7 @@ const ParentProfileModal = ({
           <Text className="mb-4 px-5 text-center font-[quilka] text-2xl text-fg">
             {modalData?.prompt}
           </Text>
-          <Text className="mb-4 px-5 text-center font-[abeezee] text-lg text-[#616161]">
+          <Text className="mb-4 px-5 text-center font-[abeezee] text-lg text-body">
             {modalData?.info}
           </Text>
           <CustomButton text="Cancel" onPress={() => setOpen(false)} />

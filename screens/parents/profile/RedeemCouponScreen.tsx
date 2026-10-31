@@ -82,14 +82,14 @@ const RedeemCouponScreen = () => {
             <View className="size-20 items-center justify-center rounded-full bg-green-100">
               <Feather name="check-circle" size={40} color="#16a34a" />
             </View>
-            <Text className="text-center font-[quilka] text-2xl text-green-700">
+            <Text className="text-center font-[quilka] text-2xl text-success-strong">
               Premium Unlocked!
             </Text>
             <Text className="text-center font-[abeezee] text-base text-body">
               {redeemResult.message}
             </Text>
             <View className="w-full rounded-2xl bg-green-50 px-4 py-4">
-              <Text className="text-center font-[abeezee] text-sm text-green-700">
+              <Text className="text-center font-[abeezee] text-sm text-success-strong">
                 {(() => {
                   const date = new Date(redeemResult.premiumAccessUntil);
                   const dateStr = Number.isNaN(date.getTime())
@@ -143,7 +143,9 @@ const RedeemCouponScreen = () => {
               >
                 <Text
                   className={`font-[abeezee] text-sm ${
-                    validationResult.valid ? "text-green-700" : "text-red-600"
+                    validationResult.valid
+                      ? "text-success-strong"
+                      : "text-danger"
                   }`}
                 >
                   {validationResult.message}

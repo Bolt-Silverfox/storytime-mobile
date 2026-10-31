@@ -44,7 +44,11 @@ export default function EditParentImage() {
                   onPress={() => setIsModalOpen(true)}
                   className="absolute bottom-0 right-6 flex size-12 items-center justify-center rounded-full border border-line-light bg-surface"
                 >
-                  <FontAwesome5 name="edit" size={15} color="black" />
+                  <FontAwesome5
+                    name="edit"
+                    size={15}
+                    color={tokens.textStrong}
+                  />
                 </Pressable>
               </View>
             ) : (
@@ -53,7 +57,7 @@ export default function EditParentImage() {
                   <MaterialCommunityIcons
                     name="image-plus-outline"
                     size={24}
-                    color="#212121"
+                    color={tokens.textStrong}
                   />
                   <Text
                     style={[defaultStyles.defaultText, editStyles.uploadText]}
@@ -94,7 +98,7 @@ export default function EditParentImage() {
               <Pressable onPress={() => setImage("")}>
                 <Text
                   style={[defaultStyles.defaultText, editStyles.blackText]}
-                  className="mx-auto w-full rounded-[99px] border-[0.5px] border-[#212121] px-2 py-3 text-center"
+                  className="mx-auto w-full rounded-[99px] border-[0.5px] border-fg px-2 py-3 text-center"
                 >
                   Cancel
                 </Text>

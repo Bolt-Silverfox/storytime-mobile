@@ -201,7 +201,7 @@ const GenerationProgressScreen = () => {
                 />
               )}
               {cancelError && (
-                <Text className="mt-2 text-center font-[abeezee] text-xs text-red-600">
+                <Text className="mt-2 text-center font-[abeezee] text-xs text-danger">
                   {cancelError}
                 </Text>
               )}

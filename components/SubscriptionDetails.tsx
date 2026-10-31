@@ -58,7 +58,7 @@ const SubscriptionDetails = () => {
         onPass={gate.onPass}
         onCancel={gate.onCancel}
       />
-      <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-white/60" />
+      <View className="mx-auto -mb-5 h-10 w-[90%] rounded-t-[32px] bg-surface/60" />
       <View className="flex flex-col gap-y-10 rounded-t-[32px] bg-surface px-4 py-5">
         <View className="flex flex-col gap-y-4">
           <Text className="font-[abeezee] text-base text-fg">Your plan</Text>
@@ -66,7 +66,7 @@ const SubscriptionDetails = () => {
             <Text className="font-[abeezee] text-base capitalize text-body">
               {data.plan} plan
             </Text>
-            <Text className="font-[quilka] text-[50px] text-[#333333]">
+            <Text className="font-[quilka] text-[50px] text-price">
               {formatPrice(data.price, data.currency)}
             </Text>
           </View>

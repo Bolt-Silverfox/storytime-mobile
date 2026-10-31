@@ -23,6 +23,14 @@ describe("tailwind semantic colours", () => {
     for (const v of new Set(referenced)) expect(defined).toContain(v);
   });
 
+  it("themed colours use <alpha-value> so opacity modifiers resolve", () => {
+    const themed = Object.values(
+      config.theme.extend.colors as Record<string, string>
+    ).filter((c) => c.includes("--c-"));
+    expect(themed.length).toBeGreaterThan(10);
+    for (const c of themed) expect(c).toContain("<alpha-value>");
+  });
+
   it("emits CSS for plain and opacity-modified semantic classes", async () => {
     const css = await compile(
       "bg-surface text-fg border-line-soft text-link/40 bg-surface/60 text-brand-text"

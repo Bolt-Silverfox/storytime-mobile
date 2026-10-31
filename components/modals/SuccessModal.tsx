@@ -20,8 +20,11 @@ type Props = {
 const { width: screenWidth } = Dimensions.get("window");
 
 export default function SuccessModal({ visible, onClose }: Props) {
-  const { tokens } = useTheme();
-  const successStyles = useMemo(() => makeSuccessStyles(tokens), [tokens]);
+  const { tokens, isDark } = useTheme();
+  const successStyles = useMemo(
+    () => makeSuccessStyles(tokens, isDark),
+    [tokens, isDark]
+  );
   return (
     <Modal visible={visible} transparent animationType="slide">
       <View style={successStyles.overlay}>
@@ -43,7 +46,7 @@ export default function SuccessModal({ visible, onClose }: Props) {
   );
 }
 
-const makeSuccessStyles = (tokens: Tokens) =>
+const makeSuccessStyles = (tokens: Tokens, isDark: boolean) =>
   StyleSheet.create({
     overlay: {
       flex: 1,
@@ -69,7 +72,7 @@ const makeSuccessStyles = (tokens: Tokens) =>
     },
     button: {
       backgroundColor: "transparent",
-      borderColor: tokens.border,
+      borderColor: isDark ? tokens.border : "rgba(0,0,0,0.2)",
       borderWidth: 1,
       width: "100%",
       paddingVertical: 16,

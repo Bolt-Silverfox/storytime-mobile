@@ -76,7 +76,7 @@ const SubscriptionModal = ({ isOpen, onClose, onSubscribed }: PropTypes) => {
 
         {errorMessage && (
           <Text
-            className={`text-center font-[abeezee] text-xl ${isUserCancelled ? "text-[#616161]" : "text-red-700"}`}
+            className={`text-center font-[abeezee] text-xl ${isUserCancelled ? "text-body" : "text-danger-strong"}`}
           >
             {errorMessage}
           </Text>

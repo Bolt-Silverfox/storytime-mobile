@@ -51,7 +51,7 @@ const ParentsHomeScreenHeader = () => {
         <Text numberOfLines={1} className="font-[abeezee] text-base text-fg">
           {isGuest ? "Guest" : (data?.name ?? "")}
         </Text>
-        <Text className="font-[abeezee] text-[12px] text-[#616161]">
+        <Text className="font-[abeezee] text-[12px] text-body">
           {getGreeting()}
         </Text>
       </View>
