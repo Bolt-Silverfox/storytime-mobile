@@ -180,7 +180,10 @@ const StoryLimitModal = ({
                   <View key={benefit} style={modalStyles.benefitRow}>
                     <Image
                       source={require("../../assets/icons/tick.png")}
-                      style={modalStyles.tickIcon}
+                      style={[
+                        modalStyles.tickIcon,
+                        { tintColor: tokens.blueAccent },
+                      ]}
                     />
                     <Text style={modalStyles.benefitText}>{benefit}</Text>
                   </View>

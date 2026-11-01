@@ -153,6 +153,7 @@ const UnsubscribedUserComponent = () => {
                   <Image
                     source={require("../../assets/icons/tick.png")}
                     className="h-[14px] w-[17px]"
+                    style={{ tintColor: tokens.blueAccent }}
                   />
                   <Text className="font-[abeezee] text-base text-fg">
                     {benefit}

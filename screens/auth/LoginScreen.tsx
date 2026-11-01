@@ -21,11 +21,11 @@ import PageTitle from "../../components/PageTitle";
 import SafeAreaWrapper from "../../components/UI/SafeAreaWrapper";
 import CustomButton from "../../components/UI/CustomButton";
 import { useTheme } from "../../theme/ThemeContext";
-import type { Tokens } from "../../theme/tokens";
+import { FIXED_INK_BLACK, type Tokens } from "../../theme/tokens";
 
 const LoginScreen = () => {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
     () => makeStyles(defaultStyles, tokens),
     [defaultStyles, tokens]
@@ -115,6 +115,9 @@ const LoginScreen = () => {
                 >
                   <Image
                     source={require("../../assets/icons/apple-icon.png")}
+                    style={{
+                      tintColor: isDark ? tokens.textStrong : FIXED_INK_BLACK,
+                    }}
                   />
                 </Pressable>
               )}

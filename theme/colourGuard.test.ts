@@ -8,6 +8,7 @@
  * exempted file cannot pass silently. Prefer a theme token instead.
  *
  * Shapes this static scan cannot see (review these by hand):
+ *  - text-style-no-colour only sees `style={styles.k}` with a same-file entry; a conditional spread counts as setting a colour
  *  - classes held in a variable or returned by a helper (className={labelClass})
  *  - colour set by a child component or a prop (color={tokens.x}, style={{ color: tokens.x }})
  *  - defaultStyles / StyleSheet text colours, which spread themed styles
@@ -395,13 +396,6 @@ const EXEMPTIONS: Exemption[] = [
   ),
   ex(
     "screens/auth/OnBoardingScreen.tsx",
-    "border-hex-class",
-    "#4A413F",
-    "fixed white onboarding button",
-    1
-  ),
-  ex(
-    "screens/auth/OnBoardingScreen.tsx",
     "color-style",
     '"#212121"',
     "dark text on fixed white onboarding button",
@@ -510,6 +504,13 @@ const EXEMPTIONS: Exemption[] = [
     "color-prop",
     'color="#07CAEC"',
     "yellow/cyan accent icons, bright enough on both surfaces",
+    1
+  ),
+  ex(
+    "components/modals/RateUsModal.tsx",
+    "text-style-no-colour",
+    "styles.emoji",
+    "emoji glyph, colour-independent",
     1
   ),
   ex(

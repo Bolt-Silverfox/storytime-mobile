@@ -31,10 +31,10 @@ type SlideItems = {
 
 export default function OnBoardingScreen() {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
-    () => makeStyles(defaultStyles, tokens),
-    [defaultStyles, tokens]
+    () => makeStyles(defaultStyles, tokens, isDark),
+    [defaultStyles, tokens, isDark]
   );
   const [_currentindex, _setCurrentIndex] = useState(0);
   const flatListRef = useRef<FlatList<SlideItems> | null>(null);
@@ -81,10 +81,10 @@ export default function OnBoardingScreen() {
 
 function OnboardingItem({ item }: { item: SlideItems }) {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
-    () => makeStyles(defaultStyles, tokens),
-    [defaultStyles, tokens]
+    () => makeStyles(defaultStyles, tokens, isDark),
+    [defaultStyles, tokens, isDark]
   );
   const navigate = useNavigation<RootNavigatorProp>();
   const { enterGuestMode } = useAuth();
@@ -134,7 +134,7 @@ function OnboardingItem({ item }: { item: SlideItems }) {
               <Pressable
                 onPress={enterGuestMode}
                 style={styles.buttonWhite}
-                className="border-[0.5px] border-[#4A413F]"
+                className="border-[0.5px]"
               >
                 <Text style={styles.textDark} className="text-center">
                   Continue as a Guest
@@ -168,10 +168,10 @@ function OnboardingItem({ item }: { item: SlideItems }) {
 
 function Pagination({ data }: { data: SlideItems }) {
   const defaultStyles = useDefaultStyles();
-  const { tokens } = useTheme();
+  const { tokens, isDark } = useTheme();
   const styles = useMemo(
-    () => makeStyles(defaultStyles, tokens),
-    [defaultStyles, tokens]
+    () => makeStyles(defaultStyles, tokens, isDark),
+    [defaultStyles, tokens, isDark]
   );
   return (
     <View className="mb-6 flex-row justify-center gap-[6px]">
@@ -193,14 +193,17 @@ function Pagination({ data }: { data: SlideItems }) {
 
 const makeStyles = (
   defaultStyles: ReturnType<typeof makeDefaultStyles>,
-  tokens: Tokens
+  tokens: Tokens,
+  isDark: boolean
 ) =>
   StyleSheet.create({
     flexOne: {
       flex: 1,
     },
+    // Light keeps the original default (black) ink; dark needs a light colour.
     titleText: {
       fontFamily: "quilka",
+      ...(isDark ? { color: tokens.textStrong } : {}),
     },
     descriptionText: {
       fontFamily: "abeezee",
@@ -209,13 +212,18 @@ const makeStyles = (
       ...defaultStyles.defaultText,
       color: "white",
     },
+    // "Continue as a Guest" stays white in light; dark is an on-theme surface button.
     textDark: {
       ...defaultStyles.defaultText,
       color: "#212121",
+      ...(isDark ? { color: tokens.textStrong } : {}),
     },
     buttonWhite: {
       ...defaultStyles.button,
       backgroundColor: "white",
+      // Single source for the border colour (tokens.border is #4A413F in light).
+      borderColor: tokens.border,
+      ...(isDark ? { backgroundColor: tokens.surfaceCream } : {}),
     },
     paginationDot: {
       backgroundColor: "#EC2907",
@@ -224,5 +232,6 @@ const makeStyles = (
     },
     paginationDotInactive: {
       backgroundColor: "#00000033",
+      ...(isDark ? { backgroundColor: tokens.border } : {}),
     },
   });

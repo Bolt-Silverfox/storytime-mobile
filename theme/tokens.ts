@@ -46,6 +46,9 @@ export const lightTokens = {
   overlay: "rgba(0,0,0,0.5)",
 } as const;
 
+/** Pure black: the ink of fixed-colour PNG icons (e.g. the Apple logo) in light mode. */
+export const FIXED_INK_BLACK = "#000000";
+
 export type TokenName = keyof typeof lightTokens;
 export type Tokens = Record<TokenName, string>;
 

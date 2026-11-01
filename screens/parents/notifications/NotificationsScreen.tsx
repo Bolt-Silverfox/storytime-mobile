@@ -129,6 +129,7 @@ const NotificationsScreen = () => {
                             <Image
                               className="size-8"
                               source={require("../../../assets/icons/middot.png")}
+                              style={{ tintColor: tokens.blueAccent }}
                             />
                           )}
                         </Pressable>
