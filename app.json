@@ -16,14 +16,10 @@
       "icon": "./assets/icon.png",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false,
-        "UIBackgroundModes": [
-          "remote-notification"
-        ]
+        "UIBackgroundModes": ["remote-notification"]
       },
       "entitlements": {
-        "com.apple.developer.applesignin": [
-          "Default"
-        ],
+        "com.apple.developer.applesignin": ["Default"],
         "aps-environment": "production"
       },
       "googleServicesFile": "./GoogleService-Info.plist",
@@ -66,10 +62,7 @@
               "pathPrefix": "/story"
             }
           ],
-          "category": [
-            "BROWSABLE",
-            "DEFAULT"
-          ]
+          "category": ["BROWSABLE", "DEFAULT"]
         }
       ]
     },
@@ -157,9 +150,6 @@
     "updates": {
       "url": "https://u.expo.dev/b117024d-5005-477f-8eae-03dce4fd8e45"
     },
-    "platforms": [
-      "ios",
-      "android"
-    ]
+    "platforms": ["ios", "android"]
   }
 }
