@@ -130,10 +130,19 @@ const isRetryableRegisterFailure = (error: unknown): boolean => {
   return true;
 };
 
-// Register device token with backend
+// The backend rejects a token it already holds (unique constraint) instead of
+// upserting. For registration that is the desired end state, not a failure.
+const isAlreadyRegistered = (error: unknown): boolean =>
+  error instanceof ApiError &&
+  (error.status === 409 || /already exists/i.test(error.message));
+
+export const ALREADY_REGISTERED = "already-registered" as const;
+
+// Register device token with backend. Resolves to the backend record, or
+// ALREADY_REGISTERED when the backend already holds this token, or null on failure.
 export const registerDeviceToken = async (
   token: string
-): Promise<DeviceTokenResponse | null> => {
+): Promise<DeviceTokenResponse | typeof ALREADY_REGISTERED | null> => {
   const platform = Platform.OS as "ios" | "android";
   const deviceName = Device.modelName || undefined;
 
@@ -161,6 +170,9 @@ export const registerDeviceToken = async (
       notifLogger.error("Failed to register device token:", data.message);
       return null;
     } catch (error) {
+      if (isAlreadyRegistered(error)) {
+        return ALREADY_REGISTERED;
+      }
       lastError = error;
       if (
         attempt < REGISTER_MAX_ATTEMPTS &&
