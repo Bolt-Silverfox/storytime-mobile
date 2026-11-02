@@ -134,7 +134,7 @@ const isRetryableRegisterFailure = (error: unknown): boolean => {
 // upserting. For registration that is the desired end state, not a failure.
 const isAlreadyRegistered = (error: unknown): boolean =>
   error instanceof ApiError &&
-  (error.status === 409 || /already exists/i.test(error.message));
+  (error.status === 409 || /already exists:\s*token/i.test(error.message));
 
 export const ALREADY_REGISTERED = "already-registered" as const;
 
