@@ -1,6 +1,12 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
 import { useEffect, useState, useMemo } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from "react-native";
 import { OtpInput } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
@@ -22,16 +28,27 @@ type VerifyEmailRouteProp = RouteProp<
 >;
 
 const OTP_DURATION = 60;
-const RESET_CODE_LENGTH = 8;
-const LEGACY_RESET_CODE_LENGTH = 6;
+export const RESET_CODE_LENGTH = 8;
+const VALID_RESET_CODE = /^(\d{6}|\d{8})$/;
+const SCREEN_HORIZONTAL_PADDING = 17;
+const BOX_MARGIN = 2;
+const MAX_BOX_WIDTH = 34;
+const MIN_BOX_WIDTH = 24;
+
+const boxWidthFor = (windowWidth: number) => {
+  const available = windowWidth - 2 * SCREEN_HORIZONTAL_PADDING;
+  const perBox = Math.floor(available / RESET_CODE_LENGTH) - 2 * BOX_MARGIN;
+  return Math.max(MIN_BOX_WIDTH, Math.min(MAX_BOX_WIDTH, perBox));
+};
 const RESET_EXPIRY_KEY = "reset_password_otp_expiry";
 
 const ConfirmResetPasswordTokenScreen = () => {
   const defaultStyles = useDefaultStyles();
   const { tokens, isDark } = useTheme();
+  const { width: windowWidth } = useWindowDimensions();
   const styles = useMemo(
-    () => makeStyles(defaultStyles, tokens),
-    [defaultStyles, tokens]
+    () => makeStyles(defaultStyles, tokens, boxWidthFor(windowWidth)),
+    [defaultStyles, tokens, windowWidth]
   );
   const route = useRoute<VerifyEmailRouteProp>();
   const navigator = useNavigation<RootNavigatorProp>();
@@ -40,8 +57,7 @@ const ConfirmResetPasswordTokenScreen = () => {
   const [successMessage, setSuccesMessage] = useState("");
   const { isLoading, validatePasswordReset, resendVerificationEmail } =
     useAuth();
-  const isCodeComplete =
-    otp.length === RESET_CODE_LENGTH || otp.length === LEGACY_RESET_CODE_LENGTH;
+  const isCodeComplete = VALID_RESET_CODE.test(otp);
   const [countDown, setCountdown] = useState(OTP_DURATION);
 
   const handleResendEmail = async () => {
@@ -121,7 +137,7 @@ const ConfirmResetPasswordTokenScreen = () => {
           <View style={styles.container}>
             <OtpInput
               numberOfDigits={RESET_CODE_LENGTH}
-              onTextChange={(text) => setOtp(text)}
+              onTextChange={(text) => setOtp(text.replace(/\D/g, ""))}
               onFilled={() => {}}
               theme={{
                 containerStyle: { width: "auto" },
@@ -170,7 +186,8 @@ export default ConfirmResetPasswordTokenScreen;
 
 const makeStyles = (
   defaultStyles: ReturnType<typeof makeDefaultStyles>,
-  tokens: Tokens
+  tokens: Tokens,
+  boxWidth: number
 ) =>
   StyleSheet.create({
     text: {
@@ -188,9 +205,9 @@ const makeStyles = (
     box: {
       borderWidth: 1,
       borderColor: "#ccc",
-      width: 34,
+      width: boxWidth,
       height: 44,
-      marginHorizontal: 2,
+      marginHorizontal: BOX_MARGIN,
       justifyContent: "center",
       alignItems: "center",
     },
