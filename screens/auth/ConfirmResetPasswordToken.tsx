@@ -22,6 +22,8 @@ type VerifyEmailRouteProp = RouteProp<
 >;
 
 const OTP_DURATION = 60;
+const RESET_CODE_LENGTH = 8;
+const LEGACY_RESET_CODE_LENGTH = 6;
 const RESET_EXPIRY_KEY = "reset_password_otp_expiry";
 
 const ConfirmResetPasswordTokenScreen = () => {
@@ -38,6 +40,8 @@ const ConfirmResetPasswordTokenScreen = () => {
   const [successMessage, setSuccesMessage] = useState("");
   const { isLoading, validatePasswordReset, resendVerificationEmail } =
     useAuth();
+  const isCodeComplete =
+    otp.length === RESET_CODE_LENGTH || otp.length === LEGACY_RESET_CODE_LENGTH;
   const [countDown, setCountdown] = useState(OTP_DURATION);
 
   const handleResendEmail = async () => {
@@ -116,7 +120,7 @@ const ConfirmResetPasswordTokenScreen = () => {
           <ErrorMessageDisplay errorMessage={error} />
           <View style={styles.container}>
             <OtpInput
-              numberOfDigits={6}
+              numberOfDigits={RESET_CODE_LENGTH}
               onTextChange={(text) => setOtp(text)}
               onFilled={() => {}}
               theme={{
@@ -138,7 +142,7 @@ const ConfirmResetPasswordTokenScreen = () => {
             </Pressable>
           </View>
           <CustomButton
-            disabled={isLoading}
+            disabled={isLoading || !isCodeComplete}
             text={isLoading ? "Loading..." : "Verify Email"}
             onPress={() =>
               validatePasswordReset({
@@ -184,9 +188,9 @@ const makeStyles = (
     box: {
       borderWidth: 1,
       borderColor: "#ccc",
-      width: 47,
-      height: 47,
-      marginHorizontal: 5,
+      width: 34,
+      height: 44,
+      marginHorizontal: 2,
       justifyContent: "center",
       alignItems: "center",
     },
