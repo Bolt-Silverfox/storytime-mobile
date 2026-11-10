@@ -109,6 +109,7 @@ describe("reset code entry", () => {
   it.each([
     ["123456", "123456"],
     ["12345678", "12345678"],
+    ["01234567", "01234567"],
     ["123456 ", "123456"],
     ["123456\n", "123456"],
     [" 12345678 ", "12345678"],
@@ -120,6 +121,7 @@ describe("reset code entry", () => {
     expect(mockValidatePasswordReset).toHaveBeenCalledTimes(1);
     const args = mockValidatePasswordReset.mock.calls[0][0];
     expect(args.token).toBe(expected);
+    expect(typeof args.token).toBe("string");
     args.onSuccess();
     expect(mockNavigate).toHaveBeenCalledWith("auth", {
       screen: "inputNewPassword",
