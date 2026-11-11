@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from "@react-navigation/native";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import {
   Pressable,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { OtpInput } from "react-native-otp-entry";
+import { OtpInput, OtpInputRef } from "react-native-otp-entry";
 import colours from "../../colours";
 import ErrorMessageDisplay from "../../components/ErrorMessageDisplay";
 import useAuth from "../../contexts/AuthContext";
@@ -54,11 +54,18 @@ const ConfirmResetPasswordTokenScreen = () => {
   const navigator = useNavigation<RootNavigatorProp>();
   const [error, setError] = useState("");
   const [otp, setOtp] = useState("");
+  const otpRef = useRef<OtpInputRef>(null);
   const [successMessage, setSuccesMessage] = useState("");
   const { isLoading, validatePasswordReset, resendVerificationEmail } =
     useAuth();
   const isCodeComplete = VALID_RESET_CODE.test(otp);
   const [countDown, setCountdown] = useState(OTP_DURATION);
+
+  const handleOtpChange = (text: string) => {
+    const digits = text.replace(/\D/g, "");
+    setOtp(digits);
+    if (digits !== text) otpRef.current?.setValue(digits);
+  };
 
   const handleResendEmail = async () => {
     setSuccesMessage("");
@@ -136,8 +143,9 @@ const ConfirmResetPasswordTokenScreen = () => {
           <ErrorMessageDisplay errorMessage={error} />
           <View style={styles.container}>
             <OtpInput
+              ref={otpRef}
               numberOfDigits={RESET_CODE_LENGTH}
-              onTextChange={(text) => setOtp(text.replace(/\D/g, ""))}
+              onTextChange={handleOtpChange}
               onFilled={() => {}}
               theme={{
                 containerStyle: { width: "auto" },

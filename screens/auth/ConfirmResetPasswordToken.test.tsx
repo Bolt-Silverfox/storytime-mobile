@@ -1,5 +1,6 @@
 import TestRenderer, { act } from "react-test-renderer";
-import { StyleSheet, useWindowDimensions } from "react-native";
+import { StyleSheet, Text, useWindowDimensions } from "react-native";
+import { lightTokens } from "../../theme/tokens";
 import ConfirmResetPasswordTokenScreen, {
   RESET_CODE_LENGTH,
 } from "./ConfirmResetPasswordToken";
@@ -24,15 +25,14 @@ jest.mock("../../contexts/AuthContext", () => ({
     resendVerificationEmail: jest.fn(),
   }),
 }));
-jest.mock("../../styles", () => ({
-  makeDefaultStyles: jest.fn(),
-  useDefaultStyles: () => ({
-    screen: {},
-    heading: {},
-    defaultText: {},
-    linkText: {},
-  }),
-}));
+jest.mock("../../styles", () => {
+  const actual = jest.requireActual("../../styles");
+  const { lightTokens: tokens } = jest.requireActual("../../theme/tokens");
+  return {
+    ...actual,
+    useDefaultStyles: () => actual.makeDefaultStyles(tokens),
+  };
+});
 jest.mock("../../theme/ThemeContext", () => ({
   useTheme: () => ({ tokens: { link: "blue" }, isDark: false }),
 }));
@@ -58,7 +58,11 @@ const mockWidth = (width: number) =>
     fontScale: 1,
   });
 
-const SCREEN_PADDING = 34;
+const screenPadding = () => {
+  const { makeDefaultStyles } = jest.requireActual("../../styles");
+  const screen = StyleSheet.flatten(makeDefaultStyles(lightTokens).screen);
+  return 2 * screen.paddingHorizontal;
+};
 
 let tree: ReturnType<typeof TestRenderer.create>;
 type Instance = typeof tree.root;
@@ -88,6 +92,17 @@ const boxes = () =>
     (n: Instance) =>
       n.props.testID === "otp-input" && typeof n.type === "string"
   );
+const boxText = () =>
+  boxes()
+    .map((box: Instance) =>
+      box
+        .findAllByType(Text)
+        .map((t: Instance) => t.props.children ?? "")
+        .join("")
+    )
+    .join("");
+const hiddenValue = () =>
+  tree.root.findByProps({ testID: "otp-input-hidden" }).props.value;
 const rowWidth = () => {
   const box = StyleSheet.flatten(boxes()[0].props.style);
   return RESET_CODE_LENGTH * (box.width + 2 * box.marginHorizontal);
@@ -144,7 +159,35 @@ describe("reset code entry", () => {
     (width) => {
       mockWidth(width);
       renderScreen();
-      expect(rowWidth()).toBeLessThanOrEqual(width - SCREEN_PADDING);
+      expect(rowWidth()).toBeLessThanOrEqual(width - screenPadding());
     }
   );
+
+  it.each([
+    [" 12345678", "12345678"],
+    ["1234 5678", "12345678"],
+    ["12a345b6", "123456"],
+    ["123456 ", "123456"],
+  ])("shows %j in the boxes as %s", (typed, expected) => {
+    renderScreen();
+    enterCode(typed);
+    expect(boxText()).toBe(expected);
+    expect(hiddenValue()).toBe(expected);
+    pressVerify();
+    expect(mockValidatePasswordReset).toHaveBeenCalledTimes(1);
+    expect(mockValidatePasswordReset.mock.calls[0][0].token).toBe(expected);
+  });
+
+  it("keeps accepting digits after a trailing space was stripped", () => {
+    renderScreen();
+    enterCode("123456 ");
+    enterCode(`${hiddenValue()}7`);
+    expect(boxText()).toBe("1234567");
+    pressVerify();
+    expect(mockValidatePasswordReset).not.toHaveBeenCalled();
+    enterCode(`${hiddenValue()}8`);
+    expect(boxText()).toBe("12345678");
+    pressVerify();
+    expect(mockValidatePasswordReset.mock.calls[0][0].token).toBe("12345678");
+  });
 });
