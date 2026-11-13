@@ -34,7 +34,6 @@ todo.txt
 
 # local env files
 .env*.local
-.env
 
 # FCM Configuration Files (contain sensitive credentials)
 google-services.json
@@ -48,7 +47,6 @@ GoogleService-Info.plist
 /android
 
 .idea/
-.vscode/
 BACKEND_API_ANALYSIS.md
 BACKEND_SETUP_REQUIRED.md
 FCM_IMPLEMENTATION_GUIDE.md
@@ -62,8 +60,8 @@ CLAUDE.md
 
 build-*.apk
 
-.env.local
 
 # Scanner checkout made by the shared malware-scan workflow. Tracking anything
 # here fails that job by design.
 .storytime-ci/
+config.bat
