@@ -74,9 +74,11 @@ const renderScreen = () => {
 };
 const enterCode = (code: string) =>
   act(() => {
-    tree.root
-      .findByProps({ testID: "otp-input-hidden" })
-      .props.onChangeText(code);
+    const input = tree.root.findByProps({ testID: "otp-input-hidden" });
+    const { maxLength } = input.props;
+    input.props.onChangeText(
+      maxLength == null ? code : code.slice(0, maxLength)
+    );
   });
 const pressVerify = () => {
   const label = tree.root.find(
@@ -129,6 +131,9 @@ describe("reset code entry", () => {
     ["123456\n", "123456"],
     [" 12345678 ", "12345678"],
     ["1234 5678", "12345678"],
+    ["1234-5678", "12345678"],
+    ["1 2 3 4 5 6 7 8", "12345678"],
+    ["123 456", "123456"],
   ])("submits %j as %s", (typed, expected) => {
     renderScreen();
     enterCode(typed);
@@ -144,15 +149,21 @@ describe("reset code entry", () => {
     });
   });
 
-  it.each(["", "12345", "1234567", "12a45b", "abcdef", "123456789"])(
-    "does not submit %j",
-    (typed) => {
-      renderScreen();
-      enterCode(typed);
-      pressVerify();
-      expect(mockValidatePasswordReset).not.toHaveBeenCalled();
-    }
-  );
+  it.each([
+    "",
+    "12345",
+    "1234567",
+    "12a45b",
+    "abcdef",
+    "123456789",
+    "1234 56789",
+    "1234-5678-9",
+  ])("does not submit %j", (typed) => {
+    renderScreen();
+    enterCode(typed);
+    pressVerify();
+    expect(mockValidatePasswordReset).not.toHaveBeenCalled();
+  });
 
   it.each([300, 320, 360, 414])(
     "fits the code row inside a %ipt wide screen",
@@ -176,6 +187,16 @@ describe("reset code entry", () => {
     pressVerify();
     expect(mockValidatePasswordReset).toHaveBeenCalledTimes(1);
     expect(mockValidatePasswordReset.mock.calls[0][0].token).toBe(expected);
+  });
+
+  it("ignores a ninth digit typed after a full code", () => {
+    renderScreen();
+    enterCode("12345678");
+    enterCode("123456789");
+    expect(boxText()).toBe("12345678");
+    expect(hiddenValue()).toBe("12345678");
+    pressVerify();
+    expect(mockValidatePasswordReset.mock.calls[0][0].token).toBe("12345678");
   });
 
   it("keeps accepting digits after a trailing space was stripped", () => {

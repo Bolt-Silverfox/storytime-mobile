@@ -63,6 +63,10 @@ const ConfirmResetPasswordTokenScreen = () => {
 
   const handleOtpChange = (text: string) => {
     const digits = text.replace(/\D/g, "");
+    if (digits.length > RESET_CODE_LENGTH) {
+      otpRef.current?.setValue(otp);
+      return;
+    }
     setOtp(digits);
     if (digits !== text) otpRef.current?.setValue(digits);
   };
@@ -146,6 +150,7 @@ const ConfirmResetPasswordTokenScreen = () => {
               ref={otpRef}
               numberOfDigits={RESET_CODE_LENGTH}
               onTextChange={handleOtpChange}
+              textInputProps={{ maxLength: undefined }}
               onFilled={() => {}}
               theme={{
                 containerStyle: { width: "auto" },
