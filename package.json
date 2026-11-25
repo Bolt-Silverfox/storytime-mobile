@@ -24,7 +24,7 @@
     "@react-native-firebase/app": "^26.4.0",
     "@react-native-firebase/crashlytics": "^26.4.0",
     "@react-native-firebase/messaging": "^26.4.0",
-    "@react-native-google-signin/google-signin": "^16.1.5",
+    "@react-native-google-signin/google-signin": "^17.0.0",
     "@react-native-masked-view/masked-view": "^0.3.2",
     "@react-navigation/bottom-tabs": "^7.21.0",
     "@react-navigation/native": "^7.5.1",
