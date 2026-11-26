@@ -53,56 +53,84 @@ jest.mock("./logger", () => ({
 
 const mockedFetch = apiFetch as jest.Mock;
 
+const duplicateTokenConflict = () =>
+  new ApiError("A record with this identifier already exists: token.", 409);
+
+const registeredRecord = {
+  id: "device-1",
+  platform: "android",
+  isActive: true,
+  createdAt: "2026-11-26T00:00:00.000Z",
+  lastUsed: "2026-11-26T00:00:00.000Z",
+};
+
+const registeredResponse = () => ({
+  json: async () => ({ success: true, data: registeredRecord }),
+});
+
+const settle = async <T>(promise: Promise<T>): Promise<T> => {
+  await jest.runAllTimersAsync();
+  return promise;
+};
+
 describe("registerDeviceToken", () => {
-  beforeEach(() => jest.clearAllMocks());
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockedFetch.mockReset();
+    jest.useFakeTimers();
+  });
+  afterEach(() => jest.useRealTimers());
 
-  it("treats a duplicate-token rejection as already registered, without an error log", async () => {
-    mockedFetch.mockRejectedValue(
-      new ApiError("A record with this identifier already exists: token.", 409)
-    );
+  it("retries a duplicate-token conflict and returns the record the backend assigns to this user", async () => {
+    mockedFetch
+      .mockRejectedValueOnce(duplicateTokenConflict())
+      .mockResolvedValueOnce(registeredResponse());
 
-    const result = await registerDeviceToken("tok");
+    const result = await settle(registerDeviceToken("tok"));
 
-    expect(result).toBeTruthy();
-    expect(mockedFetch).toHaveBeenCalledTimes(1);
+    expect(result).toEqual(registeredRecord);
+    expect(mockedFetch).toHaveBeenCalledTimes(2);
     expect(notifLogger.error).not.toHaveBeenCalled();
   });
 
-  it("recognises the duplicate message even when the backend uses another status", async () => {
+  it("does not report a conflict that never resolves as registered", async () => {
+    mockedFetch.mockRejectedValue(duplicateTokenConflict());
+
+    expect(await settle(registerDeviceToken("tok"))).toBeNull();
+    expect(mockedFetch).toHaveBeenCalledTimes(3);
+  });
+
+  it("does not treat a non-409 'already exists: token' message as registered", async () => {
     mockedFetch.mockRejectedValue(
       new ApiError("A record with this identifier already exists: token.", 400)
     );
 
-    expect(await registerDeviceToken("tok")).toBeTruthy();
-    expect(notifLogger.error).not.toHaveBeenCalled();
+    expect(await settle(registerDeviceToken("tok"))).toBeNull();
+    expect(mockedFetch).toHaveBeenCalledTimes(1);
   });
 
-  it("treats a 409 as already registered whatever the message", async () => {
-    mockedFetch.mockRejectedValue(new ApiError("Conflict", 409));
-
-    expect(await registerDeviceToken("tok")).toBeTruthy();
-    expect(notifLogger.error).not.toHaveBeenCalled();
-  });
-
-  it("does not treat an unrelated 'already exists' failure as success", async () => {
-    mockedFetch.mockRejectedValue(
-      new ApiError("Database error: relation already exists", 400)
-    );
-
-    expect(await registerDeviceToken("tok")).toBeNull();
-    expect(notifLogger.error).toHaveBeenCalled();
-  });
-
-  it("stores the token locally when the backend already holds it", async () => {
+  it("does not store the token locally when the conflict never resolves", async () => {
     (getToken as jest.Mock).mockResolvedValue("tok");
     (Notifications.getDevicePushTokenAsync as jest.Mock).mockResolvedValue({
       data: "tok",
     });
-    mockedFetch.mockRejectedValue(
-      new ApiError("A record with this identifier already exists: token.", 409)
-    );
+    mockedFetch.mockRejectedValue(duplicateTokenConflict());
 
-    await initializePushNotifications();
+    await settle(initializePushNotifications());
+
+    expect(AsyncStorage.setItem).not.toHaveBeenCalled();
+  });
+
+  it("stores the token locally once the retried registration succeeds", async () => {
+    (getToken as jest.Mock).mockResolvedValue("tok");
+    (Notifications.getDevicePushTokenAsync as jest.Mock).mockResolvedValue({
+      data: "tok",
+    });
+    mockedFetch
+      .mockRejectedValueOnce(duplicateTokenConflict())
+      .mockResolvedValueOnce(registeredResponse());
+
+    await settle(initializePushNotifications());
 
     expect(AsyncStorage.setItem).toHaveBeenCalledWith("pushToken", "tok");
   });

@@ -114,12 +114,13 @@ const isExpectedRegisterFailure = (error: unknown): boolean => {
 };
 
 // A genuinely expired session won't recover by retrying (apiFetch already
-// triggered logout), so only retry transient auth failures, rate-limits,
-// server errors and network-level throws.
+// triggered logout), so only retry transient auth failures, duplicate-token
+// conflicts, rate-limits, server errors and network-level throws.
 const isRetryableRegisterFailure = (error: unknown): boolean => {
   if (error instanceof ApiError) {
     return (
       error.transientAuth === true ||
+      error.status === 409 ||
       error.status === 429 ||
       error.status >= 500
     );
@@ -130,19 +131,10 @@ const isRetryableRegisterFailure = (error: unknown): boolean => {
   return true;
 };
 
-// The backend rejects a token it already holds (unique constraint) instead of
-// upserting. For registration that is the desired end state, not a failure.
-const isAlreadyRegistered = (error: unknown): boolean =>
-  error instanceof ApiError &&
-  (error.status === 409 || /already exists:\s*token/i.test(error.message));
-
-export const ALREADY_REGISTERED = "already-registered" as const;
-
-// Register device token with backend. Resolves to the backend record, or
-// ALREADY_REGISTERED when the backend already holds this token, or null on failure.
+// Register device token with backend
 export const registerDeviceToken = async (
   token: string
-): Promise<DeviceTokenResponse | typeof ALREADY_REGISTERED | null> => {
+): Promise<DeviceTokenResponse | null> => {
   const platform = Platform.OS as "ios" | "android";
   const deviceName = Device.modelName || undefined;
 
@@ -170,9 +162,6 @@ export const registerDeviceToken = async (
       notifLogger.error("Failed to register device token:", data.message);
       return null;
     } catch (error) {
-      if (isAlreadyRegistered(error)) {
-        return ALREADY_REGISTERED;
-      }
       lastError = error;
       if (
         attempt < REGISTER_MAX_ATTEMPTS &&

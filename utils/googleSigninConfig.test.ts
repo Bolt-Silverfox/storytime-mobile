@@ -1,13 +1,3 @@
-/**
- * Guards STORYTIME-MOBILE-2: GIDSignIn throws NSInvalidArgumentException on iOS
- * when the reversed iOS client ID is not a registered URL scheme in Info.plist.
- *
- * In v1.3.0 the google-signin plugin's `iosUrlScheme` alone did not reach
- * Info.plist; the scheme only landed once it was also declared as
- * `expo.ios.scheme` (Expo appends those to CFBundleURLTypes). So assert the
- * outcome: after app.config.js resolves the config, the reversed iOS client ID
- * of every EAS profile is in the iOS URL schemes.
- */
 import appJson from "../app.json";
 import easJson from "../eas.json";
 
