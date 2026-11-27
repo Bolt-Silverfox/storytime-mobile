@@ -114,12 +114,13 @@ const isExpectedRegisterFailure = (error: unknown): boolean => {
 };
 
 // A genuinely expired session won't recover by retrying (apiFetch already
-// triggered logout), so only retry transient auth failures, rate-limits,
-// server errors and network-level throws.
+// triggered logout), so only retry transient auth failures, duplicate-token
+// conflicts, rate-limits, server errors and network-level throws.
 const isRetryableRegisterFailure = (error: unknown): boolean => {
   if (error instanceof ApiError) {
     return (
       error.transientAuth === true ||
+      error.status === 409 ||
       error.status === 429 ||
       error.status >= 500
     );
